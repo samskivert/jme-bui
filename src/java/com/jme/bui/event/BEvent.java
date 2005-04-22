@@ -35,10 +35,27 @@ import java.util.EventObject;
  */
 public class BEvent extends EventObject
 {
-    public BEvent (Object source, long when)
+    /**
+     * Generates a string representation of this instance.
+     */
+    public String toString ()
+    {
+        StringBuffer buf = new StringBuffer("[ev:");
+        toString(buf);
+        buf.append("]");
+        return buf.toString();
+    }
+
+    protected BEvent (Object source, long when)
     {
         super(source);
         _when = when;
+    }
+
+    protected void toString (StringBuffer buf)
+    {
+        buf.append("source=").append(source);
+        buf.append(", when=").append(_when);
     }
 
     protected long _when;

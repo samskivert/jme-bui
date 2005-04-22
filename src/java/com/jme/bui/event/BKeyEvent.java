@@ -26,60 +26,66 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-package com.jme.bui;
-
-import com.jme.math.Vector2f;
+package com.jme.bui.event;
 
 /**
- * A user interface element that is meant to contain other interface
- * elements.
+ * Encapsulates the information associated with a keyboard event.
  */
-public class BContainer extends BComponent
+public class BKeyEvent extends BInputEvent
 {
+    /** Indicates that an event represents a key pressing. */
+    public static final int KEY_PRESSED = 0;
+
+    /** Indicates that an event represents a key release. */
+    public static final int KEY_RELEASED = 1;
+
+    public BKeyEvent (Object source, long when, int modifiers,
+                      int type, char keyChar, int keyCode)
+    {
+        super(source, when, modifiers);
+        _type = type;
+        _keyChar = keyChar;
+        _keyCode = keyCode;
+    }
+
     /**
-     * Configures this container with an entity that will set the size and
-     * position of its children.
+     * Indicates whether this was a {@link #KEY_PRESSED} or {@link
+     * #KEY_RELEASED} event.
      */
-    public void setLayoutManager (BLayoutManager layout)
+    public int getType ()
     {
-        _layout = layout;
+        return _type;
     }
 
-    // documentation inherited
-    public void layout ()
+    /**
+     * Returns the character associated with the key. <em>Note:</em> this
+     * is only valid for {@link #KEY_PRESSED} events, however {@link
+     * #getKeyCode} works in all cases.
+     */
+    public char getKeyChar ()
     {
-        if (_layout != null) {
-            _layout.layoutContainer(this);
-        }
+        return _keyChar;
     }
 
-    // documentation inherited
-    public BComponent getHitComponent (int mx, int my)
+    /**
+     * Returns the numeric identifier associated with the key.
+     *
+     * @see KeyInput
+     */
+    public int getKeyCode ()
     {
-        // if we're not within our bounds, we don't need to check our children
-        if (super.getHitComponent(mx, my) != this) {
-            return null;
-        }
-
-        BComponent hit = null;
-        for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
-            BComponent child = (BComponent)getChild(ii);
-            if ((hit = child.getHitComponent(mx, my)) != null) {
-                return hit;
-            }
-        }
-        return this;
+        return _keyCode;
     }
 
-    // documentation inherited
-    protected Vector2f computePreferredSize ()
+    protected void toString (StringBuffer buf)
     {
-        if (_layout != null) {
-            return _layout.computePreferredSize(this);
-        } else {
-            return super.computePreferredSize();
-        }
+        super.toString(buf);
+        buf.append(", type=").append(_type);
+        buf.append(", char=").append(_keyChar);
+        buf.append(", code=").append(_keyCode);
     }
 
-    protected BLayoutManager _layout;
+    protected int _type;
+    protected char _keyChar;
+    protected int _keyCode;
 }
