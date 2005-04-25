@@ -143,6 +143,7 @@ public class BComponent extends Node
     public void dispatchEvent (BEvent event)
     {
         // nothing to do by default
+        Log.log.info(this + " dispatching " + event);
     }
 
     /**
