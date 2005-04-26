@@ -60,7 +60,7 @@ public class LayoutTest extends SimpleGame
         window.addChild(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.addChild(new BLabel("WEST"), BorderLayout.WEST);
         window.addChild(new BLabel("CENTER"), BorderLayout.CENTER);
-        window.setSize(300, 300);
+        window.setBounds(25, 25, 300, 48);
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);

@@ -92,6 +92,10 @@ public class BContainer extends BComponent
             return null;
         }
 
+        // translate the coordinate into our children's coordinates
+        mx -= _x;
+        my -= _y;
+
         BComponent hit = null;
         for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
             BComponent child = (BComponent)getChild(ii);

@@ -79,7 +79,8 @@ public class BBitmapFont extends BFont
         Vector2f[] tcoords = (Vector2f[])_tcoords.get(key);
         if (tcoords == null) {
             int ccode = c - ASCII_OFFSET;
-            int ccol = ccode % (int)_cols, crow = ccode / (int)_cols;
+            int ccol = ccode % (int)_cols;
+            int crow = (int)_rows - (ccode / (int)_cols) - 1;
             float left = ccol / _cols, right = (ccol+1) / _cols;
             float bot = crow / _rows, top = (crow+1) / _rows;
             tcoords = new Vector2f[4];

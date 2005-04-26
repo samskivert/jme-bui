@@ -95,11 +95,14 @@ public class BLabel extends BComponent
         _tsize = new Dimension(0, (int)font.getHeight());
         _glyphs = new BGlyph[_text.length()];
         for (int ii = 0; ii < _glyphs.length; ii++) {
-            _glyphs[ii] = font.createCharacter(_text.charAt(ii));
-            _glyphs[ii].setLocalTranslation(new Vector3f(_tsize.width, 0, 0));
+            char cchar = _text.charAt(ii);
+            int cwidth = font.getWidth(cchar);
+            _glyphs[ii] = font.createCharacter(cchar);
+            _glyphs[ii].setLocalTranslation(
+                new Vector3f(_tsize.width + cwidth/2, _tsize.height/2, 0));
             _glyphs[ii].setSolidColor(lnf.getForeground());
             attachChild(_glyphs[ii]);
-            _tsize.width += font.getWidth(_text.charAt(ii));
+            _tsize.width += cwidth;
         }
 
         updateGeometricState(0.0f, true);

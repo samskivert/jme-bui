@@ -49,7 +49,7 @@ public class BComponent extends Node
         // constructor because those methods cannot be called until it
         // finishes execution, so we construct with a blank name and set a
         // valid one immediately
-        setName(getClass().getName() + hashCode());
+        setName(getClass().getName() + ":" + hashCode());
 
         AlphaState as = DisplaySystem.getDisplaySystem().getRenderer().
             createAlphaState();
@@ -194,31 +194,6 @@ public class BComponent extends Node
         Log.log.info(this + " dispatching " + event);
     }
 
-//     // documentation inherited
-//     public void setParent (Node parent)
-//     {
-//         // make a note of whether or not we were attached to an "added"
-//         // hierarchy before we allow our parent reference to be cleared
-//         boolean hadBeenAdded = isAdded();
-
-//         super.setParent(parent);
-
-//         if (parent == null) {
-//             // if we had been "added" to a hierarchy connected to a
-//             // window, we need to call wasRemoved()
-//             if (hadBeenAdded) {
-//                 wasRemoved();
-//             }
-
-//         } else if (isAdded()) {
-//             // if our parent is already added to a hierarcy connected to a
-//             // top-level window, then we can call wasAdded() immediately;
-//             // otherwise when our parent is added, it will roll a call to
-//             // wasAdded() down the hierarchy
-//             wasAdded();
-//         }
-//     }
-
     /**
      * Computes and returns a preferred size for this component. This
      * method is called if no overriding preferred size has been supplied.
@@ -278,7 +253,9 @@ public class BComponent extends Node
      */
     protected void updateNodeTranslation ()
     {
-        setLocalTranslation(new Vector3f(_x + _width/2, _y + _height/2, 0f));
+        Log.log.info(this + " reshaping to " +
+                     _width + "x" + _height + "+" + _x + "+" + _y + ".");
+        setLocalTranslation(new Vector3f(_x, _y, 0f));
     }
 
     protected BLookAndFeel _lnf;

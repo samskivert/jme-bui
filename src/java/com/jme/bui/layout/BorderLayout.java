@@ -112,7 +112,7 @@ public class BorderLayout extends BLayoutManager
         Dimension psize = new Dimension();
         int horizComps = 0, vertComps = 0;
 
-        BComponent comp = _components[NORTH.intValue()];
+        BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
             psize.width = Math.max(psize.width, cpsize.width);
@@ -120,7 +120,7 @@ public class BorderLayout extends BLayoutManager
             vertComps++;
         }
 
-        comp = _components[SOUTH.intValue()];
+        comp = _components[NORTH.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
             psize.width = Math.max(psize.width, cpsize.width);
@@ -153,32 +153,28 @@ public class BorderLayout extends BLayoutManager
     public void layoutContainer (BContainer target)
     {
         // determine what we've got to work with
-        int x = target.getX(), y = target.getY();
-        int width = target.getWidth(), height = target.getHeight();
+        int x = 0, y = 0, width = target.getWidth(), height = target.getHeight();
 
-        BComponent comp = _components[NORTH.intValue()];
+        BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
-            comp.setLocation(x, y);
             Dimension cpsize = comp.getPreferredSize();
-            comp.setSize(width, cpsize.height);
+            comp.setBounds(x, y, width, cpsize.height);
             y += (cpsize.height + _vgap);
             height -= (cpsize.height + _vgap);
         }
 
-        comp = _components[SOUTH.intValue()];
+        comp = _components[NORTH.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
-            comp.setLocation(x, target.getY() + target.getHeight() -
-                             cpsize.height);
-            comp.setSize(width, cpsize.height);
+            comp.setBounds(x, target.getHeight() - cpsize.height,
+                           width, cpsize.height);
             height -= (cpsize.height + _vgap);
         }
 
         comp = _components[WEST.intValue()];
         if (comp != null) {
-            comp.setLocation(x, y);
             Dimension cpsize = comp.getPreferredSize();
-            comp.setSize(cpsize.width, height);
+            comp.setBounds(x, y, cpsize.width, height);
             x += (cpsize.width + _hgap);
             width -= (cpsize.width + _hgap);
         }
@@ -186,16 +182,14 @@ public class BorderLayout extends BLayoutManager
         comp = _components[EAST.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
-            comp.setLocation(target.getX() + target.getWidth() -
-                             cpsize.width, y);
-            comp.setSize(cpsize.width, height);
+            comp.setBounds(target.getWidth() - cpsize.width, y,
+                           cpsize.width, height);
             width -= (cpsize.width + _hgap);
         }
 
         comp = _components[CENTER.intValue()];
         if (comp != null) {
-            comp.setLocation(x, y);
-            comp.setSize(width, height);
+            comp.setBounds(x, y, width, height);
         }
     }
 
