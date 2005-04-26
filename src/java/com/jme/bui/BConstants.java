@@ -28,29 +28,23 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
-import com.jme.bui.layout.BLayoutManager;
-
 /**
- * A window defines the top-level of a component hierarchy. It must be
- * created with a look and feel and layout manager.
+ * Codes and constants shared by the BUI components.
  */
-public class BWindow extends BContainer
+public interface BConstants
 {
-    public BWindow (BLookAndFeel lnf, BLayoutManager layout)
-    {
-        setLookAndFeel(lnf);
-        setLayoutManager(layout);
-    }
+    /** An alignment constant. */
+    public static final int LEFT = 0;
 
-    /**
-     * Sizes this window to its preferred size. This method does not
-     * change the window's coordinates.
-     */
-    public void pack ()
-    {
-        Dimension ps = getPreferredSize();
-        setBounds(_x, _y, ps.width, ps.height);
-    }
+    /** An alignment constant. */
+    public static final int RIGHT = 1;
+
+    /** An alignment constant. */
+    public static final int CENTER = 2;
+
+    /** An alignment constant. */
+    public static final int TOP = 0;
+
+    /** An alignment constant. */
+    public static final int BOTTOM = 1;
 }

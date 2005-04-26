@@ -34,8 +34,6 @@ import com.jme.bui.event.BEvent;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
-import com.jme.scene.state.AlphaState;
-import com.jme.system.DisplaySystem;
 
 /**
  * The basic entity in the BUI user interface system. A hierarchy of
@@ -51,16 +49,6 @@ public class BComponent extends Node
         // finishes execution, so we construct with a blank name and set a
         // valid one immediately
         setName(getClass().getName() + ":" + hashCode());
-
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE);
-        astate.setTestEnabled(true);
-        astate.setTestFunction(AlphaState.TF_GREATER);
-        astate.setEnabled(true);
-        setRenderState(astate);
 
         setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
@@ -124,9 +112,7 @@ public class BComponent extends Node
      */
     public void setLocation (int x, int y)
     {
-        _x = x;
-        _y = y;
-        updateNodeTranslation();
+        setBounds(x, y, _width, _height);
     }
 
     /**
@@ -134,9 +120,7 @@ public class BComponent extends Node
      */
     public void setSize (int width, int height)
     {
-        _width = width;
-        _height = height;
-        updateNodeTranslation();
+        setBounds(_x, _y, width, height);
     }
 
     /**
@@ -147,11 +131,13 @@ public class BComponent extends Node
      */
     public void setBounds (int x, int y, int width, int height)
     {
-        _x = x;
-        _y = y;
+        if (_x != x || _y != y) {
+            _x = x;
+            _y = y;
+            setLocalTranslation(new Vector3f(_x, _y, 0f));
+        }
         _width = width;
         _height = height;
-        updateNodeTranslation();
     }
 
     /**
@@ -195,7 +181,6 @@ public class BComponent extends Node
     public void dispatchEvent (BEvent event)
     {
         // nothing to do by default
-        Log.log.info(this + " dispatching " + event);
     }
 
     /**
@@ -226,6 +211,19 @@ public class BComponent extends Node
     }
 
     /**
+     * Called by a component after it has changed internally in such a way
+     * as to require a relayout, this method climbs the interface
+     * hierarchy to the containing window and forces a full relayout.
+     */
+    protected void relayout ()
+    {
+        BWindow window = getWindow();
+        if (window != null) {
+            window.layout();
+        }
+    }
+
+    /**
      * Returns a reference to the look and feel in scope for this
      * component.
      */
@@ -249,17 +247,6 @@ public class BComponent extends Node
         } else {
             return null;
         }
-    }
-
-    /**
-     * Called when our dimensions change to update the position of our
-     * underlying node.
-     */
-    protected void updateNodeTranslation ()
-    {
-        Log.log.info(this + " reshaping to " +
-                     _width + "x" + _height + "+" + _x + "+" + _y + ".");
-        setLocalTranslation(new Vector3f(_x, _y, 0f));
     }
 
     protected BLookAndFeel _lnf;

@@ -28,29 +28,56 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
-import com.jme.bui.layout.BLayoutManager;
-
 /**
- * A window defines the top-level of a component hierarchy. It must be
- * created with a look and feel and layout manager.
+ * Provides additional information about a background that is used to
+ * display the backgrounds of various components.
  */
-public class BWindow extends BContainer
+public abstract class BBackground extends BComponent
 {
-    public BWindow (BLookAndFeel lnf, BLayoutManager layout)
+    /**
+     * Returns the left inset that should be used by components rendered
+     * inside this background.
+     */
+    public int getLeftInset ()
     {
-        setLookAndFeel(lnf);
-        setLayoutManager(layout);
+        return _left;
     }
 
     /**
-     * Sizes this window to its preferred size. This method does not
-     * change the window's coordinates.
+     * Returns the top inset that should be used by components rendered
+     * inside this background.
      */
-    public void pack ()
+    public int getTopInset ()
     {
-        Dimension ps = getPreferredSize();
-        setBounds(_x, _y, ps.width, ps.height);
+        return _top;
     }
+
+    /**
+     * Returns the right inset that should be used by components rendered
+     * inside this background.
+     */
+    public int getRightInset ()
+    {
+        return _right;
+    }
+
+    /**
+     * Returns the bottom inset that should be used by components rendered
+     * inside this background.
+     */
+    public int getBottomInset ()
+    {
+        return _bottom;
+    }
+
+    /** Configures this background with its insets. */
+    protected BBackground (int left, int top, int right, int bottom)
+    {
+        _left = left;
+        _top = top;
+        _right = right;
+        _bottom = bottom;
+    }
+
+    protected int _left, _top, _right, _bottom;
 }

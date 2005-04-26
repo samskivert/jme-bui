@@ -28,12 +28,14 @@
 
 package com.jme.bui.tests;
 
+import java.net.URL;
 import java.util.logging.Level;
 
 import com.jme.app.SimpleGame;
 import com.jme.input.InputSystem;
 import com.jme.util.LoggingSystem;
 
+import com.jme.bui.BButton;
 import com.jme.bui.BLabel;
 import com.jme.bui.BLookAndFeel;
 import com.jme.bui.BWindow;
@@ -60,7 +62,20 @@ public class LayoutTest extends SimpleGame
         window.addChild(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.addChild(new BLabel("WEST"), BorderLayout.WEST);
         window.addChild(new BLabel("CENTER"), BorderLayout.CENTER);
-        window.setBounds(25, 25, 300, 48);
+        window.pack();
+        window.setLocation(25, 25);
+        window.layout();
+        rootNode.attachChild(window);
+        _dispatcher.addWindow(window);
+
+        window = new BWindow(lnf, new BorderLayout(2, 2));
+        window.addChild(new BButton("NORTH"), BorderLayout.NORTH);
+        window.addChild(new BButton("EAST"), BorderLayout.EAST);
+        window.addChild(new BButton("SOUTH"), BorderLayout.SOUTH);
+        window.addChild(new BButton("WEST"), BorderLayout.WEST);
+        window.addChild(new BButton("CENTER"), BorderLayout.CENTER);
+        window.pack();
+        window.setLocation(100, 100);
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);

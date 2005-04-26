@@ -28,10 +28,13 @@
 
 package com.jme.bui;
 
-import com.jme.renderer.ColorRGBA;
+import java.net.URL;
 
+import com.jme.bui.ScaledBackground;
+import com.jme.bui.TiledBackground;
 import com.jme.bui.font.BBitmapFont;
 import com.jme.bui.font.BFont;
+import com.jme.renderer.ColorRGBA;
 
 /**
  * Defines the look and feel of a hierarchy of user interface components.
@@ -98,6 +101,23 @@ public class BLookAndFeel
     }
 
     /**
+     * Creates a button background to use when a button is in the
+     * specified state.
+     */
+    public BBackground createButtonBack (int state)
+    {
+        String path;
+        switch (state) {
+        case BButton.DOWN: path = "/rsrc/textures/button_down.png"; break;
+        case BButton.OVER: path = "/rsrc/textures/button_up.png"; break;
+        default:
+        case BButton.UP: path = "/rsrc/textures/button_up.png"; break;
+        }
+        return new ScaledBackground(
+            BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+    }
+
+    /**
      * Creates a look and feel that defaults to the configuration of this
      * look and feel but can be further customized.
      */
@@ -119,8 +139,8 @@ public class BLookAndFeel
         BLookAndFeel lnf = new BLookAndFeel();
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
-        lnf.setFont(new BBitmapFont(BLookAndFeel.class.getResource(
-                                        "/rsrc/font/default.png"), 16, 16));
+        URL url = BLookAndFeel.class.getResource("/rsrc/fonts/default.png");
+        lnf.setFont(new BBitmapFont(url, 16, 16));
         return lnf;
     }
 

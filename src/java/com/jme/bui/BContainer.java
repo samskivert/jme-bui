@@ -82,6 +82,13 @@ public class BContainer extends BComponent
         if (_layout != null) {
             _layout.layoutContainer(this);
         }
+
+        // now layout our children
+        applyOperation(new ChildOp() {
+            public void apply (BComponent child) {
+                child.layout();
+            }
+        });
     }
 
     // documentation inherited

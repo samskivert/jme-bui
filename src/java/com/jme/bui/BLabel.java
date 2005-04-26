@@ -32,19 +32,34 @@ import java.awt.Dimension;
 
 import com.jme.bui.font.BFont;
 import com.jme.bui.font.BGlyph;
+import com.jme.renderer.ColorRGBA;
 import com.jme.math.Vector3f;
 import com.jme.scene.Text;
+import com.jme.scene.shape.Quad;
+import com.jme.scene.state.AlphaState;
+import com.jme.system.DisplaySystem;
 
 /**
  * A simple component for displaying a textual label.
  */
 public class BLabel extends BComponent
+    implements BConstants
 {
     /**
      * Creates a label that will display the supplied text.
      */
     public BLabel (String text)
     {
+        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
+            createAlphaState();
+        astate.setBlendEnabled(true);
+        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        astate.setDstFunction(AlphaState.DB_ONE);
+        astate.setTestEnabled(true);
+        astate.setTestFunction(AlphaState.TF_GREATER);
+        astate.setEnabled(true);
+        setRenderState(astate);
+
         setText(text);
     }
 
@@ -57,6 +72,48 @@ public class BLabel extends BComponent
     }
 
     /**
+     * Configures this label's horizontal alignment.
+     */
+    public void setHorizontalAlignment (int align)
+    {
+        if (_halign != align) {
+            _halign = align;
+            if (isAdded()) {
+                layout();
+            }
+        }
+    }
+
+    /**
+     * Returns this label's horizontal alignment setting.
+     */
+    public int getHorizontalAlignment ()
+    {
+        return _halign;
+    }
+
+    /**
+     * Configures this label's vertical alignment.
+     */
+    public void setVerticalAlignment (int align)
+    {
+        if (_valign != align) {
+            _valign = align;
+            if (isAdded()) {
+                layout();
+            }
+        }
+    }
+
+    /**
+     * Returns this label's vertical alignment setting.
+     */
+    public int getVerticalAlignment ()
+    {
+        return _valign;
+    }
+
+    /**
      * Updates the text displayed by this label.
      */
     public void setText (String text)
@@ -66,6 +123,7 @@ public class BLabel extends BComponent
         // if we're already part of the hierarchy, recreate our glyps
         if (isAdded()) {
             recreateGlyphs();
+            relayout();
         }
     }
 
@@ -76,6 +134,31 @@ public class BLabel extends BComponent
 
         // create our underlying glyphs
         recreateGlyphs();
+    }
+
+    // documentation inherited
+    public void layout ()
+    {
+        super.layout();
+
+        float xoff;
+        switch (_halign) {
+        case CENTER: xoff = (_width - _tgeom.getWidth()) / 2; break;
+        case RIGHT: xoff = _width - _tgeom.getWidth(); break;
+        default:
+        case LEFT: xoff = 0;
+        }
+
+        float yoff;
+        switch (_valign) {
+        default:
+        case CENTER: yoff = (_height - _tgeom.getHeight()) / 2; break;
+        case TOP: yoff = _height - _tgeom.getHeight(); break;
+        case BOTTOM: yoff = 0; break;
+        }
+
+        _slab.setLocalTranslation(new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
+        _tgeom.setLocalTranslation(new Vector3f(xoff, yoff, 0));
     }
 
     /**
@@ -90,6 +173,7 @@ public class BLabel extends BComponent
 //         }
 
         if (_tgeom != null) {
+            detachChild(_slab);
             detachChild(_tgeom);
         }
 
@@ -112,6 +196,12 @@ public class BLabel extends BComponent
         _tgeom.setSolidColor(lnf.getForeground());
         _tsize = new Dimension((int)_tgeom.getWidth(), (int)_tgeom.getHeight());
         font.configure(_tgeom);
+
+        _slab = new Quad("foo", _tsize.width, _tsize.height);
+        _slab.setSolidColor(ColorRGBA.red);
+        _slab.updateRenderState();
+        attachChild(_slab);
+
         attachChild(_tgeom);
 
         updateGeometricState(0.0f, true);
@@ -126,6 +216,8 @@ public class BLabel extends BComponent
 
     protected String _text;
 //     protected BGlyph[] _glyphs;
+    protected Quad _slab;
     protected Text _tgeom;
     protected Dimension _tsize;
+    protected int _halign = LEFT, _valign = CENTER;
 }
