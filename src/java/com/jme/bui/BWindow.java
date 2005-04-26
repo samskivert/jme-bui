@@ -26,26 +26,19 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-package com.jme.bui.font;
+package com.jme.bui;
+
+import com.jme.bui.layout.BLayoutManager;
 
 /**
- * Creates textured quads for individual characters and provides
- * information on the metrics for those characters.
+ * A window defines the top-level of a component hierarchy. It must be
+ * created with a look and feel and layout manager.
  */
-public abstract class BFont
+public class BWindow extends BContainer
 {
-    /**
-     * Creates a glyph for the specified character.
-     */
-    public abstract BGlyph createCharacter (char c);
-
-    /**
-     * Returns the width of the specified character.
-     */
-    public abstract int getWidth (char c);
-
-    /**
-     * Returns the height of the characters in this font.
-     */
-    public abstract int getHeight ();
+    public BWindow (BLookAndFeel lnf, BLayoutManager layout)
+    {
+        setLookAndFeel(lnf);
+        setLayoutManager(layout);
+    }
 }

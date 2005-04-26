@@ -28,10 +28,13 @@
 
 package com.jme.bui;
 
+import java.awt.Dimension;
+
 import com.jme.bui.event.BEvent;
-import com.jme.math.Vector2f;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
+import com.jme.system.DisplaySystem;
+import com.jme.scene.state.AlphaState;
 
 /**
  * The basic entity in the BUI user interface system. A hierarchy of
@@ -47,6 +50,15 @@ public class BComponent extends Node
         // finishes execution, so we construct with a blank name and set a
         // valid one immediately
         setName(getClass().getName() + hashCode());
+
+        AlphaState as = DisplaySystem.getDisplaySystem().getRenderer().
+            createAlphaState();
+        as.setBlendEnabled(true);
+        as.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        as.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
+        as.setTestEnabled(true);
+        as.setTestFunction(AlphaState.TF_GREATER);
+        setRenderState(as);
     }
 
     /**
@@ -62,7 +74,7 @@ public class BComponent extends Node
     /**
      * Returns the preferred size of this component.
      */
-    public Vector2f getPreferredSize ()
+    public Dimension getPreferredSize ()
     {
         return (_preferredSize == null) ?
             computePreferredSize() : _preferredSize;
@@ -73,16 +85,40 @@ public class BComponent extends Node
      * any information provided by derived classes that have opinions
      * about their preferred size.
      */
-    public void setPreferredSize (Vector2f preferredSize)
+    public void setPreferredSize (Dimension preferredSize)
     {
         _preferredSize = preferredSize;
+    }
+
+    /** Returns the x coordinate of this component. */
+    public int getX ()
+    {
+        return _x;
+    }
+
+    /** Returns the y coordinate of this component. */
+    public int getY ()
+    {
+        return _y;
+    }
+
+    /** Returns the width of this component. */
+    public int getWidth ()
+    {
+        return _width;
+    }
+
+    /** Returns the height of this component. */
+    public int getHeight ()
+    {
+        return _height;
     }
 
     /**
      * Sets the upper left position of this component in absolute screen
      * coordinates.
      */
-    public void setLocation (float x, float y)
+    public void setLocation (int x, int y)
     {
         _x = x;
         _y = y;
@@ -115,7 +151,19 @@ public class BComponent extends Node
     }
 
     /**
-     * Instructs this component to lay itself out.
+     * Returns true if this component is added to a hierarchy of
+     * components that culminates in a top-level window.
+     */
+    public boolean isAdded ()
+    {
+        return (getWindow() != null);
+    }
+
+    /**
+     * Instructs this component to lay itself out. This happens
+     * automatically when the component is attached to the interface
+     * hierarchy, but can be called again if the component changes in such
+     * a manner as to need a relayout.
      */
     public void layout ()
     {
@@ -146,13 +194,56 @@ public class BComponent extends Node
         Log.log.info(this + " dispatching " + event);
     }
 
+//     // documentation inherited
+//     public void setParent (Node parent)
+//     {
+//         // make a note of whether or not we were attached to an "added"
+//         // hierarchy before we allow our parent reference to be cleared
+//         boolean hadBeenAdded = isAdded();
+
+//         super.setParent(parent);
+
+//         if (parent == null) {
+//             // if we had been "added" to a hierarchy connected to a
+//             // window, we need to call wasRemoved()
+//             if (hadBeenAdded) {
+//                 wasRemoved();
+//             }
+
+//         } else if (isAdded()) {
+//             // if our parent is already added to a hierarcy connected to a
+//             // top-level window, then we can call wasAdded() immediately;
+//             // otherwise when our parent is added, it will roll a call to
+//             // wasAdded() down the hierarchy
+//             wasAdded();
+//         }
+//     }
+
     /**
      * Computes and returns a preferred size for this component. This
      * method is called if no overriding preferred size has been supplied.
      */
-    protected Vector2f computePreferredSize ()
+    protected Dimension computePreferredSize ()
     {
-        return new Vector2f(0, 0);
+        return new Dimension(0, 0);
+    }
+
+    /**
+     * This method is called when we are added to a hierarchy that is
+     * connected to a top-level window (at which point we can rely on
+     * having a look and feel and can set ourselves up).
+     */
+    protected void wasAdded ()
+    {
+    }
+
+    /**
+     * This method is called when we are removed from a hierarchy that is
+     * connected to a top-level window. If we wish to clean up after
+     * things done in {@link #wasAdded}, this is a fine place to do so.
+     */
+    protected void wasRemoved ()
+    {
     }
 
     /**
@@ -167,6 +258,21 @@ public class BComponent extends Node
     }
 
     /**
+     * Returns the window that defines the root of our component
+     * hierarchy.
+     */
+    protected BWindow getWindow ()
+    {
+        if (this instanceof BWindow) {
+            return (BWindow)this;
+        } else if (parent instanceof BComponent) {
+            return ((BComponent)parent).getWindow();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Called when our dimensions change to update the position of our
      * underlying node.
      */
@@ -176,6 +282,6 @@ public class BComponent extends Node
     }
 
     protected BLookAndFeel _lnf;
-    protected Vector2f _preferredSize;
-    protected float _x, _y, _width, _height;
+    protected Dimension _preferredSize;
+    protected int _x, _y, _width, _height;
 }

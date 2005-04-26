@@ -58,7 +58,7 @@ public class BGlyph extends Quad
      */
     protected BGlyph (char c, BFont font)
     {
-        super("glyph:" + c);
+        super("glyph:" + c, font.getWidth(c), font.getHeight());
         _char = c;
         _font = font;
     }

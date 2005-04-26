@@ -26,9 +26,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-package com.jme.bui;
+package com.jme.bui.layout;
 
-import com.jme.math.Vector2f;
+import java.awt.Dimension;
+
+import com.jme.bui.BComponent;
+import com.jme.bui.BContainer;
 
 /**
  * Layout managers implement a policy for laying out the children in a
@@ -38,11 +41,29 @@ import com.jme.math.Vector2f;
 public abstract class BLayoutManager
 {
     /**
+     * Components added to a container will result in a call to this
+     * method, informing the layout manager of said constraints. The
+     * default implementation does nothing.
+     */
+    public void addLayoutComponent (BComponent comp, Object constraints)
+    {
+    }
+
+    /**
+     * Components removed to a container for which a layout manager has
+     * been configured will result in a call to this method. The default
+     * implementation does nothing.
+     */
+    public void removeLayoutComponent (BComponent comp)
+    {
+    }
+
+    /**
      * Computes the preferred size for the supplied container, based on
      * the preferred sizes of its children and the layout policy
      * implemented by this manager.
      */
-    public abstract Vector2f computePreferredSize (BContainer target);
+    public abstract Dimension computePreferredSize (BContainer target);
 
     /**
      * Effects the layout policy of this manager on the supplied target,

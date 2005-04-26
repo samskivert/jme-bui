@@ -28,6 +28,13 @@
 
 package com.jme.bui;
 
+import java.awt.Dimension;
+
+import com.jme.bui.font.BFont;
+import com.jme.bui.font.BGlyph;
+import com.jme.math.Vector3f;
+import com.jme.renderer.Renderer;
+
 /**
  * A simple component for displaying a textual label.
  */
@@ -38,6 +45,7 @@ public class BLabel extends BComponent
      */
     public BLabel (String text)
     {
+        setRenderQueueMode(Renderer.QUEUE_ORTHO);
         setText(text);
     }
 
@@ -55,7 +63,56 @@ public class BLabel extends BComponent
     public void setText (String text)
     {
         _text = text;
+
+        // if we're already part of the hierarchy, recreate our glyps
+        if (isAdded()) {
+            recreateGlyphs();
+        }
+    }
+
+    // documentation inherited
+    public void wasAdded ()
+    {
+        super.wasAdded();
+
+        // create our underlying glyphs
+        recreateGlyphs();
+    }
+
+    /**
+     * Clears out old glyphs and creates new ones for our current text.
+     */
+    protected void recreateGlyphs ()
+    {
+        if (_glyphs != null) {
+            for (int ii = 0; ii < _glyphs.length; ii++) {
+                detachChild(_glyphs[ii]);
+            }
+        }
+
+        BLookAndFeel lnf = getLookAndFeel();
+        BFont font = lnf.getFont();
+        _tsize = new Dimension(0, (int)font.getHeight());
+        _glyphs = new BGlyph[_text.length()];
+        for (int ii = 0; ii < _glyphs.length; ii++) {
+            _glyphs[ii] = font.createCharacter(_text.charAt(ii));
+            _glyphs[ii].setLocalTranslation(new Vector3f(_tsize.width, 0, 0));
+            _glyphs[ii].setSolidColor(lnf.getForeground());
+            attachChild(_glyphs[ii]);
+            _tsize.width += font.getWidth(_text.charAt(ii));
+        }
+
+        updateGeometricState(0.0f, true);
+        updateRenderState();
+    }
+
+    // documentation inherited
+    protected Dimension computePreferredSize ()
+    {
+        return _tsize;
     }
 
     protected String _text;
+    protected BGlyph[] _glyphs;
+    protected Dimension _tsize;
 }

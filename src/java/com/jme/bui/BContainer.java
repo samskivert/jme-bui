@@ -28,7 +28,10 @@
 
 package com.jme.bui;
 
-import com.jme.math.Vector2f;
+import java.awt.Dimension;
+import java.util.logging.Level;
+
+import com.jme.bui.layout.BLayoutManager;
 
 /**
  * A user interface element that is meant to contain other interface
@@ -43,6 +46,34 @@ public class BContainer extends BComponent
     public void setLayoutManager (BLayoutManager layout)
     {
         _layout = layout;
+    }
+
+    /**
+     * Adds a child to this container. This should be used rather than
+     * calling {@link #attachChild} directly.
+     */
+    public void addChild (BComponent child)
+    {
+        addChild(child, null);
+    }
+
+    /**
+     * Adds a child to this container with the specified layout
+     * constraints.
+     */
+    public void addChild (BComponent child, Object constraints)
+    {
+        if (_layout != null) {
+            _layout.addLayoutComponent(child, constraints);
+        }
+        attachChild(child);
+
+        // if we're already part of the hierarchy, call wasAdded() on our
+        // child; otherwise when our parent is added, everyone will have
+        // wasAdded() called on them
+        if (isAdded()) {
+            child.wasAdded();
+        }
     }
 
     // documentation inherited
@@ -72,13 +103,63 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
-    protected Vector2f computePreferredSize ()
+    protected Dimension computePreferredSize ()
     {
         if (_layout != null) {
             return _layout.computePreferredSize(this);
         } else {
             return super.computePreferredSize();
         }
+    }
+
+    // documentation inherited
+    protected void wasAdded ()
+    {
+        super.wasAdded();
+
+        // call wasAdded() on all of our existing children; if they are
+        // added later (after we are added), they will automatically have
+        // wasAdded() called on them at that time
+        applyOperation(new ChildOp() {
+            public void apply (BComponent child) {
+                child.wasAdded();
+            }
+        });
+    }
+
+    // documentation inherited
+    protected void wasRemoved ()
+    {
+        super.wasRemoved();
+
+        // call wasRemoved() on all of our children
+        applyOperation(new ChildOp() {
+            public void apply (BComponent child) {
+                child.wasRemoved();
+            }
+        });
+    }
+
+    /**
+     * Applies an operation to all of our children.
+     */
+    protected void applyOperation (ChildOp op)
+    {
+        for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
+            BComponent child = (BComponent)getChild(ii);
+            try {
+                op.apply(child);
+            } catch (Exception e) {
+                Log.log.log(Level.WARNING, "Child operation choked" +
+                            "[op=" + op + ", child=" + child + "].", e);
+            }
+        }
+    }
+
+    /** Used in {@link #wasAdded} and {@link #wasRemoved}. */
+    protected static interface ChildOp
+    {
+        public void apply (BComponent child);
     }
 
     protected BLayoutManager _layout;

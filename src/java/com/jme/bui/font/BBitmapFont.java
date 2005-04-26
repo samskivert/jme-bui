@@ -37,6 +37,8 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
+import com.jme.bui.Log;
+
 /**
  * Provides font information from a 2D grid of character images arranged
  * in a semi-standard format (ie. in a grid, starting from ASCII 32 and
@@ -56,6 +58,7 @@ public class BBitmapFont extends BFont
 
         // create a texture from our font image, each character will
         // render using this texture with appropriate texture coordinates
+        Log.log.info("Loading " + source);
         Texture texture = TextureManager.loadTexture(
             source, Texture.MM_NEAREST, Texture.FM_NEAREST);
         _rows = texture.getImage().getWidth() / width;
@@ -95,14 +98,14 @@ public class BBitmapFont extends BFont
     }
 
     // documentation inherited
-    public float getWidth (char c)
+    public int getWidth (char c)
     {
         // we only support fixed width fonts
         return _width;
     }
 
     // documentation inherited
-    public float getHeight ()
+    public int getHeight ()
     {
         return _height;
     }

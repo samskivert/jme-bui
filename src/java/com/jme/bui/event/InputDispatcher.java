@@ -36,6 +36,7 @@ import com.jme.input.MouseInput;
 import com.jme.util.Timer;
 
 import com.jme.bui.BComponent;
+import com.jme.bui.BWindow;
 import com.jme.bui.Log;
 
 /**
@@ -60,19 +61,19 @@ public class InputDispatcher
     }
 
     /**
-     * Registers a top-level component with the input system.
+     * Registers a top-level window with the input system.
      */
-    public void addComponent (BComponent component)
+    public void addWindow (BWindow window)
     {
-        _components.add(component);
+        _windows.add(window);
     }
 
     /**
-     * Removes a component from participation in the input system.
+     * Removes a window from participation in the input system.
      */
-    public void removeComponent (BComponent component)
+    public void removeWindow (BWindow window)
     {
-        _components.remove(component);
+        _windows.remove(window);
     }
 
     /**
@@ -128,8 +129,8 @@ public class InputDispatcher
         // if it does not contain the cursor, check for a new hover
         // component starting with each of our root components
         if (nhcomponent == null) {
-            for (int ii = 0, ll = _components.size(); ii < ll; ii++) {
-                BComponent comp = (BComponent)_components.get(ii);
+            for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
+                BWindow comp = (BWindow)_windows.get(ii);
                 nhcomponent = comp.getHitComponent(mx, my);
                 if (nhcomponent != null) {
                     break;
@@ -195,7 +196,7 @@ public class InputDispatcher
         // if the mouse has moved, let the target component know about
         // that as well
         if (_mouseX != mx || _mouseY != my) {
-            _mouseX = my;
+            _mouseX = mx;
             _mouseY = my;
             if (tcomponent != null) {
                 int type = (tcomponent == _ccomponent) ?
@@ -220,7 +221,7 @@ public class InputDispatcher
     protected int _modifiers;
     protected int _mouseX, _mouseY;
 
-    protected ArrayList _components = new ArrayList();
+    protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
 
     /** Maps key codes to modifier flags. */
