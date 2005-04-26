@@ -28,6 +28,8 @@
 
 package com.jme.bui.font;
 
+import com.jme.scene.Text;
+
 /**
  * Creates textured quads for individual characters and provides
  * information on the metrics for those characters.
@@ -48,4 +50,9 @@ public abstract class BFont
      * Returns the height of the characters in this font.
      */
     public abstract int getHeight ();
+
+    /**
+     * Configures the supplied {@link Text} instance with this font.
+     */
+    public abstract void configure (Text text);
 }

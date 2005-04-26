@@ -33,6 +33,7 @@ import java.util.HashMap;
 
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;
+import com.jme.scene.Text;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
@@ -58,7 +59,6 @@ public class BBitmapFont extends BFont
 
         // create a texture from our font image, each character will
         // render using this texture with appropriate texture coordinates
-        Log.log.info("Loading " + source);
         Texture texture = TextureManager.loadTexture(
             source, Texture.MM_NEAREST, Texture.FM_NEAREST);
         _rows = texture.getImage().getWidth() / width;
@@ -109,6 +109,14 @@ public class BBitmapFont extends BFont
     public int getHeight ()
     {
         return _height;
+    }
+
+    // documentation inherited
+    public void configure (Text text)
+    {
+        text.setForceView(true);
+        text.setTextureCombineMode(TextureState.REPLACE);
+        text.setRenderState(_tstate);
     }
 
     protected TextureState _tstate;

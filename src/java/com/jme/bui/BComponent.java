@@ -32,9 +32,10 @@ import java.awt.Dimension;
 
 import com.jme.bui.event.BEvent;
 import com.jme.math.Vector3f;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
-import com.jme.system.DisplaySystem;
 import com.jme.scene.state.AlphaState;
+import com.jme.system.DisplaySystem;
 
 /**
  * The basic entity in the BUI user interface system. A hierarchy of
@@ -51,14 +52,17 @@ public class BComponent extends Node
         // valid one immediately
         setName(getClass().getName() + ":" + hashCode());
 
-        AlphaState as = DisplaySystem.getDisplaySystem().getRenderer().
+        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
             createAlphaState();
-        as.setBlendEnabled(true);
-        as.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        as.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
-        as.setTestEnabled(true);
-        as.setTestFunction(AlphaState.TF_GREATER);
-        setRenderState(as);
+        astate.setBlendEnabled(true);
+        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        astate.setDstFunction(AlphaState.DB_ONE);
+        astate.setTestEnabled(true);
+        astate.setTestFunction(AlphaState.TF_GREATER);
+        astate.setEnabled(true);
+        setRenderState(astate);
+
+        setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
 
     /**

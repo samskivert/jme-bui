@@ -33,7 +33,7 @@ import java.awt.Dimension;
 import com.jme.bui.font.BFont;
 import com.jme.bui.font.BGlyph;
 import com.jme.math.Vector3f;
-import com.jme.renderer.Renderer;
+import com.jme.scene.Text;
 
 /**
  * A simple component for displaying a textual label.
@@ -45,7 +45,6 @@ public class BLabel extends BComponent
      */
     public BLabel (String text)
     {
-        setRenderQueueMode(Renderer.QUEUE_ORTHO);
         setText(text);
     }
 
@@ -84,26 +83,36 @@ public class BLabel extends BComponent
      */
     protected void recreateGlyphs ()
     {
-        if (_glyphs != null) {
-            for (int ii = 0; ii < _glyphs.length; ii++) {
-                detachChild(_glyphs[ii]);
-            }
+//         if (_glyphs != null) {
+//             for (int ii = 0; ii < _glyphs.length; ii++) {
+//                 detachChild(_glyphs[ii]);
+//             }
+//         }
+
+        if (_tgeom != null) {
+            detachChild(_tgeom);
         }
 
         BLookAndFeel lnf = getLookAndFeel();
         BFont font = lnf.getFont();
-        _tsize = new Dimension(0, (int)font.getHeight());
-        _glyphs = new BGlyph[_text.length()];
-        for (int ii = 0; ii < _glyphs.length; ii++) {
-            char cchar = _text.charAt(ii);
-            int cwidth = font.getWidth(cchar);
-            _glyphs[ii] = font.createCharacter(cchar);
-            _glyphs[ii].setLocalTranslation(
-                new Vector3f(_tsize.width + cwidth/2, _tsize.height/2, 0));
-            _glyphs[ii].setSolidColor(lnf.getForeground());
-            attachChild(_glyphs[ii]);
-            _tsize.width += cwidth;
-        }
+//         _tsize = new Dimension(0, (int)font.getHeight());
+//         _glyphs = new BGlyph[_text.length()];
+//         for (int ii = 0; ii < _glyphs.length; ii++) {
+//             char cchar = _text.charAt(ii);
+//             int cwidth = font.getWidth(cchar);
+//             _glyphs[ii] = font.createCharacter(cchar);
+//             _glyphs[ii].setLocalTranslation(
+//                 new Vector3f(_tsize.width + cwidth/2, _tsize.height/2, 0));
+//             _glyphs[ii].setSolidColor(lnf.getForeground());
+//             attachChild(_glyphs[ii]);
+//             _tsize.width += cwidth;
+//         }
+
+        _tgeom = new Text(name + ":text", _text);
+        _tgeom.setSolidColor(lnf.getForeground());
+        _tsize = new Dimension((int)_tgeom.getWidth(), (int)_tgeom.getHeight());
+        font.configure(_tgeom);
+        attachChild(_tgeom);
 
         updateGeometricState(0.0f, true);
         updateRenderState();
@@ -116,6 +125,7 @@ public class BLabel extends BComponent
     }
 
     protected String _text;
-    protected BGlyph[] _glyphs;
+//     protected BGlyph[] _glyphs;
+    protected Text _tgeom;
     protected Dimension _tsize;
 }
