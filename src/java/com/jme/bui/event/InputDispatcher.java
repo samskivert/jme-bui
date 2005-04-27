@@ -108,12 +108,14 @@ public class InputDispatcher
                 }
             }
 
-            // now generate a key event and dispatch it
-            KeyEvent event = new KeyEvent(
-                this, tickStamp, _modifiers, pressed ?
-                KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
-                _keyInput.keyChar(), keyCode);
-            Log.log.info("Key event: " + event);
+            // if we have a focus, generate a key event and dispatch it
+            if (_focus != null) {
+                KeyEvent event = new KeyEvent(
+                    this, tickStamp, _modifiers, pressed ?
+                    KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
+                    _keyInput.keyChar(), keyCode);
+                _focus.dispatchEvent(event);
+            }
         }
 
         // check to see if the component under the mouse has changed
@@ -177,6 +179,8 @@ public class InputDispatcher
                 if ((_modifiers & ANY_BUTTON_PRESSED) == 0 &&
                     tcomponent != null) {
                     _ccomponent = tcomponent;
+                    // TODO: sort out proper focus handling
+                    _focus = tcomponent;
                 }
                 type = MouseEvent.BUTTON_PRESSED;
                 _modifiers |= modifierMask;
@@ -223,6 +227,7 @@ public class InputDispatcher
 
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
+    protected BComponent _focus;
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {

@@ -34,6 +34,8 @@ import com.jme.bui.ScaledBackground;
 import com.jme.bui.TiledBackground;
 import com.jme.bui.font.BBitmapFont;
 import com.jme.bui.font.BFont;
+import com.jme.bui.text.BKeyMap;
+import com.jme.bui.text.DefaultKeyMap;
 import com.jme.renderer.ColorRGBA;
 
 /**
@@ -101,6 +103,22 @@ public class BLookAndFeel
     }
 
     /**
+     * Returns the keymap in effect for this look and feel.
+     */
+    public BKeyMap getKeyMap ()
+    {
+        return _keymap == null ? _parent.getKeyMap() : _keymap;
+    }
+
+    /**
+     * Configures the keymap to be used by this look and feel.
+     */
+    public void setKeyMap (BKeyMap keymap)
+    {
+        _keymap = keymap;
+    }
+
+    /**
      * Creates a button background to use when a button is in the
      * specified state.
      */
@@ -113,7 +131,17 @@ public class BLookAndFeel
         default:
         case BButton.UP: path = "/rsrc/textures/button_up.png"; break;
         }
-        return new ScaledBackground(
+        return new TiledBackground(
+            BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+    }
+
+    /**
+     * Creates the background used for text components.
+     */
+    public BBackground createTextBack ()
+    {
+        String path = "/rsrc/textures/button_up.png";
+        return new TiledBackground(
             BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
     }
 
@@ -141,10 +169,12 @@ public class BLookAndFeel
         lnf.setBackground(ColorRGBA.black);
         URL url = BLookAndFeel.class.getResource("/rsrc/fonts/default.png");
         lnf.setFont(new BBitmapFont(url, 16, 16));
+        lnf.setKeyMap(new DefaultKeyMap());
         return lnf;
     }
 
     protected BLookAndFeel _parent;
     protected BFont _font;
     protected ColorRGBA _foreground, _background;
+    protected BKeyMap _keymap;
 }

@@ -38,6 +38,7 @@ import com.jme.util.LoggingSystem;
 import com.jme.bui.BButton;
 import com.jme.bui.BLabel;
 import com.jme.bui.BLookAndFeel;
+import com.jme.bui.BTextField;
 import com.jme.bui.BWindow;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
@@ -75,9 +76,8 @@ public class LayoutTest extends SimpleGame
         window.addChild(createButton("EAST"), BorderLayout.EAST);
         window.addChild(createButton("SOUTH"), BorderLayout.SOUTH);
         window.addChild(createButton("WEST"), BorderLayout.WEST);
-        window.addChild(createButton("CENTER"), BorderLayout.CENTER);
-        window.pack();
-        window.setLocation(100, 100);
+        window.addChild(_text = new BTextField(), BorderLayout.CENTER);
+        window.setBounds(100, 100, 300, 75);
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
@@ -107,8 +107,10 @@ public class LayoutTest extends SimpleGame
             BButton bs = (BButton)event.getSource();
             int align = bs.getHorizontalAlignment();
             bs.setHorizontalAlignment((align + 1) % 3);
+            _text.setText(_text.getText() + "A");
         }
     };
 
     protected InputDispatcher _dispatcher;
+    protected BTextField _text;
 }
