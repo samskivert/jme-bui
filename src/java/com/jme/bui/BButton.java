@@ -30,6 +30,7 @@ package com.jme.bui;
 
 import java.awt.Dimension;
 
+import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.MouseEvent;
 
@@ -53,8 +54,19 @@ public class BButton extends BComponent
      */
     public BButton (String text)
     {
+        this(text, null);
+    }
+
+    /**
+     * Creates a button with the specified label and action. The action
+     * will be dispatched via an {@link ActionEvent} when the button is
+     * clicked.
+     */
+    public BButton (String text, String action)
+    {
         _label = new BLabel("");
         _label.setHorizontalAlignment(BLabel.CENTER);
+        _action = action;
         setText(text);
     }
 
@@ -65,6 +77,14 @@ public class BButton extends BComponent
     {
         _label.setText(text);
         relayout();
+    }
+
+    /**
+     * Configures the action to be generated when this button is clicked.
+     */
+    public void setAction (String action)
+    {
+        _action = action;
     }
 
     // documentation inherited
@@ -144,9 +164,13 @@ public class BButton extends BComponent
 
             case MouseEvent.BUTTON_RELEASED:
                 if (_armed && _pressed) {
-                    // TODO: issue clicked event
-                    _label.setHorizontalAlignment(
-                        (_label.getHorizontalAlignment()+1)%3);
+                    // create and dispatch an event if we are configured
+                    // with an action
+                    if (_action != null) {
+                        ActionEvent aev = new ActionEvent(
+                            this, mev.getWhen(), mev.getModifiers(), _action);
+                        dispatchEvent(aev);
+                    }
                     _armed = false;
                 }
                 _pressed = false;
@@ -194,4 +218,5 @@ public class BButton extends BComponent
     protected BLabel _label;
     protected BBackground[] _backgrounds;
     protected boolean _hover, _armed, _pressed;
+    protected String _action;
 }

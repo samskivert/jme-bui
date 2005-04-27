@@ -28,54 +28,34 @@
 
 package com.jme.bui.event;
 
-import java.util.EventObject;
-
 /**
- * The base event class for all BUI events.
+ * Dispatched by a component when some sort of component-specific action
+ * has occurred.
  */
-public class BEvent extends EventObject
+public class ActionEvent extends InputEvent
 {
-    /**
-     * Returns the time at which this event was generated.
-     */
-    public long getWhen ()
+    public ActionEvent (Object source, long when, int modifiers, String action)
     {
-        return _when;
+        super(source, when, modifiers);
+        _action = action;
     }
 
     /**
-     * Generates a string representation of this instance.
+     * Returns the action associated with this event.
      */
-    public String toString ()
+    public String getAction ()
     {
-        StringBuffer buf = new StringBuffer("[ev:");
-        toString(buf);
-        buf.append("]");
-        return buf.toString();
+        return _action;
     }
 
-    /**
-     * Instructs this event to notify the supplied listener if they
-     * implement an interface appropriate to this event.
-     */
+    // documentation inherited
     public void dispatch (ComponentListener listener)
     {
-        if (listener instanceof EventListener) {
-            ((EventListener)listener).eventDispatched(this);
+        super.dispatch(listener);
+        if (listener instanceof ActionListener) {
+            ((ActionListener)listener).actionPerformed(this);
         }
     }
 
-    protected BEvent (Object source, long when)
-    {
-        super(source);
-        _when = when;
-    }
-
-    protected void toString (StringBuffer buf)
-    {
-        buf.append("source=").append(source);
-        buf.append(", when=").append(_when);
-    }
-
-    protected long _when;
+    protected String _action;
 }
