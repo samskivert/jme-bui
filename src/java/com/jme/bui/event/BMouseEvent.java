@@ -105,6 +105,49 @@ public class BMouseEvent extends BInputEvent
         return _my;
     }
 
+    // documentation inherited
+    public void dispatch (BComponentListener listener)
+    {
+        super.dispatch(listener);
+        switch (_type) {
+        case BUTTON_PRESSED:
+            if (listener instanceof BMouseListener) {
+                ((BMouseListener)listener).buttonPressed(this);
+            }
+            break;
+
+        case BUTTON_RELEASED:
+            if (listener instanceof BMouseListener) {
+                ((BMouseListener)listener).buttonReleased(this);
+            }
+            break;
+
+        case MOUSE_ENTERED:
+            if (listener instanceof BMouseListener) {
+                ((BMouseListener)listener).mouseEntered(this);
+            }
+            break;
+
+        case MOUSE_EXITED:
+            if (listener instanceof BMouseListener) {
+                ((BMouseListener)listener).mouseExited(this);
+            }
+            break;
+
+        case MOUSE_MOVED:
+            if (listener instanceof BMouseMotionListener) {
+                ((BMouseMotionListener)listener).mouseMoved(this);
+            }
+            break;
+
+        case MOUSE_DRAGGED:
+            if (listener instanceof BMouseMotionListener) {
+                ((BMouseMotionListener)listener).mouseDragged(this);
+            }
+            break;
+        }
+    }
+
     protected void toString (StringBuffer buf)
     {
         super.toString(buf);

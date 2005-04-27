@@ -29,7 +29,9 @@
 package com.jme.bui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 
+import com.jme.bui.event.BComponentListener;
 import com.jme.bui.event.BEvent;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;
@@ -141,6 +143,33 @@ public class BComponent extends Node
     }
 
     /**
+     * Adds a listener to this component. The listener will be notified
+     * when events of the appropriate type are dispatched on this
+     * component.
+     */
+    public void addListener (BComponentListener listener)
+    {
+        if (_listeners == null) {
+            _listeners = new ArrayList();
+        }
+        _listeners.add(listener);
+    }
+
+    /**
+     * Removes a listener from this component. Returns true if the
+     * listener was in fact in the listener list for this component, false
+     * if not.
+     */
+    public boolean removeListener (BComponentListener listener)
+    {
+        if (_listeners != null) {
+            return _listeners.remove(listener);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Returns true if this component is added to a hierarchy of
      * components that culminates in a top-level window.
      */
@@ -180,7 +209,12 @@ public class BComponent extends Node
      */
     public void dispatchEvent (BEvent event)
     {
-        // nothing to do by default
+        // dispatch this event to our listeners
+        if (_listeners != null) {
+            for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
+                event.dispatch((BComponentListener)_listeners.get(ii));
+            }
+        }
     }
 
     /**
@@ -252,4 +286,5 @@ public class BComponent extends Node
     protected BLookAndFeel _lnf;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
+    protected ArrayList _listeners;
 }

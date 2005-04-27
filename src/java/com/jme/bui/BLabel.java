@@ -157,7 +157,8 @@ public class BLabel extends BComponent
         case BOTTOM: yoff = 0; break;
         }
 
-        _slab.setLocalTranslation(new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
+        _slab.setLocalTranslation(
+            new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
         _tgeom.setLocalTranslation(new Vector3f(xoff, yoff, 0));
     }
 

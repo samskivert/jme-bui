@@ -28,46 +28,20 @@
 
 package com.jme.bui.event;
 
-import java.util.EventObject;
-
 /**
- * The base event class for all BUI events.
+ * Dispatches mouse motion events to listeners on a component.
  */
-public class BEvent extends EventObject
+public interface BMouseMotionListener extends BComponentListener
 {
     /**
-     * Generates a string representation of this instance.
+     * Dispatched when the mouse is moved within the bounds of the target
+     * component.
      */
-    public String toString ()
-    {
-        StringBuffer buf = new StringBuffer("[ev:");
-        toString(buf);
-        buf.append("]");
-        return buf.toString();
-    }
+    public void mouseMoved (BMouseEvent event);
 
     /**
-     * Instructs this event to notify the supplied listener if they
-     * implement an interface appropriate to this event.
+     * Dispatched when the mouse is moved after a button having been
+     * pressed within the bounds of the target component.
      */
-    public void dispatch (BComponentListener listener)
-    {
-        if (listener instanceof BEventListener) {
-            ((BEventListener)listener).eventDispatched(this);
-        }
-    }
-
-    protected BEvent (Object source, long when)
-    {
-        super(source);
-        _when = when;
-    }
-
-    protected void toString (StringBuffer buf)
-    {
-        buf.append("source=").append(source);
-        buf.append(", when=").append(_when);
-    }
-
-    protected long _when;
+    public void mouseDragged (BMouseEvent event);
 }
