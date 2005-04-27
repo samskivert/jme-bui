@@ -31,7 +31,7 @@ package com.jme.bui.event;
 /**
  * Encapsulates the information associated with a keyboard event.
  */
-public class BKeyEvent extends BInputEvent
+public class KeyEvent extends InputEvent
 {
     /** Indicates that an event represents a key pressing. */
     public static final int KEY_PRESSED = 0;
@@ -39,8 +39,8 @@ public class BKeyEvent extends BInputEvent
     /** Indicates that an event represents a key release. */
     public static final int KEY_RELEASED = 1;
 
-    public BKeyEvent (Object source, long when, int modifiers,
-                      int type, char keyChar, int keyCode)
+    public KeyEvent (Object source, long when, int modifiers,
+                     int type, char keyChar, int keyCode)
     {
         super(source, when, modifiers);
         _type = type;

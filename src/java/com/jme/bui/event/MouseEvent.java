@@ -31,7 +31,7 @@ package com.jme.bui.event;
 /**
  * Encapsulates the information associated with a mouse event.
  */
-public class BMouseEvent extends BInputEvent
+public class MouseEvent extends InputEvent
 {
     /** An event generated when a mouse button is pressed. */
     public static final int BUTTON_PRESSED = 0;
@@ -53,14 +53,14 @@ public class BMouseEvent extends BInputEvent
      * for all movement until all buttons are released. */
     public static final int MOUSE_DRAGGED = 5;
 
-    public BMouseEvent (Object source, long when, int modifiers, int type,
-                        int mx, int my)
+    public MouseEvent (Object source, long when, int modifiers, int type,
+                       int mx, int my)
     {
         this(source, when, modifiers, type, -1, mx, my);
     }
 
-    public BMouseEvent (Object source, long when, int modifiers, int type,
-                        int button, int mx, int my)
+    public MouseEvent (Object source, long when, int modifiers, int type,
+                       int button, int mx, int my)
     {
         super(source, when, modifiers);
         _type = type;
@@ -106,43 +106,43 @@ public class BMouseEvent extends BInputEvent
     }
 
     // documentation inherited
-    public void dispatch (BComponentListener listener)
+    public void dispatch (ComponentListener listener)
     {
         super.dispatch(listener);
         switch (_type) {
         case BUTTON_PRESSED:
-            if (listener instanceof BMouseListener) {
-                ((BMouseListener)listener).buttonPressed(this);
+            if (listener instanceof MouseListener) {
+                ((MouseListener)listener).buttonPressed(this);
             }
             break;
 
         case BUTTON_RELEASED:
-            if (listener instanceof BMouseListener) {
-                ((BMouseListener)listener).buttonReleased(this);
+            if (listener instanceof MouseListener) {
+                ((MouseListener)listener).buttonReleased(this);
             }
             break;
 
         case MOUSE_ENTERED:
-            if (listener instanceof BMouseListener) {
-                ((BMouseListener)listener).mouseEntered(this);
+            if (listener instanceof MouseListener) {
+                ((MouseListener)listener).mouseEntered(this);
             }
             break;
 
         case MOUSE_EXITED:
-            if (listener instanceof BMouseListener) {
-                ((BMouseListener)listener).mouseExited(this);
+            if (listener instanceof MouseListener) {
+                ((MouseListener)listener).mouseExited(this);
             }
             break;
 
         case MOUSE_MOVED:
-            if (listener instanceof BMouseMotionListener) {
-                ((BMouseMotionListener)listener).mouseMoved(this);
+            if (listener instanceof MouseMotionListener) {
+                ((MouseMotionListener)listener).mouseMoved(this);
             }
             break;
 
         case MOUSE_DRAGGED:
-            if (listener instanceof BMouseMotionListener) {
-                ((BMouseMotionListener)listener).mouseDragged(this);
+            if (listener instanceof MouseMotionListener) {
+                ((MouseMotionListener)listener).mouseDragged(this);
             }
             break;
         }

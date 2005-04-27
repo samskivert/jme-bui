@@ -50,10 +50,10 @@ public class BEvent extends EventObject
      * Instructs this event to notify the supplied listener if they
      * implement an interface appropriate to this event.
      */
-    public void dispatch (BComponentListener listener)
+    public void dispatch (ComponentListener listener)
     {
-        if (listener instanceof BEventListener) {
-            ((BEventListener)listener).eventDispatched(this);
+        if (listener instanceof EventListener) {
+            ((EventListener)listener).eventDispatched(this);
         }
     }
 

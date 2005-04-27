@@ -31,28 +31,28 @@ package com.jme.bui.event;
 /**
  * Dispatches mouse events to listeners on a component.
  */
-public interface BMouseListener extends BComponentListener
+public interface MouseListener extends ComponentListener
 {
     /**
      * Dispatched when a button is pressed within the bounds of the target
      * component.
      */
-    public void buttonPressed (BMouseEvent event);
+    public void buttonPressed (MouseEvent event);
 
     /**
      * Dispatched when a button is released after having been pressed
      * within the bounds of the target component.
      */
-    public void buttonReleased (BMouseEvent event);
+    public void buttonReleased (MouseEvent event);
 
     /**
      * Dispatched when the mouse enters the bounds of the target
      * component.
      */
-    public void mouseEntered (BMouseEvent event);
+    public void mouseEntered (MouseEvent event);
 
     /**
      * Dispatched when the mouse exits the bounds of the target component.
      */
-    public void mouseExited (BMouseEvent event);
+    public void mouseExited (MouseEvent event);
 }

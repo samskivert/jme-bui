@@ -29,8 +29,12 @@
 package com.jme.bui.event;
 
 /**
- * A placeholder interface that all component listeners extend.
+ * Listens for all input events.
  */
-public interface BComponentListener
+public interface EventListener extends ComponentListener
 {
+    /**
+     * Indicates that an event was dispatched on the target component.
+     */
+    public void eventDispatched (BEvent event);
 }

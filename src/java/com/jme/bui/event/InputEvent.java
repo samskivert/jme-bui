@@ -33,7 +33,7 @@ package com.jme.bui.event;
  * This includes the state of the modifier keys at the time the event was
  * generated.
  */
-public class BInputEvent extends BEvent
+public class InputEvent extends BEvent
 {
     /** A modifier mask indicating that the first mouse button was down at
      * the time this event was generated. */
@@ -71,7 +71,7 @@ public class BInputEvent extends BEvent
         return _modifiers;
     }
 
-    protected BInputEvent (Object source, long when, int modifiers)
+    protected InputEvent (Object source, long when, int modifiers)
     {
         super(source, when);
         _modifiers = modifiers;

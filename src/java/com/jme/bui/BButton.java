@@ -31,7 +31,7 @@ package com.jme.bui;
 import java.awt.Dimension;
 
 import com.jme.bui.event.BEvent;
-import com.jme.bui.event.BMouseEvent;
+import com.jme.bui.event.MouseEvent;
 
 /**
  * Displays a simple button that can be depressed and which generates an
@@ -117,21 +117,21 @@ public class BButton extends BComponent
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
-        if (event instanceof BMouseEvent) {
+        if (event instanceof MouseEvent) {
             int ostate = getState();
-            BMouseEvent mev = (BMouseEvent)event;
+            MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
-            case BMouseEvent.MOUSE_ENTERED:
+            case MouseEvent.MOUSE_ENTERED:
                 _hover = true;
                 _armed = _pressed;
                 break;
 
-            case BMouseEvent.MOUSE_EXITED:
+            case MouseEvent.MOUSE_EXITED:
                 _hover = false;
                 _armed = false;
                 break;
 
-            case BMouseEvent.BUTTON_PRESSED:
+            case MouseEvent.BUTTON_PRESSED:
                 if (mev.getButton() == 0) {
                     _pressed = true;
                     _armed = true;
@@ -142,7 +142,7 @@ public class BButton extends BComponent
                 }
                 break;
 
-            case BMouseEvent.BUTTON_RELEASED:
+            case MouseEvent.BUTTON_RELEASED:
                 if (_armed && _pressed) {
                     // TODO: issue clicked event
                     _label.setHorizontalAlignment(

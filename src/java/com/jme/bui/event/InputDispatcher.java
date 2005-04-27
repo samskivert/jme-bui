@@ -109,9 +109,9 @@ public class InputDispatcher
             }
 
             // now generate a key event and dispatch it
-            BKeyEvent event = new BKeyEvent(
+            KeyEvent event = new KeyEvent(
                 this, tickStamp, _modifiers, pressed ?
-                BKeyEvent.KEY_PRESSED : BKeyEvent.KEY_RELEASED,
+                KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
                 _keyInput.keyChar(), keyCode);
             Log.log.info("Key event: " + event);
         }
@@ -143,14 +143,14 @@ public class InputDispatcher
             // inform the previous component that the mouse has exited
             if (_hcomponent != null) {
                 _hcomponent.dispatchEvent(
-                    new BMouseEvent(this, tickStamp, _modifiers,
-                                    BMouseEvent.MOUSE_EXITED, mx, my));
+                    new MouseEvent(this, tickStamp, _modifiers,
+                                   MouseEvent.MOUSE_EXITED, mx, my));
             }
             // inform the new component that the mouse has entered
             if (nhcomponent != null) {
                 nhcomponent.dispatchEvent(
-                    new BMouseEvent(this, tickStamp, _modifiers,
-                                    BMouseEvent.MOUSE_ENTERED, mx, my));
+                    new MouseEvent(this, tickStamp, _modifiers,
+                                   MouseEvent.MOUSE_ENTERED, mx, my));
             }
             _hcomponent = nhcomponent;
         }
@@ -178,18 +178,18 @@ public class InputDispatcher
                     tcomponent != null) {
                     _ccomponent = tcomponent;
                 }
-                type = BMouseEvent.BUTTON_PRESSED;
+                type = MouseEvent.BUTTON_PRESSED;
                 _modifiers |= modifierMask;
 
             } else if (!down && wasDown) {
-                type = BMouseEvent.BUTTON_RELEASED;
+                type = MouseEvent.BUTTON_RELEASED;
                 _modifiers &= ~modifierMask;
             }
 
             if (type != -1 && tcomponent != null) {
                 tcomponent.dispatchEvent(
-                    new BMouseEvent(this, tickStamp, _modifiers,
-                                    type, ii, mx, my));
+                    new MouseEvent(this, tickStamp, _modifiers,
+                                   type, ii, mx, my));
             }
         }
 
@@ -200,10 +200,10 @@ public class InputDispatcher
             _mouseY = my;
             if (tcomponent != null) {
                 int type = (tcomponent == _ccomponent) ?
-                    BMouseEvent.MOUSE_DRAGGED : BMouseEvent.MOUSE_MOVED;
+                    MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
                 tcomponent.dispatchEvent(
-                    new BMouseEvent(this, tickStamp, _modifiers,
-                                    type, mx, my));
+                    new MouseEvent(this, tickStamp, _modifiers,
+                                   type, mx, my));
             }
         }
 
@@ -226,26 +226,26 @@ public class InputDispatcher
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {
-        KeyInput.KEY_LSHIFT, BInputEvent.SHIFT_DOWN_MASK,
-        KeyInput.KEY_RSHIFT, BInputEvent.SHIFT_DOWN_MASK,
-        KeyInput.KEY_LCONTROL, BInputEvent.CTRL_DOWN_MASK,
-        KeyInput.KEY_RCONTROL, BInputEvent.CTRL_DOWN_MASK,
-        KeyInput.KEY_LMENU, BInputEvent.ALT_DOWN_MASK,
-        KeyInput.KEY_RMENU, BInputEvent.ALT_DOWN_MASK,
-        KeyInput.KEY_LWIN, BInputEvent.META_DOWN_MASK,
-        KeyInput.KEY_RWIN, BInputEvent.META_DOWN_MASK,
+        KeyInput.KEY_LSHIFT, InputEvent.SHIFT_DOWN_MASK,
+        KeyInput.KEY_RSHIFT, InputEvent.SHIFT_DOWN_MASK,
+        KeyInput.KEY_LCONTROL, InputEvent.CTRL_DOWN_MASK,
+        KeyInput.KEY_RCONTROL, InputEvent.CTRL_DOWN_MASK,
+        KeyInput.KEY_LMENU, InputEvent.ALT_DOWN_MASK,
+        KeyInput.KEY_RMENU, InputEvent.ALT_DOWN_MASK,
+        KeyInput.KEY_LWIN, InputEvent.META_DOWN_MASK,
+        KeyInput.KEY_RWIN, InputEvent.META_DOWN_MASK,
     };
 
     /** Maps button indices to modifier flags. */
     protected static final int[] MOUSE_MODIFIER_MAP = {
-        BInputEvent.BUTTON1_DOWN_MASK,
-        BInputEvent.BUTTON2_DOWN_MASK,
-        BInputEvent.BUTTON3_DOWN_MASK,
+        InputEvent.BUTTON1_DOWN_MASK,
+        InputEvent.BUTTON2_DOWN_MASK,
+        InputEvent.BUTTON3_DOWN_MASK,
     };
 
     /** Used to check whether any button remains pressed. */
     protected static final int ANY_BUTTON_PRESSED =
-        BInputEvent.BUTTON1_DOWN_MASK |
-        BInputEvent.BUTTON2_DOWN_MASK |
-        BInputEvent.BUTTON3_DOWN_MASK;
+        InputEvent.BUTTON1_DOWN_MASK |
+        InputEvent.BUTTON2_DOWN_MASK |
+        InputEvent.BUTTON3_DOWN_MASK;
 }

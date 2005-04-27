@@ -31,8 +31,8 @@ package com.jme.bui;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import com.jme.bui.event.BComponentListener;
 import com.jme.bui.event.BEvent;
+import com.jme.bui.event.ComponentListener;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
@@ -147,7 +147,7 @@ public class BComponent extends Node
      * when events of the appropriate type are dispatched on this
      * component.
      */
-    public void addListener (BComponentListener listener)
+    public void addListener (ComponentListener listener)
     {
         if (_listeners == null) {
             _listeners = new ArrayList();
@@ -160,7 +160,7 @@ public class BComponent extends Node
      * listener was in fact in the listener list for this component, false
      * if not.
      */
-    public boolean removeListener (BComponentListener listener)
+    public boolean removeListener (ComponentListener listener)
     {
         if (_listeners != null) {
             return _listeners.remove(listener);
@@ -212,7 +212,7 @@ public class BComponent extends Node
         // dispatch this event to our listeners
         if (_listeners != null) {
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
-                event.dispatch((BComponentListener)_listeners.get(ii));
+                event.dispatch((ComponentListener)_listeners.get(ii));
             }
         }
     }

@@ -29,19 +29,8 @@
 package com.jme.bui.event;
 
 /**
- * Dispatches mouse motion events to listeners on a component.
+ * A placeholder interface that all component listeners extend.
  */
-public interface BMouseMotionListener extends BComponentListener
+public interface ComponentListener
 {
-    /**
-     * Dispatched when the mouse is moved within the bounds of the target
-     * component.
-     */
-    public void mouseMoved (BMouseEvent event);
-
-    /**
-     * Dispatched when the mouse is moved after a button having been
-     * pressed within the bounds of the target component.
-     */
-    public void mouseDragged (BMouseEvent event);
 }
