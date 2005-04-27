@@ -39,6 +39,8 @@ import com.jme.bui.BButton;
 import com.jme.bui.BLabel;
 import com.jme.bui.BLookAndFeel;
 import com.jme.bui.BWindow;
+import com.jme.bui.event.ActionEvent;
+import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BorderLayout;
 
@@ -69,16 +71,23 @@ public class LayoutTest extends SimpleGame
         _dispatcher.addWindow(window);
 
         window = new BWindow(lnf, new BorderLayout(2, 2));
-        window.addChild(new BButton("NORTH"), BorderLayout.NORTH);
-        window.addChild(new BButton("EAST"), BorderLayout.EAST);
-        window.addChild(new BButton("SOUTH"), BorderLayout.SOUTH);
-        window.addChild(new BButton("WEST"), BorderLayout.WEST);
-        window.addChild(new BButton("CENTER"), BorderLayout.CENTER);
+        window.addChild(createButton("NORTH"), BorderLayout.NORTH);
+        window.addChild(createButton("EAST"), BorderLayout.EAST);
+        window.addChild(createButton("SOUTH"), BorderLayout.SOUTH);
+        window.addChild(createButton("WEST"), BorderLayout.WEST);
+        window.addChild(createButton("CENTER"), BorderLayout.CENTER);
         window.pack();
         window.setLocation(100, 100);
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
+    }
+
+    protected BButton createButton (String label)
+    {
+        BButton button = new BButton(label, "bang!");
+        button.addListener(_listener);
+        return button;
     }
 
     protected void simpleUpdate ()
@@ -92,6 +101,14 @@ public class LayoutTest extends SimpleGame
         LayoutTest test = new LayoutTest();
         test.start();
     }
+
+    protected ActionListener _listener = new ActionListener() {
+        public void actionPerformed (ActionEvent event) {
+            BButton bs = (BButton)event.getSource();
+            int align = bs.getHorizontalAlignment();
+            bs.setHorizontalAlignment((align + 1) % 3);
+        }
+    };
 
     protected InputDispatcher _dispatcher;
 }

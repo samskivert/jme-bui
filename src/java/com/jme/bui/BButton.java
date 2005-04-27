@@ -54,7 +54,7 @@ public class BButton extends BComponent
      */
     public BButton (String text)
     {
-        this(text, null);
+        this(text, "");
     }
 
     /**
@@ -85,6 +85,38 @@ public class BButton extends BComponent
     public void setAction (String action)
     {
         _action = action;
+    }
+
+    /**
+     * Configures the horizontal alignment of this button's text.
+     */
+    public void setHorizontalAlignment (int align)
+    {
+        _label.setHorizontalAlignment(align);
+    }
+
+    /**
+     * Returns the current horizontal alignment of this button's text.
+     */
+    public int getHorizontalAlignment ()
+    {
+        return _label.getHorizontalAlignment();
+    }
+
+    /**
+     * Configures the vertical alignment of this button's text.
+     */
+    public void setVerticalAlignment (int align)
+    {
+        _label.setVerticalAlignment(align);
+    }
+
+    /**
+     * Returns the current vertical alignment of this button's text.
+     */
+    public int getVerticalAlignment ()
+    {
+        return _label.getVerticalAlignment();
     }
 
     // documentation inherited
@@ -137,6 +169,8 @@ public class BButton extends BComponent
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
+        super.dispatchEvent(event);
+
         if (event instanceof MouseEvent) {
             int ostate = getState();
             MouseEvent mev = (MouseEvent)event;
@@ -164,13 +198,10 @@ public class BButton extends BComponent
 
             case MouseEvent.BUTTON_RELEASED:
                 if (_armed && _pressed) {
-                    // create and dispatch an event if we are configured
-                    // with an action
-                    if (_action != null) {
-                        ActionEvent aev = new ActionEvent(
-                            this, mev.getWhen(), mev.getModifiers(), _action);
-                        dispatchEvent(aev);
-                    }
+                    // create and dispatch an action event
+                    ActionEvent aev = new ActionEvent(
+                        this, mev.getWhen(), mev.getModifiers(), _action);
+                    dispatchEvent(aev);
                     _armed = false;
                 }
                 _pressed = false;
