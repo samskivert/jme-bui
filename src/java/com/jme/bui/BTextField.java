@@ -64,6 +64,10 @@ public class BTextField extends BComponent
     public void setText (String text)
     {
         _text = text;
+        // confine the cursor to the new text
+        if (_cursorPos > _text.length()) {
+            setCursorPos(_text.length());
+        }
         refigureLabelContents();
     }
 
@@ -159,9 +163,10 @@ public class BTextField extends BComponent
                 switch (_keymap.lookupMapping(modifiers, keyCode)) {
                 case BACKSPACE:
                     if (_cursorPos > 0 && _text.length() > 0) {
+                        String before = _text.substring(0, _cursorPos - 1);
                         String after = _text.substring(_cursorPos);
-                        setText(_text.substring(0, _cursorPos-1) + after);
-                        setCursorPos(_cursorPos-1);
+                        setCursorPos(_cursorPos - 1);
+                        setText(before + after);
                     }
                     break;
 
@@ -197,7 +202,7 @@ public class BTextField extends BComponent
                         String before = _text.substring(0, _cursorPos);
                         String after = _text.substring(_cursorPos);
                         setText(before + kev.getKeyChar() + after);
-                        setCursorPos(_cursorPos +1);
+                        setCursorPos(_cursorPos + 1);
                     }
                     break;
                 }
@@ -236,18 +241,28 @@ public class BTextField extends BComponent
     {
         if (!isAdded()) {
             _label.setText(_text);
-            return;
+        } else {
+            int vizChars = computeVisisbleChars();
+            _label.setText(_text.substring(_offset, _offset+vizChars));
         }
-
-        int vizChars = computeVisisbleChars();
-        _label.setText(_text.substring(0, vizChars));
-        setCursorPos(_cursorPos);
     }
 
     protected void setCursorPos (int cursorPos)
     {
+        int vizChars = computeVisisbleChars();
         _cursorPos = cursorPos;
-        int xpos = _label.getX() + 10 * _cursorPos;
+        if (_cursorPos < _offset) {
+            _offset = _cursorPos;
+            refigureLabelContents();
+        } else if (_cursorPos > (_offset + vizChars)) {
+            _offset = (_cursorPos-vizChars);
+            refigureLabelContents();
+        } else if (_offset > 0 && (_cursorPos < (_offset + vizChars))) {
+            _offset = (_cursorPos-vizChars);
+            refigureLabelContents();
+        }
+
+        int xpos = _label.getX() + 10 * (_cursorPos - _offset);
         int ypos = (_height - 16) / 2;
         _cursor.setLocalTranslation(new Vector3f(xpos, ypos, 0));
     }
@@ -268,6 +283,6 @@ public class BTextField extends BComponent
     protected BKeyMap _keymap;
 
     protected Line _cursor;
-    protected int _cursorPos;
+    protected int _cursorPos, _offset;
     protected String _text;
 }
