@@ -38,6 +38,8 @@ public class DefaultKeyMap extends BKeyMap
 {
     public DefaultKeyMap ()
     {
+        addMapping(0, KeyInput.KEY_RETURN, EditCommands.ACTION);
+        addMapping(0, KeyInput.KEY_NUMPADENTER, EditCommands.ACTION);
         addMapping(0, KeyInput.KEY_BACK, EditCommands.BACKSPACE);
         addMapping(0, KeyInput.KEY_DELETE, EditCommands.DELETE);
 

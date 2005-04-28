@@ -30,6 +30,7 @@ package com.jme.bui;
 
 import java.awt.Dimension;
 
+import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.FocusEvent;
 import com.jme.bui.event.KeyEvent;
@@ -191,6 +192,12 @@ public class BTextField extends BComponent
 
                 case END_OF_LINE:
                     setCursorPos(_text.length());
+                    break;
+
+                case ACTION:
+                    ActionEvent aev = new ActionEvent(
+                        this, kev.getWhen(), kev.getModifiers(), "");
+                    dispatchEvent(aev);
                     break;
 
                 default:
