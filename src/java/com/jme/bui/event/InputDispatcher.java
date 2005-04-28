@@ -30,6 +30,7 @@ package com.jme.bui.event;
 
 import java.util.ArrayList;
 
+import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
 import com.jme.input.MouseInput;
@@ -46,9 +47,10 @@ import com.jme.bui.Log;
  */
 public class InputDispatcher
 {
-    public InputDispatcher (Timer timer)
+    public InputDispatcher (Timer timer, InputHandler handler)
     {
         _timer = timer;
+        _handler = handler;
         _keyInput = InputSystem.getKeyInput();
         _mouseInput = InputSystem.getMouseInput();
 
@@ -81,7 +83,7 @@ public class InputDispatcher
      * dispatcher to process input since the previous frame and dispatch
      * any newly generated events.
      */
-    public void update ()
+    public void update (float timePerFrame)
     {
         // determine our tick stamp in milliseconds
         long tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
@@ -173,11 +175,10 @@ public class InputDispatcher
             boolean wasDown = ((_modifiers & modifierMask) != 0);
             int type = -1;
             if (down && !wasDown) {
-                // if we had no mouse button down previous to this and
-                // have a component under the mouse, it becomes the
-                // "clicked" component
-                if ((_modifiers & ANY_BUTTON_PRESSED) == 0 &&
-                    tcomponent != null) {
+                // if we had no mouse button down previous to this,
+                // whatever's under the mouse becomes the "clicked"
+                // component (which might be null)
+                if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
                     _ccomponent = tcomponent;
                     setFocus(tickStamp, tcomponent);
                 }
@@ -213,6 +214,11 @@ public class InputDispatcher
         if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
             _ccomponent = null;
         }
+
+        // if we have no focus component, update the normal input handler
+        if (_focus == null) {
+            _handler.update(timePerFrame);
+        }
     }
 
     /**
@@ -245,6 +251,7 @@ public class InputDispatcher
     protected Timer _timer;
     protected KeyInput _keyInput;
     protected MouseInput _mouseInput;
+    protected InputHandler _handler;
 
     protected int _modifiers;
     protected int _mouseX, _mouseY;

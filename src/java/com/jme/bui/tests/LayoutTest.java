@@ -56,7 +56,7 @@ public class LayoutTest extends SimpleGame
     protected void simpleInitGame ()
     {
         InputSystem.createInputSystem(properties.getRenderer());
-        _dispatcher = new InputDispatcher(timer);
+        _dispatcher = new InputDispatcher(timer, input);
 
         // we don't hide the cursor
         InputSystem.getMouseInput().setCursorVisible(true);
@@ -101,7 +101,7 @@ public class LayoutTest extends SimpleGame
 
     protected void simpleUpdate ()
     {
-        _dispatcher.update();
+        _dispatcher.update(tpf);
     }
 
     public static void main (String[] args)
