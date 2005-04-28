@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import com.jme.app.SimpleGame;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyBindingManager;
+import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jme.bui.BButton;
@@ -78,6 +79,7 @@ public class LayoutTest extends SimpleGame
         window.addChild(_input = new BTextField(), BorderLayout.SOUTH);
         _input.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
+                _text.appendText("You said: ", ColorRGBA.blue);
                 _text.appendText(_input.getText() + "\n");
                 _input.setText("");
             }

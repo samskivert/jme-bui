@@ -118,19 +118,19 @@ public class InputDispatcher
             }
         }
 
-        // check to see if the component under the mouse has changed
+        // determine whether the mouse has moved in the last frame
         int mx = _mouseInput.getXAbsolute(), my = _mouseInput.getYAbsolute();
-        BComponent nhcomponent = null;
-
-        // if we have a previous hover component, do a quick check to see
-        // if it still contains the cursor
-        if (_hcomponent != null) {
-            nhcomponent = _hcomponent.getHitComponent(mx, my);
+        boolean mouseMoved = false;
+        if (_mouseX != mx || _mouseY != my) {
+            _mouseX = mx;
+            _mouseY = my;
+            mouseMoved = true;
         }
 
-        // if it does not contain the cursor, check for a new hover
-        // component starting with each of our root components
-        if (nhcomponent == null) {
+        if (mouseMoved) {
+            // check for a new hover component starting with each of our
+            // root components
+            BComponent nhcomponent = null;
             for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
                 BWindow comp = (BWindow)_windows.get(ii);
                 nhcomponent = comp.getHitComponent(mx, my);
@@ -138,23 +138,23 @@ public class InputDispatcher
                     break;
                 }
             }
-        }
 
-        // generate any necessary mouse entry or exit events
-        if (_hcomponent != nhcomponent) {
-            // inform the previous component that the mouse has exited
-            if (_hcomponent != null) {
-                _hcomponent.dispatchEvent(
-                    new MouseEvent(this, tickStamp, _modifiers,
-                                   MouseEvent.MOUSE_EXITED, mx, my));
+            // generate any necessary mouse entry or exit events
+            if (_hcomponent != nhcomponent) {
+                // inform the previous component that the mouse has exited
+                if (_hcomponent != null) {
+                    _hcomponent.dispatchEvent(
+                        new MouseEvent(this, tickStamp, _modifiers,
+                                       MouseEvent.MOUSE_EXITED, mx, my));
+                }
+                // inform the new component that the mouse has entered
+                if (nhcomponent != null) {
+                    nhcomponent.dispatchEvent(
+                        new MouseEvent(this, tickStamp, _modifiers,
+                                       MouseEvent.MOUSE_ENTERED, mx, my));
+                }
+                _hcomponent = nhcomponent;
             }
-            // inform the new component that the mouse has entered
-            if (nhcomponent != null) {
-                nhcomponent.dispatchEvent(
-                    new MouseEvent(this, tickStamp, _modifiers,
-                                   MouseEvent.MOUSE_ENTERED, mx, my));
-            }
-            _hcomponent = nhcomponent;
         }
 
         // mouse press and mouse motion events do not necessarily go to
@@ -198,9 +198,7 @@ public class InputDispatcher
 
         // if the mouse has moved, let the target component know about
         // that as well
-        if (_mouseX != mx || _mouseY != my) {
-            _mouseX = mx;
-            _mouseY = my;
+        if (mouseMoved) {
             if (tcomponent != null) {
                 int type = (tcomponent == _ccomponent) ?
                     MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
@@ -215,6 +213,14 @@ public class InputDispatcher
         if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
             _ccomponent = null;
         }
+    }
+
+    /**
+     * Generates a string representation of this instance.
+     */
+    public String toString ()
+    {
+        return "Dispatcher@" + hashCode();
     }
 
     /**

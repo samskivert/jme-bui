@@ -307,6 +307,7 @@ public class BTextArea extends BComponent
             String rtext = run.text.substring(offset, offset+used);
             Text text = new Text("line", rtext);
             font.configure(text);
+            // TODO: we need to change the color of the font texture
             text.setSolidColor(run.color == null ? foreground : run.color);
             text.setLocalTranslation(new Vector3f(dx, 0, 0));
             attachChild(text);

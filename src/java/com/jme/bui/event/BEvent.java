@@ -73,7 +73,10 @@ public class BEvent extends EventObject
 
     protected void toString (StringBuffer buf)
     {
-        buf.append("source=").append(source);
+        String name = getClass().getName();
+        name = name.substring(name.lastIndexOf(".") + 1);
+        buf.append("type=").append(name);
+        buf.append(", source=").append(source);
         buf.append(", when=").append(_when);
     }
 
