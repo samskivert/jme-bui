@@ -33,6 +33,7 @@ import java.util.logging.Level;
 
 import com.jme.app.SimpleGame;
 import com.jme.input.InputSystem;
+import com.jme.input.KeyBindingManager;
 import com.jme.util.LoggingSystem;
 
 import com.jme.bui.BButton;
@@ -85,6 +86,15 @@ public class LayoutTest extends SimpleGame
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
+
+        // these just get in the way
+        KeyBindingManager.getKeyBindingManager().remove("toggle_pause");
+        KeyBindingManager.getKeyBindingManager().remove("toggle_wire");
+        KeyBindingManager.getKeyBindingManager().remove("toggle_lights");
+        KeyBindingManager.getKeyBindingManager().remove("toggle_bounds");
+        KeyBindingManager.getKeyBindingManager().remove("camera_out");
+
+        lightState.setEnabled(false);
     }
 
     protected void simpleUpdate ()

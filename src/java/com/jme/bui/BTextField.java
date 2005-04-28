@@ -219,13 +219,11 @@ public class BTextField extends BComponent
             FocusEvent fev = (FocusEvent)event;
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
-                Log.log.info("Focus!");
                 _cursor.setForceCull(false);
                 setCursorPos(_cursorPos);
                 break;
 
             case FocusEvent.FOCUS_LOST:
-                Log.log.info("No focus!");
                 _cursor.setForceCull(true);
                 break;
             }
