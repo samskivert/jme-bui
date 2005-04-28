@@ -168,7 +168,7 @@ public class BLookAndFeel
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
         URL url = BLookAndFeel.class.getResource("/rsrc/fonts/default.png");
-        lnf.setFont(new BBitmapFont(url, 16, 16));
+        lnf.setFont(new BBitmapFont(url, 10, 16));
         lnf.setKeyMap(new DefaultKeyMap());
         return lnf;
     }

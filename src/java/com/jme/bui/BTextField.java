@@ -69,7 +69,7 @@ public class BTextField extends BComponent
         if (_cursorPos > _text.length()) {
             setCursorPos(_text.length());
         }
-        refigureLabelContents();
+        refigureContents();
     }
 
     /**
@@ -110,7 +110,7 @@ public class BTextField extends BComponent
         attachChild(_cursor);
         _cursor.setForceCull(true);
 
-        refigureLabelContents();
+        refigureContents();
     }
 
     // documentation inherited
@@ -148,7 +148,7 @@ public class BTextField extends BComponent
         int vc = computeVisisbleChars();
         _label.setBounds(left, top, width - (left+right), height - (top+bottom));
         if (computeVisisbleChars() != vc) {
-            refigureLabelContents();
+            refigureContents();
         }
     }
 
@@ -219,11 +219,13 @@ public class BTextField extends BComponent
             FocusEvent fev = (FocusEvent)event;
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
+                Log.log.info("Focus!");
                 _cursor.setForceCull(false);
                 setCursorPos(_cursorPos);
                 break;
 
             case FocusEvent.FOCUS_LOST:
+                Log.log.info("No focus!");
                 _cursor.setForceCull(true);
                 break;
             }
@@ -245,7 +247,7 @@ public class BTextField extends BComponent
      * Determines how much of our text can be visible in the label and
      * configures the label with the appropriate substring.
      */
-    protected void refigureLabelContents ()
+    protected void refigureContents ()
     {
         if (!isAdded()) {
             _label.setText(_text);
@@ -265,13 +267,13 @@ public class BTextField extends BComponent
         _cursorPos = cursorPos;
         if (_cursorPos < _offset) {
             _offset = _cursorPos;
-            refigureLabelContents();
+            refigureContents();
         } else if (_cursorPos > (_offset + vizChars)) {
             _offset = (_cursorPos-vizChars);
-            refigureLabelContents();
+            refigureContents();
         } else if (_offset > 0 && (_cursorPos < (_offset + vizChars))) {
             _offset = (_cursorPos-vizChars);
-            refigureLabelContents();
+            refigureContents();
         }
 
         int xpos = _label.getX() + 10 * (_cursorPos - _offset);
