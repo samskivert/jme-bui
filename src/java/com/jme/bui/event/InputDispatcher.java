@@ -179,8 +179,7 @@ public class InputDispatcher
                 if ((_modifiers & ANY_BUTTON_PRESSED) == 0 &&
                     tcomponent != null) {
                     _ccomponent = tcomponent;
-                    // TODO: sort out proper focus handling
-                    _focus = tcomponent;
+                    setFocus(tickStamp, tcomponent);
                 }
                 type = MouseEvent.BUTTON_PRESSED;
                 _modifiers |= modifierMask;
@@ -215,6 +214,25 @@ public class InputDispatcher
         // "clicked" component
         if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
             _ccomponent = null;
+        }
+    }
+
+    /**
+     * Configures the component that has keyboard focus.
+     */
+    protected void setFocus (long tickStamp, BComponent focus)
+    {
+        // if the focus is changing, dispatch an event to report it
+        if (_focus != focus) {
+            if (_focus != null) {
+                _focus.dispatchEvent(
+                    new FocusEvent(this, tickStamp, FocusEvent.FOCUS_LOST));
+            }
+            _focus = focus;
+            if (_focus != null) {
+                _focus.dispatchEvent(
+                    new FocusEvent(this, tickStamp, FocusEvent.FOCUS_GAINED));
+            }
         }
     }
 

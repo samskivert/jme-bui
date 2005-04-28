@@ -31,9 +31,13 @@ package com.jme.bui;
 import java.awt.Dimension;
 
 import com.jme.bui.event.BEvent;
+import com.jme.bui.event.FocusEvent;
 import com.jme.bui.event.KeyEvent;
+import com.jme.renderer.ColorRGBA;
 import com.jme.bui.text.BKeyMap;
 import com.jme.bui.text.EditCommands;
+import com.jme.math.Vector3f;
+import com.jme.scene.Line;
 
 /**
  * Displays and allows for the editing of a single line of text.
@@ -79,12 +83,27 @@ public class BTextField extends BComponent
         // look up our keymap
         _keymap = getLookAndFeel().getKeyMap();
 
-        // now that we have a look and feel we can create our background
+        // create our background
         _background = getLookAndFeel().createTextBack();
         attachChild(_background);
         _background.wasAdded();
+
+        // attach our label
         attachChild(_label);
         _label.wasAdded();
+
+        // HACK: we need a better way to get our font height
+        int fontHeight = 16;
+
+        // create our cursor
+        Vector3f[] ends = new Vector3f[] {
+            new Vector3f(0, 0, 0), new Vector3f(0, fontHeight, 0) };
+        ColorRGBA[] colors = new ColorRGBA[] {
+            getLookAndFeel().getForeground(), getLookAndFeel().getForeground() };
+        _cursor = new Line(name + ":cursor", ends, null, colors, null);
+        _cursor.setSolidColor(getLookAndFeel().getForeground());
+        _cursor.setForceCull(true);
+        attachChild(_cursor);
 
         refigureLabelContents();
     }
@@ -141,7 +160,8 @@ public class BTextField extends BComponent
                 case BACKSPACE:
                     if (_cursorPos > 0 && _text.length() > 0) {
                         String after = _text.substring(_cursorPos);
-                        setText(_text.substring(0, --_cursorPos) + after);
+                        setText(_text.substring(0, _cursorPos-1) + after);
+                        setCursorPos(_cursorPos-1);
                     }
                     break;
 
@@ -153,19 +173,19 @@ public class BTextField extends BComponent
                     break;
 
                 case CURSOR_LEFT:
-                    _cursorPos = Math.max(0, _cursorPos-1);
+                    setCursorPos(Math.max(0, _cursorPos-1));
                     break;
 
                 case CURSOR_RIGHT:
-                    _cursorPos = Math.min(_text.length(), _cursorPos+1);
+                    setCursorPos(Math.min(_text.length(), _cursorPos+1));
                     break;
 
                 case START_OF_LINE:
-                    _cursorPos = 0;
+                    setCursorPos(0);
                     break;
 
                 case END_OF_LINE:
-                    _cursorPos = _text.length();
+                    setCursorPos(_text.length());
                     break;
 
                 default:
@@ -177,10 +197,22 @@ public class BTextField extends BComponent
                         String before = _text.substring(0, _cursorPos);
                         String after = _text.substring(_cursorPos);
                         setText(before + kev.getKeyChar() + after);
-                        _cursorPos++;
+                        setCursorPos(_cursorPos +1);
                     }
                     break;
                 }
+            }
+
+        } else if (event instanceof FocusEvent) {
+            FocusEvent fev = (FocusEvent)event;
+            switch (fev.getType()) {
+            case FocusEvent.FOCUS_GAINED:
+                _cursor.setForceCull(false);
+                break;
+
+            case FocusEvent.FOCUS_LOST:
+                _cursor.setForceCull(true);
+                break;
             }
         }
     }
@@ -209,6 +241,15 @@ public class BTextField extends BComponent
 
         int vizChars = computeVisisbleChars();
         _label.setText(_text.substring(0, vizChars));
+        setCursorPos(_cursorPos);
+    }
+
+    protected void setCursorPos (int cursorPos)
+    {
+        _cursorPos = cursorPos;
+        int xpos = _label.getX() + 10 * _cursorPos;
+        int ypos = (_height - 16) / 2;
+        _cursor.setLocalTranslation(new Vector3f(xpos, ypos, 0));
     }
 
     /**
@@ -226,6 +267,7 @@ public class BTextField extends BComponent
     protected BLabel _label;
     protected BKeyMap _keymap;
 
+    protected Line _cursor;
     protected int _cursorPos;
     protected String _text;
 }
