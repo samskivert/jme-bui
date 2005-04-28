@@ -5,7 +5,13 @@
   <property name="src.dir"     value="src/java"/>
   <property name="deploy.dir"  value="dist"/>
   <property name="dist.jar"    value="${lib.name}.jar"/>
-  <property name="classes.dir"  value="${deploy.dir}/classes"/>
+  <property name="classes.dir" value="${deploy.dir}/classes"/>
+
+  <!-- javadoc bits -->
+  <property name="javadoc.dir"      value="${deploy.dir}/docs"/>
+  <property name="savedoc.dir"      value="docs"/>
+  <property name="doc.packages"     value="com.jme.bui.*"/>
+  <property name="copyright.holder" value="Michael Bayne"/>
 
   <!-- declare our classpath -->
   <path id="classpath">
@@ -16,6 +22,7 @@
   <!-- prepares the application directories -->
   <target name="prepare">
     <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${javadoc.dir}"/>
     <mkdir dir="${classes.dir}"/>
     <mkdir dir="${classes.dir}/rsrc"/>
     <!-- copy media and properties into the target directory -->
@@ -38,6 +45,29 @@
            debug="on" optimize="on" deprecation="on" source="1.4">
       <classpath refid="classpath"/>
     </javac>
+  </target>
+
+  <!-- build the javadoc documentation -->
+  <target name="javadoc" depends="prepare">
+    <tstamp><format property="year" pattern="yyyy" /></tstamp>
+    <javadoc windowtitle="BUI API" doctitle="BUI API"
+             destdir="${javadoc.dir}" additionalparam="-breakiterator">
+      <packageset dir="${src.dir}"/>
+      <bottom>Copyright &#169; ${year} ${copyright.holder}.
+              All Rights Reserved.</bottom>
+      <classpath refid="classpath"/>
+      <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
+      <link href="http://www.jmonkeyengine.com/doc/"/>
+    </javadoc>
+  </target>
+
+  <!-- builds the javadocs and stuffs them in a directory where they -->
+  <!-- won't be blown away when we do "clean" next time -->
+  <target name="savedoc" depends="javadoc">
+    <delete dir="${savedoc.dir}/api"/>
+    <copy todir="${savedoc.dir}/api">
+      <fileset dir="${javadoc.dir}" includes="**/*"/>
+    </copy>
   </target>
 
   <!-- builds our distribution files (war and jar) -->
