@@ -28,6 +28,8 @@
 
 package com.jme.bui.event;
 
+import com.jme.input.KeyInput;
+
 /**
  * Encapsulates the information associated with a keyboard event.
  */
