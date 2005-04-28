@@ -106,8 +106,8 @@ public class BTextField extends BComponent
             getLookAndFeel().getForeground(), getLookAndFeel().getForeground() };
         _cursor = new Line(name + ":cursor", ends, null, colors, null);
         _cursor.setSolidColor(getLookAndFeel().getForeground());
-        _cursor.setForceCull(true);
         attachChild(_cursor);
+        _cursor.setForceCull(true);
 
         refigureLabelContents();
     }
@@ -213,6 +213,7 @@ public class BTextField extends BComponent
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
                 _cursor.setForceCull(false);
+                setCursorPos(_cursorPos);
                 break;
 
             case FocusEvent.FOCUS_LOST:
@@ -247,6 +248,10 @@ public class BTextField extends BComponent
         }
     }
 
+    /**
+     * Updates the cursor position, moving the visible representation as
+     * well as the insertion and deletion point.
+     */
     protected void setCursorPos (int cursorPos)
     {
         int vizChars = computeVisisbleChars();
