@@ -54,15 +54,6 @@ public class BTextArea extends BComponent
 
     public BTextArea ()
     {
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE);
-        astate.setTestEnabled(true);
-        astate.setTestFunction(AlphaState.TF_GREATER);
-        astate.setEnabled(true);
-        setRenderState(astate);
     }
 
     /**
@@ -142,6 +133,20 @@ public class BTextArea extends BComponent
         attachChild(_background);
         _background.wasAdded();
 
+        // create a node that will contain our text
+        _text = new Node(name + ":text");
+        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
+            createAlphaState();
+        astate.setBlendEnabled(true);
+        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        astate.setDstFunction(AlphaState.DB_ONE);
+        astate.setTestEnabled(true);
+        astate.setTestFunction(AlphaState.TF_GREATER);
+        astate.setEnabled(true);
+        _text.setRenderState(astate);
+        attachChild(_text);
+        _text.updateRenderState();
+
         // lay out our text for the first time
         refigureContents();
     }
@@ -154,6 +159,11 @@ public class BTextArea extends BComponent
         if (_background != null) {
             detachChild(_background);
             _background.wasRemoved();
+        }
+
+        if (_text != null) {
+            detachChild(_text);
+            _text = null;
         }
     }
 
@@ -201,7 +211,7 @@ public class BTextArea extends BComponent
     {
         // remove and recreate our existing lines
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            detachChild((Line)_lines.get(ii));
+            _text.detachChild((Line)_lines.get(ii));
         }
         _lines.clear();
 
@@ -237,7 +247,7 @@ public class BTextArea extends BComponent
         int sline = Math.max(0, _lines.size() - lines);
         for (int ii = sline, ll = _lines.size(); ii < ll; ii++) {
             Line line = (Line)_lines.get(ii);
-            attachChild(line);
+            _text.attachChild(line);
             line.updateGeometricState(0.0f, true);
             line.updateRenderState();
             line.setLocalTranslation(new Vector3f(x, y, 0));
@@ -309,6 +319,7 @@ public class BTextArea extends BComponent
     }
 
     protected BBackground _background;
+    protected Node _text;
     protected ArrayList _runs = new ArrayList();
     protected ArrayList _lines = new ArrayList();
 }
