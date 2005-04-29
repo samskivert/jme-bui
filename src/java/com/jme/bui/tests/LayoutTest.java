@@ -39,6 +39,7 @@ import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BorderLayout;
+import com.jme.bui.layout.TableLayout;
 
 /**
  * Does something extraordinary.
@@ -77,6 +78,21 @@ public class LayoutTest extends SimpleGame
             }
         });
         window.setBounds(100, 100, 300, 150);
+        window.layout();
+        rootNode.attachChild(window);
+        _dispatcher.addWindow(window);
+
+        window = new BWindow(lnf, new TableLayout(3, 5, 5));
+        window.addChild(new BLabel("One"));
+        window.addChild(new BLabel("Two"));
+        window.addChild(new BLabel("Three"));
+        window.addChild(new BLabel("Four"));
+        window.addChild(new BLabel("Five"));
+        window.addChild(new BLabel("Six"));
+        window.addChild(new BLabel("Seven"));
+        window.addChild(new BLabel("Eight"));
+        window.addChild(new BLabel("Nine"));
+        window.setBounds(100, 400, 300, 150);
         window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
