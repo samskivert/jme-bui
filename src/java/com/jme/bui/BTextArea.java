@@ -250,7 +250,9 @@ public class BTextArea extends BComponent
             _text.attachChild(line);
             line.updateGeometricState(0.0f, true);
             line.updateRenderState();
-            line.setLocalTranslation(new Vector3f(x, y, 0));
+            // TEMP: handle Text offset bug
+            int fx = x - 4;
+            line.setLocalTranslation(new Vector3f(fx, y, 0));
             y -= font.getHeight();
         }
     }
