@@ -188,7 +188,7 @@ public class BLabel extends BComponent
 //         }
 
         _tgeom = new Text(name + ":text", _text);
-        _tgeom.setSolidColor(lnf.getForeground());
+        _tgeom.setTextColor(lnf.getForeground());
         _tsize = new Dimension((int)_tgeom.getWidth(), (int)_tgeom.getHeight());
         font.configure(_tgeom);
 
