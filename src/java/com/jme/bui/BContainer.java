@@ -32,6 +32,22 @@ import com.jme.bui.layout.BLayoutManager;
 public class BContainer extends BComponent
 {
     /**
+     * Creates a container with no layout manager. One should subsequently
+     * be set via a call to {@link #setLayoutManager}.
+     */
+    public BContainer ()
+    {
+    }
+
+    /**
+     * Creates a container with the supplied layout manager.
+     */
+    public BContainer (BLayoutManager layout)
+    {
+        setLayoutManager(layout);
+    }
+
+    /**
      * Configures this container with an entity that will set the size and
      * position of its children.
      */
@@ -44,16 +60,16 @@ public class BContainer extends BComponent
      * Adds a child to this container. This should be used rather than
      * calling {@link #attachChild} directly.
      */
-    public void addChild (BComponent child)
+    public void add (BComponent child)
     {
-        addChild(child, null);
+        add(child, null);
     }
 
     /**
      * Adds a child to this container with the specified layout
      * constraints.
      */
-    public void addChild (BComponent child, Object constraints)
+    public void add (BComponent child, Object constraints)
     {
         if (_layout != null) {
             _layout.addLayoutComponent(child, constraints);
@@ -65,6 +81,26 @@ public class BContainer extends BComponent
         // wasAdded() called on them
         if (isAdded()) {
             child.wasAdded();
+        }
+    }
+
+    /**
+     * Removes the specified child from this container.
+     */
+    public void remove (BComponent child)
+    {
+        if (detachChild(child) == -1) {
+            // if the component was not our child, stop now
+            return;
+        }
+        if (_layout != null) {
+            _layout.removeLayoutComponent(child);
+        }
+
+        // if we're part of the hierarchy we call wasRemoved() on the
+        // child now (which will be propagated to all of its children)
+        if (isAdded()) {
+            child.wasRemoved();
         }
     }
 

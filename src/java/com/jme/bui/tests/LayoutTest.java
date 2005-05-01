@@ -56,11 +56,11 @@ public class LayoutTest extends SimpleGame
 
         BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
         BWindow window = new BWindow(lnf, new BorderLayout());
-        window.addChild(new BLabel("NORTH"), BorderLayout.NORTH);
-        window.addChild(new BLabel("EAST"), BorderLayout.EAST);
-        window.addChild(new BLabel("SOUTH"), BorderLayout.SOUTH);
-        window.addChild(new BLabel("WEST"), BorderLayout.WEST);
-        window.addChild(new BLabel("CENTER"), BorderLayout.CENTER);
+        window.add(new BLabel("NORTH"), BorderLayout.NORTH);
+        window.add(new BLabel("EAST"), BorderLayout.EAST);
+        window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
+        window.add(new BLabel("WEST"), BorderLayout.WEST);
+        window.add(new BLabel("CENTER"), BorderLayout.CENTER);
         window.pack();
         window.setLocation(25, 25);
         window.layout();
@@ -68,11 +68,11 @@ public class LayoutTest extends SimpleGame
         _dispatcher.addWindow(window);
 
         window = new BWindow(lnf, new BorderLayout(2, 2));
-        window.addChild(_text = new BTextArea(), BorderLayout.CENTER);
-        window.addChild(_input = new BTextField(), BorderLayout.SOUTH);
+        window.add(_text = new BTextArea(), BorderLayout.CENTER);
+        window.add(_input = new BTextField(), BorderLayout.SOUTH);
         _input.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
-                _text.appendText("You said: ", ColorRGBA.blue);
+                _text.appendText("You said: ", ColorRGBA.red);
                 _text.appendText(_input.getText() + "\n");
                 _input.setText("");
             }
@@ -83,15 +83,15 @@ public class LayoutTest extends SimpleGame
         _dispatcher.addWindow(window);
 
         window = new BWindow(lnf, new TableLayout(3, 5, 5));
-        window.addChild(new BLabel("One"));
-        window.addChild(new BLabel("Two"));
-        window.addChild(new BLabel("Three"));
-        window.addChild(new BLabel("Four"));
-        window.addChild(new BLabel("Five"));
-        window.addChild(new BLabel("Six"));
-        window.addChild(new BLabel("Seven"));
-        window.addChild(new BLabel("Eight"));
-        window.addChild(new BLabel("Nine"));
+        window.add(new BLabel("One"));
+        window.add(new BLabel("Two"));
+        window.add(new BLabel("Three"));
+        window.add(new BLabel("Four"));
+        window.add(new BLabel("Five"));
+        window.add(new BLabel("Six"));
+        window.add(new BLabel("Seven"));
+        window.add(new BLabel("Eight"));
+        window.add(new BLabel("Nine"));
         window.setBounds(100, 400, 300, 150);
         window.layout();
         rootNode.attachChild(window);

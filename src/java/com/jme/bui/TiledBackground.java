@@ -61,6 +61,7 @@ public class TiledBackground extends BBackground
         // load up the background image as a texture
         Texture texture = TextureManager.loadTexture(
             source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR);
+        texture.setWrap(Texture.WM_WRAP_S_WRAP_T);
         _twidth = texture.getImage().getWidth();
         _theight = texture.getImage().getHeight();
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().

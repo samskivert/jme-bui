@@ -167,7 +167,8 @@ public class BComponent extends Node
      */
     public boolean isAdded ()
     {
-        return (getWindow() != null);
+        BWindow win = getWindow();
+        return (win != null && win.isAdded());
     }
 
     /**

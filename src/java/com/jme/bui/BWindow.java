@@ -22,6 +22,7 @@ package com.jme.bui;
 
 import java.awt.Dimension;
 
+import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BLayoutManager;
 
 /**
@@ -45,4 +46,31 @@ public class BWindow extends BContainer
         Dimension ps = getPreferredSize();
         setBounds(_x, _y, ps.width, ps.height);
     }
+
+    /**
+     * Configures this window with its input dispatcher. Do not call this
+     * method, it is called automatically when a window is added to a
+     * dispatcher via a call to {@link InputDispatcher#addWindow}.
+     */
+    public void setInputDispatcher (InputDispatcher dispatcher)
+    {
+        if (_dispatcher != dispatcher) {
+            _dispatcher = dispatcher;
+            if (_dispatcher == null) {
+                wasRemoved();
+            } else {
+                wasAdded();
+                layout();
+            }
+        }
+    }
+
+    // documentation inherited
+    public boolean isAdded ()
+    {
+        return _dispatcher != null;
+    }
+
+    /** The dispatcher that handles our events. */
+    protected InputDispatcher _dispatcher;
 }

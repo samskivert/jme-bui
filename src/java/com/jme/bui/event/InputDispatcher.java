@@ -60,6 +60,7 @@ public class InputDispatcher
     public void addWindow (BWindow window)
     {
         _windows.add(window);
+        window.setInputDispatcher(this);
     }
 
     /**
@@ -68,6 +69,7 @@ public class InputDispatcher
     public void removeWindow (BWindow window)
     {
         _windows.remove(window);
+        window.setInputDispatcher(null);
     }
 
     /**

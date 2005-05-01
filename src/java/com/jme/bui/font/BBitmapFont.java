@@ -52,7 +52,7 @@ public class BBitmapFont extends BFont
         // create a texture from our font image, each character will
         // render using this texture with appropriate texture coordinates
         Texture texture = TextureManager.loadTexture(
-            source, Texture.MM_NEAREST, Texture.FM_NEAREST);
+            source, Texture.MM_NONE, Texture.FM_NEAREST);
         _rows = texture.getImage().getWidth() / width;
         _cols = texture.getImage().getHeight() / height;
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
