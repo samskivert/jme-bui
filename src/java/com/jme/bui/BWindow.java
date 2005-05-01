@@ -24,6 +24,7 @@ import java.awt.Dimension;
 
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BLayoutManager;
+import com.jme.renderer.Renderer;
 
 /**
  * A window defines the top-level of a component hierarchy. It must be
@@ -35,6 +36,7 @@ public class BWindow extends BContainer
     {
         setLookAndFeel(lnf);
         setLayoutManager(layout);
+        setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
 
     /**

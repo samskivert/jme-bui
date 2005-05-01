@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ComponentListener;
 import com.jme.math.Vector3f;
-import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
 
 /**
@@ -43,8 +42,6 @@ public class BComponent extends Node
         // finishes execution, so we construct with a blank name and set a
         // valid one immediately
         setName(getClass().getName() + ":" + hashCode());
-
-        setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
 
     /**

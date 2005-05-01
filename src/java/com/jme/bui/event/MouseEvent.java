@@ -45,6 +45,15 @@ public class MouseEvent extends InputEvent
      * for all movement until all buttons are released. */
     public static final int MOUSE_DRAGGED = 5;
 
+    /** A constant representing the "left" mouse button. */
+    public static final int BUTTON1 = 0;
+
+    /** A constant representing the middle mouse button. */
+    public static final int BUTTON2 = 1;
+
+    /** A constant representing the "right" mouse button. */
+    public static final int BUTTON3 = 2;
+
     public MouseEvent (Object source, long when, int modifiers, int type,
                        int mx, int my)
     {
@@ -71,8 +80,9 @@ public class MouseEvent extends InputEvent
     }
 
     /**
-     * Returns the index of the button pertaining to this event (0, 1 or
-     * 2) or -1 if this is not a button related event.
+     * Returns the index of the button pertaining to this event ({@link
+     * #BUTTON1}, {@link #BUTTON2}, or {@link #BUTTON3}) or -1 if this is
+     * not a button related event.
      */
     public int getButton ()
     {

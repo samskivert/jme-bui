@@ -73,6 +73,16 @@ public class InputDispatcher
     }
 
     /**
+     * Configures a component (which would generally not be part of a
+     * normal interface hierarchy) to receive all mouse events that are
+     * not sent to some other component.
+     */
+    public void setDefaultMouseTarget (BComponent component)
+    {
+        _dcomponent = component;
+    }
+
+    /**
      * This method should be called on every frame to allow the input
      * dispatcher to process input since the previous frame and dispatch
      * any newly generated events.
@@ -159,8 +169,13 @@ public class InputDispatcher
         // component, the target for all subsequent click and motion
         // events (which become drag events) until all buttons are
         // released
-        BComponent tcomponent = (_ccomponent == null) ?
-            _hcomponent : _ccomponent;
+        BComponent tcomponent = _ccomponent;
+        if (tcomponent == null) {
+            tcomponent = _hcomponent;
+        }
+        if (tcomponent == null) {
+            tcomponent = _dcomponent;
+        }
 
         // update the mouse modifiers, possibly generating events
         for (int ii = 0; ii < MOUSE_MODIFIER_MAP.length; ii++) {
@@ -260,7 +275,7 @@ public class InputDispatcher
 
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
-    protected BComponent _focus;
+    protected BComponent _dcomponent, _focus;
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {
