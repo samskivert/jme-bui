@@ -26,6 +26,7 @@ import java.net.URL;
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;
 import com.jme.math.Vector3f;
+import com.jme.renderer.Renderer;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
@@ -54,9 +55,13 @@ public class TiledBackground extends BBackground
     /**
      * Creates a tiled background from the specified source image data.
      */
-    public TiledBackground (URL source, int left, int top, int right, int bottom)
+    public TiledBackground (URL source, int left, int top,
+                            int right, int bottom)
     {
         super(left, top, right, bottom);
+
+        // we want transparent parts of our texture to show through
+        RenderUtil.makeTransparent(this);
 
         // load up the background image as a texture
         Texture texture = TextureManager.loadTexture(

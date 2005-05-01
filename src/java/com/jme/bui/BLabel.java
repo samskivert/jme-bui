@@ -28,7 +28,6 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.math.Vector3f;
 import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
-import com.jme.scene.state.AlphaState;
 import com.jme.system.DisplaySystem;
 
 /**
@@ -42,16 +41,6 @@ public class BLabel extends BComponent
      */
     public BLabel (String text)
     {
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE);
-        astate.setTestEnabled(true);
-        astate.setTestFunction(AlphaState.TF_GREATER);
-        astate.setEnabled(true);
-        setRenderState(astate);
-
         setText(text);
     }
 

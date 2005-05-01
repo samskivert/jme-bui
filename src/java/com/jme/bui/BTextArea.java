@@ -29,7 +29,6 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Node;
 import com.jme.scene.Text;
-import com.jme.scene.state.AlphaState;
 import com.jme.system.DisplaySystem;
 
 /**
@@ -135,15 +134,6 @@ public class BTextArea extends BContainer
 
         // create a node that will contain our text
         _text = new Node(name + ":text");
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE);
-        astate.setTestEnabled(true);
-        astate.setTestFunction(AlphaState.TF_GREATER);
-        astate.setEnabled(true);
-        _text.setRenderState(astate);
         attachChild(_text);
         _text.updateRenderState();
     }

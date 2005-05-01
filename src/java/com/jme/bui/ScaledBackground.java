@@ -24,8 +24,8 @@ import java.awt.Dimension;
 import java.net.URL;
 
 import com.jme.image.Texture;
-import com.jme.renderer.ColorRGBA;
 import com.jme.math.Vector3f;
+import com.jme.renderer.ColorRGBA;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
@@ -55,8 +55,11 @@ public class ScaledBackground extends BBackground
         _tstate.setTexture(texture);
 
         _quad = new Quad(name + ":quad", _twidth, _theight);
-//         _quad.setRenderState(_tstate);
-        _quad.setSolidColor(ColorRGBA.blue);
+        _quad.setRenderState(_tstate);
+
+        // we want transparent parts of our texture to show through
+        RenderUtil.makeTransparent(_quad);
+
         attachChild(_quad);
         _quad.updateRenderState();
     }

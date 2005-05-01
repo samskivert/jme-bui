@@ -26,6 +26,7 @@ import java.util.HashMap;
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;
 import com.jme.scene.Text;
+import com.jme.scene.state.AlphaState;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
@@ -59,6 +60,15 @@ public class BBitmapFont extends BFont
             createTextureState();
         _tstate.setEnabled(true);
         _tstate.setTexture(texture);
+
+        // create an alpha state that we'll use to blend our font over the
+        // background
+        _astate = DisplaySystem.getDisplaySystem().getRenderer().
+            createAlphaState();
+        _astate.setBlendEnabled(true);
+        _astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        _astate.setDstFunction(AlphaState.DB_ONE);
+        _astate.setEnabled(true);
     }
 
     // documentation inherited
@@ -109,9 +119,11 @@ public class BBitmapFont extends BFont
         text.setForceView(true);
         text.setTextureCombineMode(TextureState.REPLACE);
         text.setRenderState(_tstate);
+        text.setRenderState(_astate);
     }
 
     protected TextureState _tstate;
+    protected AlphaState _astate;
     protected int _width, _height;
     protected float _rows, _cols;
     protected HashMap _tcoords = new HashMap();

@@ -102,6 +102,8 @@ public class LayoutTest extends SimpleGame
         KeyBindingManager.getKeyBindingManager().remove("camera_out");
 
         lightState.setEnabled(false);
+
+        display.getRenderer().setBackgroundColor(ColorRGBA.gray);
     }
 
     protected void simpleUpdate ()
