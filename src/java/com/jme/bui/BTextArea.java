@@ -38,7 +38,7 @@ import com.jme.system.DisplaySystem;
  * characters in the appended text will result in line breaks in the
  * on-screen layout.
  */
-public class BTextArea extends BComponent
+public class BTextArea extends BContainer
 {
     /** A font style constant. */
     public static final int PLAIN = 0;
@@ -130,7 +130,7 @@ public class BTextArea extends BComponent
 
         // create our background
         _background = getLookAndFeel().createTextBack();
-        attachChild(_background);
+        add(_background);
         _background.wasAdded();
 
         // create a node that will contain our text
@@ -146,9 +146,6 @@ public class BTextArea extends BComponent
         _text.setRenderState(astate);
         attachChild(_text);
         _text.updateRenderState();
-
-        // lay out our text for the first time
-        refigureContents();
     }
 
     // documentation inherited
@@ -157,8 +154,8 @@ public class BTextArea extends BComponent
         super.wasRemoved();
 
         if (_background != null) {
-            detachChild(_background);
-            _background.wasRemoved();
+            remove(_background);
+            _background = null;
         }
 
         if (_text != null) {
@@ -168,29 +165,22 @@ public class BTextArea extends BComponent
     }
 
     // documentation inherited
-    public void layout ()
-    {
-        super.layout();
-
-        // we must lay out our children by hand as we're not a container
-        _background.layout();
-    }
-
-    // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
-    {
-        super.setBounds(x, y, width, height);
-
-        _background.setBounds(0, 0, width, height);
-        refigureContents();
-    }
-
-    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
 
         // TBD
+    }
+
+    // documentation inherited
+    protected void layout ()
+    {
+        super.layout();
+
+        // our background occupies our entire dimensions
+        _background.setBounds(0, 0, _width, _height);
+
+        refigureContents();
     }
 
     // documentation inherited

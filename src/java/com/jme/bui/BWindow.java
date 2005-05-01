@@ -44,6 +44,7 @@ public class BWindow extends BContainer
     public void pack ()
     {
         Dimension ps = getPreferredSize();
+        Log.log.info("Sizing to " + ps);
         setBounds(_x, _y, ps.width, ps.height);
     }
 
@@ -60,8 +61,25 @@ public class BWindow extends BContainer
                 wasRemoved();
             } else {
                 wasAdded();
-                layout();
+                // if we've already been configured with dimensions, start
+                // the validation process, otherwise wait for whoever
+                // created us to give us dimensions
+                if (_width != 0 && _height != 0) {
+                    validate();
+                }
             }
+        }
+    }
+
+    // documentation inherited
+    public void invalidate ()
+    {
+        super.invalidate();
+
+        if (_dispatcher != null) {
+            // when an invalidation call reaches an attached top-level
+            // window, we start the revalidation process
+            validate();
         }
     }
 

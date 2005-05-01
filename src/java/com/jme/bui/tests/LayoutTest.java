@@ -61,11 +61,10 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.add(new BLabel("WEST"), BorderLayout.WEST);
         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
-        window.pack();
-        window.setLocation(25, 25);
-        window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
+        window.pack();
+        window.setLocation(25, 25);
 
         window = new BWindow(lnf, new BorderLayout(2, 2));
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
@@ -78,7 +77,6 @@ public class LayoutTest extends SimpleGame
             }
         });
         window.setBounds(100, 100, 300, 150);
-        window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
 
@@ -93,7 +91,6 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("Eight"));
         window.add(new BLabel("Nine"));
         window.setBounds(100, 400, 300, 150);
-        window.layout();
         rootNode.attachChild(window);
         _dispatcher.addWindow(window);
 

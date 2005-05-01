@@ -95,7 +95,13 @@ public class TiledBackground extends BBackground
     }
 
     // documentation inherited
-    public void layout ()
+    public Dimension getPreferredSize ()
+    {
+        return new Dimension(_twidth, _theight);
+    }
+
+    // documentation inherited
+    protected void layout ()
     {
         // position our sections
         float height = _theight/6f;
@@ -124,12 +130,6 @@ public class TiledBackground extends BBackground
 
         updateGeometricState(0.0f, true);
         updateRenderState();
-    }
-
-    // documentation inherited
-    public Dimension getPreferredSize ()
-    {
-        return new Dimension(_twidth, _theight);
     }
 
     protected int _twidth, _theight;

@@ -110,12 +110,32 @@ public class BLabel extends BComponent
      */
     public void setText (String text)
     {
+        setText(text, true);
+    }
+
+    /**
+     * Updates the text displayed by this label.
+     *
+     * @param invalidate if false, the label will not cause a revalidation
+     * as a result of this text update. This should only be used when the
+     * caller knows the label's size will not change as a result of the
+     * text change (this is used by {@link BTextField}, for example).
+     */
+    public void setText (String text, boolean invalidate)
+    {
         _text = text;
 
         // if we're already part of the hierarchy, recreate our glyps
         if (isAdded()) {
             recreateGlyphs();
-            relayout();
+        }
+
+        // if our text change is allowed to impact the layout hierarchy,
+        // invalidate ourselves, otherwise relayout just ourselves
+        if (invalidate) {
+            invalidate();
+        } else {
+            layout();
         }
     }
 
@@ -129,7 +149,7 @@ public class BLabel extends BComponent
     }
 
     // documentation inherited
-    public void layout ()
+    protected void layout ()
     {
         super.layout();
 

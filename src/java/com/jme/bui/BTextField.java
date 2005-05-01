@@ -35,7 +35,7 @@ import com.jme.scene.Line;
 /**
  * Displays and allows for the editing of a single line of text.
  */
-public class BTextField extends BComponent
+public class BTextField extends BContainer
     implements EditCommands
 {
     public BTextField ()
@@ -73,6 +73,12 @@ public class BTextField extends BComponent
     }
 
     // documentation inherited
+    public boolean acceptsFocus ()
+    {
+        return true;
+    }
+
+    // documentation inherited
     public void wasAdded ()
     {
         super.wasAdded();
@@ -81,13 +87,10 @@ public class BTextField extends BComponent
         _keymap = getLookAndFeel().getKeyMap();
 
         // create our background
-        _background = getLookAndFeel().createTextBack();
-        attachChild(_background);
-        _background.wasAdded();
+        add(_background = getLookAndFeel().createTextBack());
 
-        // attach our label
-        attachChild(_label);
-        _label.wasAdded();
+        // add our label over the background
+        add(_label);
 
         // HACK: we need a better way to get our font height
         int fontHeight = 16;
@@ -96,13 +99,12 @@ public class BTextField extends BComponent
         Vector3f[] ends = new Vector3f[] {
             new Vector3f(0, 0, 0), new Vector3f(0, fontHeight, 0) };
         ColorRGBA[] colors = new ColorRGBA[] {
-            getLookAndFeel().getForeground(), getLookAndFeel().getForeground() };
+            getLookAndFeel().getForeground(),
+            getLookAndFeel().getForeground() };
         _cursor = new Line(name + ":cursor", ends, null, colors, null);
         _cursor.setSolidColor(getLookAndFeel().getForeground());
         attachChild(_cursor);
         _cursor.setForceCull(true);
-
-        refigureContents();
     }
 
     // documentation inherited
@@ -111,37 +113,10 @@ public class BTextField extends BComponent
         super.wasRemoved();
 
         if (_background != null) {
-            detachChild(_background);
-            _background.wasRemoved();
+            remove(_background);
+            _background = null;
         }
-        detachChild(_label);
-        _label.wasRemoved();
-    }
-
-    // documentation inherited
-    public void layout ()
-    {
-        super.layout();
-
-        // we must lay out our children by hand as we're not a container
-        _background.layout();
-        _label.layout();
-    }
-
-    // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
-    {
-        super.setBounds(x, y, width, height);
-        _background.setBounds(0, 0, width, height);
-        int left = _background.getLeftInset();
-        int top = _background.getTopInset();
-        int right = _background.getRightInset();
-        int bottom = _background.getBottomInset();
-        int vc = computeVisisbleChars();
-        _label.setBounds(left, top, width - (left+right), height - (top+bottom));
-        if (computeVisisbleChars() != vc) {
-            refigureContents();
-        }
+        remove(_label);
     }
 
     // documentation inherited
@@ -223,6 +198,29 @@ public class BTextField extends BComponent
     }
 
     // documentation inherited
+    protected void layout ()
+    {
+        super.layout();
+
+        // our background covers our entire display
+        _background.setBounds(0, 0, _width, _height);
+
+        // the label is inset based on the background's insets
+        int left = _background.getLeftInset();
+        int top = _background.getTopInset();
+        int right = _background.getRightInset();
+        int bottom = _background.getBottomInset();
+        int vc = computeVisisbleChars();
+        _label.setBounds(left, top, _width - (left+right),
+                         _height - (top+bottom));
+
+        // if our size changed, we may have a different visible set of chars
+        if (computeVisisbleChars() != vc) {
+            refigureContents();
+        }
+    }
+
+    // documentation inherited
     protected Dimension computePreferredSize ()
     {
         Dimension d = new Dimension(_label.getPreferredSize());
@@ -243,7 +241,7 @@ public class BTextField extends BComponent
             _label.setText(_text);
         } else {
             int vizChars = computeVisisbleChars();
-            _label.setText(_text.substring(_offset, _offset+vizChars));
+            _label.setText(_text.substring(_offset, _offset+vizChars), false);
         }
     }
 

@@ -68,7 +68,7 @@ public class BButton extends BComponent
     public void setText (String text)
     {
         _label.setText(text);
-        relayout();
+        invalidate();
     }
 
     /**
@@ -133,7 +133,7 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
-    public void layout ()
+    protected void layout ()
     {
         super.layout();
 

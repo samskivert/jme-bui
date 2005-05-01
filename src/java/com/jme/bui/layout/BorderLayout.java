@@ -145,7 +145,8 @@ public class BorderLayout extends BLayoutManager
     public void layoutContainer (BContainer target)
     {
         // determine what we've got to work with
-        int x = 0, y = 0, width = target.getWidth(), height = target.getHeight();
+        int x = 0, y = 0;
+        int width = target.getWidth(), height = target.getHeight();
 
         BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {

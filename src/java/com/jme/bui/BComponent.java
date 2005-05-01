@@ -101,6 +101,30 @@ public class BComponent extends Node
     }
 
     /**
+     * Returns whether or not this component accepts the keyboard focus.
+     */
+    public boolean acceptsFocus ()
+    {
+        return false;
+    }
+
+    /**
+     * Returns the component that should receive focus if this component
+     * is clicked. If this component does not accept focus, its parent
+     * will be checked and so on.
+     */
+    public BComponent getFocusTarget ()
+    {
+        if (acceptsFocus()) {
+            return this;
+        } else if (parent instanceof BComponent) {
+            return ((BComponent)parent).getFocusTarget();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Sets the upper left position of this component in absolute screen
      * coordinates.
      */
@@ -130,8 +154,11 @@ public class BComponent extends Node
             _y = y;
             setLocalTranslation(new Vector3f(_x, _y, 0f));
         }
-        _width = width;
-        _height = height;
+        if (_width != width || _height != height) {
+            _width = width;
+            _height = height;
+            invalidate();
+        }
     }
 
     /**
@@ -172,14 +199,38 @@ public class BComponent extends Node
     }
 
     /**
-     * Instructs this component to lay itself out. This happens
-     * automatically when the component is attached to the interface
-     * hierarchy, but can be called again if the component changes in such
-     * a manner as to need a relayout.
+     * Instructs this component to lay itself out and then mark itself as
+     * valid.
      */
-    public void layout ()
+    public void validate ()
+    {
+        if (!_valid) {
+            layout();
+            _valid = true;
+        }
+    }
+
+    /**
+     * Instructs this component to lay itself out. This is called as a
+     * result of the component changing size.
+     */
+    protected void layout ()
     {
         // we have nothing to do by default
+    }
+
+    /**
+     * Marks this component as invalid and needing a relayout. If the
+     * component is valid, its parent will also be marked as invalid.
+     */
+    public void invalidate ()
+    {
+        if (_valid) {
+            _valid = false;
+            if (parent instanceof BComponent) {
+                ((BComponent)parent).invalidate();
+            }
+        }
     }
 
     /**
@@ -238,19 +289,6 @@ public class BComponent extends Node
     }
 
     /**
-     * Called by a component after it has changed internally in such a way
-     * as to require a relayout, this method climbs the interface
-     * hierarchy to the containing window and forces a full relayout.
-     */
-    protected void relayout ()
-    {
-        BWindow window = getWindow();
-        if (window != null) {
-            window.layout();
-        }
-    }
-
-    /**
      * Returns a reference to the look and feel in scope for this
      * component.
      */
@@ -279,5 +317,6 @@ public class BComponent extends Node
     protected BLookAndFeel _lnf;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
+    protected boolean _valid;
     protected ArrayList _listeners;
 }

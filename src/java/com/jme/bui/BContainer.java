@@ -105,21 +105,6 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
-    public void layout ()
-    {
-        if (_layout != null) {
-            _layout.layoutContainer(this);
-        }
-
-        // now layout our children
-        applyOperation(new ChildOp() {
-            public void apply (BComponent child) {
-                child.layout();
-            }
-        });
-    }
-
-    // documentation inherited
     public BComponent getHitComponent (int mx, int my)
     {
         // if we're not within our bounds, we don't need to check our children
@@ -139,6 +124,33 @@ public class BContainer extends BComponent
             }
         }
         return this;
+    }
+
+    // documentation inherited
+    public void validate ()
+    {
+        if (!_valid) {
+            // lay ourselves out
+            layout();
+
+            // now validate our children
+            applyOperation(new ChildOp() {
+                public void apply (BComponent child) {
+                    child.validate();
+                }
+            });
+
+            // finally mark ourselves as valid
+            _valid = true;
+        }
+    }
+
+    // documentation inherited
+    protected void layout ()
+    {
+        if (_layout != null) {
+            _layout.layoutContainer(this);
+        }
     }
 
     // documentation inherited
@@ -185,7 +197,11 @@ public class BContainer extends BComponent
     protected void applyOperation (ChildOp op)
     {
         for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
-            BComponent child = (BComponent)getChild(ii);
+            Object chobj = getChild(ii);
+            if (!(chobj instanceof BComponent)) {
+                continue;
+            }
+            BComponent child = (BComponent)chobj;
             try {
                 op.apply(child);
             } catch (Exception e) {
