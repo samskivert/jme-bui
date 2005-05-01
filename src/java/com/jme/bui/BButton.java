@@ -177,7 +177,7 @@ public class BButton extends BComponent
                 _armed = false;
                 break;
 
-            case MouseEvent.BUTTON_PRESSED:
+            case MouseEvent.MOUSE_PRESSED:
                 if (mev.getButton() == 0) {
                     _pressed = true;
                     _armed = true;
@@ -188,7 +188,7 @@ public class BButton extends BComponent
                 }
                 break;
 
-            case MouseEvent.BUTTON_RELEASED:
+            case MouseEvent.MOUSE_RELEASED:
                 if (_armed && _pressed) {
                     // create and dispatch an action event
                     ActionEvent aev = new ActionEvent(

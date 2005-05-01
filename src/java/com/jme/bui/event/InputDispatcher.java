@@ -176,11 +176,11 @@ public class InputDispatcher
                     _ccomponent = tcomponent;
                     setFocus(tickStamp, tcomponent);
                 }
-                type = MouseEvent.BUTTON_PRESSED;
+                type = MouseEvent.MOUSE_PRESSED;
                 _modifiers |= modifierMask;
 
             } else if (!down && wasDown) {
-                type = MouseEvent.BUTTON_RELEASED;
+                type = MouseEvent.MOUSE_RELEASED;
                 _modifiers &= ~modifierMask;
             }
 

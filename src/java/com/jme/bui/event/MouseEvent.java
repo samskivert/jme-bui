@@ -26,10 +26,10 @@ package com.jme.bui.event;
 public class MouseEvent extends InputEvent
 {
     /** An event generated when a mouse button is pressed. */
-    public static final int BUTTON_PRESSED = 0;
+    public static final int MOUSE_PRESSED = 0;
 
     /** An event generated when a mouse button is released. */
-    public static final int BUTTON_RELEASED = 1;
+    public static final int MOUSE_RELEASED = 1;
 
     /** An event generated when the mouse enters a component's bounds. */
     public static final int MOUSE_ENTERED = 2;
@@ -62,8 +62,8 @@ public class MouseEvent extends InputEvent
     }
 
     /**
-     * Returns the type of this event, one of {@link #BUTTON_PRESSED},
-     * {#link BUTTON_RELEASE}, etc.
+     * Returns the type of this event, one of {@link #MOUSE_PRESSED},
+     * {#link MOUSE_RELEASE}, etc.
      */
     public int getType ()
     {
@@ -102,15 +102,15 @@ public class MouseEvent extends InputEvent
     {
         super.dispatch(listener);
         switch (_type) {
-        case BUTTON_PRESSED:
+        case MOUSE_PRESSED:
             if (listener instanceof MouseListener) {
-                ((MouseListener)listener).buttonPressed(this);
+                ((MouseListener)listener).mousePressed(this);
             }
             break;
 
-        case BUTTON_RELEASED:
+        case MOUSE_RELEASED:
             if (listener instanceof MouseListener) {
-                ((MouseListener)listener).buttonReleased(this);
+                ((MouseListener)listener).mouseReleased(this);
             }
             break;
 

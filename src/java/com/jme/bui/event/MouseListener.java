@@ -29,13 +29,13 @@ public interface MouseListener extends ComponentListener
      * Dispatched when a button is pressed within the bounds of the target
      * component.
      */
-    public void buttonPressed (MouseEvent event);
+    public void mousePressed (MouseEvent event);
 
     /**
      * Dispatched when a button is released after having been pressed
      * within the bounds of the target component.
      */
-    public void buttonReleased (MouseEvent event);
+    public void mouseReleased (MouseEvent event);
 
     /**
      * Dispatched when the mouse enters the bounds of the target
