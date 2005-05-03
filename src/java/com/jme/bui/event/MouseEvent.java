@@ -45,6 +45,9 @@ public class MouseEvent extends InputEvent
      * for all movement until all buttons are released. */
     public static final int MOUSE_DRAGGED = 5;
 
+    /** An event generated when the mouse wheel was rotated. */
+    public static final int MOUSE_WHEELED = 6;
+
     /** A constant representing the "left" mouse button. */
     public static final int BUTTON1 = 0;
 
@@ -63,11 +66,18 @@ public class MouseEvent extends InputEvent
     public MouseEvent (Object source, long when, int modifiers, int type,
                        int button, int mx, int my)
     {
+        this(source, when, modifiers, type, button, mx, my, 0);
+    }
+
+    public MouseEvent (Object source, long when, int modifiers, int type,
+                       int button, int mx, int my, int delta)
+    {
         super(source, when, modifiers);
         _type = type;
         _button = button;
         _mx = mx;
         _my = my;
+        _delta = delta;
     }
 
     /**
@@ -105,6 +115,16 @@ public class MouseEvent extends InputEvent
     public int getY ()
     {
         return _my;
+    }
+
+    /**
+     * For mouse wheel events this indicates the delta by which the wheel
+     * was moved. The units seem to be defined by the underlying OpenGL
+     * wrapper, presently LWJGL.
+     */
+    public int getDelta ()
+    {
+        return _delta;
     }
 
     // documentation inherited
@@ -147,6 +167,12 @@ public class MouseEvent extends InputEvent
                 ((MouseMotionListener)listener).mouseDragged(this);
             }
             break;
+
+        case MOUSE_WHEELED:
+            if (listener instanceof MouseWheelListener) {
+                ((MouseWheelListener)listener).mouseWheeled(this);
+            }
+            break;
         }
     }
 
@@ -163,4 +189,5 @@ public class MouseEvent extends InputEvent
     protected int _button;
     protected int _mx;
     protected int _my;
+    protected int _delta;
 }

@@ -218,6 +218,14 @@ public class InputDispatcher
             }
         }
 
+        // process any mouse wheel events
+        int wdelta = _mouseInput.getWheelDelta();
+        if (wdelta != 0 && tcomponent != null) {
+            tcomponent.dispatchEvent(
+                new MouseEvent(this, tickStamp, _modifiers,
+                               MouseEvent.MOUSE_WHEELED, mx, my, wdelta));
+        }
+
         // finally, if no buttons are up after processing, clear out our
         // "clicked" component
         if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
