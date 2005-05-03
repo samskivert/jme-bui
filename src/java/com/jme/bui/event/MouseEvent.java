@@ -60,7 +60,7 @@ public class MouseEvent extends InputEvent
     public MouseEvent (Object source, long when, int modifiers, int type,
                        int mx, int my)
     {
-        this(source, when, modifiers, type, -1, mx, my);
+        this(source, when, modifiers, type, -1, mx, my, 0);
     }
 
     public MouseEvent (Object source, long when, int modifiers, int type,
@@ -183,6 +183,9 @@ public class MouseEvent extends InputEvent
         buf.append(", button=").append(_button);
         buf.append(", x=").append(_mx);
         buf.append(", y=").append(_my);
+        if (_delta != 0) {
+            buf.append(", delta=").append(_delta);
+        }
     }
 
     protected int _type;

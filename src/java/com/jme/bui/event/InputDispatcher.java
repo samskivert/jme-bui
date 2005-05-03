@@ -223,7 +223,7 @@ public class InputDispatcher
         if (wdelta != 0 && tcomponent != null) {
             tcomponent.dispatchEvent(
                 new MouseEvent(this, tickStamp, _modifiers,
-                               MouseEvent.MOUSE_WHEELED, mx, my, wdelta));
+                               MouseEvent.MOUSE_WHEELED, -1, mx, my, wdelta));
         }
 
         // finally, if no buttons are up after processing, clear out our
