@@ -21,6 +21,7 @@
 package com.jme.bui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.jme.bui.layout.BLayoutManager;
@@ -74,7 +75,9 @@ public class BContainer extends BComponent
         if (_layout != null) {
             _layout.addLayoutComponent(child, constraints);
         }
-        attachChild(child);
+        _children.add(child);
+        _node.attachChild(child.getNode());
+        child.setParent(this);
 
         // if we're already part of the hierarchy, call wasAdded() on our
         // child; otherwise when our parent is added, everyone will have
@@ -82,6 +85,9 @@ public class BContainer extends BComponent
         if (isAdded()) {
             child.wasAdded();
         }
+
+        // we need to be relayed out
+        invalidate();
     }
 
     /**
@@ -89,18 +95,46 @@ public class BContainer extends BComponent
      */
     public void remove (BComponent child)
     {
-        if (detachChild(child) == -1) {
+        if (!_children.remove(child)) {
             // if the component was not our child, stop now
             return;
         }
+        _node.detachChild(child.getNode());
         if (_layout != null) {
             _layout.removeLayoutComponent(child);
         }
+        child.setParent(null);
 
         // if we're part of the hierarchy we call wasRemoved() on the
         // child now (which will be propagated to all of its children)
         if (isAdded()) {
             child.wasRemoved();
+        }
+    }
+
+    /**
+     * Returns the number of components contained in this container.
+     */
+    public int getComponentCount ()
+    {
+        return _children.size();
+    }
+
+    /**
+     * Returns the <code>index</code>th component from this container.
+     */
+    public BComponent getComponent (int index)
+    {
+        return (BComponent)_children.get(index);
+    }
+
+    /**
+     * Removes all children of this container.
+     */
+    public void removeAll ()
+    {
+        for (int ii = getComponentCount() - 1; ii > 0; ii--) {
+            remove(getComponent(ii));
         }
     }
 
@@ -117,8 +151,8 @@ public class BContainer extends BComponent
         my -= _y;
 
         BComponent hit = null;
-        for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
-            BComponent child = (BComponent)getChild(ii);
+        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+            BComponent child = getComponent(ii);
             if ((hit = child.getHitComponent(mx, my)) != null) {
                 return hit;
             }
@@ -196,12 +230,8 @@ public class BContainer extends BComponent
      */
     protected void applyOperation (ChildOp op)
     {
-        for (int ii = 0, ll = getQuantity(); ii < ll; ii++) {
-            Object chobj = getChild(ii);
-            if (!(chobj instanceof BComponent)) {
-                continue;
-            }
-            BComponent child = (BComponent)chobj;
+        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+            BComponent child = getComponent(ii);
             try {
                 op.apply(child);
             } catch (Exception e) {
@@ -217,5 +247,6 @@ public class BContainer extends BComponent
         public void apply (BComponent child);
     }
 
+    protected ArrayList _children = new ArrayList();
     protected BLayoutManager _layout;
 }

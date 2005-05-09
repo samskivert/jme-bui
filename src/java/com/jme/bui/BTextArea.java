@@ -133,8 +133,8 @@ public class BTextArea extends BContainer
         _background.wasAdded();
 
         // create a node that will contain our text
-        _text = new Node(name + ":text");
-        attachChild(_text);
+        _text = new Node("text");
+        _node.attachChild(_text);
         _text.updateRenderState();
     }
 
@@ -149,7 +149,7 @@ public class BTextArea extends BContainer
         }
 
         if (_text != null) {
-            detachChild(_text);
+            _node.detachChild(_text);
             _text = null;
         }
     }

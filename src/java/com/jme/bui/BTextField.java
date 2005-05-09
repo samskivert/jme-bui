@@ -101,9 +101,9 @@ public class BTextField extends BContainer
         ColorRGBA[] colors = new ColorRGBA[] {
             getLookAndFeel().getForeground(),
             getLookAndFeel().getForeground() };
-        _cursor = new Line(name + ":cursor", ends, null, colors, null);
+        _cursor = new Line("cursor", ends, null, colors, null);
         _cursor.setSolidColor(getLookAndFeel().getForeground());
-        attachChild(_cursor);
+        _node.attachChild(_cursor);
         _cursor.setForceCull(true);
     }
 

@@ -61,7 +61,7 @@ public class TiledBackground extends BBackground
         super(left, top, right, bottom);
 
         // we want transparent parts of our texture to show through
-        RenderUtil.makeTransparent(this);
+        RenderUtil.makeTransparent(_node);
 
         // load up the background image as a texture
         Texture texture = TextureManager.loadTexture(
@@ -76,10 +76,10 @@ public class TiledBackground extends BBackground
 
         // create quads for our nine sections
         for (int ii = 0; ii < _sections.length; ii++) {
-            _sections[ii] = new Quad(name + ":" + ii, _twidth/3, _theight/3);
+            _sections[ii] = new Quad("section:" + ii, _twidth/3, _theight/3);
             _sections[ii].setRenderState(_tstate);
             _sections[ii].setTextures(_tcoords[ii]);
-            attachChild(_sections[ii]);
+            _node.attachChild(_sections[ii]);
         }
     }
 
@@ -95,8 +95,8 @@ public class TiledBackground extends BBackground
         _sections[5].resize(_twidth/3, height - 2*_theight/3);
         _sections[7].resize(width-2*_twidth/3, _theight/3);
 
-        updateGeometricState(0.0f, true);
-        updateRenderState();
+        _node.updateGeometricState(0.0f, true);
+        _node.updateRenderState();
     }
 
     // documentation inherited
@@ -133,8 +133,8 @@ public class TiledBackground extends BBackground
         _sections[8].setLocalTranslation(
             new Vector3f(_width - _twidth/6f, height, 0));
 
-        updateGeometricState(0.0f, true);
-        updateRenderState();
+        _node.updateGeometricState(0.0f, true);
+        _node.updateRenderState();
     }
 
     protected int _twidth, _theight;

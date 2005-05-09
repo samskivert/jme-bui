@@ -33,6 +33,24 @@ import com.jme.bui.Log;
  */
 public class TableLayout extends BLayoutManager
 {
+    /** An enumeration class represnting layout modes. */
+    public static class Mode
+    {
+    }
+
+    /** Left justifies the table contents within the container. */
+    public static final Mode LEFT = new Mode();
+
+    /** Centers the table contents within the container. */
+    public static final Mode CENTER = new Mode();
+
+    /** Right justifies the table contents within the container. */
+    public static final Mode RIGHT = new Mode();
+
+    /** Divides the column space among the columns in proportion to their
+     * preferred size. */
+    public static final Mode STRETCH = new Mode();
+
     /**
      * Creates a table layout with the specified number of columns.
      */
@@ -47,9 +65,19 @@ public class TableLayout extends BLayoutManager
      */
     public TableLayout (int columns, int rowgap, int colgap)
     {
+        this(columns, rowgap, colgap, LEFT);
+    }
+
+    /**
+     * Creates a table layout with the specified number of columns and the
+     * specifeid gap between rows and columns.
+     */
+    public TableLayout (int columns, int rowgap, int colgap, Mode mode)
+    {
         _columnWidths = new int[columns];
         _rowgap = rowgap;
         _colgap = colgap;
+        _mode = mode;
     }
 
     // documentation inherited
@@ -67,8 +95,8 @@ public class TableLayout extends BLayoutManager
         computeMetrics(target);
 
         int row = 0, col = 0, x = 0, y = target.getHeight();
-        for (int ii = 0, ll = target.getQuantity(); ii < ll; ii++) {
-            BComponent child = (BComponent)target.getChild(ii);
+        for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
+            BComponent child = target.getComponent(ii);
             child.setBounds(x, y - _rowHeights[row],
                             _columnWidths[col], _rowHeights[row]);
             x += (_columnWidths[col] + _colgap);
@@ -89,8 +117,8 @@ public class TableLayout extends BLayoutManager
         }
 
         int row = 0, col = 0;
-        for (int ii = 0, ll = target.getQuantity(); ii < ll; ii++) {
-            BComponent child = (BComponent)target.getChild(ii);
+        for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
+            BComponent child = target.getComponent(ii);
             Dimension psize = child.getPreferredSize();
             if (psize.height > _rowHeights[row]) {
                 _rowHeights[row] = psize.height;
@@ -103,11 +131,28 @@ public class TableLayout extends BLayoutManager
                 row++;
             }
         }
+
+        // if we are stretching, adjust the column widths accordingly
+        if (_mode == STRETCH) {
+            int naturalWidth = sum(_columnWidths);
+            int avail = target.getWidth() - naturalWidth -
+                (_colgap * (_columnWidths.length-1));
+            int used = 0;
+            for (int ii = 0; ii < _columnWidths.length; ii++) {
+                int adjust = _columnWidths[ii] * avail / naturalWidth;
+                _columnWidths[ii] += adjust;
+                used += adjust;
+            }
+            // add any rounding error to the first column
+            if (_columnWidths.length > 0) {
+                _columnWidths[0] += (avail - used);
+            }
+        }
     }
 
     protected int computeRows (BContainer target)
     {
-        int ccount = target.getQuantity();
+        int ccount = target.getComponentCount();
         int rows = ccount / _columnWidths.length;
         if (ccount % _columnWidths.length != 0) {
             rows++;
@@ -124,6 +169,7 @@ public class TableLayout extends BLayoutManager
         return total;
     }
 
+    protected Mode _mode;
     protected int _rowgap, _colgap;
     protected int[] _columnWidths;
     protected int[] _rowHeights;

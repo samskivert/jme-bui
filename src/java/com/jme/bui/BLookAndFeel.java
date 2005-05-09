@@ -132,9 +132,10 @@ public class BLookAndFeel
      */
     public BBackground createTextBack ()
     {
-        String path = "/rsrc/textures/button_up.png";
-        return new TiledBackground(
-            BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+//         String path = "/rsrc/textures/button_up.png";
+//         return new TiledBackground(
+//             BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+        return new TintedBackground(5, 5, 5, 5, new ColorRGBA(0, 0, 0, 0.5f));
     }
 
     /**

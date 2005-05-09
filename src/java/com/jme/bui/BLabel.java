@@ -158,8 +158,9 @@ public class BLabel extends BComponent
         case BOTTOM: yoff = 0; break;
         }
 
-        _slab.setLocalTranslation(
-            new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
+//         _slab.setLocalTranslation(
+//             new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
+
         // TEMP: handle Text offset bug
         xoff -= 4f;
         _tgeom.setLocalTranslation(new Vector3f(xoff, yoff, 0));
@@ -172,13 +173,13 @@ public class BLabel extends BComponent
     {
 //         if (_glyphs != null) {
 //             for (int ii = 0; ii < _glyphs.length; ii++) {
-//                 detachChild(_glyphs[ii]);
+//                 _node.detachChild(_glyphs[ii]);
 //             }
 //         }
 
         if (_tgeom != null) {
-            detachChild(_slab);
-            detachChild(_tgeom);
+//             _node.detachChild(_slab);
+            _node.detachChild(_tgeom);
         }
 
         BLookAndFeel lnf = getLookAndFeel();
@@ -192,24 +193,24 @@ public class BLabel extends BComponent
 //             _glyphs[ii].setLocalTranslation(
 //                 new Vector3f(_tsize.width + cwidth/2, _tsize.height/2, 0));
 //             _glyphs[ii].setSolidColor(lnf.getForeground());
-//             attachChild(_glyphs[ii]);
+//             _node.attachChild(_glyphs[ii]);
 //             _tsize.width += cwidth;
 //         }
 
-        _tgeom = new Text(name + ":text", _text);
+        _tgeom = new Text("text", _text);
         _tgeom.setTextColor(lnf.getForeground());
         _tsize = new Dimension((int)_tgeom.getWidth(), (int)_tgeom.getHeight());
         font.configure(_tgeom);
 
-        _slab = new Quad("foo", _tsize.width, _tsize.height);
-        _slab.setSolidColor(ColorRGBA.red);
-        _slab.updateRenderState();
-        attachChild(_slab);
+//         _slab = new Quad("foo", _tsize.width, _tsize.height);
+//         _slab.setSolidColor(ColorRGBA.red);
+//         _slab.updateRenderState();
+//         _node.attachChild(_slab);
 
-        attachChild(_tgeom);
+        _node.attachChild(_tgeom);
 
-        updateGeometricState(0.0f, true);
-        updateRenderState();
+        _node.updateGeometricState(0.0f, true);
+        _node.updateRenderState();
     }
 
     // documentation inherited
@@ -220,7 +221,7 @@ public class BLabel extends BComponent
 
     protected String _text;
 //     protected BGlyph[] _glyphs;
-    protected Quad _slab;
+//     protected Quad _slab;
     protected Text _tgeom;
     protected Dimension _tsize;
     protected int _halign = LEFT, _valign = CENTER;

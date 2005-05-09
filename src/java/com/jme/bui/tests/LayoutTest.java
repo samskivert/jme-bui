@@ -35,6 +35,7 @@ import com.jme.bui.BLookAndFeel;
 import com.jme.bui.BTextArea;
 import com.jme.bui.BTextField;
 import com.jme.bui.BWindow;
+import com.jme.bui.TintedBackground;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.InputDispatcher;
@@ -56,12 +57,14 @@ public class LayoutTest extends SimpleGame
 
         BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
         BWindow window = new BWindow(lnf, new BorderLayout());
+        window.setBackground(new TintedBackground(
+                                 5, 5, 5, 5, new ColorRGBA(0, 0, 1, 0.5f)));
         window.add(new BLabel("NORTH"), BorderLayout.NORTH);
         window.add(new BLabel("EAST"), BorderLayout.EAST);
         window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.add(new BLabel("WEST"), BorderLayout.WEST);
         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
-        rootNode.attachChild(window);
+        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(25, 25);
@@ -77,7 +80,7 @@ public class LayoutTest extends SimpleGame
             }
         });
         window.setBounds(100, 100, 300, 150);
-        rootNode.attachChild(window);
+        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
 
         window = new BWindow(lnf, new TableLayout(3, 5, 5));
@@ -91,7 +94,7 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("Eight"));
         window.add(new BLabel("Nine"));
         window.setBounds(100, 400, 300, 150);
-        rootNode.attachChild(window);
+        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
 
         // these just get in the way

@@ -36,7 +36,7 @@ public class BWindow extends BContainer
     {
         setLookAndFeel(lnf);
         setLayoutManager(layout);
-        setRenderQueueMode(Renderer.QUEUE_ORTHO);
+        _node.setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
 
     /**
@@ -48,6 +48,20 @@ public class BWindow extends BContainer
         Dimension ps = getPreferredSize();
         Log.log.info("Sizing to " + ps);
         setBounds(_x, _y, ps.width, ps.height);
+    }
+
+    /**
+     * Configures this window with a background. This should be called
+     * before any components are added to the window to ensure proper
+     * render order.
+     */
+    public void setBackground (BBackground background)
+    {
+        if (_background != null) {
+            _node.detachChild(_background.getNode());
+        }
+        _background = background;
+        _node.attachChild(_background.getNode());
     }
 
     /**
@@ -91,6 +105,21 @@ public class BWindow extends BContainer
         return _dispatcher != null;
     }
 
+    // documentation inherited
+    protected void layout ()
+    {
+        super.layout();
+
+        // TODO: sort out how to honor the background's "insets"
+        if (_background != null) {
+            // our background occupies our entire dimensions
+            _background.setBounds(0, 0, _width, _height);
+        }
+    }
+
     /** The dispatcher that handles our events. */
     protected InputDispatcher _dispatcher;
+
+    /** The background we display to denote our window. */
+    protected BBackground _background;
 }

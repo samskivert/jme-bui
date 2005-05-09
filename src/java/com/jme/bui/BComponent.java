@@ -32,16 +32,11 @@ import com.jme.scene.Node;
  * The basic entity in the BUI user interface system. A hierarchy of
  * components and component derivations make up a user interface.
  */
-public class BComponent extends Node
+public class BComponent
 {
     public BComponent ()
     {
-        super("");
-        // we can't pass our auto-generated name to our superclass
-        // constructor because those methods cannot be called until it
-        // finishes execution, so we construct with a blank name and set a
-        // valid one immediately
-        setName(getClass().getName() + ":" + hashCode());
+        _node = new Node(getClass().getName() + ":" + hashCode());
     }
 
     /**
@@ -52,6 +47,22 @@ public class BComponent extends Node
     public void setLookAndFeel (BLookAndFeel lnf)
     {
         _lnf = lnf;
+    }
+
+    /**
+     * Returns the node associated with this component.
+     */
+    public Node getNode ()
+    {
+        return _node;
+    }
+
+    /**
+     * Informs this component of its parent in the interface heirarchy.
+     */
+    public void setParent (BComponent parent)
+    {
+        _parent = parent;
     }
 
     /**
@@ -114,8 +125,8 @@ public class BComponent extends Node
     {
         if (acceptsFocus()) {
             return this;
-        } else if (parent instanceof BComponent) {
-            return ((BComponent)parent).getFocusTarget();
+        } else if (_parent != null) {
+            return _parent.getFocusTarget();
         } else {
             return null;
         }
@@ -149,7 +160,7 @@ public class BComponent extends Node
         if (_x != x || _y != y) {
             _x = x;
             _y = y;
-            setLocalTranslation(new Vector3f(_x, _y, 0f));
+            _node.setLocalTranslation(new Vector3f(_x, _y, 0f));
         }
         if (_width != width || _height != height) {
             _width = width;
@@ -224,8 +235,8 @@ public class BComponent extends Node
     {
         if (_valid) {
             _valid = false;
-            if (parent instanceof BComponent) {
-                ((BComponent)parent).invalidate();
+            if (_parent != null) {
+                _parent.invalidate();
             }
         }
     }
@@ -291,9 +302,8 @@ public class BComponent extends Node
      */
     protected BLookAndFeel getLookAndFeel ()
     {
-        // FYI: (null instanceof Whatever) is always false
-        return (_lnf == null && parent instanceof BComponent) ?
-            ((BComponent)parent).getLookAndFeel() : _lnf;
+        return (_lnf == null && _parent != null) ?
+            _parent.getLookAndFeel() : _lnf;
     }
 
     /**
@@ -304,13 +314,15 @@ public class BComponent extends Node
     {
         if (this instanceof BWindow) {
             return (BWindow)this;
-        } else if (parent instanceof BComponent) {
-            return ((BComponent)parent).getWindow();
+        } else if (_parent != null) {
+            return _parent.getWindow();
         } else {
             return null;
         }
     }
 
+    protected BComponent _parent;
+    protected Node _node;
     protected BLookAndFeel _lnf;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;

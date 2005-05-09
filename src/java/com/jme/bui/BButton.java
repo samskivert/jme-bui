@@ -80,6 +80,14 @@ public class BButton extends BComponent
     }
 
     /**
+     * Returns the action generated when this button is clicked.
+     */
+    public String getAction ()
+    {
+        return _action;
+    }
+
+    /**
      * Configures the horizontal alignment of this button's text.
      */
     public void setHorizontalAlignment (int align)
@@ -121,14 +129,14 @@ public class BButton extends BComponent
             _backgrounds = new BBackground[3];
             for (int ii = 0; ii < _backgrounds.length; ii++) {
                 _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
-                attachChild(_backgrounds[ii]);
+                _node.attachChild(_backgrounds[ii].getNode());
                 _backgrounds[ii].wasAdded();
-                _backgrounds[ii].setForceCull(ii != 0);
+                _backgrounds[ii].getNode().setForceCull(ii != 0);
             }
         }
 
         // we need to handle our children by hand as we're not a container
-        attachChild(_label);
+        _node.attachChild(_label.getNode());
         _label.wasAdded();
     }
 
@@ -204,7 +212,7 @@ public class BButton extends BComponent
             int state = getState();
             if (state != ostate) {
                 for (int ii = 0; ii < _backgrounds.length; ii++) {
-                    _backgrounds[ii].setForceCull(ii != state);
+                    _backgrounds[ii].getNode().setForceCull(ii != state);
                 }
                 int dl = (state == DOWN) ? 1 : 0;
                 _label.setLocation(_backgrounds[0].getLeftInset() + dl,
