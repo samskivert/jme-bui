@@ -137,6 +137,7 @@ public class BButton extends BComponent
 
         // we need to handle our children by hand as we're not a container
         _node.attachChild(_label.getNode());
+        _label.setParent(this);
         _label.wasAdded();
     }
 
@@ -163,7 +164,8 @@ public class BButton extends BComponent
         int top = _backgrounds[0].getTopInset();
         int right = _backgrounds[0].getRightInset();
         int bottom = _backgrounds[0].getBottomInset();
-        _label.setBounds(left, top, width - (left+right), height - (top+bottom));
+        _label.setBounds(left, top, width - (left+right),
+                         height - (top+bottom));
     }
 
     // documentation inherited
