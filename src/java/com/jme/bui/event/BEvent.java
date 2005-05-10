@@ -28,7 +28,9 @@ import java.util.EventObject;
 public class BEvent extends EventObject
 {
     /**
-     * Returns the time at which this event was generated.
+     * Returns the time at which this event was generated or -1 if this
+     * event was not a result of a user action with an associated
+     * timestamp.
      */
     public long getWhen ()
     {

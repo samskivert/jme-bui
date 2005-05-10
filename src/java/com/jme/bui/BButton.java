@@ -63,6 +63,19 @@ public class BButton extends BComponent
     }
 
     /**
+     * Creates a button with the specified icon and action. The action
+     * will be dispatched via an {@link ActionEvent} when the button is
+     * clicked.
+     */
+    public BButton (BIcon icon, String action)
+    {
+        _label = new BLabel(icon);
+        _label.setHorizontalAlignment(BLabel.CENTER);
+        _action = action;
+        invalidate();
+    }
+
+    /**
      * Configures the text to be displayed on this button.
      */
     public void setText (String text)

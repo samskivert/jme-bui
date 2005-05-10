@@ -56,6 +56,9 @@ public class BorderLayout extends BLayoutManager
     /** A layout constraint. */
     public static final Integer CENTER = new Integer(4);
 
+    /** A layout constraint. */
+    public static final Integer IGNORE = new Integer(5);
+
     /**
      * Creates a border layout with zero gap between the horizontal
      * components and zero gap between the vertical.
@@ -79,7 +82,9 @@ public class BorderLayout extends BLayoutManager
     public void addLayoutComponent (BComponent comp, Object constraints)
     {
         if (constraints instanceof Integer) {
-            _components[((Integer)constraints).intValue()] = comp;
+            if (constraints != IGNORE) {
+                _components[((Integer)constraints).intValue()] = comp;
+            }
         } else {
             throw new IllegalArgumentException(
                 "Components added to a BorderLayout must have proper " +

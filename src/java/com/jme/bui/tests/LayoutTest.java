@@ -30,8 +30,10 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jme.bui.BButton;
+import com.jme.bui.BIcon;
 import com.jme.bui.BLabel;
 import com.jme.bui.BLookAndFeel;
+import com.jme.bui.BScrollBar;
 import com.jme.bui.BTextArea;
 import com.jme.bui.BTextField;
 import com.jme.bui.BWindow;
@@ -56,10 +58,15 @@ public class LayoutTest extends SimpleGame
         InputSystem.getMouseInput().setCursorVisible(true);
 
         BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
-        BWindow window = new BWindow(lnf, new BorderLayout());
+        BWindow window = new BWindow(lnf, new BorderLayout(5, 5));
         window.setBackground(new TintedBackground(
                                  5, 5, 5, 5, new ColorRGBA(0, 0, 1, 0.5f)));
-        window.add(new BLabel("NORTH"), BorderLayout.NORTH);
+        URL icon = getClass().getClassLoader().
+            getResource("rsrc/textures/button_up.png");
+        BLabel label = new BLabel(new BIcon(icon));
+        label.setHorizontalAlignment(BLabel.CENTER);
+        label.setText("NORTH");
+        window.add(label, BorderLayout.NORTH);
         window.add(new BLabel("EAST"), BorderLayout.EAST);
         window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.add(new BLabel("WEST"), BorderLayout.WEST);
@@ -69,9 +76,13 @@ public class LayoutTest extends SimpleGame
         window.pack();
         window.setLocation(25, 25);
 
-        window = new BWindow(lnf, new BorderLayout(2, 2));
+        window = new BWindow(lnf, new BorderLayout(5, 5));
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
         window.add(_input = new BTextField(), BorderLayout.SOUTH);
+        window.add(new BScrollBar(BScrollBar.VERTICAL, 0, 25, 50, 100),
+                   BorderLayout.EAST);
+        window.add(new BScrollBar(BScrollBar.HORIZONTAL, 0, 25, 50, 100),
+                   BorderLayout.NORTH);
         _input.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 _text.appendText("You said: ", ColorRGBA.red);
@@ -84,7 +95,7 @@ public class LayoutTest extends SimpleGame
         _dispatcher.addWindow(window);
 
         window = new BWindow(lnf, new TableLayout(3, 5, 5));
-        window.add(new BLabel("One"));
+        window.add(new BButton(new BIcon(icon), ""));
         window.add(new BLabel("Two"));
         window.add(new BLabel("Three"));
         window.add(new BLabel("Four"));

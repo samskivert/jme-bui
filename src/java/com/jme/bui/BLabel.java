@@ -22,8 +22,6 @@ package com.jme.bui;
 
 import java.awt.Dimension;
 
-import com.jme.bui.font.BFont;
-import com.jme.bui.font.BGlyph;
 import com.jme.renderer.ColorRGBA;
 import com.jme.math.Vector3f;
 import com.jme.scene.Text;
@@ -45,11 +43,35 @@ public class BLabel extends BComponent
     }
 
     /**
+     * Creates a label that will display the supplied icon.
+     */
+    public BLabel (BIcon icon)
+    {
+        setIcon(icon);
+    }
+
+    /**
      * Returns the text currently being displayed by this label.
      */
     public String getText ()
     {
         return _text;
+    }
+
+    /**
+     * Returns the icon being displayed by this label.
+     */
+    public BIcon getIcon ()
+    {
+        return _icon;
+    }
+
+    /**
+     * Returns the gap between the icon and the text.
+     */
+    public int getIconTextGap ()
+    {
+        return _gap;
     }
 
     /**
@@ -128,6 +150,29 @@ public class BLabel extends BComponent
         }
     }
 
+    /**
+     * Configures the label to display the specified icon.
+     */
+    public void setIcon (BIcon icon)
+    {
+        if (_icon != null) {
+            _node.detachChild(_icon.getQuad());
+        }
+        _icon = icon;
+        if (_icon != null) {
+            _node.attachChild(_icon.getQuad());
+        }
+        invalidate();
+    }
+
+    /**
+     * Configures the gap between the icon and the text.
+     */
+    public void setIconTextGap (int gap)
+    {
+        _gap = gap;
+    }
+
     // documentation inherited
     public void wasAdded ()
     {
@@ -142,28 +187,58 @@ public class BLabel extends BComponent
     {
         super.layout();
 
+        float width = 0;
+        if (_icon != null) {
+            width += _icon.getWidth();
+        }
+        if (_tgeom != null) {
+            if (width != 0) {
+                width += _gap;
+            }
+            width += _tgeom.getWidth();
+        }
+
+        float height = 0;
+        if (_icon != null) {
+            height = _icon.getHeight();
+        }
+        if (_tgeom != null) {
+            height = Math.max(height, _tgeom.getHeight());
+        }
+
         float xoff;
         switch (_halign) {
-        case CENTER: xoff = (_width - _tgeom.getWidth()) / 2; break;
-        case RIGHT: xoff = _width - _tgeom.getWidth(); break;
+        case CENTER: xoff = (_width - width) / 2; break;
+        case RIGHT: xoff = _width - width; break;
         default:
         case LEFT: xoff = 0;
         }
 
+        if (_icon != null) {
+            _icon.getQuad().setLocalTranslation(
+                new Vector3f(xoff + _icon.getWidth()/2,
+                             getYOffset(_icon.getHeight()) +
+                             _icon.getHeight()/2, 0));
+            xoff += (_icon.getWidth() + _gap);
+        }
+
+        if (_tgeom != null) {
+            // TEMP: handle Text offset bug
+            xoff -= 4f;
+            _tgeom.setLocalTranslation(
+                new Vector3f(xoff, getYOffset(_tgeom.getHeight()), 0));
+        }
+    }
+
+    protected float getYOffset (float height)
+    {
         float yoff;
         switch (_valign) {
         default:
-        case CENTER: yoff = (_height - _tgeom.getHeight()) / 2; break;
-        case TOP: yoff = _height - _tgeom.getHeight(); break;
-        case BOTTOM: yoff = 0; break;
+        case TOP: return _height - height;
+        case BOTTOM: return 0;
+        case CENTER: return (_height - height) / 2;
         }
-
-//         _slab.setLocalTranslation(
-//             new Vector3f(xoff + _tsize.width/2, yoff + _tsize.height/2, 0));
-
-        // TEMP: handle Text offset bug
-        xoff -= 4f;
-        _tgeom.setLocalTranslation(new Vector3f(xoff, yoff, 0));
     }
 
     /**
@@ -171,44 +246,21 @@ public class BLabel extends BComponent
      */
     protected void recreateGlyphs ()
     {
-//         if (_glyphs != null) {
-//             for (int ii = 0; ii < _glyphs.length; ii++) {
-//                 _node.detachChild(_glyphs[ii]);
-//             }
-//         }
-
         if (_tgeom != null) {
-//             _node.detachChild(_slab);
             _node.detachChild(_tgeom);
+            _tgeom = null;
+        }
+
+        if (_text == null) {
+            return;
         }
 
         BLookAndFeel lnf = getLookAndFeel();
-        BFont font = lnf.getFont();
-//         _tsize = new Dimension(0, (int)font.getHeight());
-//         _glyphs = new BGlyph[_text.length()];
-//         for (int ii = 0; ii < _glyphs.length; ii++) {
-//             char cchar = _text.charAt(ii);
-//             int cwidth = font.getWidth(cchar);
-//             _glyphs[ii] = font.createCharacter(cchar);
-//             _glyphs[ii].setLocalTranslation(
-//                 new Vector3f(_tsize.width + cwidth/2, _tsize.height/2, 0));
-//             _glyphs[ii].setSolidColor(lnf.getForeground());
-//             _node.attachChild(_glyphs[ii]);
-//             _tsize.width += cwidth;
-//         }
-
         _tgeom = new Text("text", _text);
         _tgeom.setTextColor(lnf.getForeground());
-        _tsize = new Dimension((int)_tgeom.getWidth(), (int)_tgeom.getHeight());
-        font.configure(_tgeom);
-
-//         _slab = new Quad("foo", _tsize.width, _tsize.height);
-//         _slab.setSolidColor(ColorRGBA.red);
-//         _slab.updateRenderState();
-//         _node.attachChild(_slab);
+        lnf.getFont().configure(_tgeom);
 
         _node.attachChild(_tgeom);
-
         _node.updateGeometricState(0.0f, true);
         _node.updateRenderState();
     }
@@ -216,13 +268,22 @@ public class BLabel extends BComponent
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
-        return _tsize;
+        int width = 0, height = 0;
+        if (_icon != null) {
+            width = _icon.getWidth();
+            height = _icon.getHeight();
+        }
+        if (_tgeom != null) {
+            width += _tgeom.getWidth();
+            height = (int)Math.max(height, _tgeom.getHeight());
+        }
+        return new Dimension(width, height);
     }
 
     protected String _text;
-//     protected BGlyph[] _glyphs;
-//     protected Quad _slab;
+    protected BIcon _icon;
+
     protected Text _tgeom;
-    protected Dimension _tsize;
     protected int _halign = LEFT, _valign = CENTER;
+    protected int _gap;
 }

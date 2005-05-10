@@ -62,6 +62,24 @@ public abstract class BBackground extends BComponent
         return _bottom;
     }
 
+    /**
+     * Returns the width of the "contents" of this background which is the
+     * total width minus the insets.
+     */
+    public int getContentWidth ()
+    {
+        return _width - _left - _right;
+    }
+
+    /**
+     * Returns the height of the "contents" of this background which is
+     * the total height minus the insets.
+     */
+    public int getContentHeight ()
+    {
+        return _height - _top - _bottom;
+    }
+
     /** Configures this background with its insets. */
     protected BBackground (int left, int top, int right, int bottom)
     {

@@ -38,6 +38,7 @@ import com.jme.renderer.ColorRGBA;
  * look and behavior.
  */
 public class BLookAndFeel
+    implements BConstants
 {
     /**
      * Creates an unconfigured look and feel.
@@ -136,6 +137,42 @@ public class BLookAndFeel
 //         return new TiledBackground(
 //             BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
         return new TintedBackground(5, 5, 5, 5, new ColorRGBA(0, 0, 0, 0.5f));
+    }
+
+    /**
+     * Creates either the less or more button for a {@link BScrollBar}.
+     */
+    public BButton createScrollButton (int orientation, boolean less)
+    {
+        String path = "/rsrc/textures/scroll_";
+        switch (orientation) {
+        case HORIZONTAL:
+            path += (less ? "left" : "right");
+            break;
+        case VERTICAL:
+            path += (less ? "up" : "down");
+            break;
+        }
+        path += ".png";
+        return new BButton(new BIcon(BLookAndFeel.class.getResource(path)), "");
+    }
+
+    /**
+     * Creates the background for rendering the well of a {@link BScrollBar}.
+     */
+    public BBackground createScrollWell (int orientation)
+    {
+        return new TiledBackground(
+            BLookAndFeel.class.getResource("/rsrc/textures/button_up.png"),
+            5, 3, 5, 3);
+    }
+
+    /**
+     * Creates the background for rendering the thumb of a {@link BScrollBar}.
+     */
+    public BBackground createScrollThumb (int orientation)
+    {
+        return new TintedBackground(0, 0, 0, 0, ColorRGBA.white);
     }
 
     /**

@@ -18,31 +18,15 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jme.bui.event;
 
 /**
- * Codes and constants shared by the BUI components.
+ * An interface used to inform listeners when a model has changed.
  */
-public interface BConstants
+public interface ChangeListener
 {
-    /** An alignment constant. */
-    public static final int LEFT = 0;
-
-    /** An alignment constant. */
-    public static final int RIGHT = 1;
-
-    /** An alignment constant. */
-    public static final int CENTER = 2;
-
-    /** An alignment constant. */
-    public static final int TOP = 0;
-
-    /** An alignment constant. */
-    public static final int BOTTOM = 1;
-
-    /** An orientation constant. */
-    public static final int HORIZONTAL = 0;
-
-    /** An orientation constant. */
-    public static final int VERTICAL = 1;
+    /**
+     * Indicates that the underlying model has changed.
+     */
+    public void stateChanged (ChangeEvent event);
 }
