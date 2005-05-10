@@ -24,6 +24,8 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 
 import com.jme.bui.event.BEvent;
+import com.jme.bui.event.ChangeEvent;
+import com.jme.bui.event.ChangeListener;
 import com.jme.bui.font.BFont;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -53,6 +55,20 @@ public class BTextArea extends BContainer
 
     public BTextArea ()
     {
+        _model.addChangeListener(new ChangeListener() {
+            public void stateChanged (ChangeEvent event) {
+                modelDidChange();
+            }
+        });
+    }
+
+    /**
+     * Returns a model that can be wired to a scroll bar to allow
+     * scrolling up and down through the lines in this text area.
+     */
+    public BoundedRangeModel getScrollModel ()
+    {
+        return _model;
     }
 
     /**
@@ -221,11 +237,32 @@ public class BTextArea extends BContainer
         insets = _background.getTopInset() + _background.getBottomInset();
         int lines = (_height - insets) / font.getHeight();
 
-        // now position each of our lines properly
+        // update our model (which will cause the text to be repositioned)
+        int sline = Math.max(0, _lines.size() - lines);
+        if (!_model.setRange(0, sline, lines, _lines.size())) {
+            // we need to force adjustment of the text even if we didn't
+            // change anything because we wiped out and recreated all of
+            // our lines
+            modelDidChange();
+        }
+    }
+
+    /**
+     * Called when our model has changed (due to scrolling by a scroll bar
+     * or a call to {@link #scrollToLine}, etc.).
+     */
+    protected void modelDidChange ()
+    {
+        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
+            _text.detachChild((Line)_lines.get(ii));
+        }
+
+        BFont font = getLookAndFeel().getFont();
         int x = _background.getLeftInset();
         int y = _height - font.getHeight() - _background.getTopInset();
-        int sline = Math.max(0, _lines.size() - lines);
-        for (int ii = sline, ll = _lines.size(); ii < ll; ii++) {
+
+        int start = _model.getValue(), stop = start + _model.getExtent();
+        for (int ii = start; ii < stop; ii++) {
             Line line = (Line)_lines.get(ii);
             _text.attachChild(line);
             line.updateGeometricState(0.0f, true);
@@ -300,6 +337,7 @@ public class BTextArea extends BContainer
     }
 
     protected BBackground _background;
+    protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
     protected Node _text;
     protected ArrayList _runs = new ArrayList();
     protected ArrayList _lines = new ArrayList();

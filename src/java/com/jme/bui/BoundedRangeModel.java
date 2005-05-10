@@ -28,11 +28,11 @@ import com.jme.bui.event.ChangeListener;
 /**
  * Defines the model used by the {@link BScrollBar} to communicate with
  * other components and external entities that wish to be manipulated by a
- * scrollbar.
+ * scroll bar.
  *
  * <p> A bounded range model has a minimum and maximum value, a current
  * value and an extent. These are easily visualized by showing how they
- * control a scrollbar:
+ * control a scroll bar:
  *
  * <pre>
  * +-------------------------------------------------------------------+
@@ -163,8 +163,11 @@ public class BoundedRangeModel
     /**
      * Configures this model with a new minimum, maximum, current value
      * and extent.
+     *
+     * @return true if the range was modified, false if the values were
+     * already set to the requested values.
      */
-    public void setRange (int min, int value, int extent, int max)
+    public boolean setRange (int min, int value, int extent, int max)
     {
         min = Math.min(min, max);
         max = Math.max(max, value);
@@ -183,7 +186,10 @@ public class BoundedRangeModel
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
                 ((ChangeListener)_listeners.get(ii)).stateChanged(_event);
             }
+
+            return true;
         }
+        return false;
     }
 
     protected int _min, _max;

@@ -79,7 +79,7 @@ public class LayoutTest extends SimpleGame
         window = new BWindow(lnf, new BorderLayout(5, 5));
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
         window.add(_input = new BTextField(), BorderLayout.SOUTH);
-        window.add(new BScrollBar(BScrollBar.VERTICAL, 0, 25, 50, 100),
+        window.add(new BScrollBar(BScrollBar.VERTICAL, _text.getScrollModel()),
                    BorderLayout.EAST);
         window.add(new BScrollBar(BScrollBar.HORIZONTAL, 0, 25, 50, 100),
                    BorderLayout.NORTH);

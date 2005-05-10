@@ -31,7 +31,7 @@ import com.jme.bui.event.MouseMotionListener;
 import com.jme.bui.layout.BorderLayout;
 
 /**
- * Displays a scrollbar for all your horizontal and vertical scrolling
+ * Displays a scroll bar for all your horizontal and vertical scrolling
  * needs.
  */
 public class BScrollBar extends BContainer
@@ -60,9 +60,18 @@ public class BScrollBar extends BContainer
      */
     public BScrollBar (int orientation, int min, int value, int extent, int max)
     {
+        this(orientation, new BoundedRangeModel(min, value, extent, max));
+    }
+
+    /**
+     * Creates a scroll bar with the specified orientation which will
+     * interact with the supplied model.
+     */
+    public BScrollBar (int orientation, BoundedRangeModel model)
+    {
         super(new BorderLayout());
         _orient = orientation;
-        _model = new BoundedRangeModel(min, value, extent, max);
+        _model = model;
         _model.addChangeListener(_updater);
     }
 
@@ -123,14 +132,14 @@ public class BScrollBar extends BContainer
     }
 
     /**
-     * Recomputes and repositions the scrollbar thumb to reflect the
+     * Recomputes and repositions the scroll bar thumb to reflect the
      * current configuration of the model.
      */
     protected void update ()
     {
         int tx = 0, ty = 0;
         int twidth = _well.getContentWidth(), theight = _well.getContentHeight();
-        int range = _model.getRange();
+        int range = Math.max(_model.getRange(), 1); // avoid div0
         int extent = Math.max(_model.getExtent(), 1); // avoid div0
         if (_orient == HORIZONTAL) {
             int wellSize = _well.getContentWidth();
