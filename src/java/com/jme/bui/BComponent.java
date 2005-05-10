@@ -108,6 +108,28 @@ public class BComponent
         return _height;
     }
 
+    /** Returns the x position of this component in absolute screen
+     * coordinates. */
+    public int getAbsoluteX ()
+    {
+        return _x + ((_parent == null) ? 0 : _parent.getAbsoluteX());
+    }
+
+    /** Returns the y position of this component in absolute screen
+     * coordinates. */
+    public int getAbsoluteY ()
+    {
+        return _y + ((_parent == null) ? 0 : _parent.getAbsoluteY());
+    }
+
+    /**
+     * Returns our bounds as a nicely formatted string.
+     */
+    public String boundsToString ()
+    {
+        return _width + "x" + _height + "+" + _x + "+" + _y;
+    }
+
     /**
      * Returns whether or not this component accepts the keyboard focus.
      */

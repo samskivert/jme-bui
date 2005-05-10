@@ -20,10 +20,14 @@
 
 package com.jme.bui;
 
-import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.ActionEvent;
+import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.ChangeEvent;
 import com.jme.bui.event.ChangeListener;
+import com.jme.bui.event.MouseAdapter;
+import com.jme.bui.event.MouseEvent;
+import com.jme.bui.event.MouseListener;
+import com.jme.bui.event.MouseMotionListener;
 import com.jme.bui.layout.BorderLayout;
 
 /**
@@ -70,11 +74,15 @@ public class BScrollBar extends BContainer
         // create our buttons and backgrounds
         BLookAndFeel lnf = getLookAndFeel();
         add(_well = lnf.createScrollWell(_orient), BorderLayout.CENTER);
+        _well.addListener(_wellListener);
         add(_thumb = lnf.createScrollThumb(_orient), BorderLayout.IGNORE);
+        _thumb.addListener(_thumbListener);
+
         add(_less = lnf.createScrollButton(_orient, true),
             _orient == HORIZONTAL ? BorderLayout.WEST : BorderLayout.NORTH);
         _less.addListener(_buttoner);
         _less.setAction("less");
+
         add(_more = lnf.createScrollButton(_orient, false),
             _orient == HORIZONTAL ? BorderLayout.EAST : BorderLayout.SOUTH);
         _more.addListener(_buttoner);
@@ -102,6 +110,16 @@ public class BScrollBar extends BContainer
             remove(_more);
             _more = null;
         }
+    }
+
+    // documentation inherited
+    public BComponent getHitComponent (int mx, int my)
+    {
+        // we do special processing for the thumb
+        if (_thumb.getHitComponent(mx - _x, my - _y) != null) {
+            return _thumb;
+        }
+        return super.getHitComponent(mx, my);
     }
 
     /**
@@ -141,6 +159,57 @@ public class BScrollBar extends BContainer
         public void stateChanged (ChangeEvent event) {
             update();
         }
+    };
+
+    protected MouseListener _wellListener = new MouseAdapter() {
+        public void mousePressed (MouseEvent event) {
+            // if we're above the thumb, scroll up by a page, if we're
+            // below, scroll down a page
+            int mx = event.getX() - getAbsoluteX(),
+                my = event.getY() - getAbsoluteY(), dv = 0;
+            if (_orient == HORIZONTAL) {
+                if (mx < _thumb.getX()) {
+                    dv = -1;
+                } else if (mx > _thumb.getX() + _thumb.getWidth()) {
+                    dv = 1;
+                }
+            } else {
+                if (my < _thumb.getY()) {
+                    dv = 1;
+                } else if (my > _thumb.getY() + _thumb.getHeight()) {
+                    dv = -1;
+                }
+            }
+            if (dv != 0) {
+                dv *= _model.getRange() / 5;
+                _model.setValue(_model.getValue() + dv);
+            }
+        }
+    };
+
+    protected MouseAdapter _thumbListener = new MouseAdapter() {
+        public void mousePressed (MouseEvent event) {
+            _sv = _model.getValue();
+            _sx = event.getX() - getAbsoluteX();
+            _sy = event.getY() - getAbsoluteY();
+        }
+
+        public void mouseDragged (MouseEvent event) {
+            int dv = 0;
+            if (_orient == HORIZONTAL) {
+                int mx = event.getX() - getAbsoluteX();
+                dv = (mx - _sx) * _model.getRange() / _well.getContentWidth();
+            } else {
+                int my = event.getY() - getAbsoluteY();
+                dv = (_sy - my) * _model.getRange() / _well.getContentHeight();
+            }
+
+            if (dv != 0) {
+                _model.setValue(_sv + dv);
+            }
+        }
+
+        protected int _sx, _sy, _sv;
     };
 
     protected ActionListener _buttoner = new ActionListener() {
