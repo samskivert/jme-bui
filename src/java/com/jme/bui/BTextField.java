@@ -72,6 +72,15 @@ public class BTextField extends BContainer
         return _text;
     }
 
+    /**
+     * Configures the preferred width of this text field (the preferred
+     * height will be calculated from the font).
+     */
+    public void setPreferredWidth (int width)
+    {
+        _prefWidth = width;
+    }
+
     // documentation inherited
     public boolean acceptsFocus ()
     {
@@ -224,6 +233,9 @@ public class BTextField extends BContainer
     protected Dimension computePreferredSize ()
     {
         Dimension d = new Dimension(_label.getPreferredSize());
+        if (_prefWidth != -1) {
+            d.width = _prefWidth;
+        }
         d.width += _background.getLeftInset();
         d.width += _background.getRightInset();
         d.height += _background.getTopInset();
@@ -284,6 +296,7 @@ public class BTextField extends BContainer
     protected BLabel _label;
     protected BKeyMap _keymap;
 
+    protected int _prefWidth = -1;
     protected Line _cursor;
     protected int _cursorPos, _offset;
     protected String _text;
