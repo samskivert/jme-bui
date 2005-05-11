@@ -23,6 +23,7 @@ package com.jme.bui;
 import java.awt.Dimension;
 import java.net.URL;
 
+import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;
 import com.jme.math.Vector3f;
@@ -65,7 +66,8 @@ public class TiledBackground extends BBackground
 
         // load up the background image as a texture
         Texture texture = TextureManager.loadTexture(
-            source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR);
+            source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR,
+            Image.GUESS_FORMAT_NO_S3TC, 1.0f, true);
         texture.setWrap(Texture.WM_WRAP_S_WRAP_T);
         _twidth = texture.getImage().getWidth();
         _theight = texture.getImage().getHeight();

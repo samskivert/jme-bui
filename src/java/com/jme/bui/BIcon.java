@@ -24,6 +24,7 @@ import java.net.URL;
 
 import java.awt.image.BufferedImage;
 
+import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.TextureState;
@@ -40,8 +41,9 @@ public class BIcon
      */
     public BIcon (URL image)
     {
-        this(TextureManager.loadTexture(image, Texture.MM_LINEAR_LINEAR,
-                                        Texture.FM_LINEAR));
+        this(TextureManager.loadTexture(
+                 image, Texture.MM_LINEAR, Texture.FM_NEAREST,
+                 Image.GUESS_FORMAT_NO_S3TC, 1.0f, true));
     }
 
     /**
@@ -50,7 +52,7 @@ public class BIcon
     public BIcon (BufferedImage image)
     {
         this(TextureManager.loadTexture(image, Texture.MM_LINEAR_LINEAR,
-                                        Texture.FM_LINEAR, false));
+                                        Texture.FM_NEAREST, true));
     }
 
     /**

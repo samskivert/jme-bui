@@ -113,6 +113,7 @@ public class BTextField extends BContainer
         _cursor = new Line("cursor", ends, null, colors, null);
         _cursor.setSolidColor(getLookAndFeel().getForeground());
         _node.attachChild(_cursor);
+        _cursor.updateRenderState();
         _cursor.setForceCull(true);
     }
 
