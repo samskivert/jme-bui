@@ -20,10 +20,9 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BLayoutManager;
+import com.jme.bui.util.Dimension;
 import com.jme.renderer.Renderer;
 
 /**

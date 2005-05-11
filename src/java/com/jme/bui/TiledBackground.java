@@ -20,9 +20,9 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
 import java.net.URL;
 
+import com.jme.bui.util.Dimension;
 import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;

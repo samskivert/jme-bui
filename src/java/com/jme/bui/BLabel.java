@@ -20,10 +20,9 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
-import com.jme.renderer.ColorRGBA;
+import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
+import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;

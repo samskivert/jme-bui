@@ -20,11 +20,10 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.MouseEvent;
+import com.jme.bui.util.Dimension;
 
 /**
  * Displays a simple button that can be depressed and which generates an

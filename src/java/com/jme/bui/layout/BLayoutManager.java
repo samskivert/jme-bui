@@ -20,10 +20,9 @@
 
 package com.jme.bui.layout;
 
-import java.awt.Dimension;
-
 import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
+import com.jme.bui.util.Dimension;
 
 /**
  * Layout managers implement a policy for laying out the children in a

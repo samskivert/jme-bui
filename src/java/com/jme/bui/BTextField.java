@@ -20,16 +20,15 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.FocusEvent;
 import com.jme.bui.event.KeyEvent;
-import com.jme.renderer.ColorRGBA;
 import com.jme.bui.text.BKeyMap;
 import com.jme.bui.text.EditCommands;
+import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
+import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Line;
 
 /**

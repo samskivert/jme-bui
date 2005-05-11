@@ -20,11 +20,12 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ComponentListener;
+import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Rectangle;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 
@@ -63,6 +64,14 @@ public class BComponent
     public void setParent (BComponent parent)
     {
         _parent = parent;
+    }
+
+    /**
+     * Returns the parent of this component in the interface hierarchy.
+     */
+    public BComponent getParent ()
+    {
+        return _parent;
     }
 
     /**
@@ -120,6 +129,12 @@ public class BComponent
     public int getAbsoluteY ()
     {
         return _y + ((_parent == null) ? 0 : _parent.getAbsoluteY());
+    }
+
+    /** Returns the bounds of this component in a new rectangle. */
+    public Rectangle getBounds ()
+    {
+        return new Rectangle(_x, _y, _width, _height);
     }
 
     /**

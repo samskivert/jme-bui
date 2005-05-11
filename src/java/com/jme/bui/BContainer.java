@@ -20,11 +20,11 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.jme.bui.layout.BLayoutManager;
+import com.jme.bui.util.Dimension;
 
 /**
  * A user interface element that is meant to contain other interface

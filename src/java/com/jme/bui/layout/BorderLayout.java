@@ -20,10 +20,9 @@
 
 package com.jme.bui.layout;
 
-import java.awt.Dimension;
-
 import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
+import com.jme.bui.util.Dimension;
 
 /**
  * Lays out the children of a container like so:

@@ -20,11 +20,10 @@
 
 package com.jme.bui.layout;
 
-import java.awt.Dimension;
-
 import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
 import com.jme.bui.Log;
+import com.jme.bui.util.Dimension;
 
 /**
  * Lays out components in a simple grid arrangement, wherein the width and

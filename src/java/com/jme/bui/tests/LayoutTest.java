@@ -42,6 +42,7 @@ import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BorderLayout;
+import com.jme.bui.layout.GroupLayout;
 import com.jme.bui.layout.TableLayout;
 
 /**
@@ -94,7 +95,7 @@ public class LayoutTest extends SimpleGame
         rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
 
-        window = new BWindow(lnf, new TableLayout(3, 5, 5));
+        window = new BWindow(lnf, GroupLayout.makeVert(GroupLayout.TOP));
         window.add(new BButton(new BIcon(icon), ""));
         window.add(new BLabel("Two"));
         window.add(new BLabel("Three"));

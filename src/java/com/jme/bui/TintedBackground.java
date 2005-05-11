@@ -20,11 +20,10 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
-
+import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
-import com.jme.scene.shape.Quad;
 import com.jme.renderer.ColorRGBA;
+import com.jme.scene.shape.Quad;
 
 /**
  * Displays a partially transparent solid color in the background.

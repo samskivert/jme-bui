@@ -20,13 +20,13 @@
 
 package com.jme.bui;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ChangeEvent;
 import com.jme.bui.event.ChangeListener;
 import com.jme.bui.font.BFont;
+import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Node;
