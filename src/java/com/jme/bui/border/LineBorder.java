@@ -23,7 +23,6 @@ package com.jme.bui.border;
 import java.util.Arrays;
 
 import com.jme.bui.BComponent;
-import com.jme.bui.Log;
 import com.jme.bui.util.Insets;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -52,6 +51,7 @@ public class LineBorder extends BBorder
         configureCoords(component.getWidth(), component.getHeight());
         _border = new Line("border", _coords, null, _colors, null);
         component.getNode().attachChild(_border);
+        _border.updateRenderState();
     }
 
     // documentation inherited
@@ -65,6 +65,7 @@ public class LineBorder extends BBorder
     {
         configureCoords(width, height);
         _border.reconstruct(_coords, null, _colors, null);
+        _border.updateGeometricState(0, true);
     }
 
     protected void configureCoords (int width, int height)
