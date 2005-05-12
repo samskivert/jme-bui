@@ -38,6 +38,7 @@ import com.jme.bui.BTextArea;
 import com.jme.bui.BTextField;
 import com.jme.bui.BWindow;
 import com.jme.bui.TintedBackground;
+import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.InputDispatcher;
@@ -60,6 +61,7 @@ public class LayoutTest extends SimpleGame
 
         BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
         BWindow window = new BWindow(lnf, new BorderLayout(5, 5));
+        window.setBorder(new LineBorder(ColorRGBA.blue));
         window.setBackground(new TintedBackground(
                                  5, 5, 5, 5, new ColorRGBA(0, 0, 1, 0.5f)));
         URL icon = getClass().getClassLoader().
@@ -78,6 +80,7 @@ public class LayoutTest extends SimpleGame
         window.setLocation(25, 25);
 
         window = new BWindow(lnf, new BorderLayout(5, 5));
+        window.setBorder(new LineBorder(ColorRGBA.black));
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
         window.add(_input = new BTextField(), BorderLayout.SOUTH);
         window.add(new BScrollBar(BScrollBar.VERTICAL, _text.getScrollModel()),
@@ -91,11 +94,12 @@ public class LayoutTest extends SimpleGame
                 _input.setText("");
             }
         });
-        window.setBounds(100, 100, 300, 150);
         rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
+        window.setBounds(100, 100, 400, 250);
 
         window = new BWindow(lnf, GroupLayout.makeVert(GroupLayout.TOP));
+        window.setBorder(new LineBorder(ColorRGBA.black));
         window.add(new BButton(new BIcon(icon), ""));
         window.add(new BLabel("Two"));
         window.add(new BLabel("Three"));
@@ -105,9 +109,26 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("Seven"));
         window.add(new BLabel("Eight"));
         window.add(new BLabel("Nine"));
-        window.setBounds(100, 400, 300, 150);
         rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
+        window.pack();
+        window.setLocation(100, 400);
+
+        window = new BWindow(lnf, GroupLayout.makeHoriz(GroupLayout.LEFT));
+        window.setBorder(new LineBorder(ColorRGBA.black));
+        window.add(new BButton(new BIcon(icon), ""));
+        window.add(new BLabel("Two"));
+        window.add(new BLabel("Three"));
+        window.add(new BLabel("Four"));
+        window.add(new BLabel("Five"));
+        window.add(new BLabel("Six"));
+        window.add(new BLabel("Seven"));
+        window.add(new BLabel("Eight"));
+        window.add(new BLabel("Nine"));
+        rootNode.attachChild(window.getNode());
+        _dispatcher.addWindow(window);
+        window.pack();
+        window.setLocation(300, 400);
 
         // these just get in the way
         KeyBindingManager.getKeyBindingManager().remove("toggle_pause");

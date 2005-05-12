@@ -23,6 +23,7 @@ package com.jme.bui.layout;
 import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
 import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 
 /**
  * Lays out the children of a container like so:
@@ -142,6 +143,11 @@ public class BorderLayout extends BLayoutManager
         psize.width += Math.max(horizComps - 1, 0) * _hgap;
         psize.height += Math.max(vertComps - 1, 0) * _vgap;
 
+        // add in the insets
+        Insets insets = target.getInsets();
+        psize.width += insets.getHorizontal();
+        psize.height += insets.getVertical();
+
         return psize;
     }
 
@@ -149,8 +155,10 @@ public class BorderLayout extends BLayoutManager
     public void layoutContainer (BContainer target)
     {
         // determine what we've got to work with
-        int x = 0, y = 0;
-        int width = target.getWidth(), height = target.getHeight();
+        Insets insets = target.getInsets();
+        int x = insets.left, y = insets.bottom;
+        int width = target.getWidth() - insets.getHorizontal();
+        int height = target.getHeight() - insets.getVertical();
 
         BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
@@ -163,7 +171,7 @@ public class BorderLayout extends BLayoutManager
         comp = _components[NORTH.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
-            comp.setBounds(x, target.getHeight() - cpsize.height,
+            comp.setBounds(x, target.getHeight() - insets.top - cpsize.height,
                            width, cpsize.height);
             height -= (cpsize.height + _vgap);
         }
@@ -179,7 +187,7 @@ public class BorderLayout extends BLayoutManager
         comp = _components[EAST.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize();
-            comp.setBounds(target.getWidth() - cpsize.width, y,
+            comp.setBounds(target.getWidth() - insets.right - cpsize.width, y,
                            cpsize.width, height);
             width -= (cpsize.width + _hgap);
         }

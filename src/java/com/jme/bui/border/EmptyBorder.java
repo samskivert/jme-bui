@@ -18,50 +18,26 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.util;
+package com.jme.bui.border;
+
+import com.jme.bui.util.Insets;
 
 /**
- * Represents insets from the edges of a component.
+ * Defines a border with no rendered geometry but that simply takes up
+ * space.
  */
-public class Insets
+public class EmptyBorder extends BBorder
 {
-    /** The inset from the left edge. */
-    public int left;
-
-    /** The inset from the top edge. */
-    public int top;
-
-    /** The inset from the right edge. */
-    public int right;
-
-    /** The inset from the bottom edge. */
-    public int bottom;
-
-    public Insets (int left, int top, int right, int bottom)
+    public EmptyBorder (int left, int top, int right, int bottom)
     {
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
+        _insets = new Insets(left, top, right, bottom);
     }
 
-    public Insets ()
+    // documentation inherited
+    public Insets getInsets ()
     {
+        return _insets;
     }
 
-    /**
-     * Returns the sum of the horizontal insets.
-     */
-    public int getHorizontal ()
-    {
-        return left + right;
-    }
-
-    /**
-     * Returns the sum of the vertical insets.
-     */
-    public int getVertical ()
-    {
-        return top + bottom;
-    }
+    protected Insets _insets;
 }

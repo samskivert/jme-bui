@@ -23,6 +23,7 @@ package com.jme.bui.layout;
 import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
 import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
 
 public class VGroupLayout extends GroupLayout
@@ -45,10 +46,10 @@ public class VGroupLayout extends GroupLayout
         dims.height += (info.count - 1) * _gap;
 	dims.width = info.maxwid;
 
-// 	// account for the insets
-// 	Insets insets = target.getInsets();
-// 	dims.width += insets.left + insets.right;
-// 	dims.height += insets.top + insets.bottom;
+	// account for the insets
+	Insets insets = target.getInsets();
+	dims.width += insets.left + insets.right;
+	dims.height += insets.top + insets.bottom;
 
 	return dims;
     }
@@ -59,10 +60,10 @@ public class VGroupLayout extends GroupLayout
 	Rectangle b = target.getBounds();
 	DimenInfo info = computeDimens(target);
 
-// 	// adjust the bounds width and height to account for the insets
-// 	Insets insets = target.getInsets();
-// 	b.width -= (insets.left + insets.right);
-// 	b.height -= (insets.top + insets.bottom);
+	// adjust the bounds width and height to account for the insets
+	Insets insets = target.getInsets();
+	b.width -= insets.getHorizontal();
+	b.height -= insets.getVertical();
 
 	int nk = target.getComponentCount();
 	int sx, sy;
@@ -104,14 +105,11 @@ public class VGroupLayout extends GroupLayout
 
 	// do the justification-related calculations
         if (_justification == LEFT || _justification == BOTTOM) {
-//             sy = insets.top;
-            sy = tothei;
+            sy = insets.bottom + tothei;
         } else if (_justification == CENTER) {
-// 	    sy = insets.top + (b.height - tothei)/2;
-	    sy = b.height - (b.height - tothei)/2;
+ 	    sy = insets.bottom + (b.height - tothei)/2;
         } else { // RIGHT or TOP
-// 	    sy = insets.top + b.height - tothei;
-	    sy = b.height;
+ 	    sy = insets.bottom + b.height;
 	}
 
 	// do the layout
@@ -142,19 +140,15 @@ public class VGroupLayout extends GroupLayout
 
             // determine our off-axis position
             if (_offjust == LEFT || _offjust == TOP) {
-// 		sx = insets.left;
-		sx = 0;
+ 		sx = insets.left;
             } else if (_offjust == RIGHT || _offjust == BOTTOM) {
-// 		sx = insets.left + b.width - newwid;
-		sx = b.width - newwid;
+ 		sx = insets.left + (b.width - newwid);
             } else { // CENTER
-// 		sx = insets.left + (b.width - newwid)/2;
-		sx = (b.width - newwid)/2;
+ 		sx = insets.left + (b.width - newwid)/2;
             }
 
-            int cheight = child.getHeight();
-	    child.setBounds(sx, sy + cheight, newwid, newhei);
-	    sy -= (child.getHeight() + _gap);
+	    child.setBounds(sx, sy - newhei, newwid, newhei);
+	    sy -= (newhei + _gap);
 	}
     }
 }

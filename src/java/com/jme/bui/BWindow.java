@@ -109,7 +109,6 @@ public class BWindow extends BContainer
     {
         super.layout();
 
-        // TODO: sort out how to honor the background's "insets"
         if (_background != null) {
             // our background occupies our entire dimensions
             _background.setBounds(0, 0, _width, _height);

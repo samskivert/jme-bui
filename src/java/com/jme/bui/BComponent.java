@@ -22,9 +22,11 @@ package com.jme.bui;
 
 import java.util.ArrayList;
 
+import com.jme.bui.border.BBorder;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ComponentListener;
 import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
@@ -138,11 +140,41 @@ public class BComponent
     }
 
     /**
+     * Returns the insets configured on this component. If a component has
+     * a border, that border will provide insets for the component.
+     * <code>null</code> will never be returned, an {@link Insets}
+     * instance with all fields set to zero will be returned instead.
+     */
+    public Insets getInsets ()
+    {
+        return (_border == null) ? ZERO_INSETS : _border.getInsets();
+    }
+
+    /**
      * Returns our bounds as a nicely formatted string.
      */
     public String boundsToString ()
     {
         return _width + "x" + _height + "+" + _x + "+" + _y;
+    }
+
+    /**
+     * Configures this component with the specified border. Pass null to
+     * clear out this component's border.
+     */
+    public void setBorder (BBorder border)
+    {
+        BBorder oborder = _border;
+        if (oborder != null) {
+            oborder.removeGeometry(this);
+        }
+        _border = border;
+        if (_border != null) {
+            _border.addGeometry(this);
+        }
+        if (oborder != border) {
+            invalidate();
+        }
     }
 
     /**
@@ -202,6 +234,9 @@ public class BComponent
         if (_width != width || _height != height) {
             _width = width;
             _height = height;
+            if (_border != null) {
+                _border.setSize(_width, _height);
+            }
             invalidate();
         }
     }
@@ -361,8 +396,11 @@ public class BComponent
     protected BComponent _parent;
     protected Node _node;
     protected BLookAndFeel _lnf;
+    protected BBorder _border;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
     protected boolean _valid;
     protected ArrayList _listeners;
+
+    protected static final Insets ZERO_INSETS = new Insets();
 }
