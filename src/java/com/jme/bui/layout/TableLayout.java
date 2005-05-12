@@ -24,6 +24,7 @@ import com.jme.bui.BComponent;
 import com.jme.bui.BContainer;
 import com.jme.bui.Log;
 import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 
 /**
  * Lays out components in a simple grid arrangement, wherein the width and
@@ -83,8 +84,9 @@ public class TableLayout extends BLayoutManager
     public Dimension computePreferredSize (BContainer target)
     {
         computeMetrics(target);
-        int cx = (_columnWidths.length-1) * _colgap;
-        int rx = (computeRows(target)-1) * _rowgap;
+        Insets insets = target.getInsets();
+        int cx = (_columnWidths.length-1) * _colgap + insets.getHorizontal();
+        int rx = (computeRows(target)-1) * _rowgap + insets.getVertical();
         return new Dimension(sum(_columnWidths) + cx, sum(_rowHeights) + rx);
     }
 
@@ -93,7 +95,9 @@ public class TableLayout extends BLayoutManager
     {
         computeMetrics(target);
 
-        int row = 0, col = 0, x = 0, y = target.getHeight();
+        Insets insets = target.getInsets();
+        int x = insets.left, y = target.getHeight() - insets.top;
+        int row = 0, col = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
             child.setBounds(x, y - _rowHeights[row],
@@ -103,7 +107,7 @@ public class TableLayout extends BLayoutManager
                 y -= (_rowHeights[row] + _rowgap);
                 row++;
                 col = 0;
-                x = 0;
+                x = insets.left;
             }
         }
     }
@@ -134,8 +138,8 @@ public class TableLayout extends BLayoutManager
         // if we are stretching, adjust the column widths accordingly
         if (_mode == STRETCH) {
             int naturalWidth = sum(_columnWidths);
-            int avail = target.getWidth() - naturalWidth -
-                (_colgap * (_columnWidths.length-1));
+            int avail = target.getWidth() - target.getInsets().getHorizontal() -
+                naturalWidth - (_colgap * (_columnWidths.length-1));
             int used = 0;
             for (int ii = 0; ii < _columnWidths.length; ii++) {
                 int adjust = _columnWidths[ii] * avail / naturalWidth;

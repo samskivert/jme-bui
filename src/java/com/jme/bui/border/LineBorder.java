@@ -46,9 +46,9 @@ public class LineBorder extends BBorder
     }
 
     // documentation inherited
-    public void addGeometry (BComponent component)
+    public void addGeometry (BComponent component, int x, int y)
     {
-        configureCoords(component.getWidth(), component.getHeight());
+        configureCoords(x, y, component.getWidth(), component.getHeight());
         _border = new Line("border", _coords, null, _colors, null);
         component.getNode().attachChild(_border);
         _border.updateRenderState();
@@ -61,28 +61,28 @@ public class LineBorder extends BBorder
     }
 
     // documentation inherited
-    public void setSize (int width, int height)
+    public void setSize (int x, int y, int width, int height)
     {
-        configureCoords(width, height);
+        configureCoords(x, y, width, height);
         _border.reconstruct(_coords, null, _colors, null);
         _border.updateGeometricState(0, true);
     }
 
-    protected void configureCoords (int width, int height)
+    protected void configureCoords (int x, int y, int width, int height)
     {
         // it seems that we have to tell OpenGL to stroke a line one pixel
         // beyond where we actually want it to stop
-        _coords[0] = new Vector3f(0, height-1, 0);
-        _coords[1] = new Vector3f(width, height-1, 0);
+        _coords[0] = new Vector3f(x, y + height-1, 0);
+        _coords[1] = new Vector3f(x + width, y + height-1, 0);
 
-        _coords[2] = new Vector3f(width-1, 0, 0);
-        _coords[3] = new Vector3f(width-1, height, 0);
+        _coords[2] = new Vector3f(x + width-1, y, 0);
+        _coords[3] = new Vector3f(x + width-1, y + height, 0);
 
-        _coords[4] = new Vector3f(0, 0, 0);
-        _coords[5] = new Vector3f(width, 0, 0);
+        _coords[4] = new Vector3f(x, y, 0);
+        _coords[5] = new Vector3f(x + width, y, 0);
 
-        _coords[6] = new Vector3f(0, 0, 0);
-        _coords[7] = new Vector3f(0, height, 0);
+        _coords[6] = new Vector3f(x, y, 0);
+        _coords[7] = new Vector3f(x, y + height, 0);
     }
 
     protected Line _border;

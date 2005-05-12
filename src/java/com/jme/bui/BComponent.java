@@ -170,7 +170,7 @@ public class BComponent
         }
         _border = border;
         if (_border != null) {
-            _border.addGeometry(this);
+            _border.addGeometry(this, 0, 0);
         }
         if (oborder != border) {
             invalidate();
@@ -235,7 +235,7 @@ public class BComponent
             _width = width;
             _height = height;
             if (_border != null) {
-                _border.setSize(_width, _height);
+                _border.setSize(0, 0, _width, _height);
             }
             invalidate();
         }

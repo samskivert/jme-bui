@@ -24,38 +24,49 @@ import com.jme.bui.BComponent;
 import com.jme.bui.util.Insets;
 
 /**
- * Configures a border around a component that may or may not have
- * associated geometric elements. <em>Note:</em> a border must only be
- * used with a single component at a time.
+ * Combines two borders into a single compound border.
  */
-public abstract class BBorder
+public class CompoundBorder extends BBorder
 {
-    /** Returns the insets needed by this border. */
-    public abstract Insets getInsets ();
+    public CompoundBorder (BBorder outer, BBorder inner)
+    {
+        _outer = outer;
+        _inner = inner;
+        Insets oi = _outer.getInsets(), ii = _inner.getInsets();
+        _insets = new Insets(oi.left + ii.left, oi.top + ii.top,
+                             oi.right + ii.right, oi.bottom + ii.bottom);
+    }
 
-    /**
-     * Requests that this border add any needed geometry to the
-     * component's scene graph node. A component will call this method
-     * when it is configured with a border.
-     */
+    // documentation inherited
+    public Insets getInsets ()
+    {
+        return _insets;
+    }
+
+    // documentation inherited
     public void addGeometry (BComponent component, int x, int y)
     {
+        _outer.addGeometry(component, 0, 0);
+        Insets oi = _outer.getInsets();
+        _inner.addGeometry(component, oi.left, oi.bottom);
     }
 
-    /**
-     * Requests that this border remove its geometry from the component's
-     * scene graph node. A component will call this method when this
-     * border is removed.
-     */
+    // documentation inherited
     public void removeGeometry (BComponent component)
     {
+        _outer.removeGeometry(component);
+        _inner.removeGeometry(component);
     }
 
-    /**
-     * Informs the border of its associated component's bounds when they
-     * change.
-     */
+    // documentation inherited
     public void setSize (int x, int y, int width, int height)
     {
+        _outer.setSize(x, y, width, height);
+        Insets oi = _outer.getInsets();
+        _inner.setSize(x + oi.left, y + oi.bottom,
+                       width-oi.getHorizontal(), height-oi.getVertical());
     }
+
+    protected BBorder _outer, _inner;
+    protected Insets _insets;
 }
