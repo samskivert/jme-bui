@@ -54,7 +54,7 @@ public class LayoutTest extends SimpleGame
     protected void simpleInitGame ()
     {
         InputSystem.createInputSystem(properties.getRenderer());
-        _dispatcher = new InputDispatcher(timer, input);
+        _dispatcher = new InputDispatcher(timer, input, rootNode);
 
         // we don't hide the cursor
         InputSystem.getMouseInput().setCursorVisible(true);
@@ -74,7 +74,6 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
         window.add(new BLabel("WEST"), BorderLayout.WEST);
         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
-        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(25, 25);
@@ -94,7 +93,6 @@ public class LayoutTest extends SimpleGame
                 _input.setText("");
             }
         });
-        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
         window.setBounds(100, 100, 400, 250);
 
@@ -109,7 +107,6 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("Seven"));
         window.add(new BLabel("Eight"));
         window.add(new BLabel("Nine"));
-        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(100, 400);
@@ -125,7 +122,6 @@ public class LayoutTest extends SimpleGame
         window.add(new BLabel("Seven"));
         window.add(new BLabel("Eight"));
         window.add(new BLabel("Nine"));
-        rootNode.attachChild(window.getNode());
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(300, 400);

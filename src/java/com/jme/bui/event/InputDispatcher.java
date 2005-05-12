@@ -26,6 +26,7 @@ import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
 import com.jme.input.MouseInput;
+import com.jme.scene.Node;
 import com.jme.util.Timer;
 
 import com.jme.bui.BComponent;
@@ -39,12 +40,13 @@ import com.jme.bui.Log;
  */
 public class InputDispatcher
 {
-    public InputDispatcher (Timer timer, InputHandler handler)
+    public InputDispatcher (Timer timer, InputHandler handler, Node rootNode)
     {
         _timer = timer;
         _handler = handler;
         _keyInput = InputSystem.getKeyInput();
         _mouseInput = InputSystem.getMouseInput();
+        _rootNode = rootNode;
 
         if (_keyInput == null || _mouseInput == null) {
             throw new IllegalStateException(
@@ -61,6 +63,7 @@ public class InputDispatcher
     {
         _windows.add(window);
         window.setInputDispatcher(this);
+        _rootNode.attachChild(window.getNode());
     }
 
     /**
@@ -70,6 +73,7 @@ public class InputDispatcher
     {
         _windows.remove(window);
         window.setInputDispatcher(null);
+        _rootNode.detachChild(window.getNode());
     }
 
     /**
@@ -277,6 +281,7 @@ public class InputDispatcher
     protected KeyInput _keyInput;
     protected MouseInput _mouseInput;
     protected InputHandler _handler;
+    protected Node _rootNode;
 
     protected int _modifiers;
     protected int _mouseX, _mouseY;
