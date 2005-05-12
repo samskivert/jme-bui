@@ -23,6 +23,7 @@ package com.jme.bui;
 import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BLayoutManager;
 import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 import com.jme.renderer.Renderer;
 
 /**
@@ -102,6 +103,21 @@ public class BWindow extends BContainer
     public boolean isAdded ()
     {
         return _dispatcher != null;
+    }
+
+    // documentation inherited
+    public Insets getInsets ()
+    {
+        Insets insets = super.getInsets();
+        if (_background != null) {
+            Insets cinsets = new Insets(insets);
+            cinsets.left += _background.getLeftInset();
+            cinsets.top += _background.getTopInset();
+            cinsets.right += _background.getRightInset();
+            cinsets.bottom += _background.getBottomInset();
+            insets = cinsets;
+        }
+        return insets;
     }
 
     // documentation inherited

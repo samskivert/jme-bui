@@ -45,6 +45,14 @@ public class Insets
         this.bottom = bottom;
     }
 
+    public Insets (Insets other)
+    {
+        left = other.left;
+        top = other.top;
+        right = other.right;
+        bottom = other.bottom;
+    }
+
     public Insets ()
     {
     }
