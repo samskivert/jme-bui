@@ -51,10 +51,10 @@ public class MouseEvent extends InputEvent
     /** A constant representing the "left" mouse button. */
     public static final int BUTTON1 = 0;
 
-    /** A constant representing the middle mouse button. */
+    /** A constant representing the "right" mouse button. */
     public static final int BUTTON2 = 1;
 
-    /** A constant representing the "right" mouse button. */
+    /** A constant representing the middle mouse button. */
     public static final int BUTTON3 = 2;
 
     public MouseEvent (Object source, long when, int modifiers, int type,
