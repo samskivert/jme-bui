@@ -250,11 +250,22 @@ public class BTextField extends BContainer
     protected void refigureContents ()
     {
         if (!isAdded()) {
-            _label.setText(_text);
+            _label.setText(getDisplayText());
         } else {
             int vizChars = computeVisisbleChars();
-            _label.setText(_text.substring(_offset, _offset+vizChars), false);
+            _label.setText(
+                getDisplayText().substring(_offset, _offset+vizChars), false);
         }
+    }
+
+    /**
+     * This method allows a derived class (specifically {@link
+     * BPasswordField}) to display something other than the actual
+     * contents of the text field.
+     */
+    protected String getDisplayText ()
+    {
+        return _text;
     }
 
     /**
