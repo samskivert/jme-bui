@@ -77,7 +77,7 @@ public class BBitmapFont extends BFont
         BGlyph glyph = new BGlyph(c, this);
 
         // look up (or create and cache) the appropriate texture coordinates
-        Character key = Character.valueOf(c);
+        Character key = new Character(c); // Character.valueOf(c);
         Vector2f[] tcoords = (Vector2f[])_tcoords.get(key);
         if (tcoords == null) {
             int ccode = c - ASCII_OFFSET;
