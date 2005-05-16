@@ -255,12 +255,9 @@ public class InputDispatcher
      */
     protected void setFocus (long tickStamp, BComponent focus)
     {
-        // if a component is clicked that does not accept the focus (nor
-        // one of its parents), we do not change the focus; if we come
-        // into this method with a null focus (the user clicked outside a
-        // window entirely) we clear the focus
-        if (focus != null && ((focus = focus.getFocusTarget()) == null)) {
-            return;
+        // allow the component we clicked on to adjust the focus target
+        if (focus != null) {
+            focus = focus.getFocusTarget();
         }
 
         // if the focus is changing, dispatch an event to report it
