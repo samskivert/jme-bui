@@ -41,6 +41,8 @@ public class DefaultKeyMap extends BKeyMap
         addMapping(0, KeyInput.KEY_HOME, EditCommands.START_OF_LINE);
         addMapping(0, KeyInput.KEY_END, EditCommands.END_OF_LINE);
 
+        addMapping(0, KeyInput.KEY_ESCAPE, EditCommands.RELEASE_FOCUS);
+
         // some emacs commands because I love them so
         addMapping(InputEvent.CTRL_DOWN_MASK, KeyInput.KEY_A,
                    EditCommands.START_OF_LINE);

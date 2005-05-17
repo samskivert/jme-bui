@@ -176,6 +176,10 @@ public class BTextField extends BContainer
                     dispatchEvent(aev);
                     break;
 
+                case RELEASE_FOCUS:
+                    getWindow().requestFocus(null);
+                    break;
+
                 default:
                     // append printable and shifted printable characters
                     // to the text

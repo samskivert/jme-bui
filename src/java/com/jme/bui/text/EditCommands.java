@@ -45,4 +45,7 @@ public interface EditCommands
 
     /** A text editing command. */
     public static final int END_OF_LINE = 6;
+
+    /** A text editing command. */
+    public static final int RELEASE_FOCUS = 7;
 }

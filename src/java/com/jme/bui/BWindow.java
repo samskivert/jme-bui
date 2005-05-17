@@ -131,6 +131,20 @@ public class BWindow extends BContainer
         }
     }
 
+    /**
+     * Requests that the specified component be given the input focus.
+     */
+    protected void requestFocus (BComponent component)
+    {
+        if (_dispatcher == null) {
+            Log.log.warning("Un-added window requested to change focus " +
+                            "[win=" + this + ", focus=" + component + "].");
+            Thread.dumpStack();
+        } else {
+            _dispatcher.requestFocus(component);
+        }
+    }
+
     /** The dispatcher that handles our events. */
     protected InputDispatcher _dispatcher;
 

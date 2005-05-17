@@ -87,6 +87,15 @@ public class InputDispatcher
     }
 
     /**
+     * Requests that the specified component be given the input focus.
+     * Pass null to clear the focus.
+     */
+    public void requestFocus (BComponent component)
+    {
+        setFocus(component);
+    }
+
+    /**
      * This method should be called on every frame to allow the input
      * dispatcher to process input since the previous frame and dispatch
      * any newly generated events.
@@ -94,7 +103,7 @@ public class InputDispatcher
     public void update (float timePerFrame)
     {
         // determine our tick stamp in milliseconds
-        long tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
+        _tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
 
         // update our keyboard buffer and check for new events
         _keyInput.update();
@@ -121,7 +130,7 @@ public class InputDispatcher
             // if we have a focus, generate a key event and dispatch it
             if (_focus != null) {
                 KeyEvent event = new KeyEvent(
-                    this, tickStamp, _modifiers, pressed ?
+                    this, _tickStamp, _modifiers, pressed ?
                     KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
                     _keyInput.keyChar(), keyCode);
                 _focus.dispatchEvent(event);
@@ -154,13 +163,13 @@ public class InputDispatcher
                 // inform the previous component that the mouse has exited
                 if (_hcomponent != null) {
                     _hcomponent.dispatchEvent(
-                        new MouseEvent(this, tickStamp, _modifiers,
+                        new MouseEvent(this, _tickStamp, _modifiers,
                                        MouseEvent.MOUSE_EXITED, mx, my));
                 }
                 // inform the new component that the mouse has entered
                 if (nhcomponent != null) {
                     nhcomponent.dispatchEvent(
-                        new MouseEvent(this, tickStamp, _modifiers,
+                        new MouseEvent(this, _tickStamp, _modifiers,
                                        MouseEvent.MOUSE_ENTERED, mx, my));
                 }
                 _hcomponent = nhcomponent;
@@ -193,7 +202,7 @@ public class InputDispatcher
                 // component (which might be null)
                 if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
                     _ccomponent = tcomponent;
-                    setFocus(tickStamp, tcomponent);
+                    setFocus(tcomponent);
                 }
                 type = MouseEvent.MOUSE_PRESSED;
                 _modifiers |= modifierMask;
@@ -205,7 +214,7 @@ public class InputDispatcher
 
             if (type != -1 && tcomponent != null) {
                 tcomponent.dispatchEvent(
-                    new MouseEvent(this, tickStamp, _modifiers,
+                    new MouseEvent(this, _tickStamp, _modifiers,
                                    type, ii, mx, my));
             }
         }
@@ -217,7 +226,7 @@ public class InputDispatcher
                 int type = (tcomponent == _ccomponent) ?
                     MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
                 tcomponent.dispatchEvent(
-                    new MouseEvent(this, tickStamp, _modifiers,
+                    new MouseEvent(this, _tickStamp, _modifiers,
                                    type, mx, my));
             }
         }
@@ -226,7 +235,7 @@ public class InputDispatcher
         int wdelta = _mouseInput.getWheelDelta();
         if (wdelta != 0 && tcomponent != null) {
             tcomponent.dispatchEvent(
-                new MouseEvent(this, tickStamp, _modifiers,
+                new MouseEvent(this, _tickStamp, _modifiers,
                                MouseEvent.MOUSE_WHEELED, -1, mx, my, wdelta));
         }
 
@@ -253,7 +262,7 @@ public class InputDispatcher
     /**
      * Configures the component that has keyboard focus.
      */
-    protected void setFocus (long tickStamp, BComponent focus)
+    protected void setFocus (BComponent focus)
     {
         // allow the component we clicked on to adjust the focus target
         if (focus != null) {
@@ -264,12 +273,12 @@ public class InputDispatcher
         if (_focus != focus) {
             if (_focus != null) {
                 _focus.dispatchEvent(
-                    new FocusEvent(this, tickStamp, FocusEvent.FOCUS_LOST));
+                    new FocusEvent(this, _tickStamp, FocusEvent.FOCUS_LOST));
             }
             _focus = focus;
             if (_focus != null) {
                 _focus.dispatchEvent(
-                    new FocusEvent(this, tickStamp, FocusEvent.FOCUS_GAINED));
+                    new FocusEvent(this, _tickStamp, FocusEvent.FOCUS_GAINED));
             }
         }
     }
@@ -280,6 +289,7 @@ public class InputDispatcher
     protected InputHandler _handler;
     protected Node _rootNode;
 
+    protected long _tickStamp;
     protected int _modifiers;
     protected int _mouseX, _mouseY;
 

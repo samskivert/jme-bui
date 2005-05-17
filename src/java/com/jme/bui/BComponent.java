@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import com.jme.bui.border.BBorder;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ComponentListener;
+import com.jme.bui.event.KeyEvent;
 import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
+import com.jme.input.KeyInput;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 
@@ -202,6 +204,27 @@ public class BComponent
     }
 
     /**
+     * Requests that this component be given the input focus.
+     */
+    public void requestFocus ()
+    {
+        // sanity check
+        if (!acceptsFocus()) {
+            Log.log.warning("Unfocusable component requested focus: " + this);
+            Thread.dumpStack();
+            return;
+        }
+
+        BWindow window = getWindow();
+        if (window == null) {
+            Log.log.warning("Focus requested for un-added component: " + this);
+            Thread.dumpStack();
+        } else {
+            window.requestFocus(this);
+        }
+    }
+
+    /**
      * Sets the upper left position of this component in absolute screen
      * coordinates.
      */
@@ -291,15 +314,6 @@ public class BComponent
     }
 
     /**
-     * Instructs this component to lay itself out. This is called as a
-     * result of the component changing size.
-     */
-    protected void layout ()
-    {
-        // we have nothing to do by default
-    }
-
-    /**
      * Marks this component as invalid and needing a relayout. If the
      * component is valid, its parent will also be marked as invalid.
      */
@@ -333,12 +347,36 @@ public class BComponent
      */
     public void dispatchEvent (BEvent event)
     {
+        // handle focus traversal
+        if (event instanceof KeyEvent) {
+            KeyEvent kev = (KeyEvent)event;
+            if (kev.getType() == KeyEvent.KEY_PRESSED) {
+                int modifiers = kev.getModifiers(), keyCode = kev.getKeyCode();
+                if (keyCode == KeyInput.KEY_TAB) {
+                    if (modifiers == 0) {
+                        getWindow().requestFocus(getNextFocus());
+                    } else if (modifiers == KeyEvent.SHIFT_DOWN_MASK) {
+                        getWindow().requestFocus(getPreviousFocus());
+                    }
+                }
+            }
+        }
+
         // dispatch this event to our listeners
         if (_listeners != null) {
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
                 event.dispatch((ComponentListener)_listeners.get(ii));
             }
         }
+    }
+
+    /**
+     * Instructs this component to lay itself out. This is called as a
+     * result of the component changing size.
+     */
+    protected void layout ()
+    {
+        // we have nothing to do by default
     }
 
     /**
@@ -388,6 +426,42 @@ public class BComponent
             return (BWindow)this;
         } else if (_parent != null) {
             return _parent.getWindow();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Searches for the next component that should receive the keyboard
+     * focus. If such a component can be found, it will be returned. If no
+     * other focusable component can be found and this component is
+     * focusable, this component will be returned. Otherwise, null will be
+     * returned.
+     */
+    protected BComponent getNextFocus ()
+    {
+        if (_parent instanceof BContainer) {
+            return ((BContainer)_parent).getNextFocus(this);
+        } else if (acceptsFocus()) {
+            return this;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Searches for the previous component that should receive the
+     * keyboard focus. If such a component can be found, it will be
+     * returned. If no other focusable component can be found and this
+     * component is focusable, this component will be returned. Otherwise,
+     * null will be returned.
+     */
+    protected BComponent getPreviousFocus ()
+    {
+        if (_parent instanceof BContainer) {
+            return ((BContainer)_parent).getPreviousFocus(this);
+        } else if (acceptsFocus()) {
+            return this;
         } else {
             return null;
         }

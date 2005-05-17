@@ -226,6 +226,58 @@ public class BContainer extends BComponent
     }
 
     /**
+     * Returns the next component that should receive focus in this
+     * container given the current focus owner. If the supplied current
+     * focus owner is null, the container should return its first
+     * focusable component. If the container has no focusable components
+     * following the current focus, it should call {@link getNextFocus()}
+     * to search further up the hierarchy.
+     */
+    protected BComponent getNextFocus (BComponent current)
+    {
+        boolean foundCurrent = (current == null);
+        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+            BComponent child = getComponent(ii);
+            if (!foundCurrent) {
+                if (child == current) {
+                    foundCurrent = true;
+                }
+                continue;
+            }
+            if (child.acceptsFocus()) {
+                return child;
+            }
+        }
+        return getNextFocus();
+    }
+
+    /**
+     * Returns the previous component that should receive focus in this
+     * container given the current focus owner. If the supplied current
+     * focus owner is null, the container should return its last focusable
+     * component. If the container has no focusable components before the
+     * current focus, it should call {@link getPreviousFocus()} to search
+     * further up the hierarchy.
+     */
+    protected BComponent getPreviousFocus (BComponent current)
+    {
+        boolean foundCurrent = (current == null);
+        for (int ii = getComponentCount()-1; ii >= 0; ii--) {
+            BComponent child = getComponent(ii);
+            if (!foundCurrent) {
+                if (child == current) {
+                    foundCurrent = true;
+                }
+                continue;
+            }
+            if (child.acceptsFocus()) {
+                return child;
+            }
+        }
+        return getPreviousFocus();
+    }
+
+    /**
      * Applies an operation to all of our children.
      */
     protected void applyOperation (ChildOp op)
