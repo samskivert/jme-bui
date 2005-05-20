@@ -42,7 +42,7 @@ public class BIcon
     public BIcon (URL image)
     {
         this(TextureManager.loadTexture(
-                 image, Texture.MM_LINEAR, Texture.FM_NEAREST,
+                 image, Texture.MM_LINEAR, Texture.FM_LINEAR,
                  Image.GUESS_FORMAT_NO_S3TC, 1.0f, true));
     }
 
@@ -52,7 +52,7 @@ public class BIcon
     public BIcon (BufferedImage image)
     {
         this(TextureManager.loadTexture(image, Texture.MM_LINEAR_LINEAR,
-                                        Texture.FM_NEAREST, true));
+                                        Texture.FM_LINEAR, true));
     }
 
     /**
@@ -71,6 +71,7 @@ public class BIcon
 
         // we want transparent parts of our texture to show through
         RenderUtil.makeTransparent(_quad);
+        _quad.updateRenderState();
     }
 
     /**

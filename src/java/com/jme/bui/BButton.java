@@ -84,6 +84,15 @@ public class BButton extends BComponent
     }
 
     /**
+     * Configures the icon to be displayed on this button.
+     */
+    public void setIcon (BIcon icon)
+    {
+        _label.setIcon(icon);
+        invalidate();
+    }
+
+    /**
      * Configures the action to be generated when this button is clicked.
      */
     public void setAction (String action)
@@ -138,7 +147,7 @@ public class BButton extends BComponent
 
         // we can now obtain our backgrounds
         if (_backgrounds == null) {
-            _backgrounds = new BBackground[3];
+            _backgrounds = new BBackground[getBackgroundCount()];
             for (int ii = 0; ii < _backgrounds.length; ii++) {
                 _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
                 _node.attachChild(_backgrounds[ii].getNode());
@@ -151,6 +160,12 @@ public class BButton extends BComponent
         _node.attachChild(_label.getNode());
         _label.setParent(this);
         _label.wasAdded();
+    }
+
+    /** Used by the {@link BToggleButton} to add an additional state. */
+    protected int getBackgroundCount ()
+    {
+        return 3;
     }
 
     // documentation inherited
@@ -213,9 +228,7 @@ public class BButton extends BComponent
             case MouseEvent.MOUSE_RELEASED:
                 if (_armed && _pressed) {
                     // create and dispatch an action event
-                    ActionEvent aev = new ActionEvent(
-                        this, mev.getWhen(), mev.getModifiers(), _action);
-                    dispatchEvent(aev);
+                    fireAction(mev.getWhen(), mev.getModifiers());
                     _armed = false;
                 }
                 _pressed = false;
@@ -225,14 +238,19 @@ public class BButton extends BComponent
             // update our background image if necessary
             int state = getState();
             if (state != ostate) {
-                for (int ii = 0; ii < _backgrounds.length; ii++) {
-                    _backgrounds[ii].getNode().setForceCull(ii != state);
-                }
-                int dl = (state == DOWN) ? 1 : 0;
-                _label.setLocation(_backgrounds[0].getLeftInset() + dl,
-                                   _backgrounds[0].getTopInset() - dl);
+                stateDidChange();
             }
         }
+    }
+
+    /**
+     * Called when the button is "clicked" which may due to the mouse
+     * being pressed and released while over the button or due to keyboard
+     * manipulation while the button has focus.
+     */
+    protected void fireAction (long when, int modifiers)
+    {
+        dispatchEvent(new ActionEvent(this, when, modifiers, _action));
     }
 
     /**
@@ -247,6 +265,21 @@ public class BButton extends BComponent
         } else {
             return UP;
         }
+    }
+
+    /**
+     * Called when the button's state has changed, switches to the
+     * appropriate background for that state.
+     */
+    protected void stateDidChange ()
+    {
+        int state = getState();
+        for (int ii = 0; ii < _backgrounds.length; ii++) {
+            _backgrounds[ii].getNode().setForceCull(ii != state);
+        }
+        int dl = (state == DOWN) ? 1 : 0;
+        _label.setLocation(_backgrounds[0].getLeftInset() + dl,
+                           _backgrounds[0].getTopInset() - dl);
     }
 
     // documentation inherited

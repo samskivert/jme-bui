@@ -25,6 +25,7 @@ import com.jme.bui.layout.BLayoutManager;
 import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 import com.jme.renderer.Renderer;
+import com.jme.system.DisplaySystem;
 
 /**
  * A window defines the top-level of a component hierarchy. It must be
@@ -48,6 +49,18 @@ public class BWindow extends BContainer
         Dimension ps = getPreferredSize();
         Log.log.info("Sizing to " + ps);
         setBounds(_x, _y, ps.width, ps.height);
+    }
+
+    /**
+     * Positions this window in the center of the display. This should be
+     * called after configuring the size of the window (using, for
+     * example, a call to {@link #pack}).
+     */
+    public void center ()
+    {
+        int width = DisplaySystem.getDisplaySystem().getWidth();
+        int height = DisplaySystem.getDisplaySystem().getHeight();
+        setLocation((width-getWidth())/2, (height-getHeight())/2);
     }
 
     /**
@@ -84,6 +97,20 @@ public class BWindow extends BContainer
                     validate();
                 }
             }
+        }
+    }
+
+    /**
+     * Detaches this window from the input dispatcher and removes it from
+     * the display.
+     */
+    public void dismiss ()
+    {
+        if (_dispatcher != null) {
+            _dispatcher.removeWindow(this);
+        } else {
+            Log.log.warning("Unmanaged window dismissed [window=" + this + "].");
+            Thread.dumpStack();
         }
     }
 

@@ -49,5 +49,11 @@ public class ActionEvent extends InputEvent
         }
     }
 
+    protected void toString (StringBuffer buf)
+    {
+        super.toString(buf);
+        buf.append(", action=").append(_action);
+    }
+
     protected String _action;
 }

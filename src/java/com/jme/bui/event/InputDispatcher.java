@@ -150,7 +150,7 @@ public class InputDispatcher
             // check for a new hover component starting with each of our
             // root components
             BComponent nhcomponent = null;
-            for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
+            for (int ii = _windows.size()-1; ii >= 0; ii--) {
                 BWindow comp = (BWindow)_windows.get(ii);
                 nhcomponent = comp.getHitComponent(mx, my);
                 if (nhcomponent != null) {

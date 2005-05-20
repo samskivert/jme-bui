@@ -364,6 +364,17 @@ public abstract class GroupLayout extends BLayoutManager
         return lay;
     }
 
+    /**
+     * Makes a container configured with a horizontal group layout manager
+     * which is useful for containing a row of buttons.
+     */
+    public static BContainer makeButtonBox (Justification justification)
+    {
+        HGroupLayout lay = new HGroupLayout();
+        lay.setJustification(justification);
+        return new BContainer(lay);
+    }
+
     protected Policy _policy = NONE;
     protected Policy _offpolicy = CONSTRAIN;
     protected int _gap = DEFAULT_GAP;

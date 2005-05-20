@@ -30,12 +30,14 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jme.bui.BButton;
+import com.jme.bui.BCheckBox;
 import com.jme.bui.BIcon;
 import com.jme.bui.BLabel;
 import com.jme.bui.BLookAndFeel;
 import com.jme.bui.BScrollBar;
 import com.jme.bui.BTextArea;
 import com.jme.bui.BTextField;
+import com.jme.bui.BToggleButton;
 import com.jme.bui.BWindow;
 import com.jme.bui.TintedBackground;
 import com.jme.bui.border.LineBorder;
@@ -98,7 +100,7 @@ public class LayoutTest extends SimpleGame
 
         window = new BWindow(lnf, GroupLayout.makeVert(GroupLayout.TOP));
         window.setBorder(new LineBorder(ColorRGBA.black));
-        window.add(new BButton(new BIcon(icon), ""));
+        window.add(new BCheckBox("Check it!"));
         window.add(new BLabel("Two"));
         window.add(new BLabel("Three"));
         window.add(new BLabel("Four"));
@@ -113,7 +115,7 @@ public class LayoutTest extends SimpleGame
 
         window = new BWindow(lnf, GroupLayout.makeHoriz(GroupLayout.LEFT));
         window.setBorder(new LineBorder(ColorRGBA.black));
-        window.add(new BButton(new BIcon(icon), ""));
+        window.add(new BToggleButton(new BIcon(icon), ""));
         window.add(new BLabel("Two"));
         window.add(new BLabel("Three"));
         window.add(new BLabel("Four"));

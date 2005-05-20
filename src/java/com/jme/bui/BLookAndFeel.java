@@ -121,6 +121,8 @@ public class BLookAndFeel
         switch (state) {
         case BButton.DOWN: path = "/rsrc/textures/button_down.png"; break;
         case BButton.OVER: path = "/rsrc/textures/button_up.png"; break;
+        case BToggleButton.SELECTED:
+            path = "/rsrc/textures/button_down.png"; break;
         default:
         case BButton.UP: path = "/rsrc/textures/button_up.png"; break;
         }
@@ -173,6 +175,15 @@ public class BLookAndFeel
     public BBackground createScrollThumb (int orientation)
     {
         return new TintedBackground(0, 0, 0, 0, ColorRGBA.white);
+    }
+
+    /**
+     * Creates the checbox icon used by the {@link BCheckBox}.
+     */
+    public BIcon createCheckBoxIcon ()
+    {
+        return new BIcon(
+            BLookAndFeel.class.getResource("/rsrc/textures/checkbox.png"));
     }
 
     /**
