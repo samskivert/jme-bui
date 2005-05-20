@@ -80,7 +80,6 @@ public class BButton extends BComponent
     public void setText (String text)
     {
         _label.setText(text);
-        invalidate();
     }
 
     /**
@@ -89,7 +88,6 @@ public class BButton extends BComponent
     public void setIcon (BIcon icon)
     {
         _label.setIcon(icon);
-        invalidate();
     }
 
     /**

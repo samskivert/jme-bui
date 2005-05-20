@@ -107,7 +107,7 @@ public class VGroupLayout extends GroupLayout
         if (_justification == LEFT || _justification == BOTTOM) {
             sy = insets.bottom + tothei;
         } else if (_justification == CENTER) {
- 	    sy = insets.bottom + (b.height - tothei)/2;
+ 	    sy = insets.bottom + b.height - (b.height - tothei)/2;
         } else { // RIGHT or TOP
  	    sy = insets.bottom + b.height;
 	}

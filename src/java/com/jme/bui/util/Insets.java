@@ -72,4 +72,9 @@ public class Insets
     {
         return top + bottom;
     }
+
+    public String toString ()
+    {
+        return "l:" + left + " t:" + top + " r:" + right + " b:" + bottom;
+    }
 }

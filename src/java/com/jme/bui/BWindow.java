@@ -47,7 +47,6 @@ public class BWindow extends BContainer
     public void pack ()
     {
         Dimension ps = getPreferredSize();
-        Log.log.info("Sizing to " + ps);
         setBounds(_x, _y, ps.width, ps.height);
     }
 

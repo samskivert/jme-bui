@@ -154,14 +154,23 @@ public class BLabel extends BComponent
      */
     public void setIcon (BIcon icon)
     {
+        int owidth = 0, oheight = 0, nwidth = 0, nheight = 0;
         if (_icon != null) {
+            owidth = _icon.getWidth();
+            oheight = _icon.getHeight();
             _node.detachChild(_icon.getQuad());
         }
         _icon = icon;
         if (_icon != null) {
+            nwidth = _icon.getWidth();
+            nheight = _icon.getHeight();
             _node.attachChild(_icon.getQuad());
         }
-        invalidate();
+        if (owidth != nwidth || oheight != nheight) {
+            invalidate();
+        } else {
+            layout();
+        }
     }
 
     /**

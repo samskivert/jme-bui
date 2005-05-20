@@ -46,4 +46,9 @@ public class Dimension
     public Dimension ()
     {
     }
+
+    public String toString ()
+    {
+        return width + "x" + height;
+    }
 }

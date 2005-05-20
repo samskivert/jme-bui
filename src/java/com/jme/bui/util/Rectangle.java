@@ -56,4 +56,10 @@ public class Rectangle
     public Rectangle ()
     {
     }
+
+    public String toString ()
+    {
+        return width + "x" + height + (x >= 0 ? "+" : "") + x +
+            (y >= 0 ? "+" : "") + y;
+    }
 }
