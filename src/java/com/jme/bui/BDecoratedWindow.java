@@ -20,29 +20,32 @@
 
 package com.jme.bui;
 
-import com.jme.scene.Spatial;
-import com.jme.scene.state.AlphaState;
-import com.jme.system.DisplaySystem;
+import com.jme.bui.layout.BorderLayout;
 
 /**
- * Useful rendering functions.
+ * A top-level window with a border, a background and a title bar. Note
+ * that a decorated window always uses a {@link BorderLayout} and makes
+ * use of the {@link BorderLayout#NORTH} position to display its title bar
+ * (if a title was specified).
  */
-public class RenderUtil
+public class BDecoratedWindow extends BWindow
 {
     /**
-     * Configures the supplied spatial with transparency in the standard
-     * user interface sense which is that transparent pixels show through
-     * to the background but non-transparent pixels are not blended with
-     * what is behind them.
+     * Creates a decorated window using the supplied look and feel.
+     *
+     * @param title the title of the window or null if no title bar is
+     * desired.
      */
-    public static void makeTransparent (Spatial target)
+    public BDecoratedWindow (BLookAndFeel lnf, String title)
     {
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
-        astate.setEnabled(true);
-        target.setRenderState(astate);
+        super(lnf, new BorderLayout(5, 5));
+
+        // set up our background and border from the window manager
+        setBackground(lnf.createWindowBackground());
+        setBorder(lnf.createWindowBorder());
+
+        if (title != null) {
+            add(new BLabel(title), BorderLayout.NORTH);
+        }
     }
 }

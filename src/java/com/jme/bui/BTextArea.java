@@ -22,6 +22,7 @@ package com.jme.bui;
 
 import java.util.ArrayList;
 
+import com.jme.bui.background.BBackground;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ChangeEvent;
 import com.jme.bui.event.ChangeListener;

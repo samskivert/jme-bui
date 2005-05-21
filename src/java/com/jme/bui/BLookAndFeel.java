@@ -22,8 +22,11 @@ package com.jme.bui;
 
 import java.net.URL;
 
-import com.jme.bui.ScaledBackground;
-import com.jme.bui.TiledBackground;
+import com.jme.bui.background.BBackground;
+import com.jme.bui.background.TiledBackground;
+import com.jme.bui.background.TintedBackground;
+import com.jme.bui.border.BBorder;
+import com.jme.bui.border.LineBorder;
 import com.jme.bui.font.BBitmapFont;
 import com.jme.bui.font.BFont;
 import com.jme.bui.text.BKeyMap;
@@ -109,6 +112,22 @@ public class BLookAndFeel
     public void setKeyMap (BKeyMap keymap)
     {
         _keymap = keymap;
+    }
+
+    /**
+     * Creates a border for use by a decorated top-level window.
+     */
+    public BBorder createWindowBorder ()
+    {
+        return new LineBorder(ColorRGBA.white);
+    }
+
+    /**
+     * Creates a background for use by a decorated top-level window.
+     */
+    public BBackground createWindowBackground ()
+    {
+        return new TintedBackground(10, 10, 10, 10, ColorRGBA.darkGray);
     }
 
     /**

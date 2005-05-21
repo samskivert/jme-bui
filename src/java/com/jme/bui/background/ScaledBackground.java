@@ -18,25 +18,48 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jme.bui.background;
 
-import com.jme.bui.util.Dimension;
+import java.net.URL;
+
+import com.jme.image.Texture;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.shape.Quad;
+import com.jme.scene.state.TextureState;
+import com.jme.system.DisplaySystem;
+import com.jme.util.TextureManager;
+
+import com.jme.bui.util.Dimension;
+import com.jme.bui.util.RenderUtil;
 
 /**
- * Displays a partially transparent solid color in the background.
+ * Displays a scaled texture as a background image.
  */
-public class TintedBackground extends BBackground
+public class ScaledBackground extends BBackground
 {
-    public TintedBackground (int left, int top, int right, int bottom,
-                             ColorRGBA color)
+    /**
+     * Creates a scaled background from the specified source image data.
+     */
+    public ScaledBackground (
+        URL source, int left, int top, int right, int bottom)
     {
         super(left, top, right, bottom);
 
-        _quad = new Quad("quad", 10, 10);
-        _quad.setSolidColor(color);
+        // load up the background image as a texture
+        Texture texture = TextureManager.loadTexture(
+            source, Texture.MM_NEAREST, Texture.FM_NEAREST);
+        _twidth = texture.getImage().getWidth();
+        _theight = texture.getImage().getHeight();
+        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
+            createTextureState();
+        _tstate.setEnabled(true);
+        _tstate.setTexture(texture);
+
+        _quad = new Quad("quad", _twidth, _theight);
+        _quad.setRenderState(_tstate);
+
+        // we want transparent parts of our texture to show through
         RenderUtil.makeTransparent(_quad);
 
         _node.attachChild(_quad);
@@ -59,8 +82,10 @@ public class TintedBackground extends BBackground
     // documentation inherited
     public Dimension getPreferredSize ()
     {
-        return new Dimension(10, 10);
+        return new Dimension(_twidth, _theight);
     }
 
+    protected int _twidth, _theight;
+    protected TextureState _tstate;
     protected Quad _quad;
 }

@@ -20,6 +20,7 @@
 
 package com.jme.bui;
 
+import com.jme.bui.background.BBackground;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.FocusEvent;

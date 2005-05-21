@@ -31,6 +31,8 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
+import com.jme.bui.util.RenderUtil;
+
 /**
  * Provides icon imagery for various components which make use of it.
  */

@@ -29,17 +29,7 @@ import com.jme.input.KeyBindingManager;
 import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
-import com.jme.bui.BButton;
-import com.jme.bui.BCheckBox;
-import com.jme.bui.BIcon;
-import com.jme.bui.BLabel;
-import com.jme.bui.BLookAndFeel;
-import com.jme.bui.BScrollBar;
-import com.jme.bui.BTextArea;
-import com.jme.bui.BTextField;
-import com.jme.bui.BToggleButton;
-import com.jme.bui.BWindow;
-import com.jme.bui.TintedBackground;
+import com.jme.bui.*;
 import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
@@ -62,10 +52,7 @@ public class LayoutTest extends SimpleGame
         InputSystem.getMouseInput().setCursorVisible(true);
 
         BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
-        BWindow window = new BWindow(lnf, new BorderLayout(5, 5));
-        window.setBorder(new LineBorder(ColorRGBA.blue));
-        window.setBackground(new TintedBackground(
-                                 5, 5, 5, 5, new ColorRGBA(0, 0, 1, 0.5f)));
+        BWindow window = new BDecoratedWindow(lnf, null);
         URL icon = getClass().getClassLoader().
             getResource("rsrc/textures/button_up.png");
         BLabel label = new BLabel(new BIcon(icon));
