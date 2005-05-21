@@ -230,7 +230,7 @@ public class BContainer extends BComponent
      * container given the current focus owner. If the supplied current
      * focus owner is null, the container should return its first
      * focusable component. If the container has no focusable components
-     * following the current focus, it should call {@link getNextFocus()}
+     * following the current focus, it should call {@link #getNextFocus()}
      * to search further up the hierarchy.
      */
     protected BComponent getNextFocus (BComponent current)
@@ -256,7 +256,7 @@ public class BContainer extends BComponent
      * container given the current focus owner. If the supplied current
      * focus owner is null, the container should return its last focusable
      * component. If the container has no focusable components before the
-     * current focus, it should call {@link getPreviousFocus()} to search
+     * current focus, it should call {@link #getPreviousFocus()} to search
      * further up the hierarchy.
      */
     protected BComponent getPreviousFocus (BComponent current)

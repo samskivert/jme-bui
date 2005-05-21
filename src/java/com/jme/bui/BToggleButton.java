@@ -20,6 +20,8 @@
 
 package com.jme.bui;
 
+import com.jme.bui.event.ActionEvent;
+
 /**
  * Like a {@link BButton} except that it toggles between two states
  * (selected and normal) when clicked.

@@ -26,6 +26,11 @@ import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
 
+/**
+ * Handles horizontally laid out groups.
+ *
+ * @see GroupLayout
+ */
 public class HGroupLayout extends GroupLayout
 {
     // documentation inherited

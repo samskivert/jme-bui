@@ -26,6 +26,11 @@ import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
 
+/**
+ * Handles vertically laid out groups.
+ *
+ * @see GroupLayout
+ */
 public class VGroupLayout extends GroupLayout
 {
     // documentation inherited

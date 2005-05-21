@@ -26,7 +26,8 @@ import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 
 /**
- * Lays out the children of a container like so:
+ * Lays out the children of a container around the borders and one in the
+ * center. For example:
  * <pre>
  * +------------------------------------+
  * |               NORTH                |
