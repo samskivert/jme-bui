@@ -78,6 +78,29 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Configures this window to be modal which causes it to "steal" all
+     * mouse and keyboard input while it is added to the interface
+     * hierarchy. Mouse movement and button press events that would
+     * normally go to other windows or to the default mouse target will
+     * instead be sent to the top-most modal window. Other events destined
+     * for other windows (key events and mouse entry and exit events) will
+     * not be dispatched.
+     */
+    public void setModal (boolean modal)
+    {
+        _modal = modal;
+    }
+
+    /**
+     * Returns whether or not this window is modal. See {@link #setModal}
+     * for more information on modality.
+     */
+    public boolean isModal ()
+    {
+        return _modal;
+    }
+
+    /**
      * Configures this window with its input dispatcher. Do not call this
      * method, it is called automatically when a window is added to a
      * dispatcher via a call to {@link InputDispatcher#addWindow}.
@@ -177,4 +200,8 @@ public class BWindow extends BContainer
 
     /** The background we display to denote our window. */
     protected BBackground _background;
+
+    /** Whether or not this window steals all input from other windows
+     * further down the hierarchy. */
+    protected boolean _modal;
 }

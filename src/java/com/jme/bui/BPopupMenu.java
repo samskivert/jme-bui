@@ -20,6 +20,9 @@
 
 package com.jme.bui;
 
+import com.jme.bui.event.ActionEvent;
+import com.jme.bui.event.BEvent;
+import com.jme.bui.event.MouseEvent;
 import com.jme.bui.layout.GroupLayout;
 
 /**
@@ -32,7 +35,37 @@ public class BPopupMenu extends BPopupWindow
         super(parent, GroupLayout.makeVStretch());
     }
 
-//     public void addMenuItem (BMenuItem item)
-//     {
-//     }
+    /**
+     * Adds the supplied item to this menu.
+     */
+    public void addMenuItem (BMenuItem item)
+    {
+        // nothing more complicated needs to be done, yay!
+        add(item, GroupLayout.FIXED);
+    }
+
+    // documentation inherited
+    public void dispatchEvent (BEvent event)
+    {
+        super.dispatchEvent(event);
+
+        if (event instanceof MouseEvent) {
+            MouseEvent mev = (MouseEvent)event;
+            // if the mouse clicked outside of our window bounds, dismiss
+            // ourselves
+            if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
+                getHitComponent(mev.getX(), mev.getY()) == null) {
+                dismiss();
+            }
+        }
+    }
+
+    /**
+     * Called by any child {@link BMenuItem}s when they are selected.
+     */
+    protected void itemSelected (BMenuItem item, long when, int modifiers)
+    {
+        dispatchEvent(new ActionEvent(item, when, modifiers, item.getAction()));
+        dismiss();
+    }
 }

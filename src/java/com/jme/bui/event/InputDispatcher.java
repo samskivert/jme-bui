@@ -146,6 +146,7 @@ public class InputDispatcher
             mouseMoved = true;
         }
 
+        BWindow mwindow = null;
         if (mouseMoved) {
             // check for a new hover component starting with each of our
             // root components
@@ -154,6 +155,11 @@ public class InputDispatcher
                 BWindow comp = (BWindow)_windows.get(ii);
                 nhcomponent = comp.getHitComponent(mx, my);
                 if (nhcomponent != null) {
+                    break;
+                }
+                // if this window is modal, note it and stop here
+                if (comp.isModal()) {
+                    mwindow = comp;
                     break;
                 }
             }
@@ -183,9 +189,15 @@ public class InputDispatcher
         // events (which become drag events) until all buttons are
         // released
         BComponent tcomponent = _ccomponent;
+        // if there's no clicked component, use the hover component
         if (tcomponent == null) {
             tcomponent = _hcomponent;
         }
+        // if there's no hover component use any modal window
+        if (tcomponent == null) {
+            tcomponent = mwindow;
+        }
+        // if there's no modal window, use the default mouse target
         if (tcomponent == null) {
             tcomponent = _dcomponent;
         }

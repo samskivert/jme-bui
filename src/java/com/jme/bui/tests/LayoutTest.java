@@ -85,17 +85,19 @@ public class LayoutTest extends SimpleGame
         _dispatcher.addWindow(window);
         window.setBounds(100, 100, 400, 250);
 
-        window = new BWindow(lnf, GroupLayout.makeVert(GroupLayout.TOP));
+        GroupLayout glay = GroupLayout.makeVStretch();
+        glay.setGap(0);
+        window = new BWindow(lnf, glay);
         window.setBorder(new LineBorder(ColorRGBA.black));
         window.add(new BCheckBox("Check it!"));
-        window.add(new BLabel("Two"));
-        window.add(new BLabel("Three"));
-        window.add(new BLabel("Four"));
-        window.add(new BLabel("Five"));
-        window.add(new BLabel("Six"));
-        window.add(new BLabel("Seven"));
-        window.add(new BLabel("Eight"));
-        window.add(new BLabel("Nine"));
+        window.add(new BMenuItem("Two", "two"));
+        window.add(new BMenuItem("Three", "three"));
+        window.add(new BMenuItem("Four", "four"));
+        window.add(new BMenuItem("Five", "five"));
+        window.add(new BMenuItem("Six", "six"));
+        window.add(new BMenuItem("Seven", "seven"));
+        window.add(new BMenuItem("Eight", "eight"));
+        window.add(new BMenuItem("Nine", "nine"));
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(100, 400);

@@ -100,8 +100,8 @@ public class MouseEvent extends InputEvent
     }
 
     /**
-     * Returns the x coordinates of the mouse at the time this event was
-     * generated.
+     * Returns the (absolute) x coordinate of the mouse at the time this
+     * event was generated.
      */
     public int getX ()
     {
@@ -109,8 +109,8 @@ public class MouseEvent extends InputEvent
     }
 
     /**
-     * Returns the y coordinates of the mouse at the time this event was
-     * generated.
+     * Returns the (absolute) y coordinate of the mouse at the time this
+     * event was generated.
      */
     public int getY ()
     {

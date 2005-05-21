@@ -127,7 +127,7 @@ public class BLookAndFeel
      */
     public BBackground createWindowBackground ()
     {
-        return new TintedBackground(10, 10, 10, 10, ColorRGBA.darkGray);
+        return new TintedBackground(10, 10, 10, 10, BLACK_TINT);
     }
 
     /**
@@ -157,7 +157,7 @@ public class BLookAndFeel
 //         String path = "/rsrc/textures/button_up.png";
 //         return new TiledBackground(
 //             BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
-        return new TintedBackground(5, 5, 5, 5, new ColorRGBA(0, 0, 0, 0.5f));
+        return new TintedBackground(5, 5, 5, 5, BLACK_TINT);
     }
 
     /**
@@ -237,4 +237,6 @@ public class BLookAndFeel
     protected BFont _font;
     protected ColorRGBA _foreground, _background;
     protected BKeyMap _keymap;
+
+    protected static final ColorRGBA BLACK_TINT = new ColorRGBA(0, 0, 0, 0.5f);
 }
