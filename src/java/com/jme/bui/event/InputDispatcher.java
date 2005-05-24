@@ -65,6 +65,11 @@ public class InputDispatcher
         window.setInputDispatcher(this);
         _rootNode.attachChild(window.getNode());
 
+        // if this window is modal, make it the default event target
+        if (window.isModal()) {
+            pushDefaultEventTarget(window);
+        }
+
         // recompute the hover component; the window may be under the mouse
         computeHoverComponent(_mouseX, _mouseY);
     }
@@ -82,6 +87,11 @@ public class InputDispatcher
             return;
         }
 
+        // if the window is modal, pop the default event target
+        if (window.isModal()) {
+            popDefaultEventTarget(window);
+        }
+
         // then remove the hover component (which may result in a mouse
         // exited even being dispatched to the window or one of its
         // children)
@@ -94,12 +104,31 @@ public class InputDispatcher
 
     /**
      * Configures a component (which would generally not be part of a
-     * normal interface hierarchy) to receive all mouse events that are
-     * not sent to some other component.
+     * normal interface hierarchy) to receive all events that are not sent
+     * to some other component.
      */
-    public void setDefaultMouseTarget (BComponent component)
+    public void pushDefaultEventTarget (BComponent component)
     {
+        if (_dcomponent != null) {
+            _defaults.add(0, _dcomponent);
+        }
         _dcomponent = component;
+    }
+
+    /**
+     * Pops the default event target off the stack.
+     */
+    public void popDefaultEventTarget (BComponent component)
+    {
+        if (_dcomponent == component) {
+            if (_defaults.size() > 0) {
+                _dcomponent = (BComponent)_defaults.remove(0);
+            } else {
+                _dcomponent = null;
+            }
+        } else {
+            _defaults.remove(component);
+        }
     }
 
     /**
@@ -144,12 +173,16 @@ public class InputDispatcher
             }
 
             // if we have a focus, generate a key event and dispatch it
-            if (_focus != null) {
+            BComponent target = _focus;
+            if (target == null) {
+                target = _dcomponent;
+            }
+            if (target != null) {
                 KeyEvent event = new KeyEvent(
                     this, _tickStamp, _modifiers, pressed ?
                     KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
                     _keyInput.keyChar(), keyCode);
-                _focus.dispatchEvent(event);
+                target.dispatchEvent(event);
             }
         }
 
@@ -177,7 +210,7 @@ public class InputDispatcher
         if (tcomponent == null) {
             tcomponent = _hcomponent;
         }
-        // if there's no modal window, use the default mouse target
+        // if there's no hover component, use the default event target
         if (tcomponent == null) {
             tcomponent = _dcomponent;
         }
@@ -290,9 +323,8 @@ public class InputDispatcher
             if (nhcomponent != null) {
                 break;
             }
-            // if this window is modal, force it to be the hover component
+            // if this window is modal, stop here
             if (comp.isModal()) {
-                nhcomponent = comp;
                 break;
             }
         }
@@ -328,6 +360,7 @@ public class InputDispatcher
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
     protected BComponent _dcomponent, _focus;
+    protected ArrayList _defaults = new ArrayList();
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {
