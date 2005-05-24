@@ -273,15 +273,17 @@ public class BButton extends BComponent
      */
     protected void stateDidChange ()
     {
-        int state = getState();
-        if (_backgrounds != null) {
-            for (int ii = 0; ii < _backgrounds.length; ii++) {
-                _backgrounds[ii].getNode().setForceCull(ii != state);
-            }
-            int dl = (state == DOWN) ? 1 : 0;
-            _label.setLocation(_backgrounds[0].getLeftInset() + dl,
-                               _backgrounds[0].getTopInset() - dl);
+        if (_backgrounds == null) {
+            return;
         }
+
+        int state = getState();
+        for (int ii = 0; ii < _backgrounds.length; ii++) {
+            _backgrounds[ii].getNode().setForceCull(ii != state);
+        }
+        int dl = (state == DOWN) ? 1 : 0;
+        _label.setLocation(_backgrounds[0].getLeftInset() + dl,
+                           _backgrounds[0].getTopInset() - dl);
     }
 
     // documentation inherited
