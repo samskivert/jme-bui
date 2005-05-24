@@ -70,12 +70,7 @@ public class BComboBox extends BLabel
      */
     public void addItem (int index, Object item)
     {
-        boolean select = (_items.size() == 0);
         _items.add(index, new ComboMenuItem(item));
-        if (select) {
-            selectItem(index);
-        }
-
         clearCachedMenu();
     }
 
@@ -119,14 +114,22 @@ public class BComboBox extends BLabel
         selectItem(index, 0L, 0);
     }
 
-//     /**
-//      * Selects the item with the specified index.
-//      */
-//     public void selectItem (Object item)
-//     {
-//         _selidx = index;
-//         setText(getSelectedItem().toString());
-//     }
+    /**
+     * Selects the item with the specified index.
+     */
+    public void selectItem (Object item)
+    {
+        int selidx = -1;
+        for (int ii = 0, ll = _items.size(); ii < ll; ii++) {
+            ComboMenuItem mitem = (ComboMenuItem)_items.get(ii);
+            if (mitem.item.equals(item)) {
+                Log.log.info("Found " + item + " at " + ii);
+                selidx = ii;
+                break;
+            }
+        }
+        selectItem(selidx);
+    }
 
     // documentation inherited
     public void dispatchEvent (BEvent event)
