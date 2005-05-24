@@ -40,7 +40,7 @@ public class BDecoratedWindow extends BWindow
     {
         super(lnf, new BorderLayout(5, 5));
 
-        // set up our background and border from the window manager
+        // set up our background and border from the look and feel
         setBackground(lnf.createWindowBackground());
         setBorder(lnf.createWindowBorder());
 

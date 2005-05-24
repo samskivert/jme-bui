@@ -30,6 +30,7 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jme.bui.*;
+import com.jme.bui.BComboBox;
 import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
@@ -60,7 +61,9 @@ public class LayoutTest extends SimpleGame
         label.setText("NORTH");
         window.add(label, BorderLayout.NORTH);
         window.add(new BLabel("EAST"), BorderLayout.EAST);
-        window.add(new BLabel("SOUTH"), BorderLayout.SOUTH);
+        window.add(new BComboBox(new String[] {
+            "One", "Two", "Five!", "Three sir.", "Three!" }),
+                   BorderLayout.SOUTH);
         window.add(new BLabel("WEST"), BorderLayout.WEST);
         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
         _dispatcher.addWindow(window);
@@ -83,13 +86,13 @@ public class LayoutTest extends SimpleGame
             }
         });
         _dispatcher.addWindow(window);
-        window.setBounds(100, 100, 400, 250);
+        window.setBounds(100, 125, 400, 250);
 
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
         window = new BWindow(lnf, glay);
         window.setBorder(new LineBorder(ColorRGBA.black));
-        window.add(new BCheckBox("Check it!"));
+        window.add(new BComboBox(new String[] { "one", "two", "three" }));
         window.add(new BMenuItem("Two", "two"));
         window.add(new BMenuItem("Three", "three"));
         window.add(new BMenuItem("Four", "four"));

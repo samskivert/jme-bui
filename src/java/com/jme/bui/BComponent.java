@@ -83,8 +83,13 @@ public class BComponent
      */
     public Dimension getPreferredSize ()
     {
-        return (_preferredSize == null) ?
-            computePreferredSize() : _preferredSize;
+        Dimension ps = _preferredSize;
+        if (ps == null) {
+            ps = computePreferredSize();
+            ps.width += getInsets().getHorizontal();
+            ps.height += getInsets().getVertical();
+        }
+        return ps;
     }
 
     /**
@@ -404,6 +409,9 @@ public class BComponent
      */
     protected void wasRemoved ()
     {
+        // mark ourselves as invalid so that if this component is again
+        // added to an interface heirarchy it will revalidate at that time
+        _valid = false;
     }
 
     /**

@@ -33,6 +33,10 @@ public class BPopupWindow extends BWindow
     {
         super(parent.getLookAndFeel(), layout);
         _parent = parent;
+
+        // set up our background and border from the look and feel
+        setBackground(_lnf.createPopupBackground());
+        setBorder(_lnf.createPopupBorder());
     }
 
     /**
@@ -43,13 +47,21 @@ public class BPopupWindow extends BWindow
      */
     public void popup (int x, int y, boolean above)
     {
+        // add ourselves to the interface hierarchy if we're not already
+        if (_dispatcher == null) {
+            _parent.getInputDispatcher().addWindow(this);
+        }
+
+        // size ourselves appropriately
         pack();
 
         // adjust x and y to ensure that we fit on the screen
         int width = DisplaySystem.getDisplaySystem().getWidth();
         int height = DisplaySystem.getDisplaySystem().getHeight();
         x = Math.min(width - getWidth(), x);
-        y = above ? Math.min(height - getHeight(), y) : Math.max(y, getHeight());
+        y = above ?
+            Math.min(height - getHeight(), y) : Math.max(0, y - getHeight());
+        setLocation(x, y);
     }
 
     protected BWindow _parent;

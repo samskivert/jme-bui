@@ -24,6 +24,7 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.shape.Quad;
 
+import com.jme.bui.border.EmptyBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.MouseEvent;
@@ -42,6 +43,10 @@ public class BMenuItem extends BLabel
     {
         super(text);
         _action = action;
+
+        // stick a small border around ourselves so that our highlight
+        // surrounds us a bit
+        setBorder(new EmptyBorder(2, 2, 2, 2));
 
         // create a quad that will be used to indicate that this menu item
         // is highlighted; start it at zero size and we'll size it

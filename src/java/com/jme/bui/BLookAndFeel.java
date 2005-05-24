@@ -131,6 +131,22 @@ public class BLookAndFeel
     }
 
     /**
+     * Creates a border for use by a popup window.
+     */
+    public BBorder createPopupBorder ()
+    {
+        return new LineBorder(ColorRGBA.white);
+    }
+
+    /**
+     * Creates a background for use by a popup window.
+     */
+    public BBackground createPopupBackground ()
+    {
+        return new TintedBackground(0, 0, 0, 0, ColorRGBA.darkGray);
+    }
+
+    /**
      * Creates a button background to use when a button is in the
      * specified state.
      */

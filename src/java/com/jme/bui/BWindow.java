@@ -124,6 +124,14 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Returns the input dispatcher that manages this window.
+     */
+    public InputDispatcher getInputDispatcher ()
+    {
+        return _dispatcher;
+    }
+
+    /**
      * Detaches this window from the input dispatcher and removes it from
      * the display.
      */

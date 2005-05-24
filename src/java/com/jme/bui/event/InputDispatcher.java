@@ -64,6 +64,9 @@ public class InputDispatcher
         _windows.add(window);
         window.setInputDispatcher(this);
         _rootNode.attachChild(window.getNode());
+
+        // recompute the hover component; the window may be under the mouse
+        computeHoverComponent(_mouseX, _mouseY);
     }
 
     /**
@@ -71,7 +74,20 @@ public class InputDispatcher
      */
     public void removeWindow (BWindow window)
     {
-        _windows.remove(window);
+        // first remove the window from our list
+        if (!_windows.remove(window)) {
+            Log.log.warning("Requested to remove unmanaged window " +
+                            "[window=" + window + "].");
+            Thread.dumpStack();
+            return;
+        }
+
+        // then remove the hover component (which may result in a mouse
+        // exited even being dispatched to the window or one of its
+        // children)
+        computeHoverComponent(_mouseX, _mouseY);
+
+        // finally remove the window from the interface heirarchy
         window.setInputDispatcher(null);
         _rootNode.detachChild(window.getNode());
     }
@@ -146,40 +162,8 @@ public class InputDispatcher
             mouseMoved = true;
         }
 
-        BWindow mwindow = null;
         if (mouseMoved) {
-            // check for a new hover component starting with each of our
-            // root components
-            BComponent nhcomponent = null;
-            for (int ii = _windows.size()-1; ii >= 0; ii--) {
-                BWindow comp = (BWindow)_windows.get(ii);
-                nhcomponent = comp.getHitComponent(mx, my);
-                if (nhcomponent != null) {
-                    break;
-                }
-                // if this window is modal, note it and stop here
-                if (comp.isModal()) {
-                    mwindow = comp;
-                    break;
-                }
-            }
-
-            // generate any necessary mouse entry or exit events
-            if (_hcomponent != nhcomponent) {
-                // inform the previous component that the mouse has exited
-                if (_hcomponent != null) {
-                    _hcomponent.dispatchEvent(
-                        new MouseEvent(this, _tickStamp, _modifiers,
-                                       MouseEvent.MOUSE_EXITED, mx, my));
-                }
-                // inform the new component that the mouse has entered
-                if (nhcomponent != null) {
-                    nhcomponent.dispatchEvent(
-                        new MouseEvent(this, _tickStamp, _modifiers,
-                                       MouseEvent.MOUSE_ENTERED, mx, my));
-                }
-                _hcomponent = nhcomponent;
-            }
+            computeHoverComponent(mx, my);
         }
 
         // mouse press and mouse motion events do not necessarily go to
@@ -192,10 +176,6 @@ public class InputDispatcher
         // if there's no clicked component, use the hover component
         if (tcomponent == null) {
             tcomponent = _hcomponent;
-        }
-        // if there's no hover component use any modal window
-        if (tcomponent == null) {
-            tcomponent = mwindow;
         }
         // if there's no modal window, use the default mouse target
         if (tcomponent == null) {
@@ -292,6 +272,46 @@ public class InputDispatcher
                 _focus.dispatchEvent(
                     new FocusEvent(this, _tickStamp, FocusEvent.FOCUS_GAINED));
             }
+        }
+    }
+
+    /**
+     * Recomputes the component over which the mouse is hovering,
+     * generating mouse exit and entry events as necessary.
+     */
+    protected void computeHoverComponent (int mx, int my)
+    {
+        // check for a new hover component starting with each of our root
+        // components
+        BComponent nhcomponent = null;
+        for (int ii = _windows.size()-1; ii >= 0; ii--) {
+            BWindow comp = (BWindow)_windows.get(ii);
+            nhcomponent = comp.getHitComponent(mx, my);
+            if (nhcomponent != null) {
+                break;
+            }
+            // if this window is modal, force it to be the hover component
+            if (comp.isModal()) {
+                nhcomponent = comp;
+                break;
+            }
+        }
+
+        // generate any necessary mouse entry or exit events
+        if (_hcomponent != nhcomponent) {
+            // inform the previous component that the mouse has exited
+            if (_hcomponent != null) {
+                _hcomponent.dispatchEvent(
+                    new MouseEvent(this, _tickStamp, _modifiers,
+                                   MouseEvent.MOUSE_EXITED, mx, my));
+            }
+            // inform the new component that the mouse has entered
+            if (nhcomponent != null) {
+                nhcomponent.dispatchEvent(
+                    new MouseEvent(this, _tickStamp, _modifiers,
+                                   MouseEvent.MOUSE_ENTERED, mx, my));
+            }
+            _hcomponent = nhcomponent;
         }
     }
 

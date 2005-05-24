@@ -217,9 +217,9 @@ public class BLabel extends BComponent
         float xoff;
         switch (_halign) {
         case CENTER: xoff = (_width - width) / 2; break;
-        case RIGHT: xoff = _width - width; break;
+        case RIGHT: xoff = _width - width - getInsets().right; break;
         default:
-        case LEFT: xoff = 0;
+        case LEFT: xoff = getInsets().left;
         }
 
         if (_icon != null) {
@@ -243,8 +243,8 @@ public class BLabel extends BComponent
         float yoff;
         switch (_valign) {
         default:
-        case TOP: return _height - height;
-        case BOTTOM: return 0;
+        case TOP: return _height - height - getInsets().top;
+        case BOTTOM: return getInsets().bottom;
         case CENTER: return (_height - height) / 2;
         }
     }
