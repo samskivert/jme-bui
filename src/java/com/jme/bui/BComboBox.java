@@ -22,10 +22,12 @@ package com.jme.bui;
 
 import java.util.ArrayList;
 
+import com.jme.bui.background.BBackground;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.MouseEvent;
+import com.jme.bui.util.Insets;
 
 /**
  * Displays a selected value and allows that value to be changed by
@@ -34,6 +36,14 @@ import com.jme.bui.event.MouseEvent;
 public class BComboBox extends BLabel
 {
     /**
+     * Creates an empty combo box.
+     */
+    public BComboBox ()
+    {
+        super("");
+    }
+
+    /**
      * Creates a combo box with the supplied set of items. The result of
      * {@link Object#toString} for each item will be displayed in the
      * list.
@@ -41,9 +51,7 @@ public class BComboBox extends BLabel
     public BComboBox (Object[] items)
     {
         super("");
-        for (int ii = 0; ii < items.length; ii++) {
-            addItem(items[ii]);
-        }
+        setItems(items);
     }
 
     /**
@@ -68,10 +76,21 @@ public class BComboBox extends BLabel
             selectItem(index);
         }
 
-        // clear out our cached menu if we have one
-        if (_menu != null) {
-            _menu.removeAll();
-            _menu = null;
+        clearCachedMenu();
+    }
+
+    /**
+     * Replaces any existing items in this combo box with the supplied
+     * items.
+     */
+    public void setItems (Object[] items)
+    {
+        clearCachedMenu();
+        _items.clear();
+        _selidx = -1;
+
+        for (int ii = 0; ii < items.length; ii++) {
+            addItem(items[ii]);
         }
     }
 
@@ -97,9 +116,7 @@ public class BComboBox extends BLabel
      */
     public void selectItem (int index)
     {
-        _selidx = index;
-        Object item = getSelectedItem();
-        setText(item == null ? "" : item.toString());
+        selectItem(index, 0L, 0);
     }
 
 //     /**
@@ -121,14 +138,11 @@ public class BComboBox extends BLabel
             switch (mev.getType()) {
             case MouseEvent.MOUSE_PRESSED:
                 if (_menu == null) {
-                    Log.log.info("New pop! " + event);
                     _menu = new BPopupMenu(getWindow());
                     _menu.addListener(_listener);
                     for (int ii = 0; ii < _items.size(); ii++) {
                         _menu.addMenuItem((ComboMenuItem)_items.get(ii));
                     }
-                } else {
-                    Log.log.info("Old pop! " + event);
                 }
                 _menu.popup(getAbsoluteX(), getAbsoluteY(), false);
                 break;
@@ -136,6 +150,72 @@ public class BComboBox extends BLabel
             case MouseEvent.MOUSE_RELEASED:
                 break;
             }
+        }
+    }
+
+    // documentation inherited
+    public Insets getInsets ()
+    {
+        Insets insets = super.getInsets();
+        if (_background != null) {
+            insets = _background.adjustInsets(insets);
+        }
+        return insets;
+    }
+
+    // TODO: make getPreferredSize() use the widest label
+
+    // documentation inherited
+    protected void wasAdded ()
+    {
+        // add our background; other bits will go on top of that
+        _background = getLookAndFeel().createComboBoxBackground();
+        _node.attachChild(_background.getNode());
+
+        super.wasAdded();
+    }
+
+    // documentation inherited
+    protected void layout ()
+    {
+        super.layout();
+
+        if (_background != null) {
+            // our background occupies our entire dimensions
+            _background.setBounds(0, 0, _width, _height);
+            _background.layout();
+        }
+    }
+
+    // documentation inherited
+    protected void wasRemoved ()
+    {
+        super.wasRemoved();
+
+        if (_background != null) {
+            _node.detachChild(_background.getNode());
+            _background = null;
+        }
+    }
+
+    protected void selectItem (int index, long when, int modifiers)
+    {
+        if (_selidx == index) {
+            return;
+        }
+
+        _selidx = index;
+        Object item = getSelectedItem();
+        setText(item == null ? "" : item.toString());
+        dispatchEvent(
+            new ActionEvent(this, when, modifiers, "selectionChanged"));
+    }
+
+    protected void clearCachedMenu ()
+    {
+        if (_menu != null) {
+            _menu.removeAll();
+            _menu = null;
         }
     }
 
@@ -152,11 +232,13 @@ public class BComboBox extends BLabel
 
     protected ActionListener _listener = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
-            selectItem(_items.indexOf(event.getSource()));
+            selectItem(_items.indexOf(event.getSource()),
+                       event.getWhen(), event.getModifiers());
         }
     };
 
     protected int _selidx = -1;
     protected ArrayList _items = new ArrayList();
     protected BPopupMenu _menu;
+    protected BBackground _background;
 }

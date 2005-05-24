@@ -166,6 +166,16 @@ public class BLookAndFeel
     }
 
     /**
+     * Creates a background to use for a combo box.
+     */
+    public BBackground createComboBoxBackground ()
+    {
+        return new TiledBackground(
+            BLookAndFeel.class.getResource(
+                "/rsrc/textures/button_up.png"), 5, 3, 5, 3);
+    }
+
+    /**
      * Creates the background used for text components.
      */
     public BBackground createTextBack ()

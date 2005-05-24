@@ -21,6 +21,7 @@
 package com.jme.bui.background;
 
 import com.jme.bui.BComponent;
+import com.jme.bui.util.Insets;
 
 /**
  * Provides additional information about a background that is used to
@@ -80,6 +81,20 @@ public abstract class BBackground extends BComponent
     public int getContentHeight ()
     {
         return _height - _top - _bottom;
+    }
+
+    /**
+     * Creates a new set of insets that expand the supplied set by this
+     * background's insets.
+     */
+    public Insets adjustInsets (Insets insets)
+    {
+        Insets ainsets = new Insets(insets);
+        ainsets.left += getLeftInset();
+        ainsets.top += getTopInset();
+        ainsets.right += getRightInset();
+        ainsets.bottom += getBottomInset();
+        return ainsets;
     }
 
     /** Configures this background with its insets. */

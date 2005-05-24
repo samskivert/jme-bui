@@ -20,12 +20,14 @@
 
 package com.jme.bui;
 
-import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;
+
+import com.jme.bui.util.Dimension;
+import com.jme.bui.util.Insets;
 
 /**
  * A simple component for displaying a textual label.
@@ -182,7 +184,7 @@ public class BLabel extends BComponent
     }
 
     // documentation inherited
-    public void wasAdded ()
+    protected void wasAdded ()
     {
         super.wasAdded();
 
@@ -214,18 +216,19 @@ public class BLabel extends BComponent
             height = Math.max(height, _tgeom.getHeight());
         }
 
+        Insets insets = getInsets();
         float xoff;
         switch (_halign) {
         case CENTER: xoff = (_width - width) / 2; break;
-        case RIGHT: xoff = _width - width - getInsets().right; break;
+        case RIGHT: xoff = _width - width - insets.right; break;
         default:
-        case LEFT: xoff = getInsets().left;
+        case LEFT: xoff = insets.left;
         }
 
         if (_icon != null) {
             _icon.getQuad().setLocalTranslation(
                 new Vector3f(xoff + _icon.getWidth()/2,
-                             getYOffset(_icon.getHeight()) +
+                             getYOffset(insets, _icon.getHeight()) +
                              _icon.getHeight()/2, 0));
             xoff += (_icon.getWidth() + _gap);
         }
@@ -234,17 +237,17 @@ public class BLabel extends BComponent
             // TEMP: handle Text offset bug
             xoff -= 4f;
             _tgeom.setLocalTranslation(
-                new Vector3f(xoff, getYOffset(_tgeom.getHeight()), 0));
+                new Vector3f(xoff, getYOffset(insets, _tgeom.getHeight()), 0));
         }
     }
 
-    protected float getYOffset (float height)
+    protected float getYOffset (Insets insets, float height)
     {
         float yoff;
         switch (_valign) {
         default:
-        case TOP: return _height - height - getInsets().top;
-        case BOTTOM: return getInsets().bottom;
+        case TOP: return _height - height - insets.top;
+        case BOTTOM: return insets.bottom;
         case CENTER: return (_height - height) / 2;
         }
     }

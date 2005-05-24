@@ -168,12 +168,7 @@ public class BWindow extends BContainer
     {
         Insets insets = super.getInsets();
         if (_background != null) {
-            Insets cinsets = new Insets(insets);
-            cinsets.left += _background.getLeftInset();
-            cinsets.top += _background.getTopInset();
-            cinsets.right += _background.getRightInset();
-            cinsets.bottom += _background.getBottomInset();
-            insets = cinsets;
+            insets = _background.adjustInsets(insets);
         }
         return insets;
     }
