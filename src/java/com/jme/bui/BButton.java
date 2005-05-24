@@ -146,12 +146,13 @@ public class BButton extends BComponent
 
         // we can now obtain our backgrounds
         if (_backgrounds == null) {
+            int state = getState();
             _backgrounds = new BBackground[getBackgroundCount()];
             for (int ii = 0; ii < _backgrounds.length; ii++) {
                 _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
                 _node.attachChild(_backgrounds[ii].getNode());
                 _backgrounds[ii].wasAdded();
-                _backgrounds[ii].getNode().setForceCull(ii != 0);
+                _backgrounds[ii].getNode().setForceCull(ii != state);
             }
         }
 
@@ -273,12 +274,14 @@ public class BButton extends BComponent
     protected void stateDidChange ()
     {
         int state = getState();
-        for (int ii = 0; ii < _backgrounds.length; ii++) {
-            _backgrounds[ii].getNode().setForceCull(ii != state);
+        if (_backgrounds != null) {
+            for (int ii = 0; ii < _backgrounds.length; ii++) {
+                _backgrounds[ii].getNode().setForceCull(ii != state);
+            }
+            int dl = (state == DOWN) ? 1 : 0;
+            _label.setLocation(_backgrounds[0].getLeftInset() + dl,
+                               _backgrounds[0].getTopInset() - dl);
         }
-        int dl = (state == DOWN) ? 1 : 0;
-        _label.setLocation(_backgrounds[0].getLeftInset() + dl,
-                           _backgrounds[0].getTopInset() - dl);
     }
 
     // documentation inherited
