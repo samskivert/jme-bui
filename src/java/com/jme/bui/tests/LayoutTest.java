@@ -56,18 +56,23 @@ public class LayoutTest extends SimpleGame
         BWindow window = new BDecoratedWindow(lnf, null);
         URL icon = getClass().getClassLoader().
             getResource("rsrc/textures/button_up.png");
-        BLabel label = new BLabel(new BIcon(icon));
-        label.setHorizontalAlignment(BLabel.CENTER);
-        label.setText("NORTH");
-        window.add(label, BorderLayout.NORTH);
-        window.add(new BLabel("EAST"), BorderLayout.EAST);
-        window.add(new BComboBox(new String[] {
-            "One", "Two", "Five!", "Three sir.", "Three!" }),
-                   BorderLayout.SOUTH);
-        window.add(new BLabel("WEST"), BorderLayout.WEST);
-        window.add(new BLabel("CENTER"), BorderLayout.CENTER);
+//         BLabel label = new BLabel(new BIcon(icon));
+//         label.setHorizontalAlignment(BLabel.CENTER);
+//         label.setText("NORTH");
+//         window.add(label, BorderLayout.NORTH);
+//         window.add(new BLabel("EAST"), BorderLayout.EAST);
+//         window.add(new BComboBox(new String[] {
+//             "One", "Two", "Five!", "Three sir.", "Three!" }),
+//                    BorderLayout.SOUTH);
+//         window.add(new BLabel("WEST"), BorderLayout.WEST);
+//         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
+        BTabbedPane pane = new BTabbedPane();
+        window.add(pane, BorderLayout.CENTER);
+        pane.addTab("One", new BButton("One contents"));
+        pane.addTab("Two", new BLabel("Two contents"));
+        pane.addTab("Three", new BTextArea());
         _dispatcher.addWindow(window);
-        window.pack();
+        window.setSize(200, 150);
         window.setLocation(25, 25);
 
         window = new BWindow(lnf, new BorderLayout(5, 5));
@@ -86,7 +91,7 @@ public class LayoutTest extends SimpleGame
             }
         });
         _dispatcher.addWindow(window);
-        window.setBounds(100, 125, 400, 250);
+        window.setBounds(200, 125, 400, 250);
 
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);

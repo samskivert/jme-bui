@@ -43,7 +43,7 @@ public class BTabbedPane extends BContainer
     /**
      * Adds a tab to the pane using the specified tile.
      */
-    public void addTab (String title, BContainer tab)
+    public void addTab (String title, BComponent tab)
     {
         BToggleButton tbutton = new BToggleButton(
             title, String.valueOf(_tabs.size()));
@@ -69,13 +69,14 @@ public class BTabbedPane extends BContainer
 
         // make sure the appropriate button is selected
         for (int ii = 0; ii < _tabs.size(); ii++) {
-            ((BToggleButton)_buttons.getComponent(ii)).setSelected(ii == tabidx);
+            BToggleButton btn = (BToggleButton)_buttons.getComponent(ii);
+            btn.setSelected(ii == tabidx);
         }
         // remove the current tab and add the requested one
         if (_selidx != -1) {
-            remove((BContainer)_tabs.get(_selidx));
+            remove((BComponent)_tabs.get(_selidx));
         }
-        add((BContainer)_tabs.get(tabidx), BorderLayout.CENTER);
+        add((BComponent)_tabs.get(tabidx), BorderLayout.CENTER);
         _selidx = tabidx;
     }
 
