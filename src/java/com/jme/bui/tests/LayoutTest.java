@@ -31,6 +31,7 @@ import com.jme.util.LoggingSystem;
 
 import com.jme.bui.*;
 import com.jme.bui.BComboBox;
+import com.jme.bui.BScrollPane;
 import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
@@ -110,17 +111,20 @@ public class LayoutTest extends SimpleGame
         window.pack();
         window.setLocation(100, 400);
 
-        window = new BWindow(lnf, GroupLayout.makeHoriz(GroupLayout.LEFT));
+        window = new BWindow(lnf, new BorderLayout());
         window.setBorder(new LineBorder(ColorRGBA.black));
-        window.add(new BToggleButton(new BIcon(icon), ""));
-        window.add(new BLabel("Two"));
-        window.add(new BLabel("Three"));
-        window.add(new BLabel("Four"));
-        window.add(new BLabel("Five"));
-        window.add(new BLabel("Six"));
-        window.add(new BLabel("Seven"));
-        window.add(new BLabel("Eight"));
-        window.add(new BLabel("Nine"));
+        BContainer cont =
+            new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
+        cont.add(new BToggleButton(new BIcon(icon), ""));
+        cont.add(new BLabel("Two"));
+        cont.add(new BLabel("Three"));
+        cont.add(new BLabel("Four"));
+        cont.add(new BLabel("Five"));
+        cont.add(new BLabel("Six"));
+        cont.add(new BLabel("Seven"));
+        cont.add(new BLabel("Eight"));
+        cont.add(new BLabel("Nine"));
+        window.add(new BScrollPane(cont), BorderLayout.CENTER);
         _dispatcher.addWindow(window);
         window.pack();
         window.setLocation(300, 400);

@@ -30,6 +30,7 @@ import com.jme.scene.Node;
 import com.jme.util.Timer;
 
 import com.jme.bui.BComponent;
+import com.jme.bui.BScrollPane;
 import com.jme.bui.BWindow;
 import com.jme.bui.Log;
 
@@ -100,6 +101,25 @@ public class InputDispatcher
         // finally remove the window from the interface heirarchy
         window.setInputDispatcher(null);
         _rootNode.detachChild(window.getNode());
+    }
+
+    /**
+     * Registers a scroll pane with the input dispatcher. This pane will
+     * be updated on every frame, giving it a chance to re-render its
+     * viewport.
+     */
+    public void addScrollPane (BScrollPane pane)
+    {
+        _spanes.add(pane);
+    }
+
+    /**
+     * Unregisters the supplied srollpane. It will no longer be updated on
+     * every frame.
+     */
+    public void removeScrollPane (BScrollPane pane)
+    {
+        _spanes.remove(pane);
     }
 
     /**
@@ -274,6 +294,11 @@ public class InputDispatcher
         if (_focus == null) {
             _handler.update(timePerFrame);
         }
+
+        // update our scroll panes
+        for (int ii = 0, ll = _spanes.size(); ii < ll; ii++) {
+            ((BScrollPane)_spanes.get(ii)).update();
+        }
     }
 
     /**
@@ -358,6 +383,7 @@ public class InputDispatcher
     protected int _mouseX, _mouseY;
 
     protected ArrayList _windows = new ArrayList();
+    protected ArrayList _spanes = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
     protected BComponent _dcomponent, _focus;
     protected ArrayList _defaults = new ArrayList();
