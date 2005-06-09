@@ -140,7 +140,7 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
-    public void wasAdded ()
+    protected void wasAdded ()
     {
         super.wasAdded();
 
