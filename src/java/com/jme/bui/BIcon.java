@@ -31,6 +31,7 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
+import com.jme.bui.util.Dimension;
 import com.jme.bui.util.RenderUtil;
 
 /**
@@ -45,7 +46,7 @@ public class BIcon
     {
         this(TextureManager.loadTexture(
                  image, Texture.MM_LINEAR, Texture.FM_LINEAR,
-                 Image.GUESS_FORMAT_NO_S3TC, 1.0f, true));
+                 Image.GUESS_FORMAT_NO_S3TC, 1.0f, true), -1, -1);
     }
 
     /**
@@ -54,13 +55,14 @@ public class BIcon
     public BIcon (BufferedImage image)
     {
         this(TextureManager.loadTexture(image, Texture.MM_LINEAR_LINEAR,
-                                        Texture.FM_LINEAR, true));
+                                        Texture.FM_LINEAR, true),
+             image.getWidth(), image.getHeight());
     }
 
     /**
      * Creates an icon from the supplied source texture.
      */
-    public BIcon (Texture texture)
+    public BIcon (Texture texture, int width, int height)
     {
         _texture = texture;
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
@@ -68,7 +70,12 @@ public class BIcon
         _tstate.setEnabled(true);
         _tstate.setTexture(_texture);
 
-        _quad = new Quad("icon", getWidth(), getHeight());
+        if (width == -1) {
+            width = _texture.getImage().getWidth();
+            height = _texture.getImage().getHeight();
+        }
+        _size = new Dimension(width, height);
+        _quad = new Quad("icon", width, height);
         _quad.setRenderState(_tstate);
 
         // we want transparent parts of our texture to show through
@@ -81,7 +88,7 @@ public class BIcon
      */
     public int getWidth ()
     {
-        return _texture.getImage().getWidth();
+        return _size.width;
     }
 
     /**
@@ -89,7 +96,7 @@ public class BIcon
      */
     public int getHeight ()
     {
-        return _texture.getImage().getHeight();
+        return _size.height;
     }
 
     /**
@@ -103,4 +110,5 @@ public class BIcon
     protected Texture _texture;
     protected TextureState _tstate;
     protected Quad _quad;
+    protected Dimension _size;
 }
