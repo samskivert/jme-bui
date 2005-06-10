@@ -154,15 +154,14 @@ public class BLookAndFeel
     {
         String path;
         switch (state) {
-        case BButton.DOWN: path = "/rsrc/textures/button_down.png"; break;
-        case BButton.OVER: path = "/rsrc/textures/button_up.png"; break;
+        case BButton.DOWN: path = "rsrc/textures/button_down.png"; break;
+        case BButton.OVER: path = "rsrc/textures/button_up.png"; break;
         case BToggleButton.SELECTED:
-            path = "/rsrc/textures/button_down.png"; break;
+            path = "rsrc/textures/button_down.png"; break;
         default:
-        case BButton.UP: path = "/rsrc/textures/button_up.png"; break;
+        case BButton.UP: path = "rsrc/textures/button_up.png"; break;
         }
-        return new TiledBackground(
-            BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+        return new TiledBackground(getResource(path), 5, 3, 5, 3);
     }
 
     /**
@@ -171,8 +170,7 @@ public class BLookAndFeel
     public BBackground createComboBoxBackground ()
     {
         return new TiledBackground(
-            BLookAndFeel.class.getResource(
-                "/rsrc/textures/button_up.png"), 5, 3, 5, 3);
+            getResource("rsrc/textures/button_up.png"), 5, 3, 5, 3);
     }
 
     /**
@@ -180,9 +178,8 @@ public class BLookAndFeel
      */
     public BBackground createTextBack ()
     {
-//         String path = "/rsrc/textures/button_up.png";
-//         return new TiledBackground(
-//             BLookAndFeel.class.getResource(path), 5, 3, 5, 3);
+//         String path = "rsrc/textures/button_up.png";
+//         return new TiledBackground(getResource(path), 5, 3, 5, 3);
         return new TintedBackground(5, 5, 5, 5, BLACK_TINT);
     }
 
@@ -191,7 +188,7 @@ public class BLookAndFeel
      */
     public BButton createScrollButton (int orientation, boolean less)
     {
-        String path = "/rsrc/textures/scroll_";
+        String path = "rsrc/textures/scroll_";
         switch (orientation) {
         case HORIZONTAL:
             path += (less ? "left" : "right");
@@ -201,7 +198,7 @@ public class BLookAndFeel
             break;
         }
         path += ".png";
-        return new BButton(new BIcon(BLookAndFeel.class.getResource(path)), "");
+        return new BButton(new BIcon(getResource(path)), "");
     }
 
     /**
@@ -210,8 +207,7 @@ public class BLookAndFeel
     public BBackground createScrollWell (int orientation)
     {
         return new TiledBackground(
-            BLookAndFeel.class.getResource("/rsrc/textures/button_up.png"),
-            5, 3, 5, 3);
+            getResource("rsrc/textures/button_up.png"), 5, 3, 5, 3);
     }
 
     /**
@@ -227,8 +223,7 @@ public class BLookAndFeel
      */
     public BIcon createCheckBoxIcon ()
     {
-        return new BIcon(
-            BLookAndFeel.class.getResource("/rsrc/textures/checkbox.png"));
+        return new BIcon(getResource("rsrc/textures/checkbox.png"));
     }
 
     /**
@@ -253,10 +248,19 @@ public class BLookAndFeel
         BLookAndFeel lnf = new BLookAndFeel();
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
-        URL url = BLookAndFeel.class.getResource("/rsrc/fonts/default.png");
+        URL url = getResource("rsrc/fonts/default.png");
         lnf.setFont(new BBitmapFont(url, 10, 16));
         lnf.setKeyMap(new DefaultKeyMap());
         return lnf;
+    }
+
+    protected static URL getResource (String path)
+    {
+        URL url = BLookAndFeel.class.getClassLoader().getResource(path);
+        if (url == null) {
+            Log.log.warning("Failed to locate resource [path=" + path + "].");
+        }
+        return url;
     }
 
     protected BLookAndFeel _parent;
