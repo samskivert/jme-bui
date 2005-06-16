@@ -35,7 +35,7 @@ import com.jme.bui.BScrollPane;
 import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
-import com.jme.bui.event.InputDispatcher;
+import com.jme.bui.event.PolledInputDispatcher;
 import com.jme.bui.layout.BorderLayout;
 import com.jme.bui.layout.GroupLayout;
 import com.jme.bui.layout.TableLayout;
@@ -48,7 +48,7 @@ public class LayoutTest extends SimpleGame
     protected void simpleInitGame ()
     {
         InputSystem.createInputSystem(properties.getRenderer());
-        _dispatcher = new InputDispatcher(timer, input, rootNode);
+        _dispatcher = new PolledInputDispatcher(timer, input, rootNode);
 
         // we don't hide the cursor
         InputSystem.getMouseInput().setCursorVisible(true);
@@ -153,7 +153,7 @@ public class LayoutTest extends SimpleGame
         test.start();
     }
 
-    protected InputDispatcher _dispatcher;
+    protected PolledInputDispatcher _dispatcher;
     protected BTextArea _text;
     protected BTextField _input;
 }
