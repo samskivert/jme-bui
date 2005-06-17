@@ -32,7 +32,8 @@ import com.jme.bui.Log;
  * being used in an AWT canvas.
  */
 public class CanvasInputDispatcher extends InputDispatcher
-    implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener
+    implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
+               java.awt.event.MouseWheelListener
 {
     public CanvasInputDispatcher (Node rootNode, Canvas canvas)
     {
@@ -42,6 +43,7 @@ public class CanvasInputDispatcher extends InputDispatcher
         // we want to hear about mouse movement and clicking
         canvas.addMouseListener(this);
         canvas.addMouseMotionListener(this);
+        canvas.addMouseWheelListener(this);
     }
 
     // documentation inherited from interface MouseListener
@@ -111,6 +113,21 @@ public class CanvasInputDispatcher extends InputDispatcher
                     new MouseEvent(this, e.getWhen(), _modifiers,
                                    type, _mouseX, _mouseY));
             }
+        }
+    }
+
+    // documentation inherited from interface MouseWheelListener
+    public void mouseWheelMoved (java.awt.event.MouseWheelEvent e)
+    {
+        updateState(e);
+
+        BComponent tcomponent = getTargetComponent();
+        if (tcomponent != null) {
+            tcomponent.dispatchEvent(
+                new MouseEvent(this, e.getWhen(), _modifiers,
+                               MouseEvent.MOUSE_WHEELED,
+                               convertButton(e), _mouseX, _mouseY,
+                               e.getWheelRotation()));
         }
     }
 
