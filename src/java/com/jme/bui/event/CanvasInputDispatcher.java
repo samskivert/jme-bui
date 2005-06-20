@@ -181,6 +181,7 @@ public class CanvasInputDispatcher extends InputDispatcher
         case java.awt.event.MouseEvent.BUTTON1: return MouseEvent.BUTTON1;
         case java.awt.event.MouseEvent.BUTTON3: return MouseEvent.BUTTON2;
         case java.awt.event.MouseEvent.BUTTON2: return MouseEvent.BUTTON3;
+        case 0: return -1; // this is generated when we wheel
         default:
             Log.log.warning("Requested to map unknown button '" +
                             e.getButton() + "'.");
