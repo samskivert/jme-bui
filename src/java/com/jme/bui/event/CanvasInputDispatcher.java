@@ -175,11 +175,12 @@ public class CanvasInputDispatcher extends InputDispatcher
 
     protected int convertButton (java.awt.event.MouseEvent e)
     {
-        // OpenGL and the AWT disagree about mouse button numbering
+        // OpenGL and the AWT disagree about mouse button numbering (AWT
+        // is left=1 middle=2 right=3, OpenGL is left=0 middle=2 right=1)
         switch (e.getButton()) {
         case java.awt.event.MouseEvent.BUTTON1: return MouseEvent.BUTTON1;
-        case java.awt.event.MouseEvent.BUTTON2: return MouseEvent.BUTTON2;
-        case java.awt.event.MouseEvent.BUTTON3: return MouseEvent.BUTTON3;
+        case java.awt.event.MouseEvent.BUTTON3: return MouseEvent.BUTTON2;
+        case java.awt.event.MouseEvent.BUTTON2: return MouseEvent.BUTTON3;
         default:
             Log.log.warning("Requested to map unknown button '" +
                             e.getButton() + "'.");
