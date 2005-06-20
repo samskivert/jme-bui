@@ -177,9 +177,13 @@ public class CanvasInputDispatcher extends InputDispatcher
     {
         // OpenGL and the AWT disagree about mouse button numbering
         switch (e.getButton()) {
-        case 2: return 3;
-        case 3: return 2;
-        default: return e.getButton();
+        case java.awt.event.MouseEvent.BUTTON1: return MouseEvent.BUTTON1;
+        case java.awt.event.MouseEvent.BUTTON2: return MouseEvent.BUTTON2;
+        case java.awt.event.MouseEvent.BUTTON3: return MouseEvent.BUTTON3;
+        default:
+            Log.log.warning("Requested to map unknown button '" +
+                            e.getButton() + "'.");
+            return e.getButton();
         }
     }
 
