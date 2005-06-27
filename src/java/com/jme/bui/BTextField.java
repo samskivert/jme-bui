@@ -81,6 +81,14 @@ public class BTextField extends BContainer
         _prefWidth = width;
     }
 
+    /**
+     * Returns a reference to the background used by this text field.
+     */
+    public BBackground getBackground ()
+    {
+        return _background;
+    }
+
     // documentation inherited
     public boolean acceptsFocus ()
     {

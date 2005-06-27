@@ -139,6 +139,14 @@ public class BTextArea extends BContainer
         return _lines.size();
     }
 
+    /**
+     * Returns a reference to the background used by this text area.
+     */
+    public BBackground getBackground ()
+    {
+        return _background;
+    }
+
     // documentation inherited
     public void wasAdded ()
     {
