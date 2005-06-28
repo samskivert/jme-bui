@@ -281,9 +281,8 @@ public class BButton extends BComponent
         for (int ii = 0; ii < _backgrounds.length; ii++) {
             _backgrounds[ii].getNode().setForceCull(ii != state);
         }
-        int dl = (state == DOWN) ? 1 : 0;
-        _label.setLocation(_backgrounds[0].getLeftInset() + dl,
-                           _backgrounds[0].getTopInset() - dl);
+        _label.setLocation(_backgrounds[state].getLeftInset(),
+                           _backgrounds[state].getTopInset());
     }
 
     // documentation inherited

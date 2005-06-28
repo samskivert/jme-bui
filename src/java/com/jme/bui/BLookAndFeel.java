@@ -153,15 +153,21 @@ public class BLookAndFeel
     public BBackground createButtonBack (int state)
     {
         String path;
+        int dx = 0, dy = 0;
         switch (state) {
-        case BButton.DOWN: path = "rsrc/textures/button_down.png"; break;
+        case BButton.DOWN:
+            path = "rsrc/textures/button_down.png";
+            dx = -1; dy = -1;
+            break;
         case BButton.OVER: path = "rsrc/textures/button_up.png"; break;
         case BToggleButton.SELECTED:
-            path = "rsrc/textures/button_down.png"; break;
+            path = "rsrc/textures/button_down.png";
+            break;
         default:
         case BButton.UP: path = "rsrc/textures/button_up.png"; break;
         }
-        return new TiledBackground(getResource(path), 5, 3, 5, 3);
+        return new TiledBackground(getResource(path),
+                                   5 + dx, 3 + dy, 5 - dx, 3 - dy);
     }
 
     /**
@@ -246,12 +252,20 @@ public class BLookAndFeel
     public static BLookAndFeel getDefaultLookAndFeel ()
     {
         BLookAndFeel lnf = new BLookAndFeel();
+        configureDefaultLookAndFeel(lnf);
+        return lnf;
+    }
+
+    /**
+     * Returns a basic default look and feel.
+     */
+    public static void configureDefaultLookAndFeel (BLookAndFeel lnf)
+    {
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
         URL url = getResource("rsrc/fonts/default.png");
         lnf.setFont(new BBitmapFont(url, 10, 16));
         lnf.setKeyMap(new DefaultKeyMap());
-        return lnf;
     }
 
     protected static URL getResource (String path)
