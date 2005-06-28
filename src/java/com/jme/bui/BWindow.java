@@ -181,6 +181,7 @@ public class BWindow extends BContainer
         if (_background != null) {
             // our background occupies our entire dimensions
             _background.setBounds(0, 0, _width, _height);
+            _background.layout();
         }
     }
 
