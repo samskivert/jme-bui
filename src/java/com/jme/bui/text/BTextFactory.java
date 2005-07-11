@@ -20,6 +20,8 @@
 
 package com.jme.bui.text;
 
+import com.jme.renderer.ColorRGBA;
+
 /**
  * Creates instances of {@link BText} using a particular technology and a
  * particular font configuration.
@@ -27,9 +29,10 @@ package com.jme.bui.text;
 public abstract class BTextFactory
 {
     /**
-     * Creates a text instance using our font configuration.
+     * Creates a text instance using our the font configuration associated
+     * with this text factory and the foreground color specified.
      */
-    public abstract BText createText (String text);
+    public abstract BText createText (String text, ColorRGBA color);
 
     /**
      * Creates a text that is no wider than the specified maximum width
@@ -39,5 +42,6 @@ public abstract class BTextFactory
      * @param remain if non-null, will have the number of unrendered
      * characters filled into the zeroth element.
      */
-    public abstract BText wrapText (String text, int maxWidth, int[] remain);
+    public abstract BText wrapText (
+        String text, ColorRGBA color, int maxWidth, int[] remain);
 }

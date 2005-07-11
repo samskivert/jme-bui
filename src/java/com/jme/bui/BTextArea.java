@@ -234,8 +234,9 @@ public class BTextArea extends BContainer
                 _lines.add(current = new Line(_lines.size()));
             }
             int offset = 0;
-            while ((offset =
-                    current.addRun(tfact, fg, maxWidth, run, offset)) > 0) {
+            ColorRGBA color = (run.color == null) ? fg : run.color;
+            while ((offset = current.addRun(
+                        tfact, run, color, maxWidth, offset)) > 0) {
                 _lines.add(current = new Line(_lines.size()));
             }
             if (run.endsLine) {
@@ -331,15 +332,15 @@ public class BTextArea extends BContainer
          * factory, returns the offset into the run that must be appeneded
          * to a new line or -1 if the entire run was appended.
          */
-        public int addRun (BTextFactory tfact, ColorRGBA foreground,
-                           int maxWidth, Run run, int offset)
+        public int addRun (BTextFactory tfact, Run run, ColorRGBA color,
+                           int maxWidth, int offset)
         {
             if (dx == 0) {
                 start = run;
             }
             String rtext = run.text.substring(offset);
             int[] remainder = new int[1];
-            BText text = tfact.wrapText(rtext, maxWidth-dx, remainder);
+            BText text = tfact.wrapText(rtext, color, maxWidth-dx, remainder);
             text.setLocation(dx, 0);
             attachChild(text.getGeometry());
             height = Math.max(height, text.getSize().height);

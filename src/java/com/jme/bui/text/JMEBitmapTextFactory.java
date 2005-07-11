@@ -23,6 +23,7 @@ package com.jme.bui.text;
 import java.net.URL;
 
 import com.jme.image.Texture;
+import com.jme.renderer.ColorRGBA;
 import com.jme.math.Vector3f;
 import com.jme.scene.Geometry;
 import com.jme.scene.Text;
@@ -67,7 +68,7 @@ public class JMEBitmapTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (String text)
+    public BText createText (String text, ColorRGBA color)
     {
         // compute the dimensions of this text
         final Dimension dims = new Dimension(text.length() * _width, _height);
@@ -78,6 +79,7 @@ public class JMEBitmapTextFactory extends BTextFactory
         tgeom.setTextureCombineMode(TextureState.REPLACE);
         tgeom.setRenderState(_tstate);
         tgeom.setRenderState(_astate);
+        tgeom.setTextColor(color);
 
         // wrap it all up in the right object
         return new BText() {
@@ -95,7 +97,8 @@ public class JMEBitmapTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText wrapText (String text, int maxWidth, int[] remain)
+    public BText wrapText (
+        String text, ColorRGBA color, int maxWidth, int[] remain)
     {
         // determine how many characters we can fit (note: JME currently
         // assumes all text is width 10 so we propagate that hack)
@@ -104,7 +107,7 @@ public class JMEBitmapTextFactory extends BTextFactory
         // deal with the easy case
         if (text.length() <= maxChars) {
             remain[0] = 0;
-            return createText(text);
+            return createText(text, color);
         }
 
         // scan backwards from maxChars looking for whitespace
@@ -112,13 +115,13 @@ public class JMEBitmapTextFactory extends BTextFactory
             if (Character.isWhitespace(text.charAt(ii))) {
                 // subtract one to absorb the whitespace that we used to wrap
                 remain[0] = (text.length() - ii - 1);
-                return createText(text.substring(0, ii));
+                return createText(text.substring(0, ii), color);
             }
         }
 
         // ugh, found no whitespace, just hard-wrap at maxChars
         remain[0] = (text.length() - maxChars);
-        return createText(text.substring(0, maxChars));
+        return createText(text.substring(0, maxChars), color);
     }
 
     protected int _width, _height;

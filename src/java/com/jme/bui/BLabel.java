@@ -265,8 +265,7 @@ public class BLabel extends BComponent
         }
 
         BLookAndFeel lnf = getLookAndFeel();
-        _tgeom = lnf.getTextFactory().createText(_text);
-//         _tgeom.setTextColor(lnf.getForeground());
+        _tgeom = lnf.getTextFactory().createText(_text, lnf.getForeground());
 
         _node.attachChild(_tgeom.getGeometry());
         _node.updateGeometricState(0.0f, true);
