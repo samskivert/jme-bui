@@ -232,12 +232,12 @@ public class BTextField extends BContainer
         int top = _background.getTopInset();
         int right = _background.getRightInset();
         int bottom = _background.getBottomInset();
-        int vc = computeVisisbleChars();
+        int vc = computeVisibleChars();
         _label.setBounds(left, top, _width - (left+right),
                          _height - (top+bottom));
 
         // if our size changed, we may have a different visible set of chars
-        if (computeVisisbleChars() != vc) {
+        if (computeVisibleChars() != vc) {
             refigureContents();
         }
     }
@@ -265,7 +265,7 @@ public class BTextField extends BContainer
         if (!isAdded()) {
             _label.setText(getDisplayText());
         } else {
-            int vizChars = computeVisisbleChars();
+            int vizChars = computeVisibleChars();
             _label.setText(
                 getDisplayText().substring(_offset, _offset+vizChars), false);
         }
@@ -287,7 +287,7 @@ public class BTextField extends BContainer
      */
     protected void setCursorPos (int cursorPos)
     {
-        int vizChars = computeVisisbleChars();
+        int vizChars = computeVisibleChars();
         _cursorPos = cursorPos;
         if (_cursorPos < _offset) {
             _offset = _cursorPos;
@@ -309,7 +309,7 @@ public class BTextField extends BContainer
      * Returns the number of visible characters in our text field given
      * the width of the label we use to display them.
      */
-    protected int computeVisisbleChars ()
+    protected int computeVisibleChars ()
     {
         // NOTE: giant hack, Text assumes all fonts are 10 pixels wide,
         // this all needs to be fixed

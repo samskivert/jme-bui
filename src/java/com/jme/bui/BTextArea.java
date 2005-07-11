@@ -26,7 +26,8 @@ import com.jme.bui.background.BBackground;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ChangeEvent;
 import com.jme.bui.event.ChangeListener;
-import com.jme.bui.font.BFont;
+import com.jme.bui.text.BText;
+import com.jme.bui.text.BTextFactory;
 import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -220,11 +221,10 @@ public class BTextArea extends BContainer
         }
         _lines.clear();
 
-        // determine our active font and the number of characters per line
         ColorRGBA fg = getLookAndFeel().getForeground();
-        BFont font = getLookAndFeel().getFont();
-        int insets = _background.getLeftInset() + _background.getTopInset();
-        int cpl = (_width - insets) / font.getWidth('A');
+        BTextFactory tfact = getLookAndFeel().getTextFactory();
+        int insets = _background.getLeftInset() + _background.getRightInset();
+        int maxWidth = (_width - insets);
 
         // wrap our text into lines
         Line current = null;
@@ -234,7 +234,8 @@ public class BTextArea extends BContainer
                 _lines.add(current = new Line(_lines.size()));
             }
             int offset = 0;
-            while ((offset = current.addRun(font, fg, cpl, run, offset)) > 0) {
+            while ((offset =
+                    current.addRun(tfact, fg, maxWidth, run, offset)) > 0) {
                 _lines.add(current = new Line(_lines.size()));
             }
             if (run.endsLine) {
@@ -244,7 +245,16 @@ public class BTextArea extends BContainer
 
         // determine how many lines we can display in total
         insets = _background.getTopInset() + _background.getBottomInset();
-        int lines = (_height - insets) / font.getHeight();
+
+        // start at the last line and see how many we can fit
+        int lines = 0, lheight = 0;
+        for (int ll = _lines.size()-1; ll >= 0; ll--) {
+            lheight += ((Line)_lines.get(ll)).height;
+            if (lheight > _height) {
+                break;
+            }
+            lines++;
+        }
 
         // update our model (which will cause the text to be repositioned)
         int sline = Math.max(0, _lines.size() - lines);
@@ -266,20 +276,17 @@ public class BTextArea extends BContainer
             _text.detachChild((Line)_lines.get(ii));
         }
 
-        BFont font = getLookAndFeel().getFont();
         int x = _background.getLeftInset();
-        int y = _height - font.getHeight() - _background.getTopInset();
+        int y = _height - _background.getTopInset();
 
         int start = _model.getValue(), stop = start + _model.getExtent();
         for (int ii = start; ii < stop; ii++) {
             Line line = (Line)_lines.get(ii);
+            y -= line.height;
             _text.attachChild(line);
             line.updateGeometricState(0.0f, true);
             line.updateRenderState();
-            // TEMP: handle Text offset bug
-            int fx = x - 4;
-            line.setLocalTranslation(new Vector3f(fx, y, 0));
-            y -= font.getHeight();
+            line.setLocalTranslation(new Vector3f(x, y, 0));
         }
     }
 
@@ -305,14 +312,14 @@ public class BTextArea extends BContainer
         /** The run that starts this line. */
         public Run start;
 
-        /** The offset into the run at which this line starts. */
-        public int startOffset;
-
         /** The run that ends this line. */
         public Run end;
 
-        /** The number of characters on this line. */
-        public int length;
+        /** The current x position at which new text will be appended. */
+        public int dx;
+
+        /** The height of this line. */
+        public int height;
 
         public Line (int lineNo)
         {
@@ -320,28 +327,24 @@ public class BTextArea extends BContainer
         }
 
         /**
-         * Adds the supplied run to the line using the supplied font,
-         * returns the offset into the run that must be appeneded to a new
-         * line or -1 if the entire run was appended.
+         * Adds the supplied run to the line using the supplied text
+         * factory, returns the offset into the run that must be appeneded
+         * to a new line or -1 if the entire run was appended.
          */
-        public int addRun (BFont font, ColorRGBA foreground, int charsPerLine,
-                           Run run, int offset)
+        public int addRun (BTextFactory tfact, ColorRGBA foreground,
+                           int maxWidth, Run run, int offset)
         {
-            if (length == 0) {
+            if (dx == 0) {
                 start = run;
-                startOffset = offset;
             }
-            int dx = length * font.getWidth('A');
-            int ravail = run.text.length()-offset;
-            int used = Math.min(ravail, charsPerLine-length);
-            String rtext = run.text.substring(offset, offset+used);
-            Text text = new Text("line", rtext);
-            font.configure(text);
-            text.setTextColor(run.color == null ? foreground : run.color);
-            text.setLocalTranslation(new Vector3f(dx, 0, 0));
-            attachChild(text);
-            length += used;
-            return (used < ravail) ? offset + used : -1;
+            String rtext = run.text.substring(offset);
+            int[] remainder = new int[1];
+            BText text = tfact.wrapText(rtext, maxWidth-dx, remainder);
+            text.setLocation(dx, 0);
+            attachChild(text.getGeometry());
+            height = Math.max(height, text.getSize().height);
+            dx += text.getSize().width;
+            return (remainder[0] == 0) ? -1 : run.text.length() - remainder[0];
         }
     }
 

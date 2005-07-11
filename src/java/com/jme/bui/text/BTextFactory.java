@@ -18,33 +18,26 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.font;
-
-import com.jme.scene.Text;
+package com.jme.bui.text;
 
 /**
- * Creates textured quads for individual characters and provides
- * information on the metrics for those characters.
+ * Creates instances of {@link BText} using a particular technology and a
+ * particular font configuration.
  */
-public abstract class BFont
+public abstract class BTextFactory
 {
     /**
-     * Creates a glyph for the specified character.
+     * Creates a text instance using our font configuration.
      */
-    public abstract BGlyph createCharacter (char c);
+    public abstract BText createText (String text);
 
     /**
-     * Returns the width of the specified character.
+     * Creates a text that is no wider than the specified maximum width
+     * but contains as much of the supplied text (terminating on a word
+     * boundary) as is possible within that limit.
+     *
+     * @param remain if non-null, will have the number of unrendered
+     * characters filled into the zeroth element.
      */
-    public abstract int getWidth (char c);
-
-    /**
-     * Returns the height of the characters in this font.
-     */
-    public abstract int getHeight ();
-
-    /**
-     * Configures the supplied {@link Text} instance with this font.
-     */
-    public abstract void configure (Text text);
+    public abstract BText wrapText (String text, int maxWidth, int[] remain);
 }

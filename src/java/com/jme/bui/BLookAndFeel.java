@@ -27,10 +27,11 @@ import com.jme.bui.background.TiledBackground;
 import com.jme.bui.background.TintedBackground;
 import com.jme.bui.border.BBorder;
 import com.jme.bui.border.LineBorder;
-import com.jme.bui.font.BBitmapFont;
-import com.jme.bui.font.BFont;
 import com.jme.bui.text.BKeyMap;
+import com.jme.bui.text.BText;
+import com.jme.bui.text.BTextFactory;
 import com.jme.bui.text.DefaultKeyMap;
+import com.jme.bui.text.JMEBitmapTextFactory;
 import com.jme.renderer.ColorRGBA;
 
 /**
@@ -51,19 +52,19 @@ public class BLookAndFeel
     }
 
     /**
-     * Returns the font to be used when configuring components.
+     * Returns the factory used to create text instances.
      */
-    public BFont getFont ()
+    public BTextFactory getTextFactory ()
     {
-        return _font == null ? _parent.getFont() : _font;
+        return _tfact == null ? _parent.getTextFactory() : _tfact;
     }
 
     /**
      * Configures the font used by this look and feel.
      */
-    public void setFont (BFont font)
+    public void setTextFactory (BTextFactory tfact)
     {
-        _font = font;
+        _tfact = tfact;
     }
 
     /**
@@ -264,7 +265,7 @@ public class BLookAndFeel
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
         URL url = getResource("rsrc/fonts/default.png");
-        lnf.setFont(new BBitmapFont(url, 10, 16));
+        lnf.setTextFactory(new JMEBitmapTextFactory(url, 10, 16));
         lnf.setKeyMap(new DefaultKeyMap());
     }
 
@@ -278,7 +279,7 @@ public class BLookAndFeel
     }
 
     protected BLookAndFeel _parent;
-    protected BFont _font;
+    protected BTextFactory _tfact;
     protected ColorRGBA _foreground, _background;
     protected BKeyMap _keymap;
 

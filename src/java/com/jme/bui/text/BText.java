@@ -18,43 +18,27 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.font;
+package com.jme.bui.text;
 
+import com.jme.bui.util.Dimension;
+import com.jme.scene.Geometry;
 import com.jme.scene.shape.Quad;
 
 /**
- * Contains information about a single character. Multiple glyphs are
- * assembled to display text.
+ * Contains a "run" of text, which will be rendered to a {@link Quad}.
+ * Specializations of this class render text in different ways, for
+ * example using JME's internal bitmapped font support or by using the AWT
+ * to render the run of text to an image and texturing the quad with that
+ * entire image.
  */
-public class BGlyph extends Quad
+public abstract class BText
 {
-    /**
-     * Returns the width of this character.
-     */
-    public float getWidth ()
-    {
-        return _font.getWidth(_char);
-    }
+    /** Positions this text at the specified screen coordinates. */
+    public abstract void setLocation (int x, int y);
 
-    /**
-     * Returns the height of this character.
-     */
-    public float getHeight ()
-    {
-        return _font.getHeight();
-    }
+    /** Returns the screen dimensions of this text. */
+    public abstract Dimension getSize ();
 
-    /**
-     * Creates a glyph and associates it with a character and font. Its
-     * texture state must be configured by the font.
-     */
-    protected BGlyph (char c, BFont font)
-    {
-        super("glyph:" + c, font.getWidth(c), font.getHeight());
-        _char = c;
-        _font = font;
-    }
-
-    protected char _char;
-    protected BFont _font;
+    /** Returns the geometry used to display this text. */
+    public abstract Geometry getGeometry ();
 }

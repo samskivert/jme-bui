@@ -26,6 +26,7 @@ import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;
 
+import com.jme.bui.text.BText;
 import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
 
@@ -197,7 +198,7 @@ public class BLabel extends BComponent
     {
         super.layout();
 
-        float width = 0;
+        int width = 0;
         if (_icon != null) {
             width += _icon.getWidth();
         }
@@ -205,19 +206,19 @@ public class BLabel extends BComponent
             if (width != 0) {
                 width += _gap;
             }
-            width += _tgeom.getWidth();
+            width += _tgeom.getSize().width;
         }
 
-        float height = 0;
+        int height = 0;
         if (_icon != null) {
             height = _icon.getHeight();
         }
         if (_tgeom != null) {
-            height = Math.max(height, _tgeom.getHeight());
+            height = Math.max(height, _tgeom.getSize().height);
         }
 
         Insets insets = getInsets();
-        float xoff;
+        int xoff;
         switch (_halign) {
         case CENTER: xoff = (_width - width) / 2; break;
         case RIGHT: xoff = _width - width - insets.right; break;
@@ -234,16 +235,13 @@ public class BLabel extends BComponent
         }
 
         if (_tgeom != null) {
-            // TEMP: handle Text offset bug
-            xoff -= 4f;
-            _tgeom.setLocalTranslation(
-                new Vector3f(xoff, getYOffset(insets, _tgeom.getHeight()), 0));
+            _tgeom.setLocation(
+                xoff, getYOffset(insets, _tgeom.getSize().height));
         }
     }
 
-    protected float getYOffset (Insets insets, float height)
+    protected int getYOffset (Insets insets, int height)
     {
-        float yoff;
         switch (_valign) {
         default:
         case TOP: return _height - height - insets.top;
@@ -258,7 +256,7 @@ public class BLabel extends BComponent
     protected void recreateGlyphs ()
     {
         if (_tgeom != null) {
-            _node.detachChild(_tgeom);
+            _node.detachChild(_tgeom.getGeometry());
             _tgeom = null;
         }
 
@@ -267,11 +265,10 @@ public class BLabel extends BComponent
         }
 
         BLookAndFeel lnf = getLookAndFeel();
-        _tgeom = new Text("text", _text);
-        _tgeom.setTextColor(lnf.getForeground());
-        lnf.getFont().configure(_tgeom);
+        _tgeom = lnf.getTextFactory().createText(_text);
+//         _tgeom.setTextColor(lnf.getForeground());
 
-        _node.attachChild(_tgeom);
+        _node.attachChild(_tgeom.getGeometry());
         _node.updateGeometricState(0.0f, true);
         _node.updateRenderState();
     }
@@ -285,8 +282,8 @@ public class BLabel extends BComponent
             height = _icon.getHeight();
         }
         if (_tgeom != null) {
-            width += _tgeom.getWidth();
-            height = (int)Math.max(height, _tgeom.getHeight());
+            width += _tgeom.getSize().width;
+            height = Math.max(height, _tgeom.getSize().height);
         }
         return new Dimension(width, height);
     }
@@ -294,7 +291,7 @@ public class BLabel extends BComponent
     protected String _text;
     protected BIcon _icon;
 
-    protected Text _tgeom;
+    protected BText _tgeom;
     protected int _halign = LEFT, _valign = CENTER;
     protected int _gap;
 }
