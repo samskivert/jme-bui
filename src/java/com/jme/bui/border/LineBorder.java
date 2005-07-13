@@ -22,10 +22,12 @@ package com.jme.bui.border;
 
 import java.util.Arrays;
 
-import com.jme.bui.BComponent;
+import org.lwjgl.opengl.GL11;
+
 import com.jme.bui.util.Insets;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Line;
 
 /**
@@ -36,7 +38,8 @@ public class LineBorder extends BBorder
 {
     public LineBorder (ColorRGBA color)
     {
-        Arrays.fill(_colors, color);
+        _color = color;
+//         _border = new Line("border", _coords, null, _colors, null);
     }
 
     // documentation inherited
@@ -45,27 +48,27 @@ public class LineBorder extends BBorder
         return ONE_PIXEL_INSETS;
     }
 
-    // documentation inherited
-    public void addGeometry (BComponent component, int x, int y)
-    {
-        configureCoords(x, y, component.getWidth(), component.getHeight());
-        _border = new Line("border", _coords, null, _colors, null);
-        component.getNode().attachChild(_border);
-        _border.updateRenderState();
-    }
+//     // documentation inherited
+//     public void setSize (int x, int y, int width, int height)
+//     {
+//         configureCoords(x, y, width, height);
+//         _border.reconstruct(_coords, null, _colors, null);
+//         _border.updateGeometricState(0, true);
+//     }
 
     // documentation inherited
-    public void removeGeometry (BComponent component)
+    public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        component.getNode().detachChild(_border);
-    }
+//         renderer.draw(_border);
 
-    // documentation inherited
-    public void setSize (int x, int y, int width, int height)
-    {
-        configureCoords(x, y, width, height);
-        _border.reconstruct(_coords, null, _colors, null);
-        _border.updateGeometricState(0, true);
+        GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x + width, y);
+        GL11.glVertex2f(x + width + 1, y + height);
+        GL11.glVertex2f(x, y + height);
+        GL11.glVertex2f(x, y);
+        GL11.glEnd();
     }
 
     protected void configureCoords (int x, int y, int width, int height)
@@ -83,11 +86,13 @@ public class LineBorder extends BBorder
 
         _coords[6] = new Vector3f(x, y, 0);
         _coords[7] = new Vector3f(x, y + height, 0);
+        System.err.println("Configured border " + width + "x" + height +
+                           "+" + x + "+" + y + ".");
     }
 
     protected Line _border;
     protected Vector3f[] _coords = new Vector3f[8];
-    protected ColorRGBA[] _colors = new ColorRGBA[8];
+    protected ColorRGBA _color;
 
     protected static final Vector3f NORMAL = new Vector3f(0, 0, 1);
     protected static final Vector3f[] NORMALS = new Vector3f[] {

@@ -18,27 +18,40 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.event;
+package com.jme.bui;
 
 import java.util.ArrayList;
 
-import com.jme.scene.Node;
+import com.jme.intersection.CollisionResults;
+import com.jme.intersection.PickResults;
+import com.jme.math.Ray;
+import com.jme.renderer.Renderer;
+import com.jme.scene.Geometry;
+import com.jme.scene.Spatial;
 
-import com.jme.bui.BComponent;
-import com.jme.bui.BScrollPane;
-import com.jme.bui.BWindow;
-import com.jme.bui.Log;
+import com.jme.bui.event.FocusEvent;
+import com.jme.bui.event.MouseEvent;
 
-public class InputDispatcher
+/**
+ * Connects the BUI system into the JME scene graph.
+ */
+public class BRootNode extends Geometry
 {
+    public BRootNode ()
+    {
+        super("BUI Root Node");
+
+        // we need to render in the ortho queue
+        setRenderQueueMode(Renderer.QUEUE_ORTHO);
+    }
+
     /**
      * Registers a top-level window with the input system.
      */
     public void addWindow (BWindow window)
     {
         _windows.add(window);
-        window.setInputDispatcher(this);
-        _rootNode.attachChild(window.getNode());
+        window.setRootNode(this);
 
         // if this window is modal, make it the default event target
         if (window.isModal()) {
@@ -73,13 +86,12 @@ public class InputDispatcher
         computeHoverComponent(_mouseX, _mouseY);
 
         // finally remove the window from the interface heirarchy
-        window.setInputDispatcher(null);
-        _rootNode.detachChild(window.getNode());
+        window.setRootNode(null);
     }
 
     /**
-     * Registers a scroll pane with the input dispatcher. This pane will
-     * be updated on every frame, giving it a chance to re-render its
+     * Registers a scroll pane with the root node. This pane will be
+     * updated on every frame, giving it a chance to re-render its
      * viewport.
      */
     public void addScrollPane (BScrollPane pane)
@@ -135,26 +147,46 @@ public class InputDispatcher
     }
 
     /**
-     * This method should be called on every frame to allow the input
-     * dispatcher to process input since the previous frame and dispatch
-     * any newly generated events.
-     */
-    public void update (float timePerFrame)
-    {
-        // nothing to do by default
-    }
-
-    /**
      * Generates a string representation of this instance.
      */
     public String toString ()
     {
-        return "Dispatcher@" + hashCode();
+        return "BRootNode@" + hashCode();
     }
 
-    protected InputDispatcher (Node rootNode)
+    // documentation inherited
+    public void onDraw (Renderer renderer)
     {
-        _rootNode = rootNode;
+        // we're rendered in the ortho queue, so we just add ourselves to
+        // the queue here and we'll get a call directly to draw() later
+        // when the ortho queue is rendered
+        if (!renderer.isProcessingQueue()) {
+            renderer.checkAndAdd(this);
+        }
+    }
+
+    // documentation inherited
+    public void draw (Renderer renderer)
+    {
+        super.draw(renderer);
+
+        // render all of our windows
+        for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
+            BWindow win = (BWindow)_windows.get(ii);
+            win.render(renderer);
+        }
+    }
+
+    // documentation inherited
+    public void findCollisions (Spatial scene, CollisionResults results)
+    {
+        // nothing doing
+    }
+
+    // documentation inherited
+    public boolean hasCollision (Spatial scene, boolean checkTriangles)
+    {
+        return false; // nothing doing
     }
 
     /**
@@ -219,8 +251,6 @@ public class InputDispatcher
             _hcomponent = nhcomponent;
         }
     }
-
-    protected Node _rootNode;
 
     protected long _tickStamp;
     protected int _modifiers;

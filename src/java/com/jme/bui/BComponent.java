@@ -22,6 +22,9 @@ package com.jme.bui;
 
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.GL11;
+
+import com.jme.bui.background.BBackground;
 import com.jme.bui.border.BBorder;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.ComponentListener;
@@ -31,7 +34,7 @@ import com.jme.bui.util.Insets;
 import com.jme.bui.util.Rectangle;
 import com.jme.input.KeyInput;
 import com.jme.math.Vector3f;
-import com.jme.scene.Node;
+import com.jme.renderer.Renderer;
 
 /**
  * The basic entity in the BUI user interface system. A hierarchy of
@@ -39,11 +42,6 @@ import com.jme.scene.Node;
  */
 public class BComponent
 {
-    public BComponent ()
-    {
-        _node = new Node(getClass().getName() + ":" + hashCode());
-    }
-
     /**
      * Configures this component with a look and feel that will be used to
      * render it and all of its children (unless those children are
@@ -52,14 +50,6 @@ public class BComponent
     public void setLookAndFeel (BLookAndFeel lnf)
     {
         _lnf = lnf;
-    }
-
-    /**
-     * Returns the node associated with this component.
-     */
-    public Node getNode ()
-    {
-        return _node;
     }
 
     /**
@@ -154,7 +144,11 @@ public class BComponent
      */
     public Insets getInsets ()
     {
-        return (_border == null) ? ZERO_INSETS : _border.getInsets();
+        Insets insets = (_border == null) ? ZERO_INSETS : _border.getInsets();
+        if (_background != null) {
+            insets = _background.adjustInsets(insets);
+        }
+        return insets;
     }
 
     /**
@@ -172,16 +166,29 @@ public class BComponent
     public void setBorder (BBorder border)
     {
         BBorder oborder = _border;
-        if (oborder != null) {
-            oborder.removeGeometry(this);
-        }
         _border = border;
-        if (_border != null) {
-            _border.addGeometry(this, 0, 0);
-        }
+//         _border.setSize(0, 0, _width, _height);
         if (oborder != border) {
             invalidate();
         }
+    }
+
+    /**
+     * Configures this component with a background. This should be called
+     * before any components are added to the window to ensure proper
+     * render order.
+     */
+    public void setBackground (BBackground background)
+    {
+        _background = background;
+    }
+
+    /**
+     * Returns a reference to the background used by this component.
+     */
+    public BBackground getBackground ()
+    {
+        return _background;
     }
 
     /**
@@ -257,14 +264,13 @@ public class BComponent
         if (_x != x || _y != y) {
             _x = x;
             _y = y;
-            _node.setLocalTranslation(new Vector3f(_x, _y, 0f));
         }
         if (_width != width || _height != height) {
             _width = width;
             _height = height;
-            if (_border != null) {
-                _border.setSize(0, 0, _width, _height);
-            }
+//             if (_border != null) {
+//                 _border.setSize(0, 0, _width, _height);
+//             }
             invalidate();
         }
     }
@@ -330,6 +336,29 @@ public class BComponent
                 _parent.invalidate();
             }
         }
+    }
+
+    /**
+     * Renders this component. The default implementation does nothing.
+     */
+    public void render (Renderer renderer)
+    {
+        GL11.glTranslatef(_x, _y, 0);
+
+        // render our background
+        if (_background != null) {
+            _background.render(renderer, 0, 0, _width, _height);
+        }
+
+        // render our border
+        if (_border != null) {
+            _border.render(renderer, 0, 0, _width, _height);
+        }
+
+        // render any custom component bits
+        renderComponent(renderer);
+
+        GL11.glTranslatef(-_x, -_y, 0);
     }
 
     /**
@@ -416,6 +445,14 @@ public class BComponent
     }
 
     /**
+     * Renders any custom bits for this component. This is called with the
+     * graphics context translated to (0, 0) relative to this component.
+     */
+    protected void renderComponent (Renderer renderer)
+    {
+    }
+
+    /**
      * Returns a reference to the look and feel in scope for this
      * component.
      */
@@ -477,9 +514,9 @@ public class BComponent
     }
 
     protected BComponent _parent;
-    protected Node _node;
     protected BLookAndFeel _lnf;
     protected BBorder _border;
+    protected BBackground _background;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
     protected boolean _valid;

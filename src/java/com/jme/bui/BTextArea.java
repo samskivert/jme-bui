@@ -140,14 +140,6 @@ public class BTextArea extends BContainer
         return _lines.size();
     }
 
-    /**
-     * Returns a reference to the background used by this text area.
-     */
-    public BBackground getBackground ()
-    {
-        return _background;
-    }
-
     // documentation inherited
     public void wasAdded ()
     {
@@ -155,12 +147,10 @@ public class BTextArea extends BContainer
 
         // create our background
         _background = getLookAndFeel().createTextBack();
-        add(_background);
-        _background.wasAdded();
 
         // create a node that will contain our text
         _text = new Node("text");
-        _node.attachChild(_text);
+//         _node.attachChild(_text);
         _text.updateRenderState();
     }
 
@@ -169,13 +159,8 @@ public class BTextArea extends BContainer
     {
         super.wasRemoved();
 
-        if (_background != null) {
-            remove(_background);
-            _background = null;
-        }
-
         if (_text != null) {
-            _node.detachChild(_text);
+//             _node.detachChild(_text);
             _text = null;
         }
     }
@@ -192,9 +177,6 @@ public class BTextArea extends BContainer
     protected void layout ()
     {
         super.layout();
-
-        // our background occupies our entire dimensions
-        _background.setBounds(0, 0, _width, _height);
 
         refigureContents();
     }
@@ -341,8 +323,8 @@ public class BTextArea extends BContainer
             String rtext = run.text.substring(offset);
             int[] remainder = new int[1];
             BText text = tfact.wrapText(rtext, color, maxWidth-dx, remainder);
-            text.setLocation(dx, 0);
-            attachChild(text.getGeometry());
+//             text.setLocation(dx, 0);
+//             attachChild(text.getGeometry());
             height = Math.max(height, text.getSize().height);
             dx += text.getSize().width;
             return (remainder[0] == 0) ? -1 : run.text.length() - remainder[0];

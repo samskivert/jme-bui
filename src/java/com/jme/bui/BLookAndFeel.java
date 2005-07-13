@@ -20,6 +20,7 @@
 
 package com.jme.bui;
 
+import java.awt.Font;
 import java.net.URL;
 
 import com.jme.bui.background.BBackground;
@@ -27,6 +28,7 @@ import com.jme.bui.background.TiledBackground;
 import com.jme.bui.background.TintedBackground;
 import com.jme.bui.border.BBorder;
 import com.jme.bui.border.LineBorder;
+import com.jme.bui.text.AWTTextFactory;
 import com.jme.bui.text.BKeyMap;
 import com.jme.bui.text.BText;
 import com.jme.bui.text.BTextFactory;
@@ -128,7 +130,7 @@ public class BLookAndFeel
      */
     public BBackground createWindowBackground ()
     {
-        return new TintedBackground(10, 10, 10, 10, BLACK_TINT);
+        return new TintedBackground(BLACK_TINT, 10, 10, 10, 10);
     }
 
     /**
@@ -144,7 +146,7 @@ public class BLookAndFeel
      */
     public BBackground createPopupBackground ()
     {
-        return new TintedBackground(0, 0, 0, 0, ColorRGBA.darkGray);
+        return new TintedBackground(ColorRGBA.darkGray, 0, 0, 0, 0);
     }
 
     /**
@@ -187,7 +189,7 @@ public class BLookAndFeel
     {
 //         String path = "rsrc/textures/button_up.png";
 //         return new TiledBackground(getResource(path), 5, 3, 5, 3);
-        return new TintedBackground(5, 5, 5, 5, BLACK_TINT);
+        return new TintedBackground(BLACK_TINT, 5, 5, 5, 5);
     }
 
     /**
@@ -222,7 +224,7 @@ public class BLookAndFeel
      */
     public BBackground createScrollThumb (int orientation)
     {
-        return new TintedBackground(0, 0, 0, 0, ColorRGBA.white);
+        return new TintedBackground(ColorRGBA.white, 0, 0, 0, 0);
     }
 
     /**
@@ -264,8 +266,9 @@ public class BLookAndFeel
     {
         lnf.setForeground(ColorRGBA.white);
         lnf.setBackground(ColorRGBA.black);
-        URL url = getResource("rsrc/fonts/default.png");
-        lnf.setTextFactory(new JMEBitmapTextFactory(url, 10, 16));
+//         URL url = getResource("rsrc/fonts/default.png");
+//         lnf.setTextFactory(new JMEBitmapTextFactory(url, 10, 16));
+        lnf.setTextFactory(new AWTTextFactory(new Font("Dialog", Font.PLAIN, 16)));
         lnf.setKeyMap(new DefaultKeyMap());
     }
 

@@ -22,6 +22,7 @@ package com.jme.bui;
 
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;
@@ -161,13 +162,13 @@ public class BLabel extends BComponent
         if (_icon != null) {
             owidth = _icon.getWidth();
             oheight = _icon.getHeight();
-            _node.detachChild(_icon.getQuad());
+//             _node.detachChild(_icon.getQuad());
         }
         _icon = icon;
         if (_icon != null) {
             nwidth = _icon.getWidth();
             nheight = _icon.getHeight();
-            _node.attachChild(_icon.getQuad());
+//             _node.attachChild(_icon.getQuad());
         }
         if (owidth != nwidth || oheight != nheight) {
             invalidate();
@@ -235,8 +236,8 @@ public class BLabel extends BComponent
         }
 
         if (_tgeom != null) {
-            _tgeom.setLocation(
-                xoff, getYOffset(insets, _tgeom.getSize().height));
+            _tx = xoff;
+            _ty = getYOffset(insets, _tgeom.getSize().height);
         }
     }
 
@@ -256,7 +257,6 @@ public class BLabel extends BComponent
     protected void recreateGlyphs ()
     {
         if (_tgeom != null) {
-            _node.detachChild(_tgeom.getGeometry());
             _tgeom = null;
         }
 
@@ -266,10 +266,15 @@ public class BLabel extends BComponent
 
         BLookAndFeel lnf = getLookAndFeel();
         _tgeom = lnf.getTextFactory().createText(_text, lnf.getForeground());
+    }
 
-        _node.attachChild(_tgeom.getGeometry());
-        _node.updateGeometricState(0.0f, true);
-        _node.updateRenderState();
+    // documentation inherited
+    protected void renderComponent (Renderer renderer)
+    {
+        super.renderComponent(renderer);
+        if (_tgeom != null) {
+            _tgeom.render(renderer, _tx, _ty);
+        }
     }
 
     // documentation inherited
@@ -291,6 +296,7 @@ public class BLabel extends BComponent
     protected BIcon _icon;
 
     protected BText _tgeom;
+    protected int _tx, _ty;
     protected int _halign = LEFT, _valign = CENTER;
     protected int _gap;
 }

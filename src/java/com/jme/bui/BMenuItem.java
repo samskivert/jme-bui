@@ -54,7 +54,7 @@ public class BMenuItem extends BLabel
         _hquad = new Quad("highlight", 0, 0);
         _hquad.setSolidColor(ColorRGBA.blue); // TODO: get from LNF
         RenderUtil.makeTransparent(_hquad);
-        _node.attachChild(_hquad);
+//         _node.attachChild(_hquad);
         _hquad.updateRenderState();
         _hquad.setForceCull(true);
     }

@@ -20,8 +20,8 @@
 
 package com.jme.bui.border;
 
-import com.jme.bui.BComponent;
 import com.jme.bui.util.Insets;
+import com.jme.renderer.Renderer;
 
 /**
  * Combines two borders into a single compound border.
@@ -44,27 +44,12 @@ public class CompoundBorder extends BBorder
     }
 
     // documentation inherited
-    public void addGeometry (BComponent component, int x, int y)
+    public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        _outer.addGeometry(component, 0, 0);
+        _outer.render(renderer, x, y, width, height);
         Insets oi = _outer.getInsets();
-        _inner.addGeometry(component, oi.left, oi.bottom);
-    }
-
-    // documentation inherited
-    public void removeGeometry (BComponent component)
-    {
-        _outer.removeGeometry(component);
-        _inner.removeGeometry(component);
-    }
-
-    // documentation inherited
-    public void setSize (int x, int y, int width, int height)
-    {
-        _outer.setSize(x, y, width, height);
-        Insets oi = _outer.getInsets();
-        _inner.setSize(x + oi.left, y + oi.bottom,
-                       width-oi.getHorizontal(), height-oi.getVertical());
+        _inner.render(renderer, x + oi.left, y + oi.bottom,
+                      width-oi.getHorizontal(), height-oi.getVertical());
     }
 
     protected BBorder _outer, _inner;

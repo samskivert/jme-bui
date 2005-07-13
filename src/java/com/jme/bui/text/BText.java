@@ -21,6 +21,7 @@
 package com.jme.bui.text;
 
 import com.jme.bui.util.Dimension;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.shape.Quad;
 
@@ -33,12 +34,9 @@ import com.jme.scene.shape.Quad;
  */
 public abstract class BText
 {
-    /** Positions this text at the specified screen coordinates. */
-    public abstract void setLocation (int x, int y);
-
     /** Returns the screen dimensions of this text. */
     public abstract Dimension getSize ();
 
-    /** Returns the geometry used to display this text. */
-    public abstract Geometry getGeometry ();
+    /** Renders this text to the display. */
+    public abstract void render (Renderer render, int x, int y);
 }

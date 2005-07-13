@@ -25,6 +25,7 @@ import java.util.logging.Level;
 
 import com.jme.bui.layout.BLayoutManager;
 import com.jme.bui.util.Dimension;
+import com.jme.renderer.Renderer;
 
 /**
  * A user interface element that is meant to contain other interface
@@ -76,7 +77,6 @@ public class BContainer extends BComponent
             _layout.addLayoutComponent(child, constraints);
         }
         _children.add(child);
-        _node.attachChild(child.getNode());
         child.setParent(this);
 
         // if we're already part of the hierarchy, call wasAdded() on our
@@ -99,7 +99,6 @@ public class BContainer extends BComponent
             // if the component was not our child, stop now
             return;
         }
-        _node.detachChild(child.getNode());
         if (_layout != null) {
             _layout.removeLayoutComponent(child);
         }
@@ -184,6 +183,17 @@ public class BContainer extends BComponent
     {
         if (_layout != null) {
             _layout.layoutContainer(this);
+        }
+    }
+
+    // documentation inherited
+    protected void renderComponent (Renderer renderer)
+    {
+        super.renderComponent(renderer);
+
+        // render our children
+        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+            getComponent(ii).render(renderer);
         }
     }
 

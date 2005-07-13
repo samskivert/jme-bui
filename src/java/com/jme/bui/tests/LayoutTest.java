@@ -32,10 +32,10 @@ import com.jme.util.LoggingSystem;
 import com.jme.bui.*;
 import com.jme.bui.BComboBox;
 import com.jme.bui.BScrollPane;
+import com.jme.bui.PolledRootNode;
 import com.jme.bui.border.LineBorder;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
-import com.jme.bui.event.PolledInputDispatcher;
 import com.jme.bui.layout.BorderLayout;
 import com.jme.bui.layout.GroupLayout;
 import com.jme.bui.layout.TableLayout;
@@ -48,7 +48,8 @@ public class LayoutTest extends SimpleGame
     protected void simpleInitGame ()
     {
         InputSystem.createInputSystem(properties.getRenderer());
-        _dispatcher = new PolledInputDispatcher(timer, input, rootNode);
+        _root = new PolledRootNode(timer, input);
+        rootNode.attachChild(_root);
 
         // we don't hide the cursor
         InputSystem.getMouseInput().setCursorVisible(true);
@@ -72,7 +73,7 @@ public class LayoutTest extends SimpleGame
         pane.addTab("One", new BButton("One contents"));
         pane.addTab("Two", new BLabel("Two contents"));
         pane.addTab("Three", new BTextArea());
-        _dispatcher.addWindow(window);
+        _root.addWindow(window);
         window.setSize(200, 150);
         window.setLocation(25, 25);
 
@@ -91,7 +92,7 @@ public class LayoutTest extends SimpleGame
                 _input.setText("");
             }
         });
-        _dispatcher.addWindow(window);
+        _root.addWindow(window);
         window.setBounds(200, 125, 400, 250);
 
         GroupLayout glay = GroupLayout.makeVStretch();
@@ -107,7 +108,7 @@ public class LayoutTest extends SimpleGame
         window.add(new BMenuItem("Seven", "seven"));
         window.add(new BMenuItem("Eight", "eight"));
         window.add(new BMenuItem("Nine", "nine"));
-        _dispatcher.addWindow(window);
+        _root.addWindow(window);
         window.pack();
         window.setLocation(100, 400);
 
@@ -124,8 +125,9 @@ public class LayoutTest extends SimpleGame
         cont.add(new BLabel("Seven"));
         cont.add(new BLabel("Eight"));
         cont.add(new BLabel("Nine"));
-        window.add(new BScrollPane(cont), BorderLayout.CENTER);
-        _dispatcher.addWindow(window);
+//         window.add(new BScrollPane(cont), BorderLayout.CENTER);
+        window.add(cont, BorderLayout.CENTER);
+        _root.addWindow(window);
         window.pack();
         window.setLocation(300, 400);
 
@@ -143,7 +145,6 @@ public class LayoutTest extends SimpleGame
 
     protected void simpleUpdate ()
     {
-        _dispatcher.update(tpf);
     }
 
     public static void main (String[] args)
@@ -153,7 +154,7 @@ public class LayoutTest extends SimpleGame
         test.start();
     }
 
-    protected PolledInputDispatcher _dispatcher;
+    protected PolledRootNode _root;
     protected BTextArea _text;
     protected BTextField _input;
 }

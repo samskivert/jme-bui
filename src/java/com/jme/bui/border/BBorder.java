@@ -22,6 +22,7 @@ package com.jme.bui.border;
 
 import com.jme.bui.BComponent;
 import com.jme.bui.util.Insets;
+import com.jme.renderer.Renderer;
 
 /**
  * Configures a border around a component that may or may not have
@@ -33,29 +34,7 @@ public abstract class BBorder
     /** Returns the insets needed by this border. */
     public abstract Insets getInsets ();
 
-    /**
-     * Requests that this border add any needed geometry to the
-     * component's scene graph node. A component will call this method
-     * when it is configured with a border.
-     */
-    public void addGeometry (BComponent component, int x, int y)
-    {
-    }
-
-    /**
-     * Requests that this border remove its geometry from the component's
-     * scene graph node. A component will call this method when this
-     * border is removed.
-     */
-    public void removeGeometry (BComponent component)
-    {
-    }
-
-    /**
-     * Informs the border of its associated component's bounds when they
-     * change.
-     */
-    public void setSize (int x, int y, int width, int height)
-    {
-    }
+    /** Renders this border. */
+    public abstract void render (
+        Renderer renderer, int x, int y, int width, int height);
 }

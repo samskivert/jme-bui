@@ -29,6 +29,9 @@ import com.jme.system.DisplaySystem;
  */
 public class RenderUtil
 {
+    /** An alpha state that blends the source plus one minus destination. */
+    public static AlphaState blendState;
+
     /**
      * Configures the supplied spatial with transparency in the standard
      * user interface sense which is that transparent pixels show through
@@ -37,12 +40,15 @@ public class RenderUtil
      */
     public static void makeTransparent (Spatial target)
     {
-        AlphaState astate = DisplaySystem.getDisplaySystem().getRenderer().
+        target.setRenderState(blendState);
+    }
+
+    static {
+        blendState = DisplaySystem.getDisplaySystem().getRenderer().
             createAlphaState();
-        astate.setBlendEnabled(true);
-        astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        astate.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
-        astate.setEnabled(true);
-        target.setRenderState(astate);
+        blendState.setBlendEnabled(true);
+        blendState.setSrcFunction(AlphaState.SB_SRC_ALPHA);
+        blendState.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
+        blendState.setEnabled(true);
     }
 }

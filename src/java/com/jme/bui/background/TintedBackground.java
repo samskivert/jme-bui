@@ -20,11 +20,11 @@
 
 package com.jme.bui.background;
 
-import com.jme.math.Vector3f;
-import com.jme.renderer.ColorRGBA;
-import com.jme.scene.shape.Quad;
+import org.lwjgl.opengl.GL11;
 
-import com.jme.bui.util.Dimension;
+import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
+
 import com.jme.bui.util.RenderUtil;
 
 /**
@@ -32,37 +32,36 @@ import com.jme.bui.util.RenderUtil;
  */
 public class TintedBackground extends BBackground
 {
-    public TintedBackground (int left, int top, int right, int bottom,
-                             ColorRGBA color)
+    /**
+     * Creates a tinted background with no insets.
+     */
+    public TintedBackground (ColorRGBA color)
+    {
+        this(color, 0, 0, 0 ,0);
+    }
+
+    /**
+     * Creates a tinted background with the specified insets.
+     */
+    public TintedBackground (
+        ColorRGBA color, int left, int top, int right, int bottom)
     {
         super(left, top, right, bottom);
-
-        _quad = new Quad("quad", 10, 10);
-        _quad.setSolidColor(color);
-        RenderUtil.makeTransparent(_quad);
-
-        _node.attachChild(_quad);
-        _quad.updateRenderState();
+        _color = color;
     }
 
     // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        // reshape our scaled sections
-        if (_width != width || _height != height) {
-            _quad.resize(width, height);
-            _quad.setLocalTranslation(
-                new Vector3f(width/2, height/2, 0f));
-        }
-        super.setBounds(x, y, width, height);
-        _node.updateGeometricState(0.0f, true);
+        RenderUtil.blendState.apply();
+        GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x + width, y);
+        GL11.glVertex2f(x + width, y + height);
+        GL11.glVertex2f(x, y + height);
+        GL11.glEnd();
     }
 
-    // documentation inherited
-    public Dimension getPreferredSize ()
-    {
-        return new Dimension(10, 10);
-    }
-
-    protected Quad _quad;
+    protected ColorRGBA _color;
 }

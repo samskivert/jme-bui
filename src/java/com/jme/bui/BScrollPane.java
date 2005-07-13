@@ -20,7 +20,7 @@
 
 package com.jme.bui;
 
-import com.jme.bui.event.InputDispatcher;
+// import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.util.Dimension;
 import com.jme.image.Texture;
 import com.jme.math.Vector2f;
@@ -41,7 +41,7 @@ public class BScrollPane extends BComponent
     {
         // create the quad that will display our viewport
         _viewport = new Quad("viewport", 1, 1);
-        _node.attachChild(_viewport);
+//         _node.attachChild(_viewport);
         _vtstate = DisplaySystem.getDisplaySystem().getRenderer().
             createTextureState();
         _vtstate.setEnabled(true);
@@ -52,7 +52,7 @@ public class BScrollPane extends BComponent
         // set up our child
         _child = child;
         _child.setParent(this);
-        _child.getNode().setRenderQueueMode(Renderer.QUEUE_ORTHO);
+//         _child.getNode().setRenderQueueMode(Renderer.QUEUE_ORTHO);
         if (isAdded()) {
             _child.wasAdded();
         }
@@ -64,7 +64,7 @@ public class BScrollPane extends BComponent
      */
     public void update ()
     {
-        _trenderer.render(_child.getNode(), _texture);
+//         _trenderer.render(_child.getNode(), _texture);
     }
 
     // documentation inherited
@@ -91,8 +91,8 @@ public class BScrollPane extends BComponent
     {
         super.wasAdded();
         _child.wasAdded();
-        _dispatcher = getWindow().getInputDispatcher();
-        _dispatcher.addScrollPane(this);
+//         _dispatcher = getWindow().getInputDispatcher();
+//         _dispatcher.addScrollPane(this);
     }
 
     // documentation inherited
@@ -100,10 +100,10 @@ public class BScrollPane extends BComponent
     {
         super.wasRemoved();
         _child.wasRemoved();
-        if (_dispatcher != null) {
-            _dispatcher.removeScrollPane(this);
-            _dispatcher = null;
-        }
+//         if (_dispatcher != null) {
+//             _dispatcher.removeScrollPane(this);
+//             _dispatcher = null;
+//         }
     }
 
     // documentation inherited
@@ -172,7 +172,7 @@ public class BScrollPane extends BComponent
     }
 
     protected BComponent _child;
-    protected InputDispatcher _dispatcher;
+//     protected InputDispatcher _dispatcher;
 
     protected Quad _viewport;
     protected TextureState _vtstate;

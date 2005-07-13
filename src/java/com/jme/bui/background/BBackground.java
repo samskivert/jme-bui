@@ -20,14 +20,14 @@
 
 package com.jme.bui.background;
 
-import com.jme.bui.BComponent;
 import com.jme.bui.util.Insets;
+import com.jme.renderer.Renderer;
 
 /**
  * Provides additional information about a background that is used to
  * display the backgrounds of various components.
  */
-public abstract class BBackground extends BComponent
+public abstract class BBackground
 {
     /**
      * Returns the left inset that should be used by components rendered
@@ -69,18 +69,18 @@ public abstract class BBackground extends BComponent
      * Returns the width of the "contents" of this background which is the
      * total width minus the insets.
      */
-    public int getContentWidth ()
+    public int getContentWidth (int width)
     {
-        return _width - _left - _right;
+        return width - _left - _right;
     }
 
     /**
      * Returns the height of the "contents" of this background which is
      * the total height minus the insets.
      */
-    public int getContentHeight ()
+    public int getContentHeight (int height)
     {
-        return _height - _top - _bottom;
+        return height - _top - _bottom;
     }
 
     /**
@@ -96,6 +96,10 @@ public abstract class BBackground extends BComponent
         ainsets.bottom += getBottomInset();
         return ainsets;
     }
+
+    /** Renders this background. */
+    public abstract void render (
+        Renderer renderer, int x, int y, int width, int height);
 
     /** Configures this background with its insets. */
     protected BBackground (int left, int top, int right, int bottom)

@@ -20,6 +20,8 @@
 
 package com.jme.bui.background;
 
+import com.jme.renderer.Renderer;
+
 /**
  * A blank background.
  */
@@ -28,5 +30,11 @@ public class BlankBackground extends BBackground
     public BlankBackground ()
     {
         super(0, 0, 0, 0);
+    }
+
+    // documentation inherited
+    public void render (Renderer renderer, int x, int y, int width, int height)
+    {
+        // nothing doing
     }
 }

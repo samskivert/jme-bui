@@ -24,8 +24,8 @@ import java.net.URL;
 
 import com.jme.image.Texture;
 import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
 import com.jme.math.Vector3f;
-import com.jme.scene.Geometry;
 import com.jme.scene.Text;
 import com.jme.scene.state.AlphaState;
 import com.jme.scene.state.TextureState;
@@ -83,15 +83,13 @@ public class JMEBitmapTextFactory extends BTextFactory
 
         // wrap it all up in the right object
         return new BText() {
-            public void setLocation (int x, int y) {
-                x -= 4; // TEMP: handle Text offset bug
-                tgeom.setLocalTranslation(new Vector3f(x, y, 0));
-            }
             public Dimension getSize () {
                 return dims;
             }
-            public Geometry getGeometry () {
-                return tgeom;
+            public void render (Renderer renderer, int x, int y) {
+                x -= 4; // TEMP: handle Text offset bug
+                tgeom.setLocalTranslation(new Vector3f(x, y, 0));
+                renderer.draw(tgeom);
             }
         };
     }

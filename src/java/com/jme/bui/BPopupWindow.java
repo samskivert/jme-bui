@@ -48,8 +48,8 @@ public class BPopupWindow extends BWindow
     public void popup (int x, int y, boolean above)
     {
         // add ourselves to the interface hierarchy if we're not already
-        if (_dispatcher == null) {
-            _parent.getInputDispatcher().addWindow(this);
+        if (_root == null) {
+            _parent.getRootNode().addWindow(this);
         }
 
         // size ourselves appropriately

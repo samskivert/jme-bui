@@ -22,9 +22,11 @@ package com.jme.bui.background;
 
 import java.net.URL;
 
+import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
@@ -48,7 +50,10 @@ public class ScaledBackground extends BBackground
 
         // load up the background image as a texture
         Texture texture = TextureManager.loadTexture(
-            source, Texture.MM_NEAREST, Texture.FM_NEAREST);
+            source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR,
+            Image.GUESS_FORMAT_NO_S3TC, 1.0f, true);
+//         Texture texture = TextureManager.loadTexture(
+//             source, Texture.MM_LINEAR, Texture.FM_LINEAR);
         _twidth = texture.getImage().getWidth();
         _theight = texture.getImage().getHeight();
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
@@ -62,28 +67,34 @@ public class ScaledBackground extends BBackground
         // we want transparent parts of our texture to show through
         RenderUtil.makeTransparent(_quad);
 
-        _node.attachChild(_quad);
+//         _node.attachChild(_quad);
         _quad.updateRenderState();
     }
 
     // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        // reshape our scaled sections
-        if (_width != width || _height != height) {
-            _quad.resize(width, height);
-            _quad.setLocalTranslation(
-                new Vector3f(width/2, height/2, 0f));
-        }
-        super.setBounds(x, y, width, height);
-        _node.updateGeometricState(0.0f, true);
+        // nothing doing
     }
 
-    // documentation inherited
-    public Dimension getPreferredSize ()
-    {
-        return new Dimension(_twidth, _theight);
-    }
+//     // documentation inherited
+//     public void setBounds (int x, int y, int width, int height)
+//     {
+//         // reshape our scaled sections
+//         if (_width != width || _height != height) {
+//             _quad.resize(width, height);
+//             _quad.setLocalTranslation(
+//                 new Vector3f(width/2, height/2, 0f));
+//         }
+//         super.setBounds(x, y, width, height);
+// //         _node.updateGeometricState(0.0f, true);
+//     }
+
+//     // documentation inherited
+//     public Dimension getPreferredSize ()
+//     {
+//         return new Dimension(_twidth, _theight);
+//     }
 
     protected int _twidth, _theight;
     protected TextureState _tstate;

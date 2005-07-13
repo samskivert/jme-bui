@@ -81,14 +81,6 @@ public class BTextField extends BContainer
         _prefWidth = width;
     }
 
-    /**
-     * Returns a reference to the background used by this text field.
-     */
-    public BBackground getBackground ()
-    {
-        return _background;
-    }
-
     // documentation inherited
     public boolean acceptsFocus ()
     {
@@ -104,7 +96,7 @@ public class BTextField extends BContainer
         _keymap = getLookAndFeel().getKeyMap();
 
         // create our background
-        add(_background = getLookAndFeel().createTextBack());
+        _background = getLookAndFeel().createTextBack();
 
         // add our label over the background
         add(_label);
@@ -120,7 +112,7 @@ public class BTextField extends BContainer
             getLookAndFeel().getForeground() };
         _cursor = new Line("cursor", ends, null, colors, null);
         _cursor.setSolidColor(getLookAndFeel().getForeground());
-        _node.attachChild(_cursor);
+//         _node.attachChild(_cursor);
         _cursor.updateRenderState();
         _cursor.setForceCull(true);
     }
@@ -130,10 +122,6 @@ public class BTextField extends BContainer
     {
         super.wasRemoved();
 
-        if (_background != null) {
-            remove(_background);
-            _background = null;
-        }
         remove(_label);
     }
 
@@ -224,9 +212,6 @@ public class BTextField extends BContainer
     {
         super.layout();
 
-        // our background covers our entire display
-        _background.setBounds(0, 0, _width, _height);
-
         // the label is inset based on the background's insets
         int left = _background.getLeftInset();
         int top = _background.getTopInset();
@@ -316,7 +301,6 @@ public class BTextField extends BContainer
         return Math.max(Math.min(_label.getWidth() / 10, _text.length()), 0);
     }
 
-    protected BBackground _background;
     protected BLabel _label;
     protected BKeyMap _keymap;
 

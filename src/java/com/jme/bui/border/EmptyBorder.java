@@ -21,6 +21,7 @@
 package com.jme.bui.border;
 
 import com.jme.bui.util.Insets;
+import com.jme.renderer.Renderer;
 
 /**
  * Defines a border with no rendered geometry but that simply takes up
@@ -37,6 +38,12 @@ public class EmptyBorder extends BBorder
     public Insets getInsets ()
     {
         return _insets;
+    }
+
+    // documentation inherited
+    public void render (Renderer renderer, int x, int y, int width, int height)
+    {
+        // NOOP!
     }
 
     protected Insets _insets;

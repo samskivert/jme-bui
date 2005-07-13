@@ -21,6 +21,8 @@
 package com.jme.bui;
 
 import com.jme.bui.background.BBackground;
+import com.jme.bui.util.Insets;
+import com.jme.renderer.Renderer;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.ChangeEvent;
@@ -83,9 +85,11 @@ public class BScrollBar extends BContainer
 
         // create our buttons and backgrounds
         BLookAndFeel lnf = getLookAndFeel();
-        add(_well = lnf.createScrollWell(_orient), BorderLayout.CENTER);
+        add(_well = new BComponent(), BorderLayout.CENTER);
+        _well.setBackground(lnf.createScrollWell(_orient));
         _well.addListener(_wellListener);
-        add(_thumb = lnf.createScrollThumb(_orient), BorderLayout.IGNORE);
+        add(_thumb = new BComponent(), BorderLayout.IGNORE);
+        _thumb.setBackground(lnf.createScrollThumb(_orient));
         _thumb.addListener(_thumbListener);
 
         add(_less = lnf.createScrollButton(_orient, true),
@@ -138,22 +142,23 @@ public class BScrollBar extends BContainer
      */
     protected void update ()
     {
+        Insets winsets = _well.getInsets();
         int tx = 0, ty = 0;
-        int twidth = _well.getContentWidth(), theight = _well.getContentHeight();
+        int twidth = _well.getWidth() - winsets.getHorizontal();
+        int theight = _well.getHeight() - winsets.getVertical();
         int range = Math.max(_model.getRange(), 1); // avoid div0
         int extent = Math.max(_model.getExtent(), 1); // avoid div0
         if (_orient == HORIZONTAL) {
-            int wellSize = _well.getContentWidth();
+            int wellSize = twidth;
             tx = _model.getValue() * wellSize / range;
             twidth = extent * wellSize / range;
         } else {
-            int wellSize = _well.getContentHeight();
+            int wellSize = theight;
             ty = (range-extent-_model.getValue()) * wellSize / range;
             theight = extent * wellSize / range;
         }
-        _thumb.setBounds(_well.getX() + _well.getLeftInset() + tx,
-                         _well.getY() + _well.getBottomInset() + ty,
-                         twidth, theight);
+        _thumb.setBounds(_well.getX() + winsets.left + tx,
+                         _well.getY() + winsets.bottom + ty, twidth, theight);
     }
 
     // documentation inherited
@@ -208,10 +213,12 @@ public class BScrollBar extends BContainer
             int dv = 0;
             if (_orient == HORIZONTAL) {
                 int mx = event.getX() - getAbsoluteX();
-                dv = (mx - _sx) * _model.getRange() / _well.getContentWidth();
+                dv = (mx - _sx) * _model.getRange() /
+                    (_well.getWidth() - _well.getInsets().getHorizontal());
             } else {
                 int my = event.getY() - getAbsoluteY();
-                dv = (_sy - my) * _model.getRange() / _well.getContentHeight();
+                dv = (_sy - my) * _model.getRange() /
+                    (_well.getHeight() - _well.getInsets().getVertical());
             }
 
             if (dv != 0) {
@@ -237,5 +244,5 @@ public class BScrollBar extends BContainer
     protected int _orient;
 
     protected BButton _less, _more;
-    protected BBackground _well, _thumb;
+    protected BComponent _well, _thumb;
 }

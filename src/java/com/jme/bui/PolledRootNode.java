@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.event;
+package com.jme.bui;
 
 import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
@@ -27,21 +27,19 @@ import com.jme.input.MouseInput;
 import com.jme.scene.Node;
 import com.jme.util.Timer;
 
-import com.jme.bui.BComponent;
-import com.jme.bui.BScrollPane;
+import com.jme.bui.event.InputEvent;
+import com.jme.bui.event.KeyEvent;
+import com.jme.bui.event.MouseEvent;
 
 /**
  * Processes the polled input information available from the underlying
  * input system into input events and dispatches those to the appropriate
  * parties.
  */
-public class PolledInputDispatcher extends InputDispatcher
+public class PolledRootNode extends BRootNode
 {
-    public PolledInputDispatcher (
-        Timer timer, InputHandler handler, Node rootNode)
+    public PolledRootNode (Timer timer, InputHandler handler)
     {
-        super(rootNode);
-
         _timer = timer;
         _handler = handler;
         _keyInput = InputSystem.getKeyInput();
@@ -56,8 +54,10 @@ public class PolledInputDispatcher extends InputDispatcher
     }
 
     // documentation inherited
-    public void update (float timePerFrame)
+    protected void updateWorldData (float timePerFrame)
     {
+        super.updateWorldData(timePerFrame);
+
         // determine our tick stamp in milliseconds
         _tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
 

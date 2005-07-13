@@ -23,6 +23,7 @@ package com.jme.bui;
 import java.util.ArrayList;
 
 import com.jme.bui.background.BBackground;
+import com.jme.renderer.Renderer;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.event.BEvent;
@@ -132,6 +133,16 @@ public class BComboBox extends BLabel
     }
 
     // documentation inherited
+    public void render (Renderer renderer)
+    {
+        // render our background and then our label
+        if (_background != null) {
+            _background.render(renderer, 0, 0, _width, _height);
+        }
+        super.render(renderer);
+    }
+
+    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
@@ -173,32 +184,14 @@ public class BComboBox extends BLabel
     {
         // add our background; other bits will go on top of that
         _background = getLookAndFeel().createComboBoxBackground();
-        _node.attachChild(_background.getNode());
-
         super.wasAdded();
-    }
-
-    // documentation inherited
-    protected void layout ()
-    {
-        super.layout();
-
-        if (_background != null) {
-            // our background occupies our entire dimensions
-            _background.setBounds(0, 0, _width, _height);
-            _background.layout();
-        }
     }
 
     // documentation inherited
     protected void wasRemoved ()
     {
         super.wasRemoved();
-
-        if (_background != null) {
-            _node.detachChild(_background.getNode());
-            _background = null;
-        }
+        _background = null;
     }
 
     protected void selectItem (int index, long when, int modifiers)

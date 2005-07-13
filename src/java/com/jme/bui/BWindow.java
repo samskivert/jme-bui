@@ -20,13 +20,13 @@
 
 package com.jme.bui;
 
+import com.jme.renderer.Renderer;
+import com.jme.system.DisplaySystem;
+
 import com.jme.bui.background.BBackground;
-import com.jme.bui.event.InputDispatcher;
 import com.jme.bui.layout.BLayoutManager;
 import com.jme.bui.util.Dimension;
 import com.jme.bui.util.Insets;
-import com.jme.renderer.Renderer;
-import com.jme.system.DisplaySystem;
 
 /**
  * A window defines the top-level of a component hierarchy. It must be
@@ -38,7 +38,6 @@ public class BWindow extends BContainer
     {
         setLookAndFeel(lnf);
         setLayoutManager(layout);
-        _node.setRenderQueueMode(Renderer.QUEUE_ORTHO);
     }
 
     /**
@@ -61,20 +60,6 @@ public class BWindow extends BContainer
         int width = DisplaySystem.getDisplaySystem().getWidth();
         int height = DisplaySystem.getDisplaySystem().getHeight();
         setLocation((width-getWidth())/2, (height-getHeight())/2);
-    }
-
-    /**
-     * Configures this window with a background. This should be called
-     * before any components are added to the window to ensure proper
-     * render order.
-     */
-    public void setBackground (BBackground background)
-    {
-        if (_background != null) {
-            _node.detachChild(_background.getNode());
-        }
-        _background = background;
-        _node.attachChild(_background.getNode());
     }
 
     /**
@@ -101,15 +86,55 @@ public class BWindow extends BContainer
     }
 
     /**
-     * Configures this window with its input dispatcher. Do not call this
-     * method, it is called automatically when a window is added to a
-     * dispatcher via a call to {@link InputDispatcher#addWindow}.
+     * Returns the root node that manages this window.
      */
-    public void setInputDispatcher (InputDispatcher dispatcher)
+    public BRootNode getRootNode ()
     {
-        if (_dispatcher != dispatcher) {
-            _dispatcher = dispatcher;
-            if (_dispatcher == null) {
+        return _root;
+    }
+
+    /**
+     * Detaches this window from the root node and removes it from the
+     * display.
+     */
+    public void dismiss ()
+    {
+        if (_root != null) {
+            _root.removeWindow(this);
+        } else {
+            Log.log.warning("Unmanaged window dismissed [window=" + this + "].");
+            Thread.dumpStack();
+        }
+    }
+
+    // documentation inherited
+    public void invalidate ()
+    {
+        super.invalidate();
+
+        if (_root != null) {
+            // when an invalidation call reaches an attached top-level
+            // window, we start the revalidation process
+            validate();
+        }
+    }
+
+    // documentation inherited
+    public boolean isAdded ()
+    {
+        return _root != null;
+    }
+
+    /**
+     * Configures this window with its root node. Do not call this method,
+     * it is called automatically when a window is added to the root node
+     * via a call to {@link BRootNode#addWindow}.
+     */
+    protected void setRootNode (BRootNode root)
+    {
+        if (_root != root) {
+            _root = root;
+            if (_root == null) {
                 wasRemoved();
             } else {
                 wasAdded();
@@ -124,86 +149,21 @@ public class BWindow extends BContainer
     }
 
     /**
-     * Returns the input dispatcher that manages this window.
-     */
-    public InputDispatcher getInputDispatcher ()
-    {
-        return _dispatcher;
-    }
-
-    /**
-     * Detaches this window from the input dispatcher and removes it from
-     * the display.
-     */
-    public void dismiss ()
-    {
-        if (_dispatcher != null) {
-            _dispatcher.removeWindow(this);
-        } else {
-            Log.log.warning("Unmanaged window dismissed [window=" + this + "].");
-            Thread.dumpStack();
-        }
-    }
-
-    // documentation inherited
-    public void invalidate ()
-    {
-        super.invalidate();
-
-        if (_dispatcher != null) {
-            // when an invalidation call reaches an attached top-level
-            // window, we start the revalidation process
-            validate();
-        }
-    }
-
-    // documentation inherited
-    public boolean isAdded ()
-    {
-        return _dispatcher != null;
-    }
-
-    // documentation inherited
-    public Insets getInsets ()
-    {
-        Insets insets = super.getInsets();
-        if (_background != null) {
-            insets = _background.adjustInsets(insets);
-        }
-        return insets;
-    }
-
-    // documentation inherited
-    protected void layout ()
-    {
-        super.layout();
-
-        if (_background != null) {
-            // our background occupies our entire dimensions
-            _background.setBounds(0, 0, _width, _height);
-            _background.layout();
-        }
-    }
-
-    /**
      * Requests that the specified component be given the input focus.
      */
     protected void requestFocus (BComponent component)
     {
-        if (_dispatcher == null) {
+        if (_root == null) {
             Log.log.warning("Un-added window requested to change focus " +
                             "[win=" + this + ", focus=" + component + "].");
             Thread.dumpStack();
         } else {
-            _dispatcher.requestFocus(component);
+            _root.requestFocus(component);
         }
     }
 
-    /** The dispatcher that handles our events. */
-    protected InputDispatcher _dispatcher;
-
-    /** The background we display to denote our window. */
-    protected BBackground _background;
+    /** The root node that connects us into the JME system. */
+    protected BRootNode _root;
 
     /** Whether or not this window steals all input from other windows
      * further down the hierarchy. */

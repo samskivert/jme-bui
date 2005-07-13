@@ -18,26 +18,22 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.event;
+package com.jme.bui;
 
 import java.awt.Canvas;
 
-import com.jme.scene.Node;
-
-import com.jme.bui.BComponent;
-import com.jme.bui.Log;
+import com.jme.bui.event.MouseEvent;
 
 /**
  * Bridges between the AWT and the BUI input event system when we are
  * being used in an AWT canvas.
  */
-public class CanvasInputDispatcher extends InputDispatcher
+public class CanvasRootNode extends BRootNode
     implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
                java.awt.event.MouseWheelListener
 {
-    public CanvasInputDispatcher (Node rootNode, Canvas canvas)
+    public CanvasRootNode (Canvas canvas)
     {
-        super(rootNode);
         _canvas = canvas;
 
         // we want to hear about mouse movement and clicking

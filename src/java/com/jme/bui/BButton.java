@@ -21,6 +21,7 @@
 package com.jme.bui;
 
 import com.jme.bui.background.BBackground;
+import com.jme.renderer.Renderer;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.MouseEvent;
@@ -140,59 +141,13 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
-    protected void wasAdded ()
-    {
-        super.wasAdded();
-
-        // we can now obtain our backgrounds
-        if (_backgrounds == null) {
-            int state = getState();
-            _backgrounds = new BBackground[getBackgroundCount()];
-            for (int ii = 0; ii < _backgrounds.length; ii++) {
-                _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
-                _node.attachChild(_backgrounds[ii].getNode());
-                _backgrounds[ii].wasAdded();
-                _backgrounds[ii].getNode().setForceCull(ii != state);
-            }
-        }
-
-        // we need to handle our children by hand as we're not a container
-        _node.attachChild(_label.getNode());
-        _label.setParent(this);
-        _label.wasAdded();
-    }
-
-    /** Used by the {@link BToggleButton} to add an additional state. */
-    protected int getBackgroundCount ()
-    {
-        return 3;
-    }
-
-    // documentation inherited
-    protected void layout ()
-    {
-        super.layout();
-
-        // we need to lay out our children by hand as we're not a container
-        _label.layout();
-        for (int ii = 0; ii < _backgrounds.length; ii++) {
-            _backgrounds[ii].layout();
-        }
-    }
-
-    // documentation inherited
     public void setBounds (int x, int y, int width, int height)
     {
         super.setBounds(x, y, width, height);
-        for (int ii = 0; ii < _backgrounds.length; ii++) {
-            _backgrounds[ii].setBounds(0, 0, width, height);
-        }
-        int left = _backgrounds[0].getLeftInset();
-        int top = _backgrounds[0].getTopInset();
-        int right = _backgrounds[0].getRightInset();
-        int bottom = _backgrounds[0].getBottomInset();
-        _label.setBounds(left, top, width - (left+right),
-                         height - (top+bottom));
+
+        _label.setBounds(_background.getLeftInset(), _background.getTopInset(),
+                         _background.getContentWidth(width),
+                         _background.getContentHeight(height));
     }
 
     // documentation inherited
@@ -243,6 +198,49 @@ public class BButton extends BComponent
         }
     }
 
+    // documentation inherited
+    protected void wasAdded ()
+    {
+        super.wasAdded();
+
+        // we can now obtain our backgrounds
+        if (_backgrounds == null) {
+            int state = getState();
+            _backgrounds = new BBackground[getBackgroundCount()];
+            for (int ii = 0; ii < _backgrounds.length; ii++) {
+                _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
+            }
+            _background = _backgrounds[0];
+        }
+
+        // we need to handle our children by hand as we're not a container
+//         _node.attachChild(_label.getNode());
+        _label.setParent(this);
+        _label.wasAdded();
+    }
+
+    /** Used by the {@link BToggleButton} to add an additional state. */
+    protected int getBackgroundCount ()
+    {
+        return 3;
+    }
+
+    // documentation inherited
+    protected void layout ()
+    {
+        super.layout();
+
+        // we need to lay out our children by hand as we're not a container
+        _label.layout();
+    }
+
+    // documentation inherited
+    protected void renderComponent (Renderer renderer)
+    {
+        super.renderComponent(renderer);
+        _label.render(renderer);
+    }
+
     /**
      * Called when the button is "clicked" which may due to the mouse
      * being pressed and released while over the button or due to keyboard
@@ -278,21 +276,19 @@ public class BButton extends BComponent
         }
 
         int state = getState();
-        for (int ii = 0; ii < _backgrounds.length; ii++) {
-            _backgrounds[ii].getNode().setForceCull(ii != state);
-        }
-        _label.setLocation(_backgrounds[state].getLeftInset(),
-                           _backgrounds[state].getTopInset());
+        _background = _backgrounds[state];
+        _label.setLocation(_background.getLeftInset(),
+                           _background.getTopInset());
     }
 
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
         Dimension d = new Dimension(_label.getPreferredSize());
-        d.width += _backgrounds[0].getLeftInset();
-        d.width += _backgrounds[0].getRightInset();
-        d.height += _backgrounds[0].getTopInset();
-        d.height += _backgrounds[0].getBottomInset();
+        d.width += _background.getLeftInset();
+        d.width += _background.getRightInset();
+        d.height += _background.getTopInset();
+        d.height += _background.getBottomInset();
         return d;
     }
 

@@ -22,13 +22,12 @@ package com.jme.bui.background;
 
 import java.net.URL;
 
+import org.lwjgl.opengl.GL11;
+
 import com.jme.image.Image;
-import com.jme.image.Texture;
 import com.jme.math.Vector2f;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
@@ -63,132 +62,108 @@ public class TiledBackground extends BBackground
     {
         super(left, top, right, bottom);
 
-        // we want transparent parts of our texture to show through
-        RenderUtil.makeTransparent(_node);
-
         // load up the background image as a texture
-        Texture texture = TextureManager.loadTexture(
-            source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR,
-            Image.GUESS_FORMAT_NO_S3TC, 1.0f, true);
-        texture.setWrap(Texture.WM_WRAP_S_WRAP_T);
-        _twidth = texture.getImage().getWidth();
-        _theight = texture.getImage().getHeight();
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
-        _tstate.setEnabled(true);
-        _tstate.setTexture(texture);
-
-        // create quads for our nine sections
-        for (int ii = 0; ii < _sections.length; ii++) {
-            _sections[ii] = new Quad("section:" + ii, _twidth/3, _theight/3);
-            _sections[ii].setRenderState(_tstate);
-            _sections[ii].setTextures(_tcoords[ii]);
-            _node.attachChild(_sections[ii]);
-        }
+        _image = TextureManager.loadImage(source, true);
+        _twidth = _image.getWidth();
+        _theight = _image.getHeight();
     }
 
     // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        super.setBounds(x, y, width, height);
+        // render each of our image sections appropriately
+        int wthird = _twidth/3, hthird = _theight/3;
+        int wmiddle = _twidth - 2*wthird, hmiddle = _theight - 2*hthird;
 
-        // reshape our scaled sections
-        _sections[1].resize(width-2*_twidth/3, _theight/3);
-        _sections[3].resize(_twidth/3, height - 2*_theight/3);
-        _sections[4].resize(width-2*_twidth/3, height - 2*_theight/3);
-        _sections[5].resize(_twidth/3, height - 2*_theight/3);
-        _sections[7].resize(width-2*_twidth/3, _theight/3);
+        RenderUtil.blendState.apply();
+        GL11.glPixelZoom(1f, 1f);
 
-        _node.updateGeometricState(0.0f, true);
-        _node.updateRenderState();
+        // draw the corners
+        drawImage(0, 0, wthird, hthird, 0, 0);
+        drawImage(_twidth-wthird, 0, wthird, hthird, width-wthird, 0);
+        drawImage(0, _theight-hthird, wthird, hthird, 0, height-hthird);
+        drawImage(_twidth-wthird, _theight-hthird, wthird, hthird,
+                  width-wthird, height-hthird);
+
+        // draw the "gaps"
+        int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
+        drawImage(wthird, 0, wmiddle, hthird, wthird, 0, ghmiddle, hthird);
+        drawImage(wthird, _theight-hthird, wmiddle, hthird,
+                  wthird, height-hthird, ghmiddle, hthird);
+
+        drawImage(0, hthird, wthird, hmiddle, 0, hthird, wthird, gvmiddle);
+        drawImage(_twidth-wthird, hthird, wthird, hmiddle,
+                  width-wthird, hthird, wthird, gvmiddle);
+
+        // draw the center
+        drawImage(wthird, hthird, _twidth-2*wthird, _theight-2*hthird,
+                  wthird, hthird, width-2*wthird, height-2*hthird);
+
+        GL11.glPixelZoom(1f, 1f);
     }
 
-    // documentation inherited
-    public Dimension getPreferredSize ()
+    protected void drawImage (int sx, int sy, int swidth, int sheight,
+                              int tx, int ty)
     {
-        return new Dimension(_twidth, _theight);
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _twidth);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        GL11.glRasterPos2i(tx, ty);
+        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+                          _image.getData());
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
     }
 
-    // documentation inherited
-    protected void layout ()
+    protected void drawImage (int sx, int sy, int swidth, int sheight,
+                              int tx, int ty, int twidth, int theight)
     {
-        // position our sections
-        float height = _theight/6f;
-        _sections[0].setLocalTranslation(
-            new Vector3f(_twidth/6f, height, 0));
-        _sections[1].setLocalTranslation(
-            new Vector3f(_width/2f, height, 0));
-        _sections[2].setLocalTranslation(
-            new Vector3f(_width - _twidth/6f, height, 0));
-
-        height = _height/2f;
-        _sections[3].setLocalTranslation(
-            new Vector3f(_twidth/6f, height, 0));
-        _sections[4].setLocalTranslation(
-            new Vector3f(_width/2f, height, 0));
-        _sections[5].setLocalTranslation(
-            new Vector3f(_width - _twidth/6f, height, 0));
-
-        height = _height - _theight/6f;
-        _sections[6].setLocalTranslation(
-            new Vector3f(_twidth/6f, height, 0));
-        _sections[7].setLocalTranslation(
-            new Vector3f(_width/2f, height, 0));
-        _sections[8].setLocalTranslation(
-            new Vector3f(_width - _twidth/6f, height, 0));
-
-        _node.updateGeometricState(0.0f, true);
-        _node.updateRenderState();
+        GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _twidth);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        GL11.glRasterPos2i(tx, ty);
+        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+                          _image.getData());
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
+        GL11.glPixelZoom(1f, 1f);
     }
 
+//     // documentation inherited
+//     protected void layout ()
+//     {
+//         // position our sections
+//         float height = _theight/6f;
+//         _sections[0].setLocalTranslation(
+//             new Vector3f(_twidth/6f, height, 0));
+//         _sections[1].setLocalTranslation(
+//             new Vector3f(_width/2f, height, 0));
+//         _sections[2].setLocalTranslation(
+//             new Vector3f(_width - _twidth/6f, height, 0));
+
+//         height = _height/2f;
+//         _sections[3].setLocalTranslation(
+//             new Vector3f(_twidth/6f, height, 0));
+//         _sections[4].setLocalTranslation(
+//             new Vector3f(_width/2f, height, 0));
+//         _sections[5].setLocalTranslation(
+//             new Vector3f(_width - _twidth/6f, height, 0));
+
+//         height = _height - _theight/6f;
+//         _sections[6].setLocalTranslation(
+//             new Vector3f(_twidth/6f, height, 0));
+//         _sections[7].setLocalTranslation(
+//             new Vector3f(_width/2f, height, 0));
+//         _sections[8].setLocalTranslation(
+//             new Vector3f(_width - _twidth/6f, height, 0));
+
+// //         _node.updateGeometricState(0.0f, true);
+// //         _node.updateRenderState();
+//     }
+
+    protected Image _image;
     protected int _twidth, _theight;
-    protected TextureState _tstate;
-    protected Quad[] _sections = new Quad[9];
-
-    /** Contains texture coordinates for each of the nine sections into
-     * which we divide the background image. */
-    protected static Vector2f[][] _tcoords = new Vector2f[9][4];
-
-    /**
-     * These map points on a 4x4 grid to texture coordinates. Consider the
-     * following grid:
-     *
-     * <pre>
-     * 12 13 14 15
-     *  8  9 10 11
-     *  4  5  6  7
-     *  0  1  2  3
-     * </pre>
-     *
-     * Each of the nine sections is defined by four of the grid
-     * coordinates. For example, the upper left section is 8, 12, 13, 15 and
-     * we proceed in row major order from there.
-     */
-    protected static final int[] TCOORDS = {
-        4, 0, 1, 5,
-        5, 1, 2, 6,
-        6, 2, 3, 7,
-        8, 4, 5, 9,
-        9, 5, 6, 10,
-        10, 6, 7, 11,
-        12, 8, 9, 13,
-        13, 9, 10, 14,
-        14, 10, 11, 15
-    };
-
-    static {
-        Vector2f[] coords = new Vector2f[4*4];
-        int idx = 0;
-        for (int yy = 0; yy < 4; yy++) {
-            for (int xx = 0; xx < 4; xx++) {
-                coords[idx++] = new Vector2f(xx/3f, yy/3f);
-            }
-        }
-        for (int ii = 0; ii < TCOORDS.length/4; ii++) {
-            _tcoords[ii][0] = coords[TCOORDS[4*ii]];
-            _tcoords[ii][1] = coords[TCOORDS[4*ii+1]];
-            _tcoords[ii][2] = coords[TCOORDS[4*ii+2]];
-            _tcoords[ii][3] = coords[TCOORDS[4*ii+3]];
-        }
-    }
 }
