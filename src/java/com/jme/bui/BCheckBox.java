@@ -63,7 +63,7 @@ public class BCheckBox extends BContainer
 
         // load up our icons
         _cicon = getLookAndFeel().createCheckBoxIcon();
-        _bicon = new BIcon(
+        _bicon = new BImageIcon(
             new BufferedImage(_cicon.getWidth(), _cicon.getHeight(),
                               BufferedImage.TYPE_INT_ARGB));
         _check.setIcon(isChecked() ? _cicon : _bicon);

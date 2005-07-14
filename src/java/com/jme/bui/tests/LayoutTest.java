@@ -58,7 +58,7 @@ public class LayoutTest extends SimpleGame
         BWindow window = new BDecoratedWindow(lnf, null);
         URL icon = getClass().getClassLoader().
             getResource("rsrc/textures/button_up.png");
-//         BLabel label = new BLabel(new BIcon(icon));
+//         BLabel label = new BLabel(new BImageIcon(icon));
 //         label.setHorizontalAlignment(BLabel.CENTER);
 //         label.setText("NORTH");
 //         window.add(label, BorderLayout.NORTH);
@@ -116,7 +116,7 @@ public class LayoutTest extends SimpleGame
         window.setBorder(new LineBorder(ColorRGBA.black));
         BContainer cont =
             new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
-        cont.add(new BToggleButton(new BIcon(icon), ""));
+        cont.add(new BToggleButton(new BImageIcon(icon), ""));
         cont.add(new BLabel("Two"));
         cont.add(new BLabel("Three"));
         cont.add(new BLabel("Four"));

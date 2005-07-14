@@ -36,14 +36,52 @@ import com.jme.bui.util.RenderUtil;
 /**
  * Provides icon imagery for various components which make use of it.
  */
-public abstract class BIcon
+public class BImageIcon extends BIcon
 {
-    /** Returns the width of this icon. */
-    public abstract int getWidth ();
+    /**
+     * Creates an icon from the image referenced by the supplied URL.
+     */
+    public BImageIcon (URL image)
+    {
+        this(TextureManager.loadImage(image, true));
+    }
 
-    /** Returns the height of this icon. */
-    public abstract int getHeight ();
+    /**
+     * Creates an icon from the supplied source image.
+     */
+    public BImageIcon (BufferedImage image)
+    {
+        this(TextureManager.loadImage(image, true));
+    }
 
-    /** Renders this icon. */
-    public abstract void render (Renderer renderer, int x, int y);
+    /**
+     * Creates an icon from the supplied source texture.
+     */
+    public BImageIcon (Image image)
+    {
+        _image = image;
+    }
+
+    // documentation inherited
+    public int getWidth ()
+    {
+        return _image.getWidth();
+    }
+
+    // documentation inherited
+    public int getHeight ()
+    {
+        return _image.getHeight();
+    }
+
+    // documentation inherited
+    public void render (Renderer renderer, int x, int y)
+    {
+        RenderUtil.blendState.apply();
+        GL11.glRasterPos2i(x, y);
+        GL11.glDrawPixels(_image.getWidth(), _image.getHeight(),
+                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, _image.getData());
+    }
+
+    protected Image _image;
 }

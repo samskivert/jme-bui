@@ -207,7 +207,7 @@ public class BLookAndFeel
             break;
         }
         path += ".png";
-        return new BButton(new BIcon(getResource(path)), "");
+        return new BButton(new BImageIcon(getResource(path)), "");
     }
 
     /**
@@ -232,7 +232,7 @@ public class BLookAndFeel
      */
     public BIcon createCheckBoxIcon ()
     {
-        return new BIcon(getResource("rsrc/textures/checkbox.png"));
+        return new BImageIcon(getResource("rsrc/textures/checkbox.png"));
     }
 
     /**
