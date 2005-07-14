@@ -60,18 +60,31 @@ public class ScaledBackground extends BBackground
     protected void drawImage (int sx, int sy, int swidth, int sheight,
                               int tx, int ty, int twidth, int theight)
     {
-        GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _image.getWidth());
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        if (twidth != swidth || theight != sheight) {
+            GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
+        }
+        if (sx > 0 || sy > 0) {
+            GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _image.getWidth());
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        }
         GL11.glRasterPos2i(tx, ty);
-        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-                          _image.getData());
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
-        GL11.glPixelZoom(1f, 1f);
+        GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[_image.getType()],
+                          GL11.GL_UNSIGNED_BYTE, _image.getData());
+        if (sx > 0 || sy > 0) {
+            GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
+        }
+        if (twidth != swidth || theight != sheight) {
+            GL11.glPixelZoom(1f, 1f);
+        }
     }
 
     protected Image _image;
+
+    protected static int[] IMAGE_FORMATS = {
+        GL11.GL_RGBA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
+        GL11.GL_LUMINANCE_ALPHA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
+        GL11.GL_RGBA };
 }

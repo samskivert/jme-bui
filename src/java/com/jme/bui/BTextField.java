@@ -213,10 +213,13 @@ public class BTextField extends BContainer
         super.layout();
 
         // the label is inset based on the background's insets
-        int left = _background.getLeftInset();
-        int top = _background.getTopInset();
-        int right = _background.getRightInset();
-        int bottom = _background.getBottomInset();
+        int left = 0, top = 0, right = 0, bottom = 0;
+        if (_background != null) {
+            left = _background.getLeftInset();
+            top = _background.getTopInset();
+            right = _background.getRightInset();
+            bottom = _background.getBottomInset();
+        }
         int vc = computeVisibleChars();
         _label.setBounds(left, top, _width - (left+right),
                          _height - (top+bottom));
@@ -234,10 +237,12 @@ public class BTextField extends BContainer
         if (_prefWidth != -1) {
             d.width = _prefWidth;
         }
-        d.width += _background.getLeftInset();
-        d.width += _background.getRightInset();
-        d.height += _background.getTopInset();
-        d.height += _background.getBottomInset();
+        if (_background != null) {
+            d.width += _background.getLeftInset();
+            d.width += _background.getRightInset();
+            d.height += _background.getTopInset();
+            d.height += _background.getBottomInset();
+        }
         return d;
     }
 
