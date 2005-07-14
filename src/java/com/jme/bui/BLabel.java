@@ -162,13 +162,11 @@ public class BLabel extends BComponent
         if (_icon != null) {
             owidth = _icon.getWidth();
             oheight = _icon.getHeight();
-//             _node.detachChild(_icon.getQuad());
         }
         _icon = icon;
         if (_icon != null) {
             nwidth = _icon.getWidth();
             nheight = _icon.getHeight();
-//             _node.attachChild(_icon.getQuad());
         }
         if (owidth != nwidth || oheight != nheight) {
             invalidate();
@@ -228,10 +226,8 @@ public class BLabel extends BComponent
         }
 
         if (_icon != null) {
-            _icon.getQuad().setLocalTranslation(
-                new Vector3f(xoff + _icon.getWidth()/2,
-                             getYOffset(insets, _icon.getHeight()) +
-                             _icon.getHeight()/2, 0));
+            _ix = xoff;
+            _iy = getYOffset(insets, _icon.getHeight());
             xoff += (_icon.getWidth() + _gap);
         }
 
@@ -275,6 +271,9 @@ public class BLabel extends BComponent
         if (_tgeom != null) {
             _tgeom.render(renderer, _tx, _ty);
         }
+        if (_icon != null) {
+            _icon.render(renderer, _ix, _iy);
+        }
     }
 
     // documentation inherited
@@ -294,6 +293,7 @@ public class BLabel extends BComponent
 
     protected String _text;
     protected BIcon _icon;
+    protected int _ix, _iy;
 
     protected BText _tgeom;
     protected int _tx, _ty;

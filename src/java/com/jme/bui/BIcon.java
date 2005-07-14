@@ -24,14 +24,13 @@ import java.net.URL;
 
 import java.awt.image.BufferedImage;
 
+import org.lwjgl.opengl.GL11;
+
 import com.jme.image.Image;
-import com.jme.image.Texture;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.TextureState;
+import com.jme.renderer.Renderer;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
-import com.jme.bui.util.Dimension;
 import com.jme.bui.util.RenderUtil;
 
 /**
@@ -44,9 +43,7 @@ public class BIcon
      */
     public BIcon (URL image)
     {
-        this(TextureManager.loadTexture(
-                 image, Texture.MM_LINEAR, Texture.FM_LINEAR,
-                 Image.GUESS_FORMAT_NO_S3TC, 1.0f, true), -1, -1);
+        this(TextureManager.loadImage(image, true));
     }
 
     /**
@@ -54,33 +51,15 @@ public class BIcon
      */
     public BIcon (BufferedImage image)
     {
-        this(TextureManager.loadTexture(image, Texture.MM_LINEAR_LINEAR,
-                                        Texture.FM_LINEAR, true),
-             image.getWidth(), image.getHeight());
+        this(TextureManager.loadImage(image, true));
     }
 
     /**
      * Creates an icon from the supplied source texture.
      */
-    public BIcon (Texture texture, int width, int height)
+    public BIcon (Image image)
     {
-        _texture = texture;
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
-        _tstate.setEnabled(true);
-        _tstate.setTexture(_texture);
-
-        if (width == -1) {
-            width = _texture.getImage().getWidth();
-            height = _texture.getImage().getHeight();
-        }
-        _size = new Dimension(width, height);
-        _quad = new Quad("icon", width, height);
-        _quad.setRenderState(_tstate);
-
-        // we want transparent parts of our texture to show through
-        RenderUtil.makeTransparent(_quad);
-        _quad.updateRenderState();
+        _image = image;
     }
 
     /**
@@ -88,7 +67,7 @@ public class BIcon
      */
     public int getWidth ()
     {
-        return _size.width;
+        return _image.getWidth();
     }
 
     /**
@@ -96,19 +75,19 @@ public class BIcon
      */
     public int getHeight ()
     {
-        return _size.height;
+        return _image.getHeight();
     }
 
     /**
-     * Returns the textured quad that is used to display this icon.
+     * Renders this icon.
      */
-    public Quad getQuad ()
+    public void render (Renderer renderer, int x, int y)
     {
-        return _quad;
+        RenderUtil.blendState.apply();
+        GL11.glRasterPos2i(x, y);
+        GL11.glDrawPixels(_image.getWidth(), _image.getHeight(),
+                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, _image.getData());
     }
 
-    protected Texture _texture;
-    protected TextureState _tstate;
-    protected Quad _quad;
-    protected Dimension _size;
+    protected Image _image;
 }
