@@ -84,10 +84,8 @@ public class AWTTextFactory extends BTextFactory
 
         Graphics2D gfx = _stub.createGraphics();
         TextLayout layout;
-        FontMetrics fm;
         try {
             gfx.setFont(_font);
-            fm = gfx.getFontMetrics();
             layout = new TextLayout(text, _font, gfx.getFontRenderContext());
         } finally {
             gfx.dispose();
@@ -98,15 +96,13 @@ public class AWTTextFactory extends BTextFactory
         // TODO: do the Mac hack to get the real bounds
         Rectangle2D bounds = layout.getBounds();
         size.width = (int)(Math.max(bounds.getX(), 0) + bounds.getWidth());
-        size.height = (int)fm.getHeight();
+        size.height = (int)(layout.getLeading() + layout.getAscent() +
+                            layout.getDescent());
 
         // blank text results in a zero sized bounds, bump it up to 1x1 to
         // avoid freakout by the BufferedImage
         size.width = Math.max(size.width, 1);
         size.height = Math.max(size.height, 1);
-
-        Log.log.info("Creating image [text='" + text + "', " +
-                     "bounds=" + bounds + ", size=" + size + "].");
 
         // render the text into the image
         BufferedImage image = new BufferedImage(
@@ -116,7 +112,7 @@ public class AWTTextFactory extends BTextFactory
             gfx.setColor(BLANK);
             gfx.fillRect(0, 0, size.width, size.height);
             gfx.setColor(new Color(color.r, color.g, color.b, color.a));
-            layout.draw(gfx, -(float)bounds.getX(), fm.getAscent());
+            layout.draw(gfx, -(float)bounds.getX(), layout.getAscent());
         } finally {
             gfx.dispose();
         }

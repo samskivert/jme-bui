@@ -76,7 +76,6 @@ public class TiledBackground extends BBackground
         int wmiddle = _twidth - 2*wthird, hmiddle = _theight - 2*hthird;
 
         RenderUtil.blendState.apply();
-        GL11.glPixelZoom(1f, 1f);
 
         // draw the corners
         drawImage(0, 0, wthird, hthird, 0, 0);
@@ -98,8 +97,6 @@ public class TiledBackground extends BBackground
         // draw the center
         drawImage(wthird, hthird, _twidth-2*wthird, _theight-2*hthird,
                   wthird, hthird, width-2*wthird, height-2*hthird);
-
-        GL11.glPixelZoom(1f, 1f);
     }
 
     protected void drawImage (int sx, int sy, int swidth, int sheight,
@@ -131,38 +128,6 @@ public class TiledBackground extends BBackground
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
         GL11.glPixelZoom(1f, 1f);
     }
-
-//     // documentation inherited
-//     protected void layout ()
-//     {
-//         // position our sections
-//         float height = _theight/6f;
-//         _sections[0].setLocalTranslation(
-//             new Vector3f(_twidth/6f, height, 0));
-//         _sections[1].setLocalTranslation(
-//             new Vector3f(_width/2f, height, 0));
-//         _sections[2].setLocalTranslation(
-//             new Vector3f(_width - _twidth/6f, height, 0));
-
-//         height = _height/2f;
-//         _sections[3].setLocalTranslation(
-//             new Vector3f(_twidth/6f, height, 0));
-//         _sections[4].setLocalTranslation(
-//             new Vector3f(_width/2f, height, 0));
-//         _sections[5].setLocalTranslation(
-//             new Vector3f(_width - _twidth/6f, height, 0));
-
-//         height = _height - _theight/6f;
-//         _sections[6].setLocalTranslation(
-//             new Vector3f(_twidth/6f, height, 0));
-//         _sections[7].setLocalTranslation(
-//             new Vector3f(_width/2f, height, 0));
-//         _sections[8].setLocalTranslation(
-//             new Vector3f(_width - _twidth/6f, height, 0));
-
-// //         _node.updateGeometricState(0.0f, true);
-// //         _node.updateRenderState();
-//     }
 
     protected Image _image;
     protected int _twidth, _theight;

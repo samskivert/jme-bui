@@ -133,16 +133,6 @@ public class BComboBox extends BLabel
     }
 
     // documentation inherited
-    public void render (Renderer renderer)
-    {
-        // render our background and then our label
-        if (_background != null) {
-            _background.render(renderer, 0, 0, _width, _height);
-        }
-        super.render(renderer);
-    }
-
-    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
@@ -165,16 +155,6 @@ public class BComboBox extends BLabel
                 break;
             }
         }
-    }
-
-    // documentation inherited
-    public Insets getInsets ()
-    {
-        Insets insets = super.getInsets();
-        if (_background != null) {
-            insets = _background.adjustInsets(insets);
-        }
-        return insets;
     }
 
     // TODO: make getPreferredSize() use the widest label
@@ -236,5 +216,4 @@ public class BComboBox extends BLabel
     protected int _selidx = -1;
     protected ArrayList _items = new ArrayList();
     protected BPopupMenu _menu;
-    protected BBackground _background;
 }
