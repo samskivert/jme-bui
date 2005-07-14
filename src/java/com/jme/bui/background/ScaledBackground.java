@@ -20,20 +20,12 @@
 
 package com.jme.bui.background;
 
-import java.net.URL;
+import org.lwjgl.opengl.GL11;
 
 import com.jme.image.Image;
-import com.jme.image.Texture;
-import com.jme.math.Vector3f;
-import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.TextureState;
-import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
 
 import com.jme.bui.util.Dimension;
-import com.jme.bui.util.RenderUtil;
 
 /**
  * Displays a scaled texture as a background image.
@@ -44,59 +36,42 @@ public class ScaledBackground extends BBackground
      * Creates a scaled background from the specified source image data.
      */
     public ScaledBackground (
-        URL source, int left, int top, int right, int bottom)
+        Image image, int left, int top, int right, int bottom)
     {
         super(left, top, right, bottom);
+        _image = image;
+    }
 
-        // load up the background image as a texture
-        Texture texture = TextureManager.loadTexture(
-            source, Texture.MM_LINEAR_LINEAR, Texture.FM_LINEAR,
-            Image.GUESS_FORMAT_NO_S3TC, 1.0f, true);
-//         Texture texture = TextureManager.loadTexture(
-//             source, Texture.MM_LINEAR, Texture.FM_LINEAR);
-        _twidth = texture.getImage().getWidth();
-        _theight = texture.getImage().getHeight();
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
-        _tstate.setEnabled(true);
-        _tstate.setTexture(texture);
-
-        _quad = new Quad("quad", _twidth, _theight);
-        _quad.setRenderState(_tstate);
-
-        // we want transparent parts of our texture to show through
-        RenderUtil.makeTransparent(_quad);
-
-//         _node.attachChild(_quad);
-        _quad.updateRenderState();
+    /**
+     * Returns the "natural" size of our background image.
+     */
+    public Dimension getNaturalSize ()
+    {
+        return new Dimension(_image.getWidth(), _image.getHeight());
     }
 
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        // nothing doing
+        drawImage(0, 0, _image.getWidth(), _image.getHeight(),
+                  x, y, width, height);
     }
 
-//     // documentation inherited
-//     public void setBounds (int x, int y, int width, int height)
-//     {
-//         // reshape our scaled sections
-//         if (_width != width || _height != height) {
-//             _quad.resize(width, height);
-//             _quad.setLocalTranslation(
-//                 new Vector3f(width/2, height/2, 0f));
-//         }
-//         super.setBounds(x, y, width, height);
-// //         _node.updateGeometricState(0.0f, true);
-//     }
+    protected void drawImage (int sx, int sy, int swidth, int sheight,
+                              int tx, int ty, int twidth, int theight)
+    {
+        GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _image.getWidth());
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        GL11.glRasterPos2i(tx, ty);
+        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+                          _image.getData());
+        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
+        GL11.glPixelZoom(1f, 1f);
+    }
 
-//     // documentation inherited
-//     public Dimension getPreferredSize ()
-//     {
-//         return new Dimension(_twidth, _theight);
-//     }
-
-    protected int _twidth, _theight;
-    protected TextureState _tstate;
-    protected Quad _quad;
+    protected Image _image;
 }
