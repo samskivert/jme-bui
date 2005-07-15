@@ -20,8 +20,6 @@
 
 package com.jme.bui;
 
-import java.awt.image.BufferedImage;
-
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.ActionListener;
 import com.jme.bui.layout.BorderLayout;
@@ -63,9 +61,7 @@ public class BCheckBox extends BContainer
 
         // load up our icons
         _cicon = getLookAndFeel().createCheckBoxIcon();
-        _bicon = new BImageIcon(
-            new BufferedImage(_cicon.getWidth(), _cicon.getHeight(),
-                              BufferedImage.TYPE_INT_ARGB));
+        _bicon = new BlankIcon(_cicon.getWidth(), _cicon.getHeight());
         _check.setIcon(isChecked() ? _cicon : _bicon);
     }
 

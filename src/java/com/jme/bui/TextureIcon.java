@@ -20,68 +20,56 @@
 
 package com.jme.bui;
 
-import java.net.URL;
-
-import java.awt.image.BufferedImage;
-
 import org.lwjgl.opengl.GL11;
 
-import com.jme.image.Image;
-import com.jme.renderer.Renderer;
+import com.jme.image.Texture;
+import com.jme.scene.Spatial;
+import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
-
-import com.jme.bui.util.RenderUtil;
+import com.jme.renderer.Renderer;
 
 /**
- * Provides icon imagery for various components which make use of it.
+ * Displays an icon using image data that is already loaded as a texture.
+ * This is mainly useful for images created by rendering to a texture.
  */
-public class BImageIcon extends BIcon
+public class TextureIcon extends BIcon
 {
-    /**
-     * Creates an icon from the image referenced by the supplied URL.
-     */
-    public BImageIcon (URL image)
+    public TextureIcon (Texture texture, int width, int height)
     {
-        this(TextureManager.loadImage(image, true));
-    }
-
-    /**
-     * Creates an icon from the supplied source image.
-     */
-    public BImageIcon (BufferedImage image)
-    {
-        this(TextureManager.loadImage(image, true));
-    }
-
-    /**
-     * Creates an icon from the supplied source texture.
-     */
-    public BImageIcon (Image image)
-    {
-        _image = image;
+        _texture = texture;
+        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
+            createTextureState();
+        _tstate.setTexture(_texture);
+        _tstate.setEnabled(true);
+        _width = width;
+        _height = height;
     }
 
     // documentation inherited
     public int getWidth ()
     {
-        return _image.getWidth();
+        return _width;
     }
 
     // documentation inherited
     public int getHeight ()
     {
-        return _image.getHeight();
+        return _height;
     }
 
     // documentation inherited
     public void render (Renderer renderer, int x, int y)
     {
-        RenderUtil.blendState.apply();
-        GL11.glRasterPos2i(x, y);
-        GL11.glDrawPixels(_image.getWidth(), _image.getHeight(),
-                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, _image.getData());
+        _tstate.apply();
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(0, 0); GL11.glVertex3f(x, y, 0);
+        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(x, y + _height, 0);
+        GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x + _width, y + _height, 0);
+        GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x + _width, y, 0);
+        GL11.glEnd();
     }
 
-    protected Image _image;
+    protected Texture _texture;
+    protected TextureState _tstate;
+    protected int _width, _height;
 }
