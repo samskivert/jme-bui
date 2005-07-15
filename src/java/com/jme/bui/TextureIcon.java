@@ -21,7 +21,9 @@
 package com.jme.bui;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
+import com.jme.bui.util.RenderUtil;
 import com.jme.image.Texture;
 import com.jme.scene.Spatial;
 import com.jme.scene.state.TextureState;
@@ -60,6 +62,7 @@ public class TextureIcon extends BIcon
     // documentation inherited
     public void render (Renderer renderer, int x, int y)
     {
+        RenderUtil.blendState.apply();
         _tstate.apply();
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glTexCoord2f(0, 0); GL11.glVertex3f(x, y, 0);
@@ -67,6 +70,7 @@ public class TextureIcon extends BIcon
         GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x + _width, y + _height, 0);
         GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x + _width, y, 0);
         GL11.glEnd();
+        Spatial.applyDefaultStates();
     }
 
     protected Texture _texture;
