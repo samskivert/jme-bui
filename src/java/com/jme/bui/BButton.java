@@ -210,7 +210,7 @@ public class BButton extends BComponent
             for (int ii = 0; ii < _backgrounds.length; ii++) {
                 _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
             }
-            _background = _backgrounds[0];
+            _background = _backgrounds[getState()];
         }
 
         // we need to handle our children by hand as we're not a container
