@@ -25,10 +25,8 @@ import java.util.Arrays;
 import org.lwjgl.opengl.GL11;
 
 import com.jme.bui.util.Insets;
-import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Line;
 
 /**
  * Defines a border that displays a single line around the bordered
@@ -39,7 +37,6 @@ public class LineBorder extends BBorder
     public LineBorder (ColorRGBA color)
     {
         _color = color;
-//         _border = new Line("border", _coords, null, _colors, null);
     }
 
     // documentation inherited
@@ -48,18 +45,10 @@ public class LineBorder extends BBorder
         return ONE_PIXEL_INSETS;
     }
 
-//     // documentation inherited
-//     public void setSize (int x, int y, int width, int height)
-//     {
-//         configureCoords(x, y, width, height);
-//         _border.reconstruct(_coords, null, _colors, null);
-//         _border.updateGeometricState(0, true);
-//     }
-
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
-//         renderer.draw(_border);
+        super.render(renderer, x, y, width, height);
 
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
         GL11.glBegin(GL11.GL_LINE_STRIP);
@@ -71,33 +60,7 @@ public class LineBorder extends BBorder
         GL11.glEnd();
     }
 
-    protected void configureCoords (int x, int y, int width, int height)
-    {
-        // it seems that we have to tell OpenGL to stroke a line one pixel
-        // beyond where we actually want it to stop
-        _coords[0] = new Vector3f(x, y + height-1, 0);
-        _coords[1] = new Vector3f(x + width, y + height-1, 0);
-
-        _coords[2] = new Vector3f(x + width-1, y, 0);
-        _coords[3] = new Vector3f(x + width-1, y + height, 0);
-
-        _coords[4] = new Vector3f(x, y, 0);
-        _coords[5] = new Vector3f(x + width, y, 0);
-
-        _coords[6] = new Vector3f(x, y, 0);
-        _coords[7] = new Vector3f(x, y + height, 0);
-        System.err.println("Configured border " + width + "x" + height +
-                           "+" + x + "+" + y + ".");
-    }
-
-    protected Line _border;
-    protected Vector3f[] _coords = new Vector3f[8];
     protected ColorRGBA _color;
-
-    protected static final Vector3f NORMAL = new Vector3f(0, 0, 1);
-    protected static final Vector3f[] NORMALS = new Vector3f[] {
-        NORMAL, NORMAL, NORMAL, NORMAL, NORMAL
-    };
 
     protected static final Insets ONE_PIXEL_INSETS = new Insets(1, 1, 1, 1);
 }

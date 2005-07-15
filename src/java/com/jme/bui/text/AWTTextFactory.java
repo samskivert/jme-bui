@@ -39,6 +39,7 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
+import com.jme.scene.Spatial;
 import com.jme.scene.state.AlphaState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
@@ -132,6 +133,7 @@ public class AWTTextFactory extends BTextFactory
                 return size;
             }
             public void render (Renderer renderer, int x, int y) {
+                Spatial.applyDefaultStates();
                 _astate.apply();
                 GL11.glRasterPos2i(x, y + size.height);
                 GL11.glPixelZoom(1f, -1f);

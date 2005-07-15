@@ -23,6 +23,7 @@ package com.jme.bui.border;
 import com.jme.bui.BComponent;
 import com.jme.bui.util.Insets;
 import com.jme.renderer.Renderer;
+import com.jme.scene.Spatial;
 
 /**
  * Configures a border around a component that may or may not have
@@ -35,6 +36,8 @@ public abstract class BBorder
     public abstract Insets getInsets ();
 
     /** Renders this border. */
-    public abstract void render (
-        Renderer renderer, int x, int y, int width, int height);
+    public void render (Renderer renderer, int x, int y, int width, int height)
+    {
+        Spatial.applyDefaultStates();
+    }
 }

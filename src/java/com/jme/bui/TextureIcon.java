@@ -25,7 +25,6 @@ import org.lwjgl.opengl.GL13;
 
 import com.jme.bui.util.RenderUtil;
 import com.jme.image.Texture;
-import com.jme.scene.Spatial;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.renderer.Renderer;
@@ -36,9 +35,17 @@ import com.jme.renderer.Renderer;
  */
 public class TextureIcon extends BIcon
 {
+    /**
+     * Creates a texture icon with the supplied texture. <em>Note:</em>
+     * the texture will be placed into <code>AM_REPLACE</code> mode (which
+     * is not JME's default) to avoid strange interaction with the current
+     * color. If this is not desirable, change it after constructing the
+     * icon.
+     */
     public TextureIcon (Texture texture, int width, int height)
     {
         _texture = texture;
+        _texture.setApply(Texture.AM_REPLACE);
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
             createTextureState();
         _tstate.setTexture(_texture);
@@ -62,6 +69,8 @@ public class TextureIcon extends BIcon
     // documentation inherited
     public void render (Renderer renderer, int x, int y)
     {
+        super.render(renderer, x, y);
+
         RenderUtil.blendState.apply();
         _tstate.apply();
         GL11.glBegin(GL11.GL_QUADS);
@@ -70,7 +79,6 @@ public class TextureIcon extends BIcon
         GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x + _width, y + _height, 0);
         GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x + _width, y, 0);
         GL11.glEnd();
-        Spatial.applyDefaultStates();
     }
 
     protected Texture _texture;

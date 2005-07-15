@@ -22,6 +22,7 @@ package com.jme.bui.background;
 
 import com.jme.bui.util.Insets;
 import com.jme.renderer.Renderer;
+import com.jme.scene.Spatial;
 
 /**
  * Provides additional information about a background that is used to
@@ -98,8 +99,10 @@ public abstract class BBackground
     }
 
     /** Renders this background. */
-    public abstract void render (
-        Renderer renderer, int x, int y, int width, int height);
+    public void render (Renderer renderer, int x, int y, int width, int height)
+    {
+        Spatial.applyDefaultStates();
+    }
 
     /** Configures this background with its insets. */
     protected BBackground (int left, int top, int right, int bottom)

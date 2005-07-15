@@ -35,6 +35,7 @@ import com.jme.bui.util.Rectangle;
 import com.jme.input.KeyInput;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;
+import com.jme.scene.Spatial;
 
 /**
  * The basic entity in the BUI user interface system. A hierarchy of
@@ -450,6 +451,7 @@ public class BComponent
      */
     protected void renderComponent (Renderer renderer)
     {
+        Spatial.applyDefaultStates();
     }
 
     /**

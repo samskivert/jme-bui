@@ -53,6 +53,8 @@ public class ScaledBackground extends BBackground
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
+        super.render(renderer, x, y, width, height);
+
         drawImage(0, 0, _image.getWidth(), _image.getHeight(),
                   x, y, width, height);
     }

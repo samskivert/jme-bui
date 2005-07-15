@@ -71,6 +71,8 @@ public class TiledBackground extends BBackground
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
+        super.render(renderer, x, y, width, height);
+
         // render each of our image sections appropriately
         int wthird = _twidth/3, hthird = _theight/3;
         int wmiddle = _twidth - 2*wthird, hmiddle = _theight - 2*hthird;

@@ -31,10 +31,4 @@ public class BlankBackground extends BBackground
     {
         super(0, 0, 0, 0);
     }
-
-    // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
-    {
-        // nothing doing
-    }
 }

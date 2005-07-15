@@ -28,6 +28,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.jme.image.Image;
 import com.jme.renderer.Renderer;
+import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
@@ -45,5 +46,8 @@ public abstract class BIcon
     public abstract int getHeight ();
 
     /** Renders this icon. */
-    public abstract void render (Renderer renderer, int x, int y);
+    public void render (Renderer renderer, int x, int y)
+    {
+        Spatial.applyDefaultStates();
+    }
 }

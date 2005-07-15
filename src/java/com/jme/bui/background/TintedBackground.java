@@ -53,6 +53,8 @@ public class TintedBackground extends BBackground
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
+        super.render(renderer, x, y, width, height);
+
         RenderUtil.blendState.apply();
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
         GL11.glBegin(GL11.GL_QUADS);

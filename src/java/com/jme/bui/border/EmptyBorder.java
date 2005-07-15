@@ -40,11 +40,5 @@ public class EmptyBorder extends BBorder
         return _insets;
     }
 
-    // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
-    {
-        // NOOP!
-    }
-
     protected Insets _insets;
 }

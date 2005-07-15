@@ -28,7 +28,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.jme.image.Image;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
@@ -78,11 +77,12 @@ public class ImageIcon extends BIcon
     // documentation inherited
     public void render (Renderer renderer, int x, int y)
     {
+        super.render(renderer, x, y);
+
         RenderUtil.blendState.apply();
         GL11.glRasterPos2i(x, y);
         GL11.glDrawPixels(_image.getWidth(), _image.getHeight(),
                           GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, _image.getData());
-        Spatial.applyDefaultStates();
     }
 
     protected Image _image;
