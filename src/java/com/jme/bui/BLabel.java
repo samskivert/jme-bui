@@ -78,6 +78,19 @@ public class BLabel extends BComponent
     }
 
     /**
+     * Sets the orientation of this label with respect to its icon. If the
+     * horizontal (the default) the text is displayed to the right of the
+     * icon, if vertical the text is displayed below it.
+     */
+    public void setOrientation (int orient)
+    {
+        _orient = orient;
+        if (isAdded()) {
+            layout();
+        }
+    }
+
+    /**
      * Configures this label's horizontal alignment.
      */
     public void setHorizontalAlignment (int align)
@@ -197,43 +210,41 @@ public class BLabel extends BComponent
     {
         super.layout();
 
-        int width = 0;
-        if (_icon != null) {
-            width += _icon.getWidth();
-        }
-        if (_tgeom != null) {
-            if (width != 0) {
-                width += _gap;
-            }
-            width += _tgeom.getSize().width;
-        }
-
-        int height = 0;
-        if (_icon != null) {
-            height = _icon.getHeight();
-        }
-        if (_tgeom != null) {
-            height = Math.max(height, _tgeom.getSize().height);
-        }
-
+        Dimension size = computePreferredSize();
         Insets insets = getInsets();
-        int xoff;
+        int xoff = 0, yoff = 0;
+
+        if (_orient == HORIZONTAL) {
+            if (_icon != null) {
+                _ix = getXOffset(insets, size.width);
+                _iy = getYOffset(insets, _icon.getHeight());
+                xoff = (_icon.getWidth() + _gap);
+            }
+            if (_tgeom != null) {
+                _tx = getXOffset(insets, size.width) + xoff;
+                _ty = getYOffset(insets, _tgeom.getSize().height);
+            }
+
+        } else {
+            if (_tgeom != null) {
+                _tx = getXOffset(insets, _tgeom.getSize().width);
+                _ty = getYOffset(insets, size.height);
+                yoff = (_tgeom.getSize().height + _gap);
+            }
+            if (_icon != null) {
+                _ix = getXOffset(insets, _icon.getWidth());
+                _iy = getYOffset(insets, size.height) + yoff;
+            }
+        }
+    }
+
+    protected int getXOffset (Insets insets, int width)
+    {
         switch (_halign) {
-        case CENTER: xoff = (_width - width) / 2; break;
-        case RIGHT: xoff = _width - width - insets.right; break;
         default:
-        case LEFT: xoff = insets.left;
-        }
-
-        if (_icon != null) {
-            _ix = xoff;
-            _iy = getYOffset(insets, _icon.getHeight());
-            xoff += (_icon.getWidth() + _gap);
-        }
-
-        if (_tgeom != null) {
-            _tx = xoff;
-            _ty = getYOffset(insets, _tgeom.getSize().height);
+        case LEFT: return insets.left;
+        case RIGHT: return _width - width - insets.right;
+        case CENTER: return (_width - width) / 2;
         }
     }
 
@@ -279,15 +290,28 @@ public class BLabel extends BComponent
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
-        int width = 0, height = 0;
+        int iwidth = 0, iheight = 0, twidth = 0, theight = 0, gap = 0;
         if (_icon != null) {
-            width = _icon.getWidth();
-            height = _icon.getHeight();
+            iwidth = _icon.getWidth();
+            iheight = _icon.getHeight();
         }
         if (_tgeom != null) {
-            width += _tgeom.getSize().width;
-            height = Math.max(height, _tgeom.getSize().height);
+            if (_icon != null) {
+                gap = _gap;
+            }
+            twidth = _tgeom.getSize().width;
+            theight = _tgeom.getSize().height;
         }
+
+        int width, height;
+        if (_orient == HORIZONTAL) {
+            width = iwidth + gap + twidth;
+            height = Math.max(iheight, theight);
+        } else {
+            width = Math.max(iwidth, twidth);
+            height = iheight + gap + theight;
+        }
+
         return new Dimension(width, height);
     }
 
@@ -299,4 +323,5 @@ public class BLabel extends BComponent
     protected int _tx, _ty;
     protected int _halign = LEFT, _valign = CENTER;
     protected int _gap;
+    protected int _orient = HORIZONTAL;
 }

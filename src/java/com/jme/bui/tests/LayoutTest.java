@@ -117,8 +117,16 @@ public class LayoutTest extends SimpleGame
         BContainer cont =
             new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
         cont.add(new BToggleButton(new ImageIcon(icon), ""));
-        cont.add(new BLabel("Two"));
-        cont.add(new BLabel("Three"));
+        BLabel label = new BLabel("Horizontal");
+        label.setIcon(new ImageIcon(icon));
+        label.setIconTextGap(3);
+        cont.add(label);
+        label = new BLabel("Vertical");
+        label.setIcon(new ImageIcon(icon));
+        label.setIconTextGap(1);
+        label.setHorizontalAlignment(BLabel.CENTER);
+        label.setOrientation(BLabel.VERTICAL);
+        cont.add(label);
         cont.add(new BLabel("Four"));
         cont.add(new BLabel("Five"));
         cont.add(new BLabel("Six"));
