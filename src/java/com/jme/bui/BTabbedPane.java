@@ -46,7 +46,13 @@ public class BTabbedPane extends BContainer
     public void addTab (String title, BComponent tab)
     {
         BToggleButton tbutton = new BToggleButton(
-            title, String.valueOf(_tabs.size()));
+            title, String.valueOf(_tabs.size())) {
+            protected void fireAction (long when, int modifiers) {
+                if (!_selected) {
+                    super.fireAction(when, modifiers);
+                }
+            }
+        };
         tbutton.addListener(_selector);
         _buttons.add(tbutton);
         _tabs.add(tab);
