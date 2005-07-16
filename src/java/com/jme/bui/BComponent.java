@@ -21,6 +21,7 @@
 package com.jme.bui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
 
@@ -190,6 +191,24 @@ public class BComponent
     public BBackground getBackground ()
     {
         return _background;
+    }
+
+    /**
+     * Sets a user defined property on this component. User defined
+     * properties allow the association of arbitrary additional data with
+     * a component for application specific purposes.
+     */
+    public void setProperty (String key, Object value)
+    {
+        if (_properties == null) {
+            _properties = new HashMap();
+        }
+        _properties.put(key, value);
+    }
+
+    public Object getProperty (String key)
+    {
+        return (_properties == null) ? null : _properties.get(key);
     }
 
     /**
@@ -523,6 +542,7 @@ public class BComponent
     protected int _x, _y, _width, _height;
     protected boolean _valid;
     protected ArrayList _listeners;
+    protected HashMap _properties;
 
     protected static final Insets ZERO_INSETS = new Insets();
 }

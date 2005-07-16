@@ -32,6 +32,7 @@ import com.jme.bui.util.Dimension;
  * action event when pressed and released.
  */
 public class BButton extends BComponent
+    implements BConstants
 {
     /** A button state constant. Used to select a background. */
     public static final int UP = 0;
@@ -90,6 +91,16 @@ public class BButton extends BComponent
     public void setIcon (BIcon icon)
     {
         _label.setIcon(icon);
+    }
+
+    /**
+     * Sets the orientation of the label with respect to its icon. If the
+     * horizontal (the default) the text is displayed to the right of the
+     * icon, if vertical the text is displayed below it.
+     */
+    public void setOrientation (int orient)
+    {
+        _label.setOrientation(orient);
     }
 
     /**
