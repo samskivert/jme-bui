@@ -78,11 +78,27 @@ public class BButton extends BComponent
     }
 
     /**
+     * Returns the text being displayed on this button.
+     */
+    public String getText ()
+    {
+        return _label.getText();
+    }
+
+    /**
      * Configures the text to be displayed on this button.
      */
     public void setText (String text)
     {
         _label.setText(text);
+    }
+
+    /**
+     * Returns the icon being displayed on this button.
+     */
+    public BIcon getIcon ()
+    {
+        return _label.getIcon();
     }
 
     /**
