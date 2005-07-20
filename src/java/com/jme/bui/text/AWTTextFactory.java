@@ -79,6 +79,12 @@ public class AWTTextFactory extends BTextFactory
     // documentation inherited
     public BText createText (String text, ColorRGBA color)
     {
+        return createText(text, color, false);
+    }
+
+    /** Helper function. */
+    protected BText createText (String text, ColorRGBA color, boolean useAdvance)
+    {
         if (text.equals("")) {
             text = " ";
         }
@@ -96,7 +102,11 @@ public class AWTTextFactory extends BTextFactory
         final Dimension size = new Dimension();
         // TODO: do the Mac hack to get the real bounds
         Rectangle2D bounds = layout.getBounds();
-        size.width = (int)(Math.max(bounds.getX(), 0) + bounds.getWidth());
+        if (useAdvance) {
+            size.width = (int)(Math.max(bounds.getX(), 0) + layout.getAdvance());
+        } else {
+            size.width = (int)(Math.max(bounds.getX(), 0) + bounds.getWidth());
+        }
         size.height = (int)(layout.getLeading() + layout.getAscent() +
                             layout.getDescent());
 
@@ -135,6 +145,7 @@ public class AWTTextFactory extends BTextFactory
             public void render (Renderer renderer, int x, int y) {
                 Spatial.applyDefaultStates();
                 _astate.apply();
+
                 GL11.glRasterPos2i(x, y + size.height);
                 GL11.glPixelZoom(1f, -1f);
                 GL11.glDrawPixels(size.width, size.height,
@@ -155,7 +166,7 @@ public class AWTTextFactory extends BTextFactory
         // deal with the easy case
         if (text.length() <= maxChars) {
             remain[0] = 0;
-            return createText(text, color);
+            return createText(text, color, true);
         }
 
         // scan backwards from maxChars looking for whitespace
@@ -163,13 +174,13 @@ public class AWTTextFactory extends BTextFactory
             if (Character.isWhitespace(text.charAt(ii))) {
                 // subtract one to absorb the whitespace that we used to wrap
                 remain[0] = (text.length() - ii - 1);
-                return createText(text.substring(0, ii), color);
+                return createText(text.substring(0, ii), color, true);
             }
         }
 
         // ugh, found no whitespace, just hard-wrap at maxChars
         remain[0] = (text.length() - maxChars);
-        return createText(text.substring(0, maxChars), color);
+        return createText(text.substring(0, maxChars), color, true);
     }
 
     protected Font _font;

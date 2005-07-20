@@ -31,7 +31,7 @@ import com.jme.bui.text.BTextFactory;
 import com.jme.bui.util.Dimension;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
-import com.jme.scene.Node;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Text;
 import com.jme.system.DisplaySystem;
 
@@ -147,22 +147,12 @@ public class BTextArea extends BContainer
 
         // create our background
         _background = getLookAndFeel().createTextBack();
-
-        // create a node that will contain our text
-        _text = new Node("text");
-//         _node.attachChild(_text);
-        _text.updateRenderState();
     }
 
     // documentation inherited
     public void wasRemoved ()
     {
         super.wasRemoved();
-
-        if (_text != null) {
-//             _node.detachChild(_text);
-            _text = null;
-        }
     }
 
     // documentation inherited
@@ -182,6 +172,22 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
+    protected void renderComponent (Renderer renderer)
+    {
+        super.renderComponent(renderer);
+
+        int x = _background.getLeftInset();
+        int y = _height - _background.getTopInset();
+
+        int start = _model.getValue(), stop = start + _model.getExtent();
+        for (int ii = start; ii < stop; ii++) {
+            Line line = (Line)_lines.get(ii);
+            y -= line.height;
+            line.render(renderer, x, y);
+        }
+    }
+
+    // documentation inherited
     protected Dimension computePreferredSize ()
     {
         Dimension d = new Dimension(100, 25); // TBD
@@ -198,9 +204,6 @@ public class BTextArea extends BContainer
     protected void refigureContents ()
     {
         // remove and recreate our existing lines
-        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            _text.detachChild((Line)_lines.get(ii));
-        }
         _lines.clear();
 
         ColorRGBA fg = getLookAndFeel().getForeground();
@@ -213,13 +216,13 @@ public class BTextArea extends BContainer
         for (int ii = 0, ll = _runs.size(); ii < ll; ii++) {
             Run run = (Run)_runs.get(ii);
             if (current == null) {
-                _lines.add(current = new Line(_lines.size()));
+                _lines.add(current = new Line());
             }
             int offset = 0;
             ColorRGBA color = (run.color == null) ? fg : run.color;
             while ((offset = current.addRun(
                         tfact, run, color, maxWidth, offset)) > 0) {
-                _lines.add(current = new Line(_lines.size()));
+                _lines.add(current = new Line());
             }
             if (run.endsLine) {
                 current = null;
@@ -255,22 +258,6 @@ public class BTextArea extends BContainer
      */
     protected void modelDidChange ()
     {
-        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            _text.detachChild((Line)_lines.get(ii));
-        }
-
-        int x = _background.getLeftInset();
-        int y = _height - _background.getTopInset();
-
-        int start = _model.getValue(), stop = start + _model.getExtent();
-        for (int ii = start; ii < stop; ii++) {
-            Line line = (Line)_lines.get(ii);
-            y -= line.height;
-            _text.attachChild(line);
-            line.updateGeometricState(0.0f, true);
-            line.updateRenderState();
-            line.setLocalTranslation(new Vector3f(x, y, 0));
-        }
     }
 
     /** Used to associate a style with a run of text. */
@@ -290,7 +277,7 @@ public class BTextArea extends BContainer
     }
 
     /** Contains the segments of text on a single line. */
-    protected static class Line extends Node
+    protected static class Line
     {
         /** The run that starts this line. */
         public Run start;
@@ -304,10 +291,8 @@ public class BTextArea extends BContainer
         /** The height of this line. */
         public int height;
 
-        public Line (int lineNo)
-        {
-            super("line" + lineNo);
-        }
+        /** A list of {@link BText} instances for the text on this line. */
+        public ArrayList segments = new ArrayList();
 
         /**
          * Adds the supplied run to the line using the supplied text
@@ -323,17 +308,28 @@ public class BTextArea extends BContainer
             String rtext = run.text.substring(offset);
             int[] remainder = new int[1];
             BText text = tfact.wrapText(rtext, color, maxWidth-dx, remainder);
-//             text.setLocation(dx, 0);
-//             attachChild(text.getGeometry());
+            segments.add(text);
             height = Math.max(height, text.getSize().height);
             dx += text.getSize().width;
             return (remainder[0] == 0) ? -1 : run.text.length() - remainder[0];
+        }
+
+        /**
+         * Renders this line of text.
+         */
+        public void render (Renderer renderer, int x, int y)
+        {
+            int dx = x;
+            for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
+                BText text = (BText)segments.get(ii);
+                text.render(renderer, dx, y);
+                dx += text.getSize().width;
+            }
         }
     }
 
     protected BBackground _background;
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
-    protected Node _text;
     protected ArrayList _runs = new ArrayList();
     protected ArrayList _lines = new ArrayList();
 }
