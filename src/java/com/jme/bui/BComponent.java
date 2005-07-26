@@ -364,21 +364,27 @@ public class BComponent
     public void render (Renderer renderer)
     {
         GL11.glTranslatef(_x, _y, 0);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(getAbsoluteX(), getAbsoluteY(), _width, _height);
 
-        // render our background
-        if (_background != null) {
-            _background.render(renderer, 0, 0, _width, _height);
+        try {
+            // render our background
+            if (_background != null) {
+                _background.render(renderer, 0, 0, _width, _height);
+            }
+
+            // render our border
+            if (_border != null) {
+                _border.render(renderer, 0, 0, _width, _height);
+            }
+
+            // render any custom component bits
+            renderComponent(renderer);
+
+        } finally {
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            GL11.glTranslatef(-_x, -_y, 0);
         }
-
-        // render our border
-        if (_border != null) {
-            _border.render(renderer, 0, 0, _width, _height);
-        }
-
-        // render any custom component bits
-        renderComponent(renderer);
-
-        GL11.glTranslatef(-_x, -_y, 0);
     }
 
     /**

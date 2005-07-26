@@ -93,7 +93,7 @@ public class LayoutTest extends SimpleGame
             }
         });
         _root.addWindow(window);
-        window.setBounds(200, 125, 400, 250);
+        window.setBounds(300, 125, 400, 250);
 
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
@@ -110,7 +110,7 @@ public class LayoutTest extends SimpleGame
         window.add(new BMenuItem("Nine", "nine"));
         _root.addWindow(window);
         window.pack();
-        window.setLocation(100, 400);
+        window.setLocation(100, 300);
 
         window = new BWindow(lnf, new BorderLayout());
         window.setBorder(new LineBorder(ColorRGBA.black));

@@ -29,6 +29,11 @@ import com.jme.renderer.ColorRGBA;
 public abstract class BTextFactory
 {
     /**
+     * Returns the height of our text.
+     */
+    public abstract int getHeight ();
+
+    /**
      * Creates a text instance using our the font configuration associated
      * with this text factory and the foreground color specified.
      */

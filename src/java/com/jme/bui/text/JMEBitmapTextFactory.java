@@ -68,6 +68,12 @@ public class JMEBitmapTextFactory extends BTextFactory
     }
 
     // documentation inherited
+    public int getHeight ()
+    {
+        return 16; // JME text is all hardcoded to 16 pixels presently
+    }
+
+    // documentation inherited
     public BText createText (String text, ColorRGBA color)
     {
         // compute the dimensions of this text
@@ -85,6 +91,10 @@ public class JMEBitmapTextFactory extends BTextFactory
         return new BText() {
             public Dimension getSize () {
                 return dims;
+            }
+            public int getCursorPos (int index) {
+                // JME characters are hardcoded to 10x16
+                return 10 * index;
             }
             public void render (Renderer renderer, int x, int y) {
                 x -= 4; // TEMP: handle Text offset bug

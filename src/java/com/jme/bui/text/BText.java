@@ -34,9 +34,19 @@ import com.jme.scene.shape.Quad;
  */
 public abstract class BText
 {
-    /** Returns the screen dimensions of this text. */
+    /**
+     * Returns the screen dimensions of this text.
+     */
     public abstract Dimension getSize ();
 
-    /** Renders this text to the display. */
+    /**
+     * Returns the x position for the cursor at the specified character
+     * index. Note that the position should be "before" that character.
+     */
+    public abstract int getCursorPos (int index);
+
+    /**
+     * Renders this text to the display.
+     */
     public abstract void render (Renderer render, int x, int y);
 }

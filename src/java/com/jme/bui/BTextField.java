@@ -20,22 +20,26 @@
 
 package com.jme.bui;
 
+import org.lwjgl.opengl.GL11;
+
+import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
+
 import com.jme.bui.background.BBackground;
 import com.jme.bui.event.ActionEvent;
 import com.jme.bui.event.BEvent;
 import com.jme.bui.event.FocusEvent;
 import com.jme.bui.event.KeyEvent;
 import com.jme.bui.text.BKeyMap;
+import com.jme.bui.text.BText;
 import com.jme.bui.text.EditCommands;
 import com.jme.bui.util.Dimension;
-import com.jme.math.Vector3f;
-import com.jme.renderer.ColorRGBA;
-import com.jme.scene.Line;
+import com.jme.bui.util.Insets;
 
 /**
  * Displays and allows for the editing of a single line of text.
  */
-public class BTextField extends BContainer
+public class BTextField extends BComponent
     implements EditCommands
 {
     public BTextField ()
@@ -45,7 +49,6 @@ public class BTextField extends BContainer
 
     public BTextField (String text)
     {
-        _label = new BLabel("");
         setText(text);
     }
 
@@ -57,11 +60,16 @@ public class BTextField extends BContainer
     public void setText (String text)
     {
         _text = text;
+
+        // if we're already part of the hierarchy, recreate our glyps
+        if (isAdded()) {
+            recreateGlyphs();
+        }
+
         // confine the cursor to the new text
         if (_cursorPos > _text.length()) {
             setCursorPos(_text.length());
         }
-        refigureContents();
     }
 
     /**
@@ -98,31 +106,8 @@ public class BTextField extends BContainer
         // create our background
         _background = getLookAndFeel().createTextBack();
 
-        // add our label over the background
-        add(_label);
-
-        // HACK: we need a better way to get our font height
-        int fontHeight = 16;
-
-        // create our cursor
-        Vector3f[] ends = new Vector3f[] {
-            new Vector3f(0, 0, 0), new Vector3f(0, fontHeight, 0) };
-        ColorRGBA[] colors = new ColorRGBA[] {
-            getLookAndFeel().getForeground(),
-            getLookAndFeel().getForeground() };
-        _cursor = new Line("cursor", ends, null, colors, null);
-        _cursor.setSolidColor(getLookAndFeel().getForeground());
-//         _node.attachChild(_cursor);
-        _cursor.updateRenderState();
-        _cursor.setForceCull(true);
-    }
-
-    // documentation inherited
-    public void wasRemoved ()
-    {
-        super.wasRemoved();
-
-        remove(_label);
+        // create our underlying glyphs
+        recreateGlyphs();
     }
 
     // documentation inherited
@@ -196,12 +181,12 @@ public class BTextField extends BContainer
             FocusEvent fev = (FocusEvent)event;
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
-                _cursor.setForceCull(false);
+                _showCursor = true;
                 setCursorPos(_cursorPos);
                 break;
 
             case FocusEvent.FOCUS_LOST:
-                _cursor.setForceCull(true);
+                _showCursor = false;
                 break;
             }
         }
@@ -212,53 +197,66 @@ public class BTextField extends BContainer
     {
         super.layout();
 
-        // the label is inset based on the background's insets
-        int left = 0, top = 0, right = 0, bottom = 0;
-        if (_background != null) {
-            left = _background.getLeftInset();
-            top = _background.getTopInset();
-            right = _background.getRightInset();
-            bottom = _background.getBottomInset();
-        }
-        int vc = computeVisibleChars();
-        _label.setBounds(left, top, _width - (left+right),
-                         _height - (top+bottom));
+        // TODO cope with becoming smaller or larger
+    }
 
-        // if our size changed, we may have a different visible set of chars
-        if (computeVisibleChars() != vc) {
-            refigureContents();
+    // documentation inherited
+    protected void renderComponent (Renderer renderer)
+    {
+        super.renderComponent(renderer);
+
+        Insets insets = getInsets();
+        int tx = insets.left, ty = insets.bottom, cx = tx;
+
+        // render our text
+        if (_glyphs != null) {
+            _glyphs.render(renderer, tx, ty);
+
+            // locate the cursor position
+            if (_showCursor) {
+                cx += _glyphs.getCursorPos(_cursorPos);
+            }
+        }
+
+        // render the cursor if we have focus
+        if (_showCursor) {
+            ColorRGBA c = ColorRGBA.white;
+            GL11.glColor4f(c.r, c.g, c.b, c.a);
+            GL11.glBegin(GL11.GL_LINE_STRIP);
+            GL11.glVertex2f(cx, insets.bottom);
+            int cheight = getLookAndFeel().getTextFactory().getHeight();
+            GL11.glVertex2f(cx, insets.bottom + cheight);
+            GL11.glEnd();
         }
     }
 
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
-        Dimension d = new Dimension(_label.getPreferredSize());
+        Dimension d = (_glyphs == null) ?
+            new Dimension(0, getLookAndFeel().getTextFactory().getHeight()) :
+            new Dimension(_glyphs.getSize());
         if (_prefWidth != -1) {
             d.width = _prefWidth;
-        }
-        if (_background != null) {
-            d.width += _background.getLeftInset();
-            d.width += _background.getRightInset();
-            d.height += _background.getTopInset();
-            d.height += _background.getBottomInset();
         }
         return d;
     }
 
     /**
-     * Determines how much of our text can be visible in the label and
-     * configures the label with the appropriate substring.
+     * Recreates the entity that we use to render our text.
      */
-    protected void refigureContents ()
+    protected void recreateGlyphs ()
     {
-        if (!isAdded()) {
-            _label.setText(getDisplayText());
-        } else {
-            int vizChars = computeVisibleChars();
-            _label.setText(
-                getDisplayText().substring(_offset, _offset+vizChars), false);
+        if (_glyphs != null) {
+            _glyphs = null;
         }
+
+        if (_text == null) {
+            return;
+        }
+
+        BLookAndFeel lnf = getLookAndFeel();
+        _glyphs = lnf.getTextFactory().createText(_text, lnf.getForeground());
     }
 
     /**
@@ -277,40 +275,22 @@ public class BTextField extends BContainer
      */
     protected void setCursorPos (int cursorPos)
     {
-        int vizChars = computeVisibleChars();
+        int vizChars = 10; // TODO computeVisibleChars();
         _cursorPos = cursorPos;
         if (_cursorPos < _offset) {
             _offset = _cursorPos;
-            refigureContents();
         } else if (_cursorPos > (_offset + vizChars)) {
             _offset = (_cursorPos-vizChars);
-            refigureContents();
         } else if (_offset > 0 && (_cursorPos < (_offset + vizChars))) {
             _offset = (_cursorPos-vizChars);
-            refigureContents();
         }
-
-        int xpos = _label.getX() + 10 * (_cursorPos - _offset);
-        int ypos = (_height - 16) / 2;
-        _cursor.setLocalTranslation(new Vector3f(xpos, ypos, 0));
     }
 
-    /**
-     * Returns the number of visible characters in our text field given
-     * the width of the label we use to display them.
-     */
-    protected int computeVisibleChars ()
-    {
-        // NOTE: giant hack, Text assumes all fonts are 10 pixels wide,
-        // this all needs to be fixed
-        return Math.max(Math.min(_label.getWidth() / 10, _text.length()), 0);
-    }
-
-    protected BLabel _label;
+    protected String _text;
+    protected BText _glyphs;
     protected BKeyMap _keymap;
 
     protected int _prefWidth = -1;
-    protected Line _cursor;
+    protected boolean _showCursor;
     protected int _cursorPos, _offset;
-    protected String _text;
 }

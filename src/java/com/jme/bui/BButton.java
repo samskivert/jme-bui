@@ -241,7 +241,6 @@ public class BButton extends BComponent
         }
 
         // we need to handle our children by hand as we're not a container
-//         _node.attachChild(_label.getNode());
         _label.setParent(this);
         _label.wasAdded();
     }
@@ -311,12 +310,7 @@ public class BButton extends BComponent
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
-        Dimension d = new Dimension(_label.getPreferredSize());
-        d.width += _background.getLeftInset();
-        d.width += _background.getRightInset();
-        d.height += _background.getTopInset();
-        d.height += _background.getBottomInset();
-        return d;
+        return new Dimension(_label.getPreferredSize());
     }
 
     protected BLabel _label;
