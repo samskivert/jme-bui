@@ -29,6 +29,11 @@ public class BlankBackground extends BBackground
 {
     public BlankBackground ()
     {
-        super(0, 0, 0, 0);
+        this(0, 0, 0, 0);
+    }
+
+    public BlankBackground (int left, int top, int right, int bottom)
+    {
+        super(left, top, right, bottom);
     }
 }
