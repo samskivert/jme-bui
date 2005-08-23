@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
@@ -27,9 +27,9 @@ import com.jme.input.MouseInput;
 import com.jme.scene.Node;
 import com.jme.util.Timer;
 
-import com.jme.bui.event.InputEvent;
-import com.jme.bui.event.KeyEvent;
-import com.jme.bui.event.MouseEvent;
+import com.jmex.bui.event.InputEvent;
+import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.event.MouseEvent;
 
 /**
  * Processes the polled input information available from the underlying

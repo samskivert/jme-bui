@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.net.URL;
 
@@ -31,7 +31,7 @@ import com.jme.renderer.Renderer;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
-import com.jme.bui.util.RenderUtil;
+import com.jmex.bui.util.RenderUtil;
 
 /**
  * Provides icon imagery for various components which make use of it.

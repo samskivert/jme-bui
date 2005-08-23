@@ -18,17 +18,17 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.shape.Quad;
 
-import com.jme.bui.border.EmptyBorder;
-import com.jme.bui.event.ActionEvent;
-import com.jme.bui.event.BEvent;
-import com.jme.bui.event.MouseEvent;
-import com.jme.bui.util.RenderUtil;
+import com.jmex.bui.border.EmptyBorder;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.util.RenderUtil;
 
 /**
  * Displays a single menu item.

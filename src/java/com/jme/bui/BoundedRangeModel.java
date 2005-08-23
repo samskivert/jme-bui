@@ -18,12 +18,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.util.ArrayList;
 
-import com.jme.bui.event.ChangeEvent;
-import com.jme.bui.event.ChangeListener;
+import com.jmex.bui.event.ChangeEvent;
+import com.jmex.bui.event.ChangeListener;
 
 /**
  * Defines the model used by the {@link BScrollBar} to communicate with

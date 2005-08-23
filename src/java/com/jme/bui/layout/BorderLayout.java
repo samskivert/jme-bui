@@ -18,12 +18,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.layout;
+package com.jmex.bui.layout;
 
-import com.jme.bui.BComponent;
-import com.jme.bui.BContainer;
-import com.jme.bui.util.Dimension;
-import com.jme.bui.util.Insets;
+import com.jmex.bui.BComponent;
+import com.jmex.bui.BContainer;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Lays out the children of a container around the borders and one in the

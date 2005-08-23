@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.util;
+package com.jmex.bui.util;
 
 import com.jme.scene.Spatial;
 import com.jme.scene.state.AlphaState;

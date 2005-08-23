@@ -18,11 +18,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.awt.Canvas;
 
-import com.jme.bui.event.MouseEvent;
+import com.jmex.bui.event.MouseEvent;
 
 /**
  * Bridges between the AWT and the BUI input event system when we are

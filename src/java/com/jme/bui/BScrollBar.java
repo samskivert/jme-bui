@@ -18,20 +18,20 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
-import com.jme.bui.background.BBackground;
-import com.jme.bui.util.Insets;
+import com.jmex.bui.background.BBackground;
+import com.jmex.bui.util.Insets;
 import com.jme.renderer.Renderer;
-import com.jme.bui.event.ActionEvent;
-import com.jme.bui.event.ActionListener;
-import com.jme.bui.event.ChangeEvent;
-import com.jme.bui.event.ChangeListener;
-import com.jme.bui.event.MouseAdapter;
-import com.jme.bui.event.MouseEvent;
-import com.jme.bui.event.MouseListener;
-import com.jme.bui.event.MouseMotionListener;
-import com.jme.bui.layout.BorderLayout;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.event.ChangeEvent;
+import com.jmex.bui.event.ChangeListener;
+import com.jmex.bui.event.MouseAdapter;
+import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.event.MouseListener;
+import com.jmex.bui.event.MouseMotionListener;
+import com.jmex.bui.layout.BorderLayout;
 
 /**
  * Displays a scroll bar for all your horizontal and vertical scrolling

@@ -18,22 +18,22 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.awt.Font;
 import java.net.URL;
 
-import com.jme.bui.background.BBackground;
-import com.jme.bui.background.TiledBackground;
-import com.jme.bui.background.TintedBackground;
-import com.jme.bui.border.BBorder;
-import com.jme.bui.border.LineBorder;
-import com.jme.bui.text.AWTTextFactory;
-import com.jme.bui.text.BKeyMap;
-import com.jme.bui.text.BText;
-import com.jme.bui.text.BTextFactory;
-import com.jme.bui.text.DefaultKeyMap;
-import com.jme.bui.text.JMEBitmapTextFactory;
+import com.jmex.bui.background.BBackground;
+import com.jmex.bui.background.TiledBackground;
+import com.jmex.bui.background.TintedBackground;
+import com.jmex.bui.border.BBorder;
+import com.jmex.bui.border.LineBorder;
+import com.jmex.bui.text.AWTTextFactory;
+import com.jmex.bui.text.BKeyMap;
+import com.jmex.bui.text.BText;
+import com.jmex.bui.text.BTextFactory;
+import com.jmex.bui.text.DefaultKeyMap;
+import com.jmex.bui.text.JMEBitmapTextFactory;
 import com.jme.renderer.ColorRGBA;
 
 /**

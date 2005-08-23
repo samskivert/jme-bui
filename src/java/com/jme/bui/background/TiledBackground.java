@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.background;
+package com.jmex.bui.background;
 
 import java.net.URL;
 
@@ -31,8 +31,8 @@ import com.jme.renderer.Renderer;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
-import com.jme.bui.util.Dimension;
-import com.jme.bui.util.RenderUtil;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.RenderUtil;
 
 /**
  * Displays a specially tiled background image. The background image is

@@ -18,14 +18,14 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.background;
+package com.jmex.bui.background;
 
 import org.lwjgl.opengl.GL11;
 
 import com.jme.image.Image;
 import com.jme.renderer.Renderer;
 
-import com.jme.bui.util.Dimension;
+import com.jmex.bui.util.Dimension;
 
 /**
  * Displays a scaled texture as a background image.

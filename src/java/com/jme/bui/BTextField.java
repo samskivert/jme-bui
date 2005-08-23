@@ -18,23 +18,23 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import org.lwjgl.opengl.GL11;
 
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 
-import com.jme.bui.background.BBackground;
-import com.jme.bui.event.ActionEvent;
-import com.jme.bui.event.BEvent;
-import com.jme.bui.event.FocusEvent;
-import com.jme.bui.event.KeyEvent;
-import com.jme.bui.text.BKeyMap;
-import com.jme.bui.text.BText;
-import com.jme.bui.text.EditCommands;
-import com.jme.bui.util.Dimension;
-import com.jme.bui.util.Insets;
+import com.jmex.bui.background.BBackground;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.FocusEvent;
+import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.text.BKeyMap;
+import com.jmex.bui.text.BText;
+import com.jmex.bui.text.EditCommands;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Displays and allows for the editing of a single line of text.

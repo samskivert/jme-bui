@@ -18,9 +18,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.layout;
+package com.jmex.bui.layout;
 
-import com.jme.bui.util.Dimension;
+import com.jmex.bui.util.Dimension;
 
 /**
  * This record is used by the group layout managers to return a set of

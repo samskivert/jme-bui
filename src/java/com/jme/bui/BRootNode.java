@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.util.ArrayList;
 
@@ -29,8 +29,8 @@ import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
 
-import com.jme.bui.event.FocusEvent;
-import com.jme.bui.event.MouseEvent;
+import com.jmex.bui.event.FocusEvent;
+import com.jmex.bui.event.MouseEvent;
 
 /**
  * Connects the BUI system into the JME scene graph.

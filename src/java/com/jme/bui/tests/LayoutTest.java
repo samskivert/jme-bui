@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.tests;
+package com.jmex.bui.tests;
 
 import java.net.URL;
 import java.util.logging.Level;
@@ -29,16 +29,16 @@ import com.jme.input.KeyBindingManager;
 import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
-import com.jme.bui.*;
-import com.jme.bui.BComboBox;
-import com.jme.bui.BScrollPane;
-import com.jme.bui.PolledRootNode;
-import com.jme.bui.border.LineBorder;
-import com.jme.bui.event.ActionEvent;
-import com.jme.bui.event.ActionListener;
-import com.jme.bui.layout.BorderLayout;
-import com.jme.bui.layout.GroupLayout;
-import com.jme.bui.layout.TableLayout;
+import com.jmex.bui.*;
+import com.jmex.bui.BComboBox;
+import com.jmex.bui.BScrollPane;
+import com.jmex.bui.PolledRootNode;
+import com.jmex.bui.border.LineBorder;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.layout.BorderLayout;
+import com.jmex.bui.layout.GroupLayout;
+import com.jmex.bui.layout.TableLayout;
 
 /**
  * Does something extraordinary.

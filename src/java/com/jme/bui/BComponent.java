@@ -18,21 +18,21 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
 
-import com.jme.bui.background.BBackground;
-import com.jme.bui.border.BBorder;
-import com.jme.bui.event.BEvent;
-import com.jme.bui.event.ComponentListener;
-import com.jme.bui.event.KeyEvent;
-import com.jme.bui.util.Dimension;
-import com.jme.bui.util.Insets;
-import com.jme.bui.util.Rectangle;
+import com.jmex.bui.background.BBackground;
+import com.jmex.bui.border.BBorder;
+import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.ComponentListener;
+import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
+import com.jmex.bui.util.Rectangle;
 import com.jme.input.KeyInput;
 import com.jme.math.Vector3f;
 import com.jme.renderer.Renderer;

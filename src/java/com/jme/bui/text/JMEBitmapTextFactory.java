@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.text;
+package com.jmex.bui.text;
 
 import java.net.URL;
 
@@ -32,8 +32,8 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
-import com.jme.bui.Log;
-import com.jme.bui.util.Dimension;
+import com.jmex.bui.Log;
+import com.jmex.bui.util.Dimension;
 
 /**
  * Creates instances of {@link JMEBitmapText} for text rendering.

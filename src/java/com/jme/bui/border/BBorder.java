@@ -18,10 +18,10 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui.border;
+package com.jmex.bui.border;
 
-import com.jme.bui.BComponent;
-import com.jme.bui.util.Insets;
+import com.jmex.bui.BComponent;
+import com.jmex.bui.util.Insets;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
 

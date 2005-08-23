@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -27,9 +27,9 @@ import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;
 
-import com.jme.bui.text.BText;
-import com.jme.bui.util.Dimension;
-import com.jme.bui.util.Insets;
+import com.jmex.bui.text.BText;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * A simple component for displaying a textual label.

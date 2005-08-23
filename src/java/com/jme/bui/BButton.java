@@ -18,14 +18,14 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
-import com.jme.bui.background.BBackground;
+import com.jmex.bui.background.BBackground;
 import com.jme.renderer.Renderer;
-import com.jme.bui.event.ActionEvent;
-import com.jme.bui.event.BEvent;
-import com.jme.bui.event.MouseEvent;
-import com.jme.bui.util.Dimension;
+import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.util.Dimension;
 
 /**
  * Displays a simple button that can be depressed and which generates an

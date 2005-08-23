@@ -18,17 +18,17 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jme.bui;
+package com.jmex.bui;
 
 import java.util.ArrayList;
 
-import com.jme.bui.background.BBackground;
-import com.jme.bui.event.BEvent;
-import com.jme.bui.event.ChangeEvent;
-import com.jme.bui.event.ChangeListener;
-import com.jme.bui.text.BText;
-import com.jme.bui.text.BTextFactory;
-import com.jme.bui.util.Dimension;
+import com.jmex.bui.background.BBackground;
+import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.ChangeEvent;
+import com.jmex.bui.event.ChangeListener;
+import com.jmex.bui.text.BText;
+import com.jmex.bui.text.BTextFactory;
+import com.jmex.bui.util.Dimension;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
