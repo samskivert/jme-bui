@@ -81,7 +81,7 @@ public class JMEBitmapTextFactory extends BTextFactory
 
         // create a text object to display it
         final Text tgeom = new Text("text", text);
-        tgeom.setForceView(true);
+        tgeom.setCullMode(Text.CULL_NEVER);
         tgeom.setTextureCombineMode(TextureState.REPLACE);
         tgeom.setRenderState(_tstate);
         tgeom.setRenderState(_astate);

@@ -56,7 +56,7 @@ public class BMenuItem extends BLabel
         RenderUtil.makeTransparent(_hquad);
 //         _node.attachChild(_hquad);
         _hquad.updateRenderState();
-        _hquad.setForceCull(true);
+        _hquad.setCullMode(Quad.CULL_ALWAYS);
     }
 
     /**
@@ -86,12 +86,12 @@ public class BMenuItem extends BLabel
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
-                _hquad.setForceCull(false);
+                _hquad.setCullMode(Quad.CULL_DYNAMIC);
                 _armed = _pressed;
                 break;
 
             case MouseEvent.MOUSE_EXITED:
-                _hquad.setForceCull(true);
+                _hquad.setCullMode(Quad.CULL_ALWAYS);
                 _armed = false;
                 break;
 
