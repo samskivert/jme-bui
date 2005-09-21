@@ -29,7 +29,7 @@ import com.jmex.bui.event.ActionEvent;
 public class BToggleButton extends BButton
 {
     /** A button state constant. Used to select a background. */
-    public static final int SELECTED = 3;
+    public static final int SELECTED = BButton.BACKGROUND_COUNT;
 
     /**
      * Creates a button with the specified textual label.
@@ -81,7 +81,7 @@ public class BToggleButton extends BButton
     // documentation inherited
     protected int getBackgroundCount ()
     {
-        return 4;
+        return BButton.BACKGROUND_COUNT + 1;
     }
 
     // documentation inherited

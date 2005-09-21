@@ -72,17 +72,20 @@ public class BLookAndFeel
     /**
      * Returns the foreground color to be used when configuring components.
      */
-    public ColorRGBA getForeground ()
+    public ColorRGBA getForeground (boolean enabled)
     {
-        return _foreground == null ? _parent.getForeground() : _foreground;
+        int fidx = enabled ? 0 : 1;
+        return _foregrounds[fidx] == null ?
+            _parent.getForeground(enabled) : _foregrounds[fidx];
     }
 
     /**
-     * Configures the foreground color used by this look and feel.
+     * Configures the foreground color used by this look and feel. Both an
+     * enabled and a disabled foreground may be configured.
      */
-    public void setForeground (ColorRGBA color)
+    public void setForeground (boolean enabled, ColorRGBA color)
     {
-        _foreground = color;
+        _foregrounds[enabled ? 0 : 1] = color;
     }
 
     /**
@@ -155,17 +158,16 @@ public class BLookAndFeel
      */
     public BBackground createButtonBack (int state)
     {
-        String path;
+        String path = "rsrc/textures/";
         int dx = 0, dy = 0;
         switch (state) {
         case BButton.DOWN:
-            path = "rsrc/textures/button_down.png";
+            path += "button_down.png";
             dx = -1; dy = -1;
             break;
-        case BButton.OVER: path = "rsrc/textures/button_up.png"; break;
-        case BToggleButton.SELECTED:
-            path = "rsrc/textures/button_down.png";
-            break;
+        case BButton.OVER: path += "button_up.png"; break;
+        case BButton.DISABLED: path += "button_disabled.png"; break;
+        case BToggleButton.SELECTED: path += "button_down.png"; break;
         default:
         case BButton.UP: path = "rsrc/textures/button_up.png"; break;
         }
@@ -264,7 +266,8 @@ public class BLookAndFeel
      */
     public static void configureDefaultLookAndFeel (BLookAndFeel lnf)
     {
-        lnf.setForeground(ColorRGBA.white);
+        lnf.setForeground(true, ColorRGBA.white);
+        lnf.setForeground(false, ColorRGBA.gray);
         lnf.setBackground(ColorRGBA.black);
 //         URL url = getResource("rsrc/fonts/default.png");
 //         lnf.setTextFactory(new JMEBitmapTextFactory(url, 10, 16));
@@ -283,7 +286,8 @@ public class BLookAndFeel
 
     protected BLookAndFeel _parent;
     protected BTextFactory _tfact;
-    protected ColorRGBA _foreground, _background;
+    protected ColorRGBA[] _foregrounds = new ColorRGBA[2];
+    protected ColorRGBA _background;
     protected BKeyMap _keymap;
 
     protected static final ColorRGBA BLACK_TINT = new ColorRGBA(0, 0, 0, 0.5f);

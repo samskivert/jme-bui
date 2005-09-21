@@ -138,6 +138,17 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
+    public void setEnabled (boolean enabled)
+    {
+        super.setEnabled(enabled);
+
+        // enable or disable our children accordingly
+        for (int ii = getComponentCount() - 1; ii > 0; ii--) {
+            getComponent(ii).setEnabled(enabled);
+        }
+    }
+
+    // documentation inherited
     public BComponent getHitComponent (int mx, int my)
     {
         // if we're not within our bounds, we don't need to check our children

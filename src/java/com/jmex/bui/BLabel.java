@@ -179,6 +179,16 @@ public class BLabel extends BComponent
     }
 
     // documentation inherited
+    public void setEnabled (boolean enabled)
+    {
+        boolean wasEnabled = isEnabled();
+        super.setEnabled(enabled);
+        if (isAdded() && wasEnabled != isEnabled()) {
+            recreateGlyphs();
+        }
+    }
+
+    // documentation inherited
     protected void wasAdded ()
     {
         super.wasAdded();
@@ -254,7 +264,8 @@ public class BLabel extends BComponent
         }
 
         BLookAndFeel lnf = getLookAndFeel();
-        _tgeom = lnf.getTextFactory().createText(_text, lnf.getForeground());
+        _tgeom = lnf.getTextFactory().createText(
+            _text, lnf.getForeground(isEnabled()));
     }
 
     // documentation inherited

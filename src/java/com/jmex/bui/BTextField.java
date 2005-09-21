@@ -92,7 +92,17 @@ public class BTextField extends BComponent
     // documentation inherited
     public boolean acceptsFocus ()
     {
-        return true;
+        return isEnabled();
+    }
+
+    // documentation inherited
+    public void setEnabled (boolean enabled)
+    {
+        boolean wasEnabled = isEnabled();
+        super.setEnabled(enabled);
+        if (isAdded() && wasEnabled != isEnabled()) {
+            recreateGlyphs();
+        }
     }
 
     // documentation inherited
@@ -256,7 +266,8 @@ public class BTextField extends BComponent
         }
 
         BLookAndFeel lnf = getLookAndFeel();
-        _glyphs = lnf.getTextFactory().createText(_text, lnf.getForeground());
+        _glyphs = lnf.getTextFactory().createText(
+            _text, lnf.getForeground(isEnabled()));
     }
 
     /**

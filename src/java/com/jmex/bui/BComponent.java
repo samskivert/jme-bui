@@ -194,6 +194,25 @@ public class BComponent
     }
 
     /**
+     * Sets this components enabled state. A component that is not enabled
+     * should not respond to user interaction and should render itself in such
+     * a way as not to afford user interaction.
+     */
+    public void setEnabled (boolean enabled)
+    {
+        _enabled = enabled;
+    }
+
+    /**
+     * Returns true if this component is enabled and responding to user
+     * interaction, false if it is not.
+     */
+    public boolean isEnabled ()
+    {
+        return _enabled;
+    }
+
+    /**
      * Sets a user defined property on this component. User defined
      * properties allow the association of arbitrary additional data with
      * a component for application specific purposes.
@@ -545,7 +564,7 @@ public class BComponent
     protected BBackground _background;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
-    protected boolean _valid;
+    protected boolean _valid, _enabled = true;
     protected ArrayList _listeners;
     protected HashMap _properties;
 

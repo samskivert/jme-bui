@@ -43,6 +43,12 @@ public class BButton extends BComponent
     /** A button state constant. Used to select a background. */
     public static final int DOWN = 2;
 
+    /** A button state constant. Used to select a background. */
+    public static final int DISABLED = 3;
+
+    /** The total number of backgrounds available for the button. */
+    public static final int BACKGROUND_COUNT = 4;
+
     /**
      * Creates a button with the specified textual label.
      */
@@ -178,11 +184,23 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
+    public void setEnabled (boolean enabled)
+    {
+        int ostate = getState();
+        super.setEnabled(enabled);
+        _label.setEnabled(enabled);
+        int state = getState();
+        if (state != ostate) {
+            stateDidChange();
+        }
+    }
+
+    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
 
-        if (event instanceof MouseEvent) {
+        if (_enabled && event instanceof MouseEvent) {
             int ostate = getState();
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
@@ -248,7 +266,7 @@ public class BButton extends BComponent
     /** Used by the {@link BToggleButton} to add an additional state. */
     protected int getBackgroundCount ()
     {
-        return 3;
+        return BACKGROUND_COUNT;
     }
 
     // documentation inherited
@@ -282,7 +300,9 @@ public class BButton extends BComponent
      */
     protected int getState ()
     {
-        if (_armed && _pressed) {
+        if (!_enabled) {
+            return DISABLED;
+        } else if (_armed && _pressed) {
             return DOWN;
         } else if (_hover) {
             return OVER;

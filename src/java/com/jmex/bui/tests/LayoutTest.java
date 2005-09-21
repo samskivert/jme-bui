@@ -71,7 +71,9 @@ public class LayoutTest extends SimpleGame
 //         window.add(new BLabel("CENTER"), BorderLayout.CENTER);
         BTabbedPane pane = new BTabbedPane();
         window.add(pane, BorderLayout.CENTER);
-        pane.addTab("One", new BButton("One contents"));
+        BButton button = new BButton("One contents");
+        pane.addTab("One", button);
+        button.setEnabled(false);
         pane.addTab("Two", new BLabel("Two contents"));
         pane.addTab("Three", new BTextArea());
         _root.addWindow(window);

@@ -150,6 +150,16 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
+    public void setEnabled (boolean enabled)
+    {
+        boolean wasEnabled = isEnabled();
+        super.setEnabled(enabled);
+        if (isAdded() && wasEnabled != isEnabled()) {
+            refigureContents();
+        }
+    }
+
+    // documentation inherited
     public void wasAdded ()
     {
         super.wasAdded();
@@ -221,7 +231,7 @@ public class BTextArea extends BContainer
         // remove and recreate our existing lines
         _lines.clear();
 
-        ColorRGBA fg = lnf.getForeground();
+        ColorRGBA fg = lnf.getForeground(isEnabled());
         BTextFactory tfact = lnf.getTextFactory();
         int insets = _background.getLeftInset() + _background.getRightInset();
         int maxWidth = (_width - insets);
