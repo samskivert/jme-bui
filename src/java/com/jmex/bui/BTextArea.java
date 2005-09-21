@@ -74,6 +74,15 @@ public class BTextArea extends BContainer
     }
 
     /**
+     * Clears any text in this text area and appends the supplied text.
+     */
+    public void setText (String text)
+    {
+        clearText();
+        appendText(text);
+    }
+
+    /**
      * Appends text with the foreground color in the plain style.
      */
     public void appendText (String text)
@@ -203,11 +212,17 @@ public class BTextArea extends BContainer
      */
     protected void refigureContents ()
     {
+        // if we're not yet added to the heirarchy, we can stop now
+        BLookAndFeel lnf = getLookAndFeel();
+        if (lnf == null) {
+            return;
+        }
+
         // remove and recreate our existing lines
         _lines.clear();
 
-        ColorRGBA fg = getLookAndFeel().getForeground();
-        BTextFactory tfact = getLookAndFeel().getTextFactory();
+        ColorRGBA fg = lnf.getForeground();
+        BTextFactory tfact = lnf.getTextFactory();
         int insets = _background.getLeftInset() + _background.getRightInset();
         int maxWidth = (_width - insets);
 
