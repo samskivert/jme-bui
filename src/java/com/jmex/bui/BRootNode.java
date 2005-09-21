@@ -90,25 +90,6 @@ public class BRootNode extends Geometry
     }
 
     /**
-     * Registers a scroll pane with the root node. This pane will be
-     * updated on every frame, giving it a chance to re-render its
-     * viewport.
-     */
-    public void addScrollPane (BScrollPane pane)
-    {
-        _spanes.add(pane);
-    }
-
-    /**
-     * Unregisters the supplied srollpane. It will no longer be updated on
-     * every frame.
-     */
-    public void removeScrollPane (BScrollPane pane)
-    {
-        _spanes.remove(pane);
-    }
-
-    /**
      * Configures a component (which would generally not be part of a
      * normal interface hierarchy) to receive all events that are not sent
      * to some other component.
@@ -257,7 +238,6 @@ public class BRootNode extends Geometry
     protected int _mouseX, _mouseY;
 
     protected ArrayList _windows = new ArrayList();
-    protected ArrayList _spanes = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
     protected BComponent _dcomponent, _focus;
     protected ArrayList _defaults = new ArrayList();

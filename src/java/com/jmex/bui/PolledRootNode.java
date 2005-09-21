@@ -185,11 +185,6 @@ public class PolledRootNode extends BRootNode
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
         }
-
-        // update our scroll panes
-        for (int ii = 0, ll = _spanes.size(); ii < ll; ii++) {
-            ((BScrollPane)_spanes.get(ii)).update();
-        }
     }
 
     protected Timer _timer;

@@ -33,6 +33,7 @@ import com.jmex.bui.*;
 import com.jmex.bui.BComboBox;
 import com.jmex.bui.BScrollPane;
 import com.jmex.bui.PolledRootNode;
+import com.jmex.bui.util.Dimension;
 import com.jmex.bui.border.LineBorder;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
@@ -95,27 +96,30 @@ public class LayoutTest extends SimpleGame
         _root.addWindow(window);
         window.setBounds(300, 125, 400, 250);
 
+        window = new BWindow(lnf, GroupLayout.makeVStretch());
+        window.setBorder(new LineBorder(ColorRGBA.black));
+
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
-        window = new BWindow(lnf, glay);
-        window.setBorder(new LineBorder(ColorRGBA.black));
-        window.add(new BComboBox(new String[] { "one", "two", "three" }));
-        window.add(new BMenuItem("Two", "two"));
-        window.add(new BMenuItem("Three", "three"));
-        window.add(new BMenuItem("Four", "four"));
-        window.add(new BMenuItem("Five", "five"));
-        window.add(new BMenuItem("Six", "six"));
-        window.add(new BMenuItem("Seven", "seven"));
-        window.add(new BMenuItem("Eight", "eight"));
-        window.add(new BMenuItem("Nine", "nine"));
+        BContainer cont = new BContainer(glay);
+        cont.add(new BComboBox(new String[] { "one", "two", "three" }));
+        cont.add(new BButton("Two"));
+        cont.add(new BMenuItem("Three", "three"));
+        cont.add(new BMenuItem("Four", "four"));
+        cont.add(new BMenuItem("Five", "five"));
+        cont.add(new BMenuItem("Six", "six"));
+        cont.add(new BMenuItem("Seven", "seven"));
+        cont.add(new BMenuItem("Eight", "eight"));
+        cont.add(new BButton("Nine", "nine"));
+
+        window.add(new BScrollPane(cont));
         _root.addWindow(window);
-        window.pack();
-        window.setLocation(100, 300);
+        Dimension ps = window.getPreferredSize();
+        window.setBounds(100, 300, ps.width, 2*ps.height/3);
 
         window = new BWindow(lnf, new BorderLayout());
         window.setBorder(new LineBorder(ColorRGBA.black));
-        BContainer cont =
-            new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
+        cont = new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
         cont.add(new BToggleButton(new ImageIcon(icon), ""));
         BLabel label = new BLabel("Horizontal");
         label.setIcon(new ImageIcon(icon));
@@ -133,7 +137,6 @@ public class LayoutTest extends SimpleGame
         cont.add(new BLabel("Seven"));
         cont.add(new BLabel("Eight"));
         cont.add(new BLabel("Nine"));
-//         window.add(new BScrollPane(cont), BorderLayout.CENTER);
         window.add(cont, BorderLayout.CENTER);
         _root.addWindow(window);
         window.pack();

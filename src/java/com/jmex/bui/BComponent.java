@@ -359,13 +359,13 @@ public class BComponent
     }
 
     /**
-     * Renders this component. The default implementation does nothing.
+     * Translates into the component's coordinate space, renders the background
+     * and border and then calls {@link #renderComponent} to allow the
+     * component to render itself.
      */
     public void render (Renderer renderer)
     {
         GL11.glTranslatef(_x, _y, 0);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(getAbsoluteX(), getAbsoluteY(), _width, _height);
 
         try {
             // render our background
@@ -382,7 +382,6 @@ public class BComponent
             renderComponent(renderer);
 
         } finally {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
             GL11.glTranslatef(-_x, -_y, 0);
         }
     }

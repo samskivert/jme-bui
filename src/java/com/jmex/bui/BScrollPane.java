@@ -20,163 +20,145 @@
 
 package com.jmex.bui;
 
-// import com.jmex.bui.event.InputDispatcher;
-import com.jmex.bui.util.Dimension;
-import com.jme.image.Texture;
-import com.jme.math.Vector2f;
-import com.jme.math.Vector3f;
+import org.lwjgl.opengl.GL11;
+
 import com.jme.renderer.Renderer;
-import com.jme.renderer.TextureRenderer;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.TextureState;
-import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
+import com.jmex.bui.layout.BorderLayout;
+import com.jmex.bui.util.Dimension;
 
 /**
  * Provides a scrollable clipped view on a sub-heirarchy of components.
  */
-public class BScrollPane extends BComponent
+public class BScrollPane extends BContainer
 {
     public BScrollPane (BComponent child)
     {
-        // create the quad that will display our viewport
-        _viewport = new Quad("viewport", 1, 1);
-//         _node.attachChild(_viewport);
-        _vtstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
-        _vtstate.setEnabled(true);
-        _viewport.setRenderState(_vtstate);
-        _viewport.updateGeometricState(0, true);
-        _viewport.updateRenderState();
+        super(new BorderLayout(0, 0));
 
-        // set up our child
-        _child = child;
-        _child.setParent(this);
-//         _child.getNode().setRenderQueueMode(Renderer.QUEUE_ORTHO);
-        if (isAdded()) {
-            _child.wasAdded();
+        BViewport vport = new BViewport(child);
+        add(vport, BorderLayout.CENTER);
+        add(new BScrollBar(BScrollBar.VERTICAL, vport.getModel()),
+            BorderLayout.EAST);
+    }
+
+    /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
+     * horizontal scrolling as well. */
+    protected static class BViewport extends BContainer
+    {
+        public BViewport (BComponent target)
+        {
+            _model = new BoundedRangeModel(0, 0, 10, 10);
+            add(_target = target);
         }
-    }
 
-    /**
-     * Called every frame by the input dispatcher to allow us to re-render
-     * our viewport.
-     */
-    public void update ()
-    {
-//         _trenderer.render(_child.getNode(), _texture);
-    }
-
-    // documentation inherited
-    public Dimension getPreferredSize ()
-    {
-        return _child.getPreferredSize();
-    }
-
-    // documentation inherited
-    public void validate ()
-    {
-        if (!_valid) {
-            // lay ourselves out
-            layout();
-            // and validate our child
-            _child.validate();
-            // finally mark ourselves as valid
-            _valid = true;
+        /**
+         * Returns the range model defined by this viewport's size and the
+         * preferred size of its target component.
+         */
+        public BoundedRangeModel getModel ()
+        {
+            return _model;
         }
-    }
 
-    // documentation inherited
-    protected void wasAdded ()
-    {
-        super.wasAdded();
-        _child.wasAdded();
-//         _dispatcher = getWindow().getInputDispatcher();
-//         _dispatcher.addScrollPane(this);
-    }
-
-    // documentation inherited
-    protected void wasRemoved ()
-    {
-        super.wasRemoved();
-        _child.wasRemoved();
-//         if (_dispatcher != null) {
-//             _dispatcher.removeScrollPane(this);
-//             _dispatcher = null;
-//         }
-    }
-
-    // documentation inherited
-    protected void layout ()
-    {
-        // determine the desired size of our texture
-        int vwidth = getWidth(), vheight = getHeight();
-        int twidth = nextPOT(vwidth), theight = nextPOT(vheight);
-        _viewport.resize(vwidth, vheight);
-        _viewport.setLocalTranslation(new Vector3f(vwidth/2f, vheight/2f, 0f));
-//         _viewport.setTextures(new Vector2f[] {
-//             new Vector2f(0, 0), new Vector2f(0, vheight/(float)theight),
-//             new Vector2f(vwidth/(float)twidth, vheight/(float)theight),
-//             new Vector2f(vwidth/(float)twidth, 0), new Vector2f(0, 0) });
-
-        // create or recreate our texture renderer as needed
-        if (_texture == null || _texture.getImage().getWidth() != twidth ||
-            _texture.getImage().getWidth() != twidth) {
-            if (_trenderer != null) {
-                _trenderer.cleanup();
+        // documentation inherited
+        public void invalidate ()
+        {
+            // if we're not attached, don't worry about it
+            if (getParent() == null) {
+                return;
             }
-            Log.log.info("Recreating texture [size=" + twidth + "x" + theight +
-                         ", osize=" + vwidth + "x" + vheight + "].");
-            _trenderer = DisplaySystem.getDisplaySystem().createTextureRenderer(
-                twidth, theight, false, true, false, false,
-                TextureRenderer.RENDER_TEXTURE_2D, 0);
-//             _trenderer.getCamera().setLocation(new Vector3f(0, 0, 65f));
-//             _trenderer.updateCamera();
-            _texture = _trenderer.setupTexture();
-//             _texture.setWrap(Texture.WM_CLAMP_S_CLAMP_T);
-            _vtstate.setTexture(_texture);
+
+            // otherwise layout our target component
+            layout();
         }
 
-        // also tell our child to size to its preferred size
-        Dimension cpsize = _child.getPreferredSize();
-        _child.setBounds(0, 0, cpsize.width, cpsize.height);
-        Log.log.info("Sizing child " + cpsize);
+        // documentation inherited
+        public void layout ()
+        {
+            // resize our target component to its preferred size
+            Dimension d = _target.getPreferredSize();
+            if (_target.getWidth() != d.width ||
+                _target.getHeight() != d.height) {
+                _target.setBounds(0, 0, d.width, d.height);
+                // this will trigger a call up to invalidate() and we'll
+                // reenter this same method with the target at its preferred
+                // size
+                return;
+            }
+
+            // lay out our target component
+            _target.layout();
+
+            // and recompute our scrollbar range
+            _model.setRange(0, _model.getValue(), getHeight(), d.height);
+        }
+
+        // documentation inherited
+        public Dimension getPreferredSize ()
+        {
+            return _target.getPreferredSize();
+        }
+
+//         // documentation inherited
+//         public int getAbsoluteX ()
+//         {
+//             return super.getAbsoluteX();
+//         }
+
+        // documentation inherited
+        public int getAbsoluteY ()
+        {
+            return super.getAbsoluteY() + getYOffset();
+        }
+
+        // documentation inherited
+        public BComponent getHitComponent (int mx, int my)
+        {
+            // if we're not within our bounds, we needn't check our target
+            if ((mx < _x) || (my < _y) ||
+                (mx >= _x + _width) || (my > _y + _height)) {
+                return null;
+            }
+
+            // translate the coordinate into our children's coordinates
+            mx -= _x;
+            my -= (_y + getYOffset());
+
+            BComponent hit = null;
+            for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+                BComponent child = getComponent(ii);
+                if ((hit = child.getHitComponent(mx, my)) != null) {
+                    return hit;
+                }
+            }
+            return this;
+        }
+
+        // documentation inherited
+        protected void renderComponent (Renderer renderer)
+        {
+            // translate by our offset into the viewport
+            int offset = getYOffset();
+            GL11.glTranslatef(0, offset, 0);
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(getAbsoluteX(), getAbsoluteY()-offset,
+                           _width, _height);
+            try {
+                // and then render our target component
+                _target.render(renderer);
+            } finally {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                GL11.glTranslatef(0, -offset, 0);
+            }
+        }
+
+        protected final int getYOffset ()
+        {
+            return _model.getValue() -
+                (_model.getMaximum() - _model.getExtent());
+        }
+
+        protected BoundedRangeModel _model;
+        protected BComponent _target;
     }
-
-    /** Rounds the supplied value up to a power of two. */
-    protected static int nextPOT (int value)
-    {
-        return (bitCount(value) > 1) ? (highestOneBit(value) << 1) : value;
-    }
-
-    protected static int bitCount (int value)
-    {
-        // some two's complement magic
-	value = value - ((value >>> 1) & 0x55555555);
-	value = (value & 0x33333333) + ((value >>> 2) & 0x33333333);
-	value = (value + (value >>> 4)) & 0x0f0f0f0f;
-	value = value + (value >>> 8);
-	value = value + (value >>> 16);
-	return value & 0x3f;
-    }
-
-    protected static int highestOneBit (int value)
-    {
-        // more two's complement magic
-        value |= (value >>  1);
-        value |= (value >>  2);
-        value |= (value >>  4);
-        value |= (value >>  8);
-        value |= (value >> 16);
-        return value - (value >>> 1);
-    }
-
-    protected BComponent _child;
-//     protected InputDispatcher _dispatcher;
-
-    protected Quad _viewport;
-    protected TextureState _vtstate;
-
-    protected TextureRenderer _trenderer;
-    protected Texture _texture;
 }
