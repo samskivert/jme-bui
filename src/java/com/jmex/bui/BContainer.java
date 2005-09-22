@@ -132,7 +132,7 @@ public class BContainer extends BComponent
      */
     public void removeAll ()
     {
-        for (int ii = getComponentCount() - 1; ii > 0; ii--) {
+        for (int ii = getComponentCount() - 1; ii >= 0; ii--) {
             remove(getComponent(ii));
         }
     }
