@@ -90,9 +90,12 @@ public class LayoutTest extends SimpleGame
                    BorderLayout.NORTH);
         _input.addListener(new ActionListener() {
             public void actionPerformed (ActionEvent event) {
-                _text.appendText("You said: ", ColorRGBA.red);
-                _text.appendText(_input.getText() + "\n");
-                _input.setText("");
+                String input = _input.getText();
+                if (input != null && !input.equals("")) {
+                    _text.appendText("You said: ", ColorRGBA.red);
+                    _text.appendText(_input.getText() + "\n");
+                    _input.setText("");
+                }
             }
         });
         _root.addWindow(window);
