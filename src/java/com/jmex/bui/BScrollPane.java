@@ -75,8 +75,11 @@ public class BScrollPane extends BContainer
         // documentation inherited
         public void layout ()
         {
-            // resize our target component to its preferred size
+            // resize our target component to the larger of our size and its
+            // preferred size
             Dimension d = _target.getPreferredSize();
+            d.width = Math.max(d.width, getWidth());
+            d.height = Math.max(d.height, getHeight());
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
                 _target.setBounds(0, 0, d.width, d.height);

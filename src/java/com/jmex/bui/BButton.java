@@ -20,9 +20,11 @@
 
 package com.jmex.bui;
 
-import com.jmex.bui.background.BBackground;
 import com.jme.renderer.Renderer;
+
+import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.util.Dimension;
@@ -64,10 +66,23 @@ public class BButton extends BComponent
      */
     public BButton (String text, String action)
     {
+        this(text, null, action);
+    }
+
+    /**
+     * Creates a button with the specified label and action. The action will be
+     * dispatched via an {@link ActionEvent} to the specified {@link
+     * ActionListener} when the button is clicked.
+     */
+    public BButton (String text, ActionListener listener, String action)
+    {
         _label = new BLabel("");
         _label.setHorizontalAlignment(BLabel.CENTER);
         _action = action;
         setText(text);
+        if (listener != null) {
+            addListener(listener);
+        }
     }
 
     /**

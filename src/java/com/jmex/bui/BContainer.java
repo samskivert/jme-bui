@@ -109,6 +109,9 @@ public class BContainer extends BComponent
         if (isAdded()) {
             child.wasRemoved();
         }
+
+        // we need to be relayed out
+        invalidate();
     }
 
     /**

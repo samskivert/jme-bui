@@ -223,14 +223,14 @@ public class BTextArea extends BContainer
     protected void refigureContents ()
     {
         // if we're not yet added to the heirarchy, we can stop now
-        BLookAndFeel lnf = getLookAndFeel();
-        if (lnf == null) {
+        if (!isAdded()) {
             return;
         }
 
         // remove and recreate our existing lines
         _lines.clear();
 
+        BLookAndFeel lnf = getLookAndFeel();
         ColorRGBA fg = lnf.getForeground(isEnabled());
         BTextFactory tfact = lnf.getTextFactory();
         int insets = _background.getLeftInset() + _background.getRightInset();
