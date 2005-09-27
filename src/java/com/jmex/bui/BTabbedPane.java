@@ -34,9 +34,14 @@ public class BTabbedPane extends BContainer
 {
     public BTabbedPane ()
     {
+        this(GroupLayout.LEFT);
+    }
+
+    public BTabbedPane (GroupLayout.Justification tabJustification)
+    {
         super(new BorderLayout());
 
-        _buttons = GroupLayout.makeButtonBox(GroupLayout.LEFT);
+        _buttons = GroupLayout.makeHBox(tabJustification);
         add(_buttons, BorderLayout.NORTH);
     }
 
