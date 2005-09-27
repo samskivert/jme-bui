@@ -365,12 +365,21 @@ public abstract class GroupLayout extends BLayoutManager
     }
 
     /**
-     * Makes a container configured with a horizontal group layout manager
-     * which is useful for containing a row of buttons.
+     * Makes a container configured with a horizontal group layout manager.
      */
-    public static BContainer makeButtonBox (Justification justification)
+    public static BContainer makeHBox (Justification justification)
     {
         HGroupLayout lay = new HGroupLayout();
+        lay.setJustification(justification);
+        return new BContainer(lay);
+    }
+
+    /**
+     * Creates a container configured with a vertical group layout manager.
+     */
+    public static BContainer makeVBox (Justification justification)
+    {
+        VGroupLayout lay = new VGroupLayout();
         lay.setJustification(justification);
         return new BContainer(lay);
     }
