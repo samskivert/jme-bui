@@ -267,7 +267,7 @@ public class BTextField extends BComponent
 
         BLookAndFeel lnf = getLookAndFeel();
         _glyphs = lnf.getTextFactory().createText(
-            _text, lnf.getForeground(isEnabled()));
+            getDisplayText(), lnf.getForeground(isEnabled()));
     }
 
     /**
