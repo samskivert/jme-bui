@@ -49,7 +49,7 @@ public class ImageIcon extends BIcon
     /**
      * Creates an icon from the supplied source image.
      */
-    public ImageIcon (BufferedImage image)
+    public ImageIcon (java.awt.Image image)
     {
         this(TextureManager.loadImage(image, true));
     }
