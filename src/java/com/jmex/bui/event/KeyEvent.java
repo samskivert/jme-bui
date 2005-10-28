@@ -71,6 +71,25 @@ public class KeyEvent extends InputEvent
         return _keyCode;
     }
 
+    // documentation inherited
+    public void dispatch (ComponentListener listener)
+    {
+        super.dispatch(listener);
+        switch (_type) {
+        case KEY_PRESSED:
+            if (listener instanceof KeyListener) {
+                ((KeyListener)listener).keyPressed(this);
+            }
+            break;
+
+        case KEY_RELEASED:
+            if (listener instanceof KeyListener) {
+                ((KeyListener)listener).keyReleased(this);
+            }
+            break;
+        }
+    }
+    
     protected void toString (StringBuffer buf)
     {
         super.toString(buf);
