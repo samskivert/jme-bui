@@ -141,6 +141,9 @@ public class PolledRootNode extends BRootNode
             _ccomponent = null;
         }
 
+        // poll the keyboard and notify event listeners
+        KeyInput.get().update();
+        
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
