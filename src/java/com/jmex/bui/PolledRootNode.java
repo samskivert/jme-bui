@@ -56,9 +56,13 @@ public class PolledRootNode extends BRootNode
         // determine our tick stamp in milliseconds
         _tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
 
+        // update the mouse input system
+        MouseInput mousein = MouseInput.get();
+        mousein.update();
+
         // determine whether the mouse has moved in the last frame
-        int mx = MouseInput.get().getXAbsolute();
-        int my = MouseInput.get().getYAbsolute();
+        int mx = mousein.getXAbsolute();
+        int my = mousein.getYAbsolute();
         boolean mouseMoved = false;
         if (_mouseX != mx || _mouseY != my) {
             _mouseX = mx;
@@ -89,7 +93,7 @@ public class PolledRootNode extends BRootNode
         // update the mouse modifiers, possibly generating events
         for (int ii = 0; ii < MOUSE_MODIFIER_MAP.length; ii++) {
             int modifierMask = MOUSE_MODIFIER_MAP[ii];
-            boolean down = MouseInput.get().isButtonDown(ii);
+            boolean down = mousein.isButtonDown(ii);
             boolean wasDown = ((_modifiers & modifierMask) != 0);
             int type = -1;
             if (down && !wasDown) {
@@ -128,7 +132,7 @@ public class PolledRootNode extends BRootNode
         }
 
         // process any mouse wheel events
-        int wdelta = MouseInput.get().getWheelDelta();
+        int wdelta = mousein.getWheelDelta();
         if (wdelta != 0 && tcomponent != null) {
             tcomponent.dispatchEvent(
                 new MouseEvent(this, _tickStamp, _modifiers,
@@ -143,7 +147,7 @@ public class PolledRootNode extends BRootNode
 
         // poll the keyboard and notify event listeners
         KeyInput.get().update();
-        
+
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
