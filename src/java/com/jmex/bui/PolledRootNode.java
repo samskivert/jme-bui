@@ -23,6 +23,7 @@ package com.jmex.bui;
 import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
+import com.jme.input.KeyInputListener;
 import com.jme.input.MouseInput;
 import com.jme.scene.Node;
 import com.jme.util.Timer;
@@ -42,15 +43,9 @@ public class PolledRootNode extends BRootNode
     {
         _timer = timer;
         _handler = handler;
-        _keyInput = InputSystem.getKeyInput();
-        _mouseInput = InputSystem.getMouseInput();
 
-        if (_keyInput == null || _mouseInput == null) {
-            throw new IllegalStateException(
-                "InputSystem not properly initialized prior to creation of " +
-                "InputDispatcher [key=" + _keyInput +
-                ", mouse=" + _mouseInput + "].");
-        }
+        // register our interest in key presses
+        KeyInput.get().addListener(_keyListener);
     }
 
     // documentation inherited
@@ -61,44 +56,9 @@ public class PolledRootNode extends BRootNode
         // determine our tick stamp in milliseconds
         _tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
 
-        // update our keyboard buffer and check for new events
-        _keyInput.update();
-        while (_keyInput.next()) {
-            boolean pressed = _keyInput.state();
-            int keyCode = _keyInput.key();
-
-            // first update the state of the modifiers
-            int modifierMask = -1;
-            for (int ii = 0; ii < KEY_MODIFIER_MAP.length; ii += 2) {
-                if (KEY_MODIFIER_MAP[ii] == keyCode) {
-                    modifierMask = KEY_MODIFIER_MAP[ii+1];
-                    break;
-                }
-            }
-            if (modifierMask != -1) {
-                if (pressed) {
-                    _modifiers |= modifierMask;
-                } else {
-                    _modifiers &= ~modifierMask;
-                }
-            }
-
-            // if we have a focus, generate a key event and dispatch it
-            BComponent target = _focus;
-            if (target == null) {
-                target = _dcomponent;
-            }
-            if (target != null) {
-                KeyEvent event = new KeyEvent(
-                    this, _tickStamp, _modifiers, pressed ?
-                    KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
-                    _keyInput.keyChar(), keyCode);
-                target.dispatchEvent(event);
-            }
-        }
-
         // determine whether the mouse has moved in the last frame
-        int mx = _mouseInput.getXAbsolute(), my = _mouseInput.getYAbsolute();
+        int mx = MouseInput.get().getXAbsolute();
+        int my = MouseInput.get().getYAbsolute();
         boolean mouseMoved = false;
         if (_mouseX != mx || _mouseY != my) {
             _mouseX = mx;
@@ -129,7 +89,7 @@ public class PolledRootNode extends BRootNode
         // update the mouse modifiers, possibly generating events
         for (int ii = 0; ii < MOUSE_MODIFIER_MAP.length; ii++) {
             int modifierMask = MOUSE_MODIFIER_MAP[ii];
-            boolean down = _mouseInput.isButtonDown(ii);
+            boolean down = MouseInput.get().isButtonDown(ii);
             boolean wasDown = ((_modifiers & modifierMask) != 0);
             int type = -1;
             if (down && !wasDown) {
@@ -168,7 +128,7 @@ public class PolledRootNode extends BRootNode
         }
 
         // process any mouse wheel events
-        int wdelta = _mouseInput.getWheelDelta();
+        int wdelta = MouseInput.get().getWheelDelta();
         if (wdelta != 0 && tcomponent != null) {
             tcomponent.dispatchEvent(
                 new MouseEvent(this, _tickStamp, _modifiers,
@@ -187,9 +147,41 @@ public class PolledRootNode extends BRootNode
         }
     }
 
+    /** This listener is notified when a key is pressed or released. */
+    protected KeyInputListener _keyListener = new KeyInputListener() {
+        public void onKey (char character, int keyCode, boolean pressed) {
+            // first update the state of the modifiers
+            int modifierMask = -1;
+            for (int ii = 0; ii < KEY_MODIFIER_MAP.length; ii += 2) {
+                if (KEY_MODIFIER_MAP[ii] == keyCode) {
+                    modifierMask = KEY_MODIFIER_MAP[ii+1];
+                    break;
+                }
+            }
+            if (modifierMask != -1) {
+                if (pressed) {
+                    _modifiers |= modifierMask;
+                } else {
+                    _modifiers &= ~modifierMask;
+                }
+            }
+
+            // if we have a focus, generate a key event and dispatch it
+            BComponent target = _focus;
+            if (target == null) {
+                target = _dcomponent;
+            }
+            if (target != null) {
+                KeyEvent event = new KeyEvent(
+                    this, _tickStamp, _modifiers,
+                    pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
+                    character, keyCode);
+                target.dispatchEvent(event);
+            }
+        }
+    };
+
     protected Timer _timer;
-    protected KeyInput _keyInput;
-    protected MouseInput _mouseInput;
     protected InputHandler _handler;
 
     /** Maps key codes to modifier flags. */
