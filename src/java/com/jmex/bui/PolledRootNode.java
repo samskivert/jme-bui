@@ -49,6 +49,13 @@ public class PolledRootNode extends BRootNode
     }
 
     // documentation inherited
+    public void windowInvalidated (BWindow window)
+    {
+        // we do nothing as we validate all invalid windows at the start of
+        // every tick
+    }
+
+    // documentation inherited
     protected void updateWorldData (float timePerFrame)
     {
         super.updateWorldData(timePerFrame);
@@ -151,6 +158,12 @@ public class PolledRootNode extends BRootNode
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
+        }
+
+        // finally validate all invalid windows
+        for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
+            BWindow win = (BWindow)_windows.get(ii);
+            win.validate(); // this is a NOOP if the window is already valid
         }
     }
 

@@ -46,6 +46,14 @@ public class CanvasRootNode extends BRootNode
         canvas.addKeyListener(this);
     }
 
+    // documentation inherited
+    public void windowInvalidated (BWindow window)
+    {
+        // TODO: queue up an event to revalidate this window; for now we'll
+        // just emulate the old behavior which was to validate every time
+        window.validate();
+    }
+
     // documentation inherited from interface MouseListener
     public void mouseClicked (java.awt.event.MouseEvent e) {
         // N/A

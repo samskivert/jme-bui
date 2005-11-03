@@ -35,7 +35,7 @@ import com.jmex.bui.event.MouseEvent;
 /**
  * Connects the BUI system into the JME scene graph.
  */
-public class BRootNode extends Geometry
+public abstract class BRootNode extends Geometry
 {
     public BRootNode ()
     {
@@ -88,6 +88,13 @@ public class BRootNode extends Geometry
         // finally remove the window from the interface heirarchy
         window.setRootNode(null);
     }
+
+    /**
+     * This is called by a window when it has become invalidated. The root node
+     * should do whatever is necessary to schedule a revalidation of this
+     * window on the next tick or the next time an event is processed.
+     */
+    public abstract void windowInvalidated (BWindow window);
 
     /**
      * Configures a component (which would generally not be part of a
