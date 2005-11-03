@@ -91,6 +91,14 @@ public class BTabbedPane extends BContainer
         _selidx = tabidx;
     }
 
+    /**
+     * Returns the index of the selected tab.
+     */
+    public int getSelectedTabIndex ()
+    {
+        return _selidx;
+    }
+    
     protected ActionListener _selector = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
             try {
