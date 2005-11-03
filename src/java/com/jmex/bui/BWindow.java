@@ -110,13 +110,12 @@ public class BWindow extends BContainer
     // documentation inherited
     public void invalidate ()
     {
-        boolean wasValid = _valid;
         super.invalidate();
 
-        if (wasValid && _root != null) {
+        if (_root != null) {
             // when an invalidation call reaches an attached top-level window,
             // let the root node know that we're invalid
-            _root.windowInvalidated(this);
+            _root.rootInvalidated(this);
         }
     }
 

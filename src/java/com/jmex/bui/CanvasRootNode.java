@@ -47,11 +47,11 @@ public class CanvasRootNode extends BRootNode
     }
 
     // documentation inherited
-    public void windowInvalidated (BWindow window)
+    public void rootInvalidated (BComponent root)
     {
-        // TODO: queue up an event to revalidate this window; for now we'll
+        // TODO: queue up an event to revalidate this component; for now we'll
         // just emulate the old behavior which was to validate every time
-        window.validate();
+        root.validate();
     }
 
     // documentation inherited from interface MouseListener

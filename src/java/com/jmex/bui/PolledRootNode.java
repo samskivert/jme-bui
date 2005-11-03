@@ -20,6 +20,8 @@
 
 package com.jmex.bui;
 
+import java.util.ArrayList;
+
 import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
@@ -49,10 +51,12 @@ public class PolledRootNode extends BRootNode
     }
 
     // documentation inherited
-    public void windowInvalidated (BWindow window)
+    public void rootInvalidated (BComponent root)
     {
-        // we do nothing as we validate all invalid windows at the start of
-        // every tick
+        // add the component to the list of invalid roots
+        if (!_invalidRoots.contains(root)) {
+            _invalidRoots.add(root);
+        }
     }
 
     // documentation inherited
@@ -160,10 +164,9 @@ public class PolledRootNode extends BRootNode
             _handler.update(timePerFrame);
         }
 
-        // finally validate all invalid windows
-        for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
-            BWindow win = (BWindow)_windows.get(ii);
-            win.validate(); // this is a NOOP if the window is already valid
+        // finally validate all invalid roots
+        while (_invalidRoots.size() > 0) {
+            ((BComponent)_invalidRoots.remove(0)).validate();
         }
     }
 
@@ -203,6 +206,7 @@ public class PolledRootNode extends BRootNode
 
     protected Timer _timer;
     protected InputHandler _handler;
+    protected ArrayList _invalidRoots = new ArrayList();
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {

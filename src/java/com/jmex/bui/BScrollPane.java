@@ -64,12 +64,15 @@ public class BScrollPane extends BContainer
         public void invalidate ()
         {
             // if we're not attached, don't worry about it
-            if (getParent() == null) {
+            BWindow window;
+            BRootNode root;
+            if (!_valid || (window = getWindow()) == null ||
+                (root = window.getRootNode()) == null) {
                 return;
             }
 
-            // otherwise layout our target component
-            layout();
+            _valid = false;
+            root.rootInvalidated(this);
         }
 
         // documentation inherited

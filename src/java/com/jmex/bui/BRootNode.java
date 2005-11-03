@@ -90,11 +90,11 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * This is called by a window when it has become invalidated. The root node
-     * should do whatever is necessary to schedule a revalidation of this
-     * window on the next tick or the next time an event is processed.
+     * This is called by a window or a scroll pane when it has become invalid.
+     * The root node should schedule a revalidation of this component on the
+     * next tick or the next time an event is processed.
      */
-    public abstract void windowInvalidated (BWindow window);
+    public abstract void rootInvalidated (BComponent root);
 
     /**
      * Configures a component (which would generally not be part of a
