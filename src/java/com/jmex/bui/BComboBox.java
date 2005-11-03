@@ -116,7 +116,8 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Selects the item with the specified index.
+     * Selects the item with the specified index. <em>Note:</em> the supplied
+     * item is compared with the item list using {@link Object#equals}.
      */
     public void selectItem (Object item)
     {
