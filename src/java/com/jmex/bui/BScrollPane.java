@@ -86,10 +86,6 @@ public class BScrollPane extends BContainer
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
                 _target.setBounds(0, 0, d.width, d.height);
-                // this will trigger a call up to invalidate() and we'll
-                // reenter this same method with the target at its preferred
-                // size
-                return;
             }
 
             // lay out our target component
