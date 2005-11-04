@@ -41,7 +41,28 @@ public class BMenuItem extends BLabel
      */
     public BMenuItem (String text, String action)
     {
+        this(text, null, action);
+    }
+
+    /**
+     * Creates a menu item with the specified icon that will generate an
+     * {@link ActionEvent} with the specified action when selected.
+     */
+    public BMenuItem (BIcon icon, String action)
+    {
+        this(null, icon, action);
+    }
+
+    /**
+     * Creates a menu item with the specified text and icon that will generate
+     * an {@link ActionEvent} with the specified action when selected.
+     */
+    public BMenuItem (String text, BIcon icon, String action)
+    {
         super(text);
+        if (icon != null) {
+            setIcon(icon);
+        }
         _action = action;
 
         // stick a small border around ourselves so that our highlight

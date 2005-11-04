@@ -183,7 +183,11 @@ public class BComboBox extends BLabel
 
         _selidx = index;
         Object item = getSelectedItem();
-        setText(item == null ? "" : item.toString());
+        if (item instanceof BIcon) {
+            setIcon((BIcon)item);
+        } else {
+            setText(item == null ? "" : item.toString());
+        }
         dispatchEvent(
             new ActionEvent(this, when, modifiers, "selectionChanged"));
     }
@@ -202,7 +206,12 @@ public class BComboBox extends BLabel
 
         public ComboMenuItem (Object item)
         {
-            super(item.toString(), "select");
+            super(null, null, "select");
+            if (item instanceof BIcon) {
+                setIcon((BIcon)item);
+            } else {
+                setText(item.toString());
+            }
             this.item = item;
         }
     }
