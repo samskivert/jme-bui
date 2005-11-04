@@ -73,6 +73,15 @@ public class BTextArea extends BContainer
     }
 
     /**
+     * Configures the preferred width of this text area (the preferred height
+     * will be calculated from the font).
+     */
+    public void setPreferredWidth (int width)
+    {
+        _prefWidth = width;
+    }
+
+    /**
      * Returns a model that can be wired to a scroll bar to allow
      * scrolling up and down through the lines in this text area.
      */
@@ -129,7 +138,7 @@ public class BTextArea extends BContainer
             _runs.add(new Run(text.substring(offset), color, style, false));
         }
         // TODO: optimize appending
-        refigureContents();
+        refigureContents(getWidth());
     }
 
     /**
@@ -138,7 +147,7 @@ public class BTextArea extends BContainer
     public void clearText ()
     {
         _runs.clear();
-        refigureContents();
+        refigureContents(getWidth());
     }
 
     /**
@@ -163,7 +172,7 @@ public class BTextArea extends BContainer
         boolean wasEnabled = isEnabled();
         super.setEnabled(enabled);
         if (isAdded() && wasEnabled != isEnabled()) {
-            refigureContents();
+            refigureContents(getWidth());
         }
     }
 
@@ -195,7 +204,7 @@ public class BTextArea extends BContainer
     {
         super.layout();
 
-        refigureContents();
+        refigureContents(getWidth());
     }
 
     // documentation inherited
@@ -217,18 +226,29 @@ public class BTextArea extends BContainer
     // documentation inherited
     protected Dimension computePreferredSize ()
     {
-        Dimension d = new Dimension(100, 25); // TBD
+        if (_prefWidth > 0 && _lines.size() == 0) {
+            refigureContents(_prefWidth);
+        }
+
+        // total up the height of all of our lines
+        Dimension d = new Dimension(Math.max(_prefWidth, 1), 0);
+        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
+            d.height += ((Line)_lines.get(ii)).height;
+        }
+
+        // add our background insets
         d.width += _background.getLeftInset();
         d.width += _background.getRightInset();
         d.height += _background.getTopInset();
         d.height += _background.getBottomInset();
+
         return d;
     }
 
     /**
      * Reflows the entirety of our text.
      */
-    protected void refigureContents ()
+    protected void refigureContents (int width)
     {
         // if we're not yet added to the heirarchy, we can stop now
         if (!isAdded()) {
@@ -242,7 +262,7 @@ public class BTextArea extends BContainer
         ColorRGBA fg = lnf.getForeground(isEnabled());
         BTextFactory tfact = lnf.getTextFactory();
         int insets = _background.getLeftInset() + _background.getRightInset();
-        int maxWidth = (_width - insets);
+        int maxWidth = (width - insets);
 
         // wrap our text into lines
         Line current = null;
@@ -363,6 +383,7 @@ public class BTextArea extends BContainer
 
     protected BBackground _background;
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
+    protected int _prefWidth = -1;
     protected ArrayList _runs = new ArrayList();
     protected ArrayList _lines = new ArrayList();
 }
