@@ -57,11 +57,19 @@ public class BTextArea extends BContainer
 
     public BTextArea ()
     {
+        this(null);
+    }
+
+    public BTextArea (String text)
+    {
         _model.addChangeListener(new ChangeListener() {
             public void stateChanged (ChangeEvent event) {
                 modelDidChange();
             }
         });
+        if (text != null) {
+            setText(text);
+        }
     }
 
     /**
