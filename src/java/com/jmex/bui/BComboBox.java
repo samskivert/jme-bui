@@ -133,6 +133,14 @@ public class BComboBox extends BLabel
         selectItem(selidx);
     }
 
+    /**
+     * Returns the number of items in this combo box.
+     */
+    public int getItemCount ()
+    {
+        return _items.size();
+    }
+
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
