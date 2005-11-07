@@ -166,7 +166,11 @@ public class PolledRootNode extends BRootNode
 
         // finally validate all invalid roots
         while (_invalidRoots.size() > 0) {
-            ((BComponent)_invalidRoots.remove(0)).validate();
+            BComponent root = (BComponent)_invalidRoots.remove(0);
+            // make sure the root is still added to the view hierarchy
+            if (root.isAdded()) {
+                root.validate();
+            }
         }
     }
 
