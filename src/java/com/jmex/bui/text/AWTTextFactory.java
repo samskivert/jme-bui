@@ -102,6 +102,11 @@ public class AWTTextFactory extends BTextFactory
     public BText wrapText (
         String text, ColorRGBA color, int maxWidth, int[] remain)
     {
+        // the empty string will break things; so use a single space instead
+        if (text.length() == 0) {
+            text = " ";
+        }
+
         Graphics2D gfx = _stub.createGraphics();
         TextLayout layout;
         try {
@@ -137,7 +142,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     /** Helper function. */
-    protected BText createText (String text, ColorRGBA color, boolean useAdvance)
+    protected BText createText (
+        String text, ColorRGBA color, boolean useAdvance)
     {
         if (text.equals("")) {
             text = " ";
