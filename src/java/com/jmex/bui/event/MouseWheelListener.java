@@ -23,7 +23,7 @@ package com.jmex.bui.event;
 /**
  * Dispatches mouse wheel events to listeners on a component.
  */
-public interface MouseWheelListener
+public interface MouseWheelListener extends ComponentListener
 {
     /**
      * Dispatched when the mouse wheel is rotated within the bounds of the
