@@ -59,12 +59,19 @@ public class BContainer extends BComponent
     }
 
     /**
-     * Adds a child to this container. This should be used rather than
-     * calling {@link #attachChild} directly.
+     * Adds a child to this container.
      */
     public void add (BComponent child)
     {
         add(child, null);
+    }
+
+    /**
+     * Adds a child to this container at the specified position.
+     */
+    public void add (int index, BComponent child)
+    {
+        add(index, child, null);
     }
 
     /**
@@ -73,10 +80,19 @@ public class BContainer extends BComponent
      */
     public void add (BComponent child, Object constraints)
     {
+        add(_children.size(), child, constraints);
+    }
+
+    /**
+     * Adds a child to this container at the specified position, with the
+     * specified layout constraints.
+     */
+    public void add (int index, BComponent child, Object constraints)
+    {
         if (_layout != null) {
             _layout.addLayoutComponent(child, constraints);
         }
-        _children.add(child);
+        _children.add(index, child);
         child.setParent(this);
 
         // if we're already part of the hierarchy, call wasAdded() on our
