@@ -22,6 +22,8 @@ package com.jmex.bui;
 
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.Display;
+
 import com.jme.input.InputHandler;
 import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
@@ -162,6 +164,11 @@ public class PolledRootNode extends BRootNode
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
+        }
+
+        // if our OpenGL window lost focus, clear our modifiers
+        if (_modifiers != 0 && !Display.isActive()) {
+            _modifiers = 0;
         }
 
         // finally validate all invalid roots
