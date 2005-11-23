@@ -67,6 +67,11 @@ public abstract class BRootNode extends Geometry
      */
     public void removeWindow (BWindow window)
     {
+        // if our focus is in this window, clear it
+        if (_focus != null && _focus.getWindow() == window) {
+            setFocus(null);
+        }
+
         // first remove the window from our list
         if (!_windows.remove(window)) {
             Log.log.warning("Requested to remove unmanaged window " +
