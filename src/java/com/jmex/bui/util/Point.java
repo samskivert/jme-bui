@@ -21,9 +21,9 @@
 package com.jmex.bui.util;
 
 /**
- * Represents the bounds of a component.
+ * Represents the location of a component.
  */
-public class Rectangle
+public class Point
 {
     /** The x position of the entity in question. */
     public int x;
@@ -31,49 +31,24 @@ public class Rectangle
     /** The y position of the entity in question. */
     public int y;
 
-    /** The width of the entity in question. */
-    public int width;
-
-    /** The height of the entity in question. */
-    public int height;
-
-    public Rectangle (int x, int y, int width, int height)
+    public Point (int x, int y)
     {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
     }
 
-    public Rectangle (Rectangle other)
+    public Point (Point other)
     {
         x = other.x;
         y = other.y;
-        width = other.width;
-        height = other.height;
     }
 
-    public Rectangle ()
+    public Point ()
     {
-    }
-
-    /**
-     * Adds the specified rectangle to this rectangle, causing this rectangle
-     * to become the union of itself and the specified rectangle.
-     */
-    public void add (int x, int y, int width, int height)
-    {
-        int fx = Math.max(this.x+this.width, x+width);
-        int fy = Math.max(this.y+this.height, y+height);
-        this.x = Math.min(x, this.x);
-        this.y = Math.min(y, this.y);
-        this.width = fx-this.x;
-        this.height = fy-this.y;
     }
 
     public String toString ()
     {
-        return width + "x" + height + (x >= 0 ? "+" : "") + x +
-            (y >= 0 ? "+" : "") + y;
+        return (x >= 0 ? "+" : "") + x + (y >= 0 ? "+" : "") + y;
     }
 }

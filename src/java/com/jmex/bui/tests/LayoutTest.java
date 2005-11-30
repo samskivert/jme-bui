@@ -30,16 +30,16 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
-import com.jmex.bui.BComboBox;
-import com.jmex.bui.BScrollPane;
-import com.jmex.bui.PolledRootNode;
-import com.jmex.bui.util.Dimension;
 import com.jmex.bui.border.LineBorder;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.layout.AbsoluteLayout;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
+import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Point;
+import com.jmex.bui.util.Rectangle;
 
 /**
  * Does something extraordinary.
@@ -145,6 +145,15 @@ public class LayoutTest extends SimpleGame
         _root.addWindow(window);
         window.pack();
         window.setLocation(300, 400);
+
+        window = new BWindow(lnf, new AbsoluteLayout());
+        window.setBorder(new LineBorder(ColorRGBA.black));
+        window.add(new BLabel("+0+0"), new Point(0, 0));
+        window.add(new BLabel("+10+35"), new Point(10, 35));
+        window.add(new BButton("200x25+50+75"), new Rectangle(50, 75, 200, 25));
+        _root.addWindow(window);
+        window.pack();
+        window.setLocation(300, 450);
 
         // these just get in the way
         KeyBindingManager.getKeyBindingManager().remove("toggle_pause");
