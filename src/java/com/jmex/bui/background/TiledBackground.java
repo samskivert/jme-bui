@@ -108,8 +108,7 @@ public class TiledBackground extends BBackground
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
         GL11.glRasterPos2i(tx, ty);
-        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-                          _image.getData());
+        RenderUtil.renderImage(_image, swidth, sheight);
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
@@ -123,8 +122,7 @@ public class TiledBackground extends BBackground
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
         GL11.glRasterPos2i(tx, ty);
-        GL11.glDrawPixels(swidth, sheight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-                          _image.getData());
+        RenderUtil.renderImage(_image, swidth, sheight);
         GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
         GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);

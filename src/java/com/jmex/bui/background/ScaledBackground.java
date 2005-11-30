@@ -73,8 +73,7 @@ public class ScaledBackground extends BBackground
         }
         RenderUtil.blendState.apply();
         GL11.glRasterPos2i(tx, ty);
-        GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[_image.getType()],
-                          GL11.GL_UNSIGNED_BYTE, _image.getData());
+        RenderUtil.renderImage(_image, swidth, sheight);
         if (sx > 0 || sy > 0) {
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
@@ -86,9 +85,4 @@ public class ScaledBackground extends BBackground
     }
 
     protected Image _image;
-
-    protected static int[] IMAGE_FORMATS = {
-        GL11.GL_RGBA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
-        GL11.GL_LUMINANCE_ALPHA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
-        GL11.GL_RGBA };
 }

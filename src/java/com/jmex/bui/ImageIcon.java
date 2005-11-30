@@ -81,8 +81,7 @@ public class ImageIcon extends BIcon
 
         RenderUtil.blendState.apply();
         GL11.glRasterPos2i(x, y);
-        GL11.glDrawPixels(_image.getWidth(), _image.getHeight(),
-                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, _image.getData());
+        RenderUtil.renderImage(_image, _image.getWidth(), _image.getHeight());
     }
 
     protected Image _image;

@@ -20,6 +20,9 @@
 
 package com.jmex.bui.util;
 
+import org.lwjgl.opengl.GL11;
+
+import com.jme.image.Image;
 import com.jme.scene.Spatial;
 import com.jme.scene.state.AlphaState;
 import com.jme.system.DisplaySystem;
@@ -43,6 +46,16 @@ public class RenderUtil
         target.setRenderState(blendState);
     }
 
+    /**
+     * Renders a JME image via a call to {@link GL11#glDrawPixels} using the
+     * appropriate format.
+     */
+    public static void renderImage (Image image, int width, int height)
+    {
+        GL11.glDrawPixels(width, height, IMAGE_FORMATS[image.getType()],
+                          GL11.GL_UNSIGNED_BYTE, image.getData());
+    }
+
     static {
         blendState = DisplaySystem.getDisplaySystem().getRenderer().
             createAlphaState();
@@ -51,4 +64,9 @@ public class RenderUtil
         blendState.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
         blendState.setEnabled(true);
     }
+
+    protected static int[] IMAGE_FORMATS = {
+        GL11.GL_RGBA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
+        GL11.GL_LUMINANCE_ALPHA, GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA,
+        GL11.GL_RGBA };
 }
