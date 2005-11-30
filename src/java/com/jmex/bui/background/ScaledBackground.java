@@ -26,6 +26,7 @@ import com.jme.image.Image;
 import com.jme.renderer.Renderer;
 
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.RenderUtil;
 
 /**
  * Displays a scaled texture as a background image.
@@ -70,6 +71,7 @@ public class ScaledBackground extends BBackground
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
         }
+        RenderUtil.blendState.apply();
         GL11.glRasterPos2i(tx, ty);
         GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[_image.getType()],
                           GL11.GL_UNSIGNED_BYTE, _image.getData());
