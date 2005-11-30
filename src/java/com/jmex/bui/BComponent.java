@@ -388,14 +388,10 @@ public class BComponent
 
         try {
             // render our background
-            if (_background != null) {
-                _background.render(renderer, 0, 0, _width, _height);
-            }
+            renderBackground(renderer);
 
             // render our border
-            if (_border != null) {
-                _border.render(renderer, 0, 0, _width, _height);
-            }
+            renderBorder(renderer);
 
             // render any custom component bits
             renderComponent(renderer);
@@ -486,6 +482,26 @@ public class BComponent
         // mark ourselves as invalid so that if this component is again
         // added to an interface heirarchy it will revalidate at that time
         _valid = false;
+    }
+
+    /**
+     * Renders the background for this component.
+     */
+    protected void renderBackground (Renderer renderer)
+    {
+        if (_background != null) {
+            _background.render(renderer, 0, 0, _width, _height);
+        }
+    }
+
+    /**
+     * Renders the border for this component.
+     */
+    protected void renderBorder (Renderer renderer)
+    {
+        if (_border != null) {
+            _border.render(renderer, 0, 0, _width, _height);
+        }
     }
 
     /**
