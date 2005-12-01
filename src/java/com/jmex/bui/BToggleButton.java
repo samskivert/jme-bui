@@ -21,6 +21,7 @@
 package com.jmex.bui;
 
 import com.jmex.bui.event.ActionEvent;
+import com.jmex.bui.icon.BIcon;
 
 /**
  * Like a {@link BButton} except that it toggles between two states

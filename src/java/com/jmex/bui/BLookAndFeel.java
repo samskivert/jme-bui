@@ -23,18 +23,21 @@ package com.jmex.bui;
 import java.awt.Font;
 import java.net.URL;
 
+import com.jme.renderer.ColorRGBA;
+
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.background.TiledBackground;
 import com.jmex.bui.background.TintedBackground;
 import com.jmex.bui.border.BBorder;
 import com.jmex.bui.border.LineBorder;
+import com.jmex.bui.icon.BIcon;
+import com.jmex.bui.icon.ImageIcon;
 import com.jmex.bui.text.AWTTextFactory;
 import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.BTextFactory;
 import com.jmex.bui.text.DefaultKeyMap;
 import com.jmex.bui.text.JMEBitmapTextFactory;
-import com.jme.renderer.ColorRGBA;
 
 /**
  * Defines the look and feel of a hierarchy of user interface components.

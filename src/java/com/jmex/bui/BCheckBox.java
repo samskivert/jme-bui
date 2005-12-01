@@ -22,6 +22,8 @@ package com.jmex.bui;
 
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.icon.BIcon;
+import com.jmex.bui.icon.BlankIcon;
 import com.jmex.bui.layout.BorderLayout;
 
 /**

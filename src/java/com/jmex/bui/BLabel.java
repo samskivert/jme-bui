@@ -27,6 +27,7 @@ import com.jme.scene.Text;
 import com.jme.scene.shape.Quad;
 import com.jme.system.DisplaySystem;
 
+import com.jmex.bui.icon.BIcon;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;

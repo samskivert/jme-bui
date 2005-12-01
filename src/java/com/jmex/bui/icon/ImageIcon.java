@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jmex.bui;
+package com.jmex.bui.icon;
 
 import java.net.URL;
 
@@ -80,8 +80,7 @@ public class ImageIcon extends BIcon
         super.render(renderer, x, y);
 
         RenderUtil.blendState.apply();
-        GL11.glRasterPos2i(x, y);
-        RenderUtil.renderImage(_image, _image.getWidth(), _image.getHeight());
+        RenderUtil.renderImage(_image, x, y);
     }
 
     protected Image _image;

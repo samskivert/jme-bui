@@ -18,47 +18,50 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jmex.bui.background;
+package com.jmex.bui.icon;
 
 import com.jme.image.Image;
 import com.jme.renderer.Renderer;
 
-import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Rectangle;
 import com.jmex.bui.util.RenderUtil;
 
 /**
- * Displays a scaled texture as a background image.
+ * Displays a region of an image as an icon.
  */
-public class ScaledBackground extends BBackground
+public class SubimageIcon extends ImageIcon
 {
     /**
-     * Creates a scaled background from the specified source image data.
+     * Creates an icon that will display the specified region of the supplied
+     * image.
      */
-    public ScaledBackground (
-        Image image, int left, int top, int right, int bottom)
+    public SubimageIcon (Image image, int x, int y, int width, int height)
     {
-        super(left, top, right, bottom);
-        _image = image;
-    }
-
-    /**
-     * Returns the "natural" size of our background image.
-     */
-    public Dimension getNaturalSize ()
-    {
-        return new Dimension(_image.getWidth(), _image.getHeight());
+        super(image);
+        _region = new Rectangle(x, y, width, height);
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public int getWidth ()
     {
-        super.render(renderer, x, y, width, height);
+        return _region.width;
+    }
+
+    // documentation inherited
+    public int getHeight ()
+    {
+        return _region.height;
+    }
+
+    // documentation inherited
+    public void render (Renderer renderer, int x, int y)
+    {
+        super.render(renderer, x, y);
 
         RenderUtil.blendState.apply();
         RenderUtil.renderImage(
-            _image, 0, 0, _image.getWidth(), _image.getHeight(),
-            x, y, width, height);
+            _image, _region.x, _region.y, _region.width, _region.height, x, y);
     }
 
-    protected Image _image;
+    protected Rectangle _region;
 }

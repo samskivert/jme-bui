@@ -47,13 +47,62 @@ public class RenderUtil
     }
 
     /**
-     * Renders a JME image via a call to {@link GL11#glDrawPixels} using the
-     * appropriate format.
+     * Renders an image at the specified coordinates.
      */
-    public static void renderImage (Image image, int width, int height)
+    public static void renderImage (Image image, int x, int y)
     {
-        GL11.glDrawPixels(width, height, IMAGE_FORMATS[image.getType()],
+        GL11.glRasterPos2i(x, y);
+        GL11.glDrawPixels(image.getWidth(), image.getHeight(),
+                          IMAGE_FORMATS[image.getType()],
                           GL11.GL_UNSIGNED_BYTE, image.getData());
+    }
+
+    /**
+     * Renders an image at the specified coordinates and scaled to the
+     * specified size.
+     */
+    public static void renderImage (
+        Image image, int tx, int ty, int twidth, int theight)
+    {
+        renderImage(image, 0, 0, image.getWidth(), image.getHeight(),
+                    tx, ty, twidth, theight);
+    }
+
+    /**
+     * Renders a region of an image at the specified coordinates.
+     */
+    public static void renderImage (
+        Image image, int sx, int sy, int swidth, int sheight, int tx, int ty)
+    {
+        renderImage(image, sx, sy, swidth, sheight, tx, ty, swidth, sheight);
+    }
+
+    /**
+     * Renders a region of an image, positioned and scaled as specified.
+     */
+    public static void renderImage (
+        Image image, int sx, int sy, int swidth, int sheight,
+        int tx, int ty, int twidth, int theight)
+    {
+        if (twidth != swidth || theight != sheight) {
+            GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
+        }
+        if (sx > 0 || sy > 0 || swidth != image.getWidth()) {
+            GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, image.getWidth());
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
+        }
+        GL11.glRasterPos2i(tx, ty);
+        GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[image.getType()],
+                          GL11.GL_UNSIGNED_BYTE, image.getData());
+        if (sx > 0 || sy > 0) {
+            GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
+            GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
+        }
+        if (twidth != swidth || theight != sheight) {
+            GL11.glPixelZoom(1f, 1f);
+        }
     }
 
     static {

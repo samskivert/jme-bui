@@ -80,53 +80,34 @@ public class TiledBackground extends BBackground
         RenderUtil.blendState.apply();
 
         // draw the corners
-        drawImage(0, 0, wthird, hthird, 0, 0);
-        drawImage(_twidth-wthird, 0, wthird, hthird, width-wthird, 0);
-        drawImage(0, _theight-hthird, wthird, hthird, 0, height-hthird);
-        drawImage(_twidth-wthird, _theight-hthird, wthird, hthird,
-                  width-wthird, height-hthird);
+        RenderUtil.renderImage(
+            _image, 0, 0, wthird, hthird, 0, 0);
+        RenderUtil.renderImage(
+            _image, _twidth-wthird, 0, wthird, hthird, width-wthird, 0);
+        RenderUtil.renderImage(
+            _image, 0, _theight-hthird, wthird, hthird, 0, height-hthird);
+        RenderUtil.renderImage(
+            _image, _twidth-wthird, _theight-hthird, wthird, hthird,
+            width-wthird, height-hthird);
 
         // draw the "gaps"
         int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
-        drawImage(wthird, 0, wmiddle, hthird, wthird, 0, ghmiddle, hthird);
-        drawImage(wthird, _theight-hthird, wmiddle, hthird,
-                  wthird, height-hthird, ghmiddle, hthird);
+        RenderUtil.renderImage(
+            _image, wthird, 0, wmiddle, hthird, wthird, 0, ghmiddle, hthird);
+        RenderUtil.renderImage(
+            _image, wthird, _theight-hthird, wmiddle, hthird,
+            wthird, height-hthird, ghmiddle, hthird);
 
-        drawImage(0, hthird, wthird, hmiddle, 0, hthird, wthird, gvmiddle);
-        drawImage(_twidth-wthird, hthird, wthird, hmiddle,
-                  width-wthird, hthird, wthird, gvmiddle);
+        RenderUtil.renderImage(
+            _image, 0, hthird, wthird, hmiddle, 0, hthird, wthird, gvmiddle);
+        RenderUtil.renderImage(
+            _image, _twidth-wthird, hthird, wthird, hmiddle,
+            width-wthird, hthird, wthird, gvmiddle);
 
         // draw the center
-        drawImage(wthird, hthird, _twidth-2*wthird, _theight-2*hthird,
-                  wthird, hthird, width-2*wthird, height-2*hthird);
-    }
-
-    protected void drawImage (int sx, int sy, int swidth, int sheight,
-                              int tx, int ty)
-    {
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _twidth);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
-        GL11.glRasterPos2i(tx, ty);
-        RenderUtil.renderImage(_image, swidth, sheight);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
-    }
-
-    protected void drawImage (int sx, int sy, int swidth, int sheight,
-                              int tx, int ty, int twidth, int theight)
-    {
-        GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, _twidth);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
-        GL11.glRasterPos2i(tx, ty);
-        RenderUtil.renderImage(_image, swidth, sheight);
-        GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
-        GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
-        GL11.glPixelZoom(1f, 1f);
+        RenderUtil.renderImage(
+            _image, wthird, hthird, _twidth-2*wthird, _theight-2*hthird,
+            wthird, hthird, width-2*wthird, height-2*hthird);
     }
 
     protected Image _image;

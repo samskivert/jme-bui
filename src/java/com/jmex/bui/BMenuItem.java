@@ -28,6 +28,7 @@ import com.jmex.bui.border.EmptyBorder;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.icon.BIcon;
 import com.jmex.bui.util.RenderUtil;
 
 /**
