@@ -29,7 +29,7 @@ import com.jmex.bui.util.RenderUtil;
 /**
  * Displays a region of an image as an icon.
  */
-public class SubimageIcon extends ImageIcon
+public class SubimageIcon extends BIcon
 {
     /**
      * Creates an icon that will display the specified region of the supplied
@@ -37,8 +37,9 @@ public class SubimageIcon extends ImageIcon
      */
     public SubimageIcon (Image image, int x, int y, int width, int height)
     {
-        super(image);
+        _image = image;
         _region = new Rectangle(x, y, width, height);
+        System.out.println("Yay! " + _region);
     }
 
     // documentation inherited
@@ -63,5 +64,6 @@ public class SubimageIcon extends ImageIcon
             _image, _region.x, _region.y, _region.width, _region.height, x, y);
     }
 
+    protected Image _image;
     protected Rectangle _region;
 }

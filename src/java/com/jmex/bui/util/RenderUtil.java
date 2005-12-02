@@ -84,10 +84,12 @@ public class RenderUtil
         Image image, int sx, int sy, int swidth, int sheight,
         int tx, int ty, int twidth, int theight)
     {
-        if (twidth != swidth || theight != sheight) {
+        boolean scale = (twidth != swidth || theight != sheight);
+        if (scale) {
             GL11.glPixelZoom(twidth/(float)swidth, theight/(float)sheight);
         }
-        if (sx > 0 || sy > 0 || swidth != image.getWidth()) {
+        boolean skip = (sx > 0 || sy > 0 || swidth != image.getWidth());
+        if (skip) {
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, image.getWidth());
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
@@ -95,12 +97,12 @@ public class RenderUtil
         GL11.glRasterPos2i(tx, ty);
         GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[image.getType()],
                           GL11.GL_UNSIGNED_BYTE, image.getData());
-        if (sx > 0 || sy > 0) {
+        if (skip) {
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, 0);
         }
-        if (twidth != swidth || theight != sheight) {
+        if (scale) {
             GL11.glPixelZoom(1f, 1f);
         }
     }
