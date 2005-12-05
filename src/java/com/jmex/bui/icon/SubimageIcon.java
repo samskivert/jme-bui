@@ -39,7 +39,6 @@ public class SubimageIcon extends BIcon
     {
         _image = image;
         _region = new Rectangle(x, y, width, height);
-        System.out.println("Yay! " + _region);
     }
 
     // documentation inherited
