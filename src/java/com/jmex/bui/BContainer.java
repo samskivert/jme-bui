@@ -228,12 +228,12 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
         if (_layout != null) {
-            return _layout.computePreferredSize(this);
+            return _layout.computePreferredSize(this, whint, hhint);
         } else {
-            return super.computePreferredSize();
+            return super.computePreferredSize(whint, hhint);
         }
     }
 

@@ -81,7 +81,8 @@ public class TableLayout extends BLayoutManager
     }
 
     // documentation inherited
-    public Dimension computePreferredSize (BContainer target)
+    public Dimension computePreferredSize (
+        BContainer target, int whint, int hhint)
     {
         computeMetrics(target);
         Insets insets = target.getInsets();
@@ -122,7 +123,7 @@ public class TableLayout extends BLayoutManager
         int row = 0, col = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
-            Dimension psize = child.getPreferredSize();
+            Dimension psize = child.getPreferredSize(-1, -1);
             if (psize.height > _rowHeights[row]) {
                 _rowHeights[row] = psize.height;
             }

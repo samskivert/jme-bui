@@ -344,9 +344,9 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
-        return new Dimension(_label.getPreferredSize());
+        return new Dimension(_label.getPreferredSize(whint, hhint));
     }
 
     protected BLabel _label;

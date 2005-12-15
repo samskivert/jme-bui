@@ -71,6 +71,24 @@ public class Rectangle
         this.height = fy-this.y;
     }
 
+    // documentation inherited
+    public boolean equals (Object other)
+    {
+        if (other instanceof Rectangle) {
+            Rectangle orect = (Rectangle)other;
+            return x == orect.x && y == orect.y &&
+                width == orect.width && height == orect.height;
+        }
+        return false;
+    }
+
+    // documentation inherited
+    public int hashCode ()
+    {
+        return x ^ y ^ width ^ height;
+    }
+
+    /** Generates a string representation of this instance. */
     public String toString ()
     {
         return width + "x" + height + (x >= 0 ? "+" : "") + x +

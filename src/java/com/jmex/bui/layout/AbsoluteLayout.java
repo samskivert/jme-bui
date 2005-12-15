@@ -75,7 +75,8 @@ public class AbsoluteLayout extends BLayoutManager
     }
 
     // documentation inherited
-    public Dimension computePreferredSize (BContainer target)
+    public Dimension computePreferredSize (
+        BContainer target, int whint, int hhint)
     {
         // determine the largest rectangle that contains all of the components
         Rectangle rec = new Rectangle();
@@ -84,7 +85,7 @@ public class AbsoluteLayout extends BLayoutManager
             Object cons = _spots.get(comp);
             if (cons instanceof Point) {
                 Point p = (Point)cons;
-                Dimension d = comp.getPreferredSize();
+                Dimension d = comp.getPreferredSize(-1, -1);
                 rec.add(p.x, p.y, d.width, d.height);
             } else if (cons instanceof Rectangle) {
                 Rectangle r = (Rectangle)cons;
@@ -107,7 +108,7 @@ public class AbsoluteLayout extends BLayoutManager
             Object cons = _spots.get(comp);
             if (cons instanceof Point) {
                 Point p = (Point)cons;
-                Dimension d = comp.getPreferredSize();
+                Dimension d = comp.getPreferredSize(-1, -1);
                 comp.setBounds(insets.left + p.x,
                                insets.bottom + p.y, d.width, d.height);
             } else if (cons instanceof Rectangle) {

@@ -46,7 +46,19 @@ public class BWindow extends BContainer
      */
     public void pack ()
     {
-        Dimension ps = getPreferredSize();
+        pack(-1, -1);
+    }
+
+    /**
+     * Sizes this window to its preferred size, accounting for the specified
+     * width or height hints. Specify -1 for a dimension to indicate that it is
+     * freely resizable and a non-negative hint for a dimension that should be
+     * no larger than a particular size. This method does not change the
+     * window's coordinates.
+     */
+    public void pack (int whint, int hhint)
+    {
+        Dimension ps = getPreferredSize(whint, hhint);
         setBounds(_x, _y, ps.width, ps.height);
     }
 

@@ -119,7 +119,7 @@ public class LayoutTest extends SimpleGame
 
         window.add(new BScrollPane(cont));
         _root.addWindow(window);
-        Dimension ps = window.getPreferredSize();
+        Dimension ps = window.getPreferredSize(-1, -1);
         window.setBounds(100, 300, ps.width, 2*ps.height/3);
 
         window = new BWindow(lnf, new BorderLayout());

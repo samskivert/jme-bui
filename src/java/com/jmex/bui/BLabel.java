@@ -203,7 +203,7 @@ public class BLabel extends BComponent
     {
         super.layout();
 
-        Dimension size = computePreferredSize();
+        Dimension size = computePreferredSize(-1, -1);
         Insets insets = getInsets();
         int xoff = 0, yoff = 0;
 
@@ -282,7 +282,7 @@ public class BLabel extends BComponent
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
         int iwidth = 0, iheight = 0, twidth = 0, theight = 0, gap = 0;
         if (_icon != null) {

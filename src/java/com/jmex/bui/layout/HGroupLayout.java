@@ -34,9 +34,10 @@ import com.jmex.bui.util.Rectangle;
 public class HGroupLayout extends GroupLayout
 {
     // documentation inherited
-    public Dimension computePreferredSize (BContainer target)
+    public Dimension computePreferredSize (
+        BContainer target, int whint, int hhint)
     {
-	DimenInfo info = computeDimens(target);
+	DimenInfo info = computeDimens(target, -1, hhint);
 	Dimension dims = new Dimension();
 
         if (_policy == STRETCH) {
@@ -63,12 +64,12 @@ public class HGroupLayout extends GroupLayout
     public void layoutContainer (BContainer target)
     {
 	Rectangle b = target.getBounds();
-	DimenInfo info = computeDimens(target);
+	DimenInfo info = computeDimens(target, -1, b.height);
 
 	// adjust the bounds width and height to account for the insets
 	Insets insets = target.getInsets();
-	b.width -= (insets.left + insets.right);
-	b.height -= (insets.top + insets.bottom);
+	b.width -= insets.getHorizontal();
+	b.height -= insets.getVertical();
 
 	int nk = target.getComponentCount();
 	int sx, sy;

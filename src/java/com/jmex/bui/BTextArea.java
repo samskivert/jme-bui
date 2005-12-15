@@ -224,24 +224,38 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
-        if (_prefWidth > 0 && _lines.size() == 0) {
-            refigureContents(_prefWidth);
+        int hinset = _background.getLeftInset() + _background.getRightInset();
+
+        // lay out our text if we have not yet done so
+        if (_lines.size() == 0) {
+            if (_prefWidth > 0) {
+                // our preferred width overrides any hint
+                whint = _prefWidth;
+            } else if (whint == -1) {
+                // if we're given no hints and have no preferred width, allow
+                // arbitrarily wide lines
+                whint = Short.MAX_VALUE;
+            }
+            whint -= hinset;
+            refigureContents(whint);
         }
 
-        // total up the height of all of our lines
-        Dimension d = new Dimension(Math.max(_prefWidth, 1), 0);
+        // compute our dimensions based on the dimensions of our text
+        Dimension d = new Dimension();
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            d.height += ((Line)_lines.get(ii)).height;
+            Line line = (Line)_lines.get(ii);
+            d.width = Math.max(line.getWidth(), d.width);
+            d.height += line.height;
         }
 
         // add our background insets
-        d.width += _background.getLeftInset();
-        d.width += _background.getRightInset();
+        d.width += hinset;
         d.height += _background.getTopInset();
         d.height += _background.getBottomInset();
 
+        System.out.println("PS: " + d);
         return d;
     }
 
@@ -378,6 +392,18 @@ public class BTextArea extends BContainer
                 text.render(renderer, dx, y);
                 dx += text.getSize().width;
             }
+        }
+
+        /**
+         * Returns the width of this line.
+         */
+        public int getWidth ()
+        {
+            int width = 0;
+            for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
+                width += ((BText)segments.get(ii)).getSize().width;
+            }
+            return width;
         }
     }
 

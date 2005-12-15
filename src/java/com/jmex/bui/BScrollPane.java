@@ -80,7 +80,7 @@ public class BScrollPane extends BContainer
         {
             // resize our target component to the larger of our size and its
             // preferred size
-            Dimension d = _target.getPreferredSize();
+            Dimension d = _target.getPreferredSize(-1, -1);
             d.width = Math.max(d.width, getWidth());
             d.height = Math.max(d.height, getHeight());
             if (_target.getWidth() != d.width ||
@@ -96,9 +96,9 @@ public class BScrollPane extends BContainer
         }
 
         // documentation inherited
-        public Dimension getPreferredSize ()
+        public Dimension getPreferredSize (int whint, int hhint)
         {
-            return _target.getPreferredSize();
+            return _target.getPreferredSize(whint, hhint);
         }
 
 //         // documentation inherited

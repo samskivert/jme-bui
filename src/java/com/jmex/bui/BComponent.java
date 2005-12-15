@@ -71,13 +71,17 @@ public class BComponent
     }
 
     /**
-     * Returns the preferred size of this component.
+     * Returns the preferred size of this component, supplying a width and or
+     * height hint to the component to inform it of restrictions in one of the
+     * two dimensions. Not all components will make use of the hints, but
+     * layout managers should provide them if they know the component will be
+     * forced to a particular width or height regardless of what it prefers.
      */
-    public Dimension getPreferredSize ()
+    public Dimension getPreferredSize (int whint, int hhint)
     {
         Dimension ps = _preferredSize;
         if (ps == null) {
-            ps = computePreferredSize();
+            ps = computePreferredSize(whint, hhint);
             ps.width += getInsets().getHorizontal();
             ps.height += getInsets().getVertical();
         }
@@ -169,7 +173,6 @@ public class BComponent
     {
         BBorder oborder = _border;
         _border = border;
-//         _border.setSize(0, 0, _width, _height);
         if (oborder != border) {
             invalidate();
         }
@@ -307,9 +310,6 @@ public class BComponent
         if (_width != width || _height != height) {
             _width = width;
             _height = height;
-//             if (_border != null) {
-//                 _border.setSize(0, 0, _width, _height);
-//             }
             invalidate();
         }
     }
@@ -455,10 +455,10 @@ public class BComponent
     }
 
     /**
-     * Computes and returns a preferred size for this component. This
-     * method is called if no overriding preferred size has been supplied.
+     * Computes and returns a preferred size for this component. This method is
+     * called if no overriding preferred size has been supplied.
      */
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
         return new Dimension(0, 0);
     }

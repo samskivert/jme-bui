@@ -105,14 +105,24 @@ public class BorderLayout extends BLayoutManager
     }
 
     // documentation inherited
-    public Dimension computePreferredSize (BContainer target)
+    public Dimension computePreferredSize (
+        BContainer target, int whint, int hhint)
     {
         Dimension psize = new Dimension();
         int horizComps = 0, vertComps = 0;
 
+        // deduct the insets from the width and height hints
+        Insets insets = target.getInsets();
+        if (whint > 0) {
+            whint -= insets.getHorizontal();
+        }
+        if (hhint > 0) {
+            hhint -= insets.getVertical();
+        }
+
         BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(whint, -1);
             psize.width = Math.max(psize.width, cpsize.width);
             psize.height += cpsize.height;
             vertComps++;
@@ -120,7 +130,7 @@ public class BorderLayout extends BLayoutManager
 
         comp = _components[NORTH.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(whint, -1);
             psize.width = Math.max(psize.width, cpsize.width);
             psize.height += cpsize.height;
             vertComps++;
@@ -130,22 +140,19 @@ public class BorderLayout extends BLayoutManager
         for (int ii = EAST.intValue(); ii <= CENTER.intValue(); ii++) {
             comp = _components[ii];
             if (comp != null) {
-                Dimension cpsize = comp.getPreferredSize();
+                Dimension cpsize = comp.getPreferredSize(-1, -1);
                 centerWidth += cpsize.width;
                 centerHeight = Math.max(centerHeight, cpsize.height);
                 horizComps++;
             }
         }
+        centerWidth += Math.max(horizComps - 1, 0) * _hgap; 
 
         psize.width = Math.max(psize.width, centerWidth);
         psize.height += centerHeight;
-
-        // add in the gaps
-        psize.width += Math.max(horizComps - 1, 0) * _hgap;
         psize.height += Math.max(vertComps - 1, 0) * _vgap;
 
         // add in the insets
-        Insets insets = target.getInsets();
         psize.width += insets.getHorizontal();
         psize.height += insets.getVertical();
 
@@ -163,7 +170,7 @@ public class BorderLayout extends BLayoutManager
 
         BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(width, -1);
             comp.setBounds(x, y, width, cpsize.height);
             y += (cpsize.height + _vgap);
             height -= (cpsize.height + _vgap);
@@ -171,7 +178,7 @@ public class BorderLayout extends BLayoutManager
 
         comp = _components[NORTH.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(width, -1);
             comp.setBounds(x, target.getHeight() - insets.top - cpsize.height,
                            width, cpsize.height);
             height -= (cpsize.height + _vgap);
@@ -179,7 +186,7 @@ public class BorderLayout extends BLayoutManager
 
         comp = _components[WEST.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(-1, -1);
             comp.setBounds(x, y, cpsize.width, height);
             x += (cpsize.width + _hgap);
             width -= (cpsize.width + _hgap);
@@ -187,7 +194,7 @@ public class BorderLayout extends BLayoutManager
 
         comp = _components[EAST.intValue()];
         if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize();
+            Dimension cpsize = comp.getPreferredSize(-1, -1);
             comp.setBounds(target.getWidth() - insets.right - cpsize.width, y,
                            cpsize.width, height);
             width -= (cpsize.width + _hgap);

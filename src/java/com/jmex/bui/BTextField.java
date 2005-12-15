@@ -241,7 +241,7 @@ public class BTextField extends BComponent
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize ()
+    protected Dimension computePreferredSize (int whint, int hhint)
     {
         Dimension d = (_glyphs == null) ?
             new Dimension(0, getLookAndFeel().getTextFactory().getHeight()) :
