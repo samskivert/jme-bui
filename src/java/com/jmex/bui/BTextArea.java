@@ -255,7 +255,6 @@ public class BTextArea extends BContainer
         d.height += _background.getTopInset();
         d.height += _background.getBottomInset();
 
-        System.out.println("PS: " + d);
         return d;
     }
 
