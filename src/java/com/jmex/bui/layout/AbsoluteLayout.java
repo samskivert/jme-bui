@@ -93,10 +93,7 @@ public class AbsoluteLayout extends BLayoutManager
             }
         }
 
-        // add in the insets
-        Insets insets = target.getInsets();
-        return new Dimension(rec.x + rec.width + insets.getHorizontal(),
-                             rec.y + rec.height + insets.getVertical());
+        return new Dimension(rec.x + rec.width, rec.y + rec.height);
     }
 
     // documentation inherited

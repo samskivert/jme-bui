@@ -52,11 +52,6 @@ public class VGroupLayout extends GroupLayout
         dims.height += (info.count - 1) * _gap;
 	dims.width = info.maxwid;
 
-	// account for the insets
-	Insets insets = target.getInsets();
-	dims.width += insets.left + insets.right;
-	dims.height += insets.top + insets.bottom;
-
 	return dims;
     }
 

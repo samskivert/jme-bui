@@ -81,9 +81,18 @@ public class BComponent
     {
         Dimension ps = _preferredSize;
         if (ps == null) {
+            // extract space from the hints for our insets
+            Insets insets = getInsets();
+            if (whint > 0) {
+                whint -= insets.getHorizontal();
+            }
+            if (hhint > 0) {
+                hhint -= insets.getVertical();
+            }
             ps = computePreferredSize(whint, hhint);
-            ps.width += getInsets().getHorizontal();
-            ps.height += getInsets().getVertical();
+            // now add our insets back into our preferred size
+            ps.width += insets.getHorizontal();
+            ps.height += insets.getVertical();
         }
         return ps;
     }

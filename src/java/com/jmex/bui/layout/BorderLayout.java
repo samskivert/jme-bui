@@ -111,15 +111,6 @@ public class BorderLayout extends BLayoutManager
         Dimension psize = new Dimension();
         int horizComps = 0, vertComps = 0;
 
-        // deduct the insets from the width and height hints
-        Insets insets = target.getInsets();
-        if (whint > 0) {
-            whint -= insets.getHorizontal();
-        }
-        if (hhint > 0) {
-            hhint -= insets.getVertical();
-        }
-
         BComponent comp = _components[SOUTH.intValue()];
         if (comp != null) {
             Dimension cpsize = comp.getPreferredSize(whint, -1);
@@ -151,10 +142,6 @@ public class BorderLayout extends BLayoutManager
         psize.width = Math.max(psize.width, centerWidth);
         psize.height += centerHeight;
         psize.height += Math.max(vertComps - 1, 0) * _vgap;
-
-        // add in the insets
-        psize.width += insets.getHorizontal();
-        psize.height += insets.getVertical();
 
         return psize;
     }

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import com.jmex.bui.BComponent;
 import com.jmex.bui.BContainer;
 import com.jmex.bui.util.Dimension;
-import com.jmex.bui.util.Insets;
 
 /**
  * Group layout managers lay out widgets in horizontal or vertical groups.
@@ -254,15 +253,6 @@ public abstract class GroupLayout extends BLayoutManager
 	int count = parent.getComponentCount();
 	DimenInfo info = new DimenInfo();
 	info.dimens = new Dimension[count];
-
-        // deduct the insets from the width and height hints
-        Insets insets = parent.getInsets();
-        if (whint > 0) {
-            whint -= insets.getHorizontal();
-        }
-        if (hhint > 0) {
-            hhint -= insets.getVertical();
-        }
 
 	for (int i = 0; i < count; i++) {
 	    BComponent child = parent.getComponent(i);

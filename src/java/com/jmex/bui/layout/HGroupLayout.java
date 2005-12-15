@@ -52,11 +52,6 @@ public class HGroupLayout extends GroupLayout
 	dims.width += (info.count - 1) * _gap;
 	dims.height = info.maxhei;
 
-	// account for the insets
-	Insets insets = target.getInsets();
-	dims.width += insets.left + insets.right;
-	dims.height += insets.top + insets.bottom;
-
 	return dims;
     }
 

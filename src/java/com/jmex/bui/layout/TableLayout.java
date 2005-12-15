@@ -85,9 +85,8 @@ public class TableLayout extends BLayoutManager
         BContainer target, int whint, int hhint)
     {
         computeMetrics(target);
-        Insets insets = target.getInsets();
-        int cx = (_columnWidths.length-1) * _colgap + insets.getHorizontal();
-        int rx = (computeRows(target)-1) * _rowgap + insets.getVertical();
+        int cx = (_columnWidths.length-1) * _colgap;
+        int rx = (computeRows(target)-1) * _rowgap;
         return new Dimension(sum(_columnWidths) + cx, sum(_rowHeights) + rx);
     }
 
