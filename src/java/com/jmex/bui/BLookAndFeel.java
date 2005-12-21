@@ -274,7 +274,8 @@ public class BLookAndFeel
         lnf.setBackground(ColorRGBA.black);
 //         URL url = getResource("rsrc/fonts/default.png");
 //         lnf.setTextFactory(new JMEBitmapTextFactory(url, 10, 16));
-        lnf.setTextFactory(new AWTTextFactory(new Font("Dialog", Font.PLAIN, 16)));
+        lnf.setTextFactory(
+            new AWTTextFactory(new Font("Dialog", Font.PLAIN, 16), false));
         lnf.setKeyMap(new DefaultKeyMap());
     }
 

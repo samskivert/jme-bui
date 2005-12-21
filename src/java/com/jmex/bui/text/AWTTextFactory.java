@@ -23,6 +23,7 @@ package com.jmex.bui.text;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -61,9 +62,10 @@ public class AWTTextFactory extends BTextFactory
     /**
      * Creates an AWT text factory with the supplied font.
      */
-    public AWTTextFactory (Font font)
+    public AWTTextFactory (Font font, boolean antialias)
     {
         _font = font;
+        _antialias = antialias;
         _attrs.put(TextAttribute.FONT, _font);
 
         // create an alpha state that we'll use to draw our text over the
@@ -111,6 +113,10 @@ public class AWTTextFactory extends BTextFactory
         TextLayout layout;
         try {
             gfx.setFont(_font);
+            if (_antialias) {
+                gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            }
 
             // stop at the next newline or the end of the line if there
             // are no newlines in the text
@@ -153,6 +159,10 @@ public class AWTTextFactory extends BTextFactory
         TextLayout layout;
         try {
             gfx.setFont(_font);
+            if (_antialias) {
+                gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            }
             layout = new TextLayout(text, _font, gfx.getFontRenderContext());
         } finally {
             gfx.dispose();
@@ -189,8 +199,6 @@ public class AWTTextFactory extends BTextFactory
             size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
         try {
-//             gfx.setColor(Color.blue);
-//             gfx.drawRect(0, 0, size.width-1, size.height-1);
             gfx.setColor(new Color(color.r, color.g, color.b, color.a));
             layout.draw(gfx, 0, layout.getAscent());
         } finally {
@@ -230,6 +238,7 @@ public class AWTTextFactory extends BTextFactory
     }
 
     protected Font _font;
+    protected boolean _antialias;
     protected HashMap _attrs = new HashMap();
     protected int _height;
     protected AlphaState _astate;
