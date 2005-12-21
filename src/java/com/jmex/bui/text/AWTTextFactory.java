@@ -20,6 +20,7 @@
 
 package com.jmex.bui.text;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -199,6 +200,11 @@ public class AWTTextFactory extends BTextFactory
             size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
         try {
+            // if we're antialiasing, we need to set a custom compositing rule
+            // to avoid incorrectly blending with the blank background
+            if (_antialias) {
+                gfx.setComposite(AlphaComposite.SrcOut);
+            }
             gfx.setColor(new Color(color.r, color.g, color.b, color.a));
             layout.draw(gfx, 0, layout.getAscent());
         } finally {
