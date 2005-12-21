@@ -44,14 +44,32 @@ public class TextureIcon extends BIcon
      */
     public TextureIcon (Texture texture, int width, int height)
     {
-        _texture = texture;
-        _texture.setApply(Texture.AM_REPLACE);
+        this(width, height);
+        setTexture(texture);
+    }
+
+    /**
+     * Creates a texture icon with no texture yet assigned. The icon will be
+     * blank until a texture is provided with a subsequent call to {@link
+     * #setTexture}.
+     */
+    public TextureIcon (int width, int height)
+    {
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
             createTextureState();
-        _tstate.setTexture(_texture);
-        _tstate.setEnabled(true);
         _width = width;
         _height = height;
+    }
+
+    /**
+     * Configures the texture to be used for this icon.
+     */
+    public void setTexture (Texture texture)
+    {
+        _texture = texture;
+        _texture.setApply(Texture.AM_REPLACE);
+        _tstate.setTexture(_texture);
+        _tstate.setEnabled(true);
     }
 
     // documentation inherited
@@ -71,14 +89,16 @@ public class TextureIcon extends BIcon
     {
         super.render(renderer, x, y);
 
-        RenderUtil.blendState.apply();
-        _tstate.apply();
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 0); GL11.glVertex3f(x, y, 0);
-        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(x, y + _height, 0);
-        GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x + _width, y + _height, 0);
-        GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x + _width, y, 0);
-        GL11.glEnd();
+        if (_texture != null) {
+            RenderUtil.blendState.apply();
+            _tstate.apply();
+            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glTexCoord2f(0, 0); GL11.glVertex3f(x, y, 0);
+            GL11.glTexCoord2f(0, 1); GL11.glVertex3f(x, y + _height, 0);
+            GL11.glTexCoord2f(1, 1); GL11.glVertex3f(x + _width, y + _height, 0);
+            GL11.glTexCoord2f(1, 0); GL11.glVertex3f(x + _width, y, 0);
+            GL11.glEnd();
+        }
     }
 
     protected Texture _texture;
