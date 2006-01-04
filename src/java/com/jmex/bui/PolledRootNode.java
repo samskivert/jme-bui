@@ -62,7 +62,7 @@ public class PolledRootNode extends BRootNode
     }
 
     // documentation inherited
-    protected void updateWorldData (float timePerFrame)
+    public void updateWorldData (float timePerFrame)
     {
         super.updateWorldData(timePerFrame);
 
