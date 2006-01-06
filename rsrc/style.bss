@@ -33,7 +33,7 @@ component:disabled {
 }
 
 button {
-  background: image "rsrc/textures/button_up.png";
+  background: image "rsrc/textures/button_up.png" tilexy;
   padding: 3 5;
 }
 
@@ -42,22 +42,22 @@ button:hover {
 }
 
 button:disabled {
-  background: image "rsrc/textures/button_disabled.png";
+  background: image "rsrc/textures/button_disabled.png" tilexy;
 }
 
 button:down {
-  background: image "rsrc/textures/button_down.png";
+  background: image "rsrc/textures/button_down.png" tilexy;
   color: #FF00FF;
   padding: 4 4 2 6;
 }
 
 button:selected {
-  background: image "rsrc/textures/button_down.png";
+  background: image "rsrc/textures/button_down.png" tilexy;
   padding: 4 4 2 6;
 }
 
 combobox {
-  background: image "rsrc/textures/button_up.png";
+  background: image "rsrc/textures/button_up.png" tilexy;
   padding: 3 5;
 }
 

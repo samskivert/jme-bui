@@ -36,7 +36,7 @@ import com.jme.util.TextureManager;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.background.BlankBackground;
-import com.jmex.bui.background.TiledBackground;
+import com.jmex.bui.background.ImageBackground;
 import com.jmex.bui.background.TintedBackground;
 import com.jmex.bui.border.BBorder;
 import com.jmex.bui.border.EmptyBorder;
@@ -412,8 +412,13 @@ public class BStyleSheet
             } else if (bprop.type.equals("image")) {
                 bprop.ipath = (String)args.get(1);
                 if (args.size() > 2) {
-                    bprop.scale = (String)args.get(2);
-                    // TODO: validate
+                    String scale = (String)args.get(2);
+                    Integer scval = (Integer)_ibconsts.get(scale);
+                    if (scval == null) {
+                        throw new IllegalArgumentException(
+                            "Unknown background scaling type: '" + scale + "'");
+                    }
+                    bprop.scale = scval.intValue();
                 }
 
             } else if (bprop.type.equals("blank")) {
@@ -464,29 +469,21 @@ public class BStyleSheet
 
         } else if (name.equals("text-align")) {
             String type = (String)args.get(0);
-            if (type.equals("center")) {
-                return new Integer(BConstants.CENTER);
-            } else if (type.equals("left")) {
-                return new Integer(BConstants.LEFT);
-            } else if (type.equals("right")) {
-                return new Integer(BConstants.RIGHT);
-            } else {
+            Object value = _taconsts.get(type);
+            if (value == null) {
                 throw new IllegalArgumentException(
                     "Unknown text-align type '" + type + "'");
             }
+            return value;
 
         } else if (name.equals("vertical-align")) {
             String type = (String)args.get(0);
-            if (type.equals("center")) {
-                return new Integer(BConstants.CENTER);
-            } else if (type.equals("top")) {
-                return new Integer(BConstants.TOP);
-            } else if (type.equals("bottom")) {
-                return new Integer(BConstants.BOTTOM);
-            } else {
+            Object value = _vaconsts.get(type);
+            if (value == null) {
                 throw new IllegalArgumentException(
                     "Unknown vertical-align type '" + type + "'");
             }
+            return value;
 
         } else if (name.equals("padding")) {
             Insets insets = new Insets();
@@ -604,7 +601,7 @@ public class BStyleSheet
         String type;
         ColorRGBA color;
         String ipath;
-        String scale;
+        int scale = ImageBackground.SCALE_XY;
 
         public Object resolve (ResourceProvider rsrcprov) {
             if (type.equals("solid")) {
@@ -619,7 +616,7 @@ public class BStyleSheet
                     return new BlankBackground();
                 }
                 // TODO: parse stretching/centering/tiling rule
-                return new TiledBackground(image);
+                return new ImageBackground(scale, image);
             } else {
                 return new BlankBackground();
             }
@@ -655,4 +652,29 @@ public class BStyleSheet
 
     protected ResourceProvider _rsrcprov;
     protected HashMap _rules = new HashMap();
+
+    protected static HashMap _taconsts = new HashMap();
+    protected static HashMap _vaconsts = new HashMap();
+    protected static HashMap _ibconsts = new HashMap();
+    static {
+        // alignment constants
+        _taconsts.put("left", new Integer(BConstants.LEFT));
+        _taconsts.put("right", new Integer(BConstants.RIGHT));
+        _taconsts.put("center", new Integer(BConstants.CENTER));
+
+        _vaconsts.put("center", new Integer(BConstants.CENTER));
+        _vaconsts.put("top", new Integer(BConstants.TOP));
+        _vaconsts.put("bottom", new Integer(BConstants.BOTTOM));
+
+        // background image constants
+        _ibconsts.put("centerxy", new Integer(ImageBackground.CENTER_XY));
+        _ibconsts.put("centerx", new Integer(ImageBackground.CENTER_X));
+        _ibconsts.put("centery", new Integer(ImageBackground.CENTER_Y));
+        _ibconsts.put("scalexy", new Integer(ImageBackground.SCALE_XY));
+        _ibconsts.put("scalex", new Integer(ImageBackground.SCALE_X));
+        _ibconsts.put("scaley", new Integer(ImageBackground.SCALE_Y));
+        _ibconsts.put("tilexy", new Integer(ImageBackground.TILE_XY));
+        _ibconsts.put("tilex", new Integer(ImageBackground.TILE_X));
+        _ibconsts.put("tiley", new Integer(ImageBackground.TILE_Y));
+    }
 }
