@@ -36,16 +36,22 @@ public class BDecoratedWindow extends BWindow
      * @param title the title of the window or null if no title bar is
      * desired.
      */
-    public BDecoratedWindow (BLookAndFeel lnf, String title)
+    public BDecoratedWindow (BStyleSheet style, String title)
     {
-        super(lnf, new BorderLayout(5, 5));
+        super(style, new BorderLayout(5, 5));
 
-        // set up our background and border from the look and feel
-        setBackground(lnf.createWindowBackground());
-        setBorder(lnf.createWindowBorder());
+//         // set up our background and border from the look and feel
+//         setBackground(lnf.createWindowBackground());
+//         setBorder(lnf.createWindowBorder());
 
         if (title != null) {
             add(new BLabel(title), BorderLayout.NORTH);
         }
+    }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "decoratedwindow";
     }
 }

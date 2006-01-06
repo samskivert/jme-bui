@@ -20,8 +20,6 @@
 
 package com.jmex.bui.background;
 
-import com.jme.renderer.Renderer;
-
 /**
  * A blank background.
  */
@@ -29,11 +27,5 @@ public class BlankBackground extends BBackground
 {
     public BlankBackground ()
     {
-        this(0, 0, 0, 0);
-    }
-
-    public BlankBackground (int left, int top, int right, int bottom)
-    {
-        super(left, top, right, bottom);
     }
 }

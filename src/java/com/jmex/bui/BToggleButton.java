@@ -29,8 +29,8 @@ import com.jmex.bui.icon.BIcon;
  */
 public class BToggleButton extends BButton
 {
-    /** A button state constant. Used to select a background. */
-    public static final int SELECTED = BButton.BACKGROUND_COUNT;
+    /** Indicates that this button is in the selected state. */
+    public static final int SELECTED = BButton.STATE_COUNT + 0;
 
     /**
      * Creates a button with the specified textual label.
@@ -80,9 +80,26 @@ public class BToggleButton extends BButton
     }
 
     // documentation inherited
-    protected int getBackgroundCount ()
+    public int getState ()
     {
-        return BButton.BACKGROUND_COUNT + 1;
+        int state = super.getState();
+        return (state == DISABLED || !_selected) ? state : SELECTED;
+    }
+
+    // documentation inherited
+    protected int getStateCount ()
+    {
+        return STATE_COUNT;
+    }
+
+    // documentation inherited
+    protected String getStatePseudoClass (int state)
+    {
+        if (state >= BButton.STATE_COUNT) {
+            return STATE_PCLASSES[state-BButton.STATE_COUNT];
+        } else {
+            return super.getStatePseudoClass(state);
+        }
     }
 
     // documentation inherited
@@ -92,17 +109,9 @@ public class BToggleButton extends BButton
         super.fireAction(when, modifiers);
     }
 
-    // documentation inherited
-    protected int getState ()
-    {
-        int state = super.getState();
-        if (state != DOWN) {
-            return _selected ? SELECTED : state;
-        } else {
-            return state;
-        }
-    }
-
     /** Used to track whether we are selected or not. */
     protected boolean _selected;
+
+    protected static final int STATE_COUNT = BButton.STATE_COUNT + 1;
+    protected static final String[] STATE_PCLASSES = { "selected" };
 }

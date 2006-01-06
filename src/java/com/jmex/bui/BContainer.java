@@ -209,6 +209,12 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "container";
+    }
+
+    // documentation inherited
     protected void layout ()
     {
         if (_layout != null) {

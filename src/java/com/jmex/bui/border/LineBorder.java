@@ -40,9 +40,9 @@ public class LineBorder extends BBorder
     }
 
     // documentation inherited
-    public Insets getInsets ()
+    public Insets adjustInsets (Insets insets)
     {
-        return ONE_PIXEL_INSETS;
+        return ONE_PIXEL_INSETS.add(insets);
     }
 
     // documentation inherited

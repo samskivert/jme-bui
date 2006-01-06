@@ -29,28 +29,17 @@ import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.icon.BIcon;
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
- * Displays a simple button that can be depressed and which generates an
- * action event when pressed and released.
+ * Displays a simple button that can be depressed and which generates an action
+ * event when pressed and released.
  */
-public class BButton extends BComponent
+public class BButton extends BLabel
     implements BConstants
 {
-    /** A button state constant. Used to select a background. */
-    public static final int UP = 0;
-
-    /** A button state constant. Used to select a background. */
-    public static final int OVER = 1;
-
-    /** A button state constant. Used to select a background. */
-    public static final int DOWN = 2;
-
-    /** A button state constant. Used to select a background. */
-    public static final int DISABLED = 3;
-
-    /** The total number of backgrounds available for the button. */
-    public static final int BACKGROUND_COUNT = 4;
+    /** Indicates that this button is in the down state. */
+    public static final int DOWN = BComponent.STATE_COUNT + 0;
 
     /**
      * Creates a button with the specified textual label.
@@ -77,10 +66,8 @@ public class BButton extends BComponent
      */
     public BButton (String text, ActionListener listener, String action)
     {
-        _label = new BLabel("");
-        _label.setHorizontalAlignment(BLabel.CENTER);
+        super(text);
         _action = action;
-        setText(text);
         if (listener != null) {
             addListener(listener);
         }
@@ -93,52 +80,9 @@ public class BButton extends BComponent
      */
     public BButton (BIcon icon, String action)
     {
-        _label = new BLabel(icon);
-        _label.setHorizontalAlignment(BLabel.CENTER);
+        super(icon);
         _action = action;
         invalidate();
-    }
-
-    /**
-     * Returns the text being displayed on this button.
-     */
-    public String getText ()
-    {
-        return _label.getText();
-    }
-
-    /**
-     * Configures the text to be displayed on this button.
-     */
-    public void setText (String text)
-    {
-        _label.setText(text);
-    }
-
-    /**
-     * Returns the icon being displayed on this button.
-     */
-    public BIcon getIcon ()
-    {
-        return _label.getIcon();
-    }
-
-    /**
-     * Configures the icon to be displayed on this button.
-     */
-    public void setIcon (BIcon icon)
-    {
-        _label.setIcon(icon);
-    }
-
-    /**
-     * Sets the orientation of the label with respect to its icon. If the
-     * horizontal (the default) the text is displayed to the right of the
-     * icon, if vertical the text is displayed below it.
-     */
-    public void setOrientation (int orient)
-    {
-        _label.setOrientation(orient);
     }
 
     /**
@@ -157,57 +101,18 @@ public class BButton extends BComponent
         return _action;
     }
 
-    /**
-     * Configures the horizontal alignment of this button's text.
-     */
-    public void setHorizontalAlignment (int align)
-    {
-        _label.setHorizontalAlignment(align);
-    }
-
-    /**
-     * Returns the current horizontal alignment of this button's text.
-     */
-    public int getHorizontalAlignment ()
-    {
-        return _label.getHorizontalAlignment();
-    }
-
-    /**
-     * Configures the vertical alignment of this button's text.
-     */
-    public void setVerticalAlignment (int align)
-    {
-        _label.setVerticalAlignment(align);
-    }
-
-    /**
-     * Returns the current vertical alignment of this button's text.
-     */
-    public int getVerticalAlignment ()
-    {
-        return _label.getVerticalAlignment();
-    }
-
     // documentation inherited
-    public void setBounds (int x, int y, int width, int height)
+    public int getState ()
     {
-        super.setBounds(x, y, width, height);
+        int state = super.getState();
+        if (state == DISABLED) {
+            return state;
+        }
 
-        _label.setBounds(_background.getLeftInset(), _background.getTopInset(),
-                         _background.getContentWidth(width),
-                         _background.getContentHeight(height));
-    }
-
-    // documentation inherited
-    public void setEnabled (boolean enabled)
-    {
-        int ostate = getState();
-        super.setEnabled(enabled);
-        _label.setEnabled(enabled);
-        int state = getState();
-        if (state != ostate) {
-            stateDidChange();
+        if (_armed && _pressed) {
+            return DOWN;
+        } else {
+            return state; // most likely HOVER
         }
     }
 
@@ -221,12 +126,10 @@ public class BButton extends BComponent
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
-                _hover = true;
                 _armed = _pressed;
                 break;
 
             case MouseEvent.MOUSE_EXITED:
-                _hover = false;
                 _armed = false;
                 break;
 
@@ -260,45 +163,39 @@ public class BButton extends BComponent
     }
 
     // documentation inherited
-    protected void wasAdded ()
+    protected String getDefaultStyleClass ()
     {
-        super.wasAdded();
+        return "button";
+    }
 
-        // we can now obtain our backgrounds
-        if (_backgrounds == null) {
-            int state = getState();
-            _backgrounds = new BBackground[getBackgroundCount()];
-            for (int ii = 0; ii < _backgrounds.length; ii++) {
-                _backgrounds[ii] = getLookAndFeel().createButtonBack(ii);
-            }
-            _background = _backgrounds[getState()];
+    // documentation inherited
+    protected int getStateCount ()
+    {
+        return STATE_COUNT;
+    }
+
+    // documentation inherited
+    protected String getStatePseudoClass (int state)
+    {
+        if (state >= BComponent.STATE_COUNT) {
+            return STATE_PCLASSES[state-BComponent.STATE_COUNT];
+        } else {
+            return super.getStatePseudoClass(state);
         }
-
-        // we need to handle our children by hand as we're not a container
-        _label.setParent(this);
-        _label.wasAdded();
-    }
-
-    /** Used by the {@link BToggleButton} to add an additional state. */
-    protected int getBackgroundCount ()
-    {
-        return BACKGROUND_COUNT;
     }
 
     // documentation inherited
-    protected void layout ()
+    protected void configureStyle (BStyleSheet style)
     {
-        super.layout();
+        super.configureStyle(style);
 
-        // we need to lay out our children by hand as we're not a container
-        _label.layout();
-    }
-
-    // documentation inherited
-    protected void renderComponent (Renderer renderer)
-    {
-        super.renderComponent(renderer);
-        _label.render(renderer);
+        // check to see if our stylesheet provides us with an icon
+        if (_label.getIcon() == null) {
+            BIcon icon = style.getIcon(this, getStatePseudoClass(DEFAULT));
+            if (icon != null) {
+                _label.setIcon(icon);
+            }
+        }
     }
 
     /**
@@ -311,46 +208,9 @@ public class BButton extends BComponent
         dispatchEvent(new ActionEvent(this, when, modifiers, _action));
     }
 
-    /**
-     * Returns the "state" this button should be in.
-     */
-    protected int getState ()
-    {
-        if (!_enabled) {
-            return DISABLED;
-        } else if (_armed && _pressed) {
-            return DOWN;
-        } else if (_hover) {
-            return OVER;
-        } else {
-            return UP;
-        }
-    }
-
-    /**
-     * Called when the button's state has changed, switches to the
-     * appropriate background for that state.
-     */
-    protected void stateDidChange ()
-    {
-        if (_backgrounds == null) {
-            return;
-        }
-
-        int state = getState();
-        _background = _backgrounds[state];
-        _label.setLocation(_background.getLeftInset(),
-                           _background.getTopInset());
-    }
-
-    // documentation inherited
-    protected Dimension computePreferredSize (int whint, int hhint)
-    {
-        return new Dimension(_label.getPreferredSize(whint, hhint));
-    }
-
-    protected BLabel _label;
-    protected BBackground[] _backgrounds;
-    protected boolean _hover, _armed, _pressed;
+    protected boolean _armed, _pressed;
     protected String _action;
+
+    protected static final int STATE_COUNT = BComponent.STATE_COUNT + 1;
+    protected static final String[] STATE_PCLASSES = { "down" };
 }

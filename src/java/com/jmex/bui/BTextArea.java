@@ -22,6 +22,12 @@ package com.jmex.bui;
 
 import java.util.ArrayList;
 
+import com.jme.math.Vector3f;
+import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
+import com.jme.scene.Text;
+import com.jme.system.DisplaySystem;
+
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.ChangeEvent;
@@ -29,11 +35,6 @@ import com.jmex.bui.event.ChangeListener;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.BTextFactory;
 import com.jmex.bui.util.Dimension;
-import com.jme.math.Vector3f;
-import com.jme.renderer.ColorRGBA;
-import com.jme.renderer.Renderer;
-import com.jme.scene.Text;
-import com.jme.system.DisplaySystem;
 
 /**
  * Displays one or more lines of text which may contain basic formatting
@@ -166,6 +167,16 @@ public class BTextArea extends BContainer
         return _lines.size();
     }
 
+    /**
+     * Returns a text factory suitable for creating text in the style defined
+     * by the component's current state.
+     */
+    public BTextFactory getTextFactory ()
+    {
+        BTextFactory textfact = _textfacts[getState()];
+        return (textfact != null) ? textfact : _textfacts[DEFAULT];
+    }
+
     // documentation inherited
     public void setEnabled (boolean enabled)
     {
@@ -177,26 +188,27 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
-    public void wasAdded ()
-    {
-        super.wasAdded();
-
-        // create our background
-        _background = getLookAndFeel().createTextBack();
-    }
-
-    // documentation inherited
-    public void wasRemoved ()
-    {
-        super.wasRemoved();
-    }
-
-    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
 
         // TBD
+    }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "textarea";
+    }
+
+    // documentation inherited
+    protected void configureStyle (BStyleSheet style)
+    {
+        super.configureStyle(style);
+
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            _textfacts[ii] = style.getTextFactory(this, getStatePseudoClass(ii));
+        }
     }
 
     // documentation inherited
@@ -212,8 +224,8 @@ public class BTextArea extends BContainer
     {
         super.renderComponent(renderer);
 
-        int x = _background.getLeftInset();
-        int y = _height - _background.getTopInset();
+        int x = getInsets().left;
+        int y = _height - getInsets().top;
 
         int start = _model.getValue(), stop = start + _model.getExtent();
         for (int ii = start; ii < stop; ii++) {
@@ -226,8 +238,6 @@ public class BTextArea extends BContainer
     // documentation inherited
     protected Dimension computePreferredSize (int whint, int hhint)
     {
-        int hinset = _background.getLeftInset() + _background.getRightInset();
-
         // lay out our text if we have not yet done so
         if (_lines.size() == 0) {
             if (_prefWidth > 0) {
@@ -238,7 +248,6 @@ public class BTextArea extends BContainer
                 // arbitrarily wide lines
                 whint = Short.MAX_VALUE;
             }
-            whint -= hinset;
             refigureContents(whint);
         }
 
@@ -249,11 +258,6 @@ public class BTextArea extends BContainer
             d.width = Math.max(line.getWidth(), d.width);
             d.height += line.height;
         }
-
-        // add our background insets
-        d.width += hinset;
-        d.height += _background.getTopInset();
-        d.height += _background.getBottomInset();
 
         return d;
     }
@@ -271,10 +275,7 @@ public class BTextArea extends BContainer
         // remove and recreate our existing lines
         _lines.clear();
 
-        BLookAndFeel lnf = getLookAndFeel();
-        ColorRGBA fg = lnf.getForeground(isEnabled());
-        BTextFactory tfact = lnf.getTextFactory();
-        int insets = _background.getLeftInset() + _background.getRightInset();
+        int insets = getInsets().getHorizontal();
         int maxWidth = (width - insets);
 
         // wrap our text into lines
@@ -285,9 +286,9 @@ public class BTextArea extends BContainer
                 _lines.add(current = new Line());
             }
             int offset = 0;
-            ColorRGBA color = (run.color == null) ? fg : run.color;
+            ColorRGBA color = (run.color == null) ? getColor() : run.color;
             while ((offset = current.addRun(
-                        tfact, run, color, maxWidth, offset)) > 0) {
+                        getTextFactory(), run, color, maxWidth, offset)) > 0) {
                 _lines.add(current = new Line());
             }
             if (run.endsLine) {
@@ -296,7 +297,7 @@ public class BTextArea extends BContainer
         }
 
         // determine how many lines we can display in total
-        insets = _background.getTopInset() + _background.getBottomInset();
+        insets = getInsets().getVertical();
 
         // start at the last line and see how many we can fit
         int lines = 0, lheight = 0;
@@ -406,7 +407,7 @@ public class BTextArea extends BContainer
         }
     }
 
-    protected BBackground _background;
+    protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
     protected int _prefWidth = -1;
     protected ArrayList _runs = new ArrayList();

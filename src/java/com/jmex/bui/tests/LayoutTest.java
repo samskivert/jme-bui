@@ -20,6 +20,8 @@
 
 package com.jmex.bui.tests;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -30,7 +32,6 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
-import com.jmex.bui.border.LineBorder;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.icon.ImageIcon;
@@ -55,12 +56,22 @@ public class LayoutTest extends SimpleGame
         // we don't hide the cursor
         MouseInput.get().setCursorVisible(true);
 
-        BLookAndFeel lnf = BLookAndFeel.getDefaultLookAndFeel();
-        BWindow window = new BDecoratedWindow(lnf, null);
+        // load up the default BUI stylesheet
+        BStyleSheet style = null;
+        try {
+            InputStream stin = getClass().getClassLoader().
+                getResourceAsStream("rsrc/style.bss");
+            style = new BStyleSheet(new InputStreamReader(stin),
+                                    new BStyleSheet.DefaultResourceProvider());
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            System.exit(-1);
+        }
+
+        BWindow window = new BDecoratedWindow(style, null);
         URL icon = getClass().getClassLoader().
-            getResource("rsrc/textures/button_up.png");
+            getResource("rsrc/textures/scroll_up.png");
 //         BLabel label = new BLabel(new ImageIcon(icon));
-//         label.setHorizontalAlignment(BLabel.CENTER);
 //         label.setText("NORTH");
 //         window.add(label, BorderLayout.NORTH);
 //         window.add(new BLabel("EAST"), BorderLayout.EAST);
@@ -80,8 +91,7 @@ public class LayoutTest extends SimpleGame
         window.setSize(200, 150);
         window.setLocation(25, 25);
 
-        window = new BWindow(lnf, new BorderLayout(5, 5));
-        window.setBorder(new LineBorder(ColorRGBA.black));
+        window = new BWindow(style, new BorderLayout(5, 5));
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
         window.add(_input = new BTextField(), BorderLayout.SOUTH);
         window.add(new BScrollBar(BScrollBar.VERTICAL, _text.getScrollModel()),
@@ -101,8 +111,7 @@ public class LayoutTest extends SimpleGame
         _root.addWindow(window);
         window.setBounds(300, 125, 400, 250);
 
-        window = new BWindow(lnf, GroupLayout.makeVStretch());
-        window.setBorder(new LineBorder(ColorRGBA.black));
+        window = new BWindow(style, GroupLayout.makeVStretch());
 
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
@@ -122,8 +131,7 @@ public class LayoutTest extends SimpleGame
         Dimension ps = window.getPreferredSize(-1, -1);
         window.setBounds(100, 300, ps.width, 2*ps.height/3);
 
-        window = new BWindow(lnf, new BorderLayout());
-        window.setBorder(new LineBorder(ColorRGBA.black));
+        window = new BWindow(style, new BorderLayout());
         cont = new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
         cont.add(new BToggleButton(new ImageIcon(icon), ""));
         BLabel label = new BLabel("Horizontal");
@@ -133,7 +141,6 @@ public class LayoutTest extends SimpleGame
         label = new BLabel("Vertical");
         label.setIcon(new ImageIcon(icon));
         label.setIconTextGap(1);
-        label.setHorizontalAlignment(BLabel.CENTER);
         label.setOrientation(BLabel.VERTICAL);
         cont.add(label);
         cont.add(new BLabel("Four"));
@@ -147,8 +154,7 @@ public class LayoutTest extends SimpleGame
         window.pack();
         window.setLocation(300, 400);
 
-        window = new BWindow(lnf, new AbsoluteLayout());
-        window.setBorder(new LineBorder(ColorRGBA.black));
+        window = new BWindow(style, new AbsoluteLayout());
         window.add(new BLabel("+0+0"), new Point(0, 0));
         window.add(new BLabel("+10+35"), new Point(10, 35));
         window.add(new BButton("200x25+50+75"), new Rectangle(50, 75, 200, 25));

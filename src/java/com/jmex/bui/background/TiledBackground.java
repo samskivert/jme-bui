@@ -57,15 +57,33 @@ public class TiledBackground extends BBackground
     /**
      * Creates a tiled background from the specified source image data.
      */
-    public TiledBackground (URL source, int left, int top,
-                            int right, int bottom)
+    public TiledBackground (URL source)
     {
-        super(left, top, right, bottom);
+        this(TextureManager.loadImage(source, true));
+    }
 
-        // load up the background image as a texture
-        _image = TextureManager.loadImage(source, true);
+    /**
+     * Creates a tiled background from the specified source image data.
+     */
+    public TiledBackground (Image image)
+    {
+        _image = image;
         _twidth = _image.getWidth();
         _theight = _image.getHeight();
+    }
+
+    // documentation inherited
+    public int getMinimumWidth ()
+    {
+        return _twidth;
+    }
+
+    /**
+     * Returns the minimum height allowed by this background.
+     */
+    public int getMinimumHeight ()
+    {
+        return _theight;
     }
 
     // documentation inherited

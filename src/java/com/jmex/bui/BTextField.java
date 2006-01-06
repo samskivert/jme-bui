@@ -39,7 +39,7 @@ import com.jmex.bui.util.Insets;
 /**
  * Displays and allows for the editing of a single line of text.
  */
-public class BTextField extends BComponent
+public class BTextField extends BTextComponent
     implements EditCommands
 {
     public BTextField ()
@@ -72,9 +72,7 @@ public class BTextField extends BComponent
         }
     }
 
-    /**
-     * Returns the contents of this text field.
-     */
+    // documentation inherited
     public String getText ()
     {
         return _text;
@@ -96,25 +94,9 @@ public class BTextField extends BComponent
     }
 
     // documentation inherited
-    public void setEnabled (boolean enabled)
-    {
-        boolean wasEnabled = isEnabled();
-        super.setEnabled(enabled);
-        if (isAdded() && wasEnabled != isEnabled()) {
-            recreateGlyphs();
-        }
-    }
-
-    // documentation inherited
     public void wasAdded ()
     {
         super.wasAdded();
-
-        // look up our keymap
-        _keymap = getLookAndFeel().getKeyMap();
-
-        // create our background
-        _background = getLookAndFeel().createTextBack();
 
         // create our underlying glyphs
         recreateGlyphs();
@@ -203,11 +185,33 @@ public class BTextField extends BComponent
     }
 
     // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "textfield";
+    }
+
+    // documentation inherited
+    protected void configureStyle (BStyleSheet style)
+    {
+        super.configureStyle(style);
+
+        // look up our keymap
+        _keymap = style.getKeyMap(this, null);
+    }
+
+    // documentation inherited
     protected void layout ()
     {
         super.layout();
 
         // TODO cope with becoming smaller or larger
+    }
+
+    // documentation inherited
+    protected void stateDidChange ()
+    {
+        super.stateDidChange();
+        recreateGlyphs();
     }
 
     // documentation inherited
@@ -234,7 +238,7 @@ public class BTextField extends BComponent
             GL11.glColor4f(c.r, c.g, c.b, c.a);
             GL11.glBegin(GL11.GL_LINE_STRIP);
             GL11.glVertex2f(cx, insets.bottom);
-            int cheight = getLookAndFeel().getTextFactory().getHeight();
+            int cheight = getTextFactory().getHeight();
             GL11.glVertex2f(cx, insets.bottom + cheight);
             GL11.glEnd();
         }
@@ -244,7 +248,7 @@ public class BTextField extends BComponent
     protected Dimension computePreferredSize (int whint, int hhint)
     {
         Dimension d = (_glyphs == null) ?
-            new Dimension(0, getLookAndFeel().getTextFactory().getHeight()) :
+            new Dimension(0, getTextFactory().getHeight()) :
             new Dimension(_glyphs.getSize());
         if (_prefWidth != -1) {
             d.width = _prefWidth;
@@ -265,9 +269,7 @@ public class BTextField extends BComponent
             return;
         }
 
-        BLookAndFeel lnf = getLookAndFeel();
-        _glyphs = lnf.getTextFactory().createText(
-            getDisplayText(), lnf.getForeground(isEnabled()));
+        _glyphs = getTextFactory().createText(getDisplayText(), getColor());
     }
 
     /**

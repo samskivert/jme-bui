@@ -20,9 +20,8 @@
 
 package com.jmex.bui;
 
-import com.jmex.bui.background.BBackground;
-import com.jmex.bui.util.Insets;
 import com.jme.renderer.Renderer;
+
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.ChangeEvent;
@@ -31,7 +30,10 @@ import com.jmex.bui.event.MouseAdapter;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.MouseListener;
 import com.jmex.bui.event.MouseMotionListener;
+
+import com.jmex.bui.background.BBackground;
 import com.jmex.bui.layout.BorderLayout;
+import com.jmex.bui.util.Insets;
 
 /**
  * Displays a scroll bar for all your horizontal and vertical scrolling
@@ -84,21 +86,28 @@ public class BScrollBar extends BContainer
         super.wasAdded();
 
         // create our buttons and backgrounds
-        BLookAndFeel lnf = getLookAndFeel();
-        add(_well = new BComponent(), BorderLayout.CENTER);
-        _well.setBackground(lnf.createScrollWell(_orient));
+        String oprefix = "scrollbar_" + ((_orient == HORIZONTAL) ? "h" : "v");
+        _well = new BComponent();
+        _well.setStyleClass(oprefix + "well");
+        add(_well, BorderLayout.CENTER);
         _well.addListener(_wellListener);
-        add(_thumb = new BComponent(), BorderLayout.IGNORE);
-        _thumb.setBackground(lnf.createScrollThumb(_orient));
+
+        _thumb = new BComponent();
+        _thumb.setStyleClass(oprefix + "thumb");
+        add(_thumb, BorderLayout.IGNORE);
         _thumb.addListener(_thumbListener);
 
-        add(_less = lnf.createScrollButton(_orient, true),
-            _orient == HORIZONTAL ? BorderLayout.WEST : BorderLayout.NORTH);
+        _less = new BButton("");
+        _less.setStyleClass(oprefix + "less");
+        add(_less, _orient == HORIZONTAL ?
+            BorderLayout.WEST : BorderLayout.NORTH);
         _less.addListener(_buttoner);
         _less.setAction("less");
 
-        add(_more = lnf.createScrollButton(_orient, false),
-            _orient == HORIZONTAL ? BorderLayout.EAST : BorderLayout.SOUTH);
+        _more = new BButton("");
+        _more.setStyleClass(oprefix + "more");
+        add(_more, _orient == HORIZONTAL ?
+            BorderLayout.EAST : BorderLayout.SOUTH);
         _more.addListener(_buttoner);
         _more.setAction("more");
     }
@@ -159,6 +168,12 @@ public class BScrollBar extends BContainer
         }
         _thumb.setBounds(_well.getX() + winsets.left + tx,
                          _well.getY() + winsets.bottom + ty, twidth, theight);
+    }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "scrollbar";
     }
 
     // documentation inherited

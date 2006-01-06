@@ -25,33 +25,65 @@ import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
 
+import com.jme.input.KeyInput;
+import com.jme.math.Vector3f;
+import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
+import com.jme.scene.Spatial;
+
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.border.BBorder;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.ComponentListener;
 import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 import com.jmex.bui.util.Rectangle;
-import com.jme.input.KeyInput;
-import com.jme.math.Vector3f;
-import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 
 /**
- * The basic entity in the BUI user interface system. A hierarchy of
- * components and component derivations make up a user interface.
+ * The basic entity in the BUI user interface system. A hierarchy of components
+ * and component derivations make up a user interface.
  */
 public class BComponent
 {
+    /** The default component state. This is used to select the component's
+     * style pseudoclass among other things. */
+    public static final int DEFAULT = 0;
+
+    /** A component state indicating that the mouse is hovering over the
+     * component. This is used to select the component's style pseudoclass
+     * among other things. */
+    public static final int HOVER = 1;
+
+    /** A component state indicating that the component is disabled. This is
+     * used to select the component's style pseudoclass among other things. */
+    public static final int DISABLED = 2;
+
     /**
-     * Configures this component with a look and feel that will be used to
-     * render it and all of its children (unless those children are
-     * configured themselves with a custom look and feel).
+     * Configures this component with a custom stylesheet class. By default a
+     * component's class is defined by its component type (label, button,
+     * checkbox, etc.) but one can provide custom style information to a
+     * component by configuring it with a custom class and defining that class
+     * in the applicable stylesheet.
      */
-    public void setLookAndFeel (BLookAndFeel lnf)
+    public void setStyleClass (String styleClass)
     {
-        _lnf = lnf;
+        if (isAdded()) {
+            System.err.println("Warning: attempt to set style class after " +
+                               "component was added to the interface " +
+                               "heirarchy [comp=" + this + "].");
+            Thread.dumpStack();
+        }
+        _styleClass = styleClass;
+    }
+
+    /**
+     * Returns the Style class to be used for this component.
+     */
+    public String getStyleClass ()
+    {
+        return (_styleClass == null) ? getDefaultStyleClass() : _styleClass;
     }
 
     /**
@@ -94,6 +126,15 @@ public class BComponent
             ps.width += insets.getHorizontal();
             ps.height += insets.getVertical();
         }
+
+        // now make sure we're not smaller in either dimension than our
+        // background will allow
+        BBackground background = getBackground();
+        if (background != null) {
+            ps.width = Math.max(ps.width, background.getMinimumWidth());
+            ps.height = Math.max(ps.height, background.getMinimumHeight());
+        }
+
         return ps;
     }
 
@@ -152,18 +193,22 @@ public class BComponent
     }
 
     /**
-     * Returns the insets configured on this component. If a component has
-     * a border, that border will provide insets for the component.
-     * <code>null</code> will never be returned, an {@link Insets}
-     * instance with all fields set to zero will be returned instead.
+     * Returns the insets configured on this component. <code>null</code> will
+     * never be returned, an {@link Insets} instance with all fields set to
+     * zero will be returned instead.
      */
     public Insets getInsets ()
     {
-        Insets insets = (_border == null) ? ZERO_INSETS : _border.getInsets();
-        if (_background != null) {
-            insets = _background.adjustInsets(insets);
-        }
-        return insets;
+        return _insets[getState()];
+    }
+
+    /**
+     * Returns the (foreground) color configured for this component.
+     */
+    public ColorRGBA getColor ()
+    {
+        ColorRGBA color = _colors[getState()];
+        return (color != null) ? color : _colors[DEFAULT];
     }
 
     /**
@@ -175,26 +220,12 @@ public class BComponent
     }
 
     /**
-     * Configures this component with the specified border. Pass null to
-     * clear out this component's border.
+     * Returns the currently active border for this component.
      */
-    public void setBorder (BBorder border)
+    public BBorder getBorder ()
     {
-        BBorder oborder = _border;
-        _border = border;
-        if (oborder != border) {
-            invalidate();
-        }
-    }
-
-    /**
-     * Configures this component with a background. This should be called
-     * before any components are added to the window to ensure proper
-     * render order.
-     */
-    public void setBackground (BBackground background)
-    {
-        _background = background;
+        BBorder border = _borders[getState()];
+        return (border != null) ? border : _borders[DEFAULT];
     }
 
     /**
@@ -202,7 +233,19 @@ public class BComponent
      */
     public BBackground getBackground ()
     {
-        return _background;
+        BBackground background = _backgrounds[getState()];
+        return (background != null) ? background : _backgrounds[DEFAULT];
+    }
+
+    /**
+     * Configures the background for this component for the specified state.
+     * This must only be called after the component has been added to the
+     * interface heirarchy or the value will be overridden by the stylesheet
+     * associated with this component.
+     */
+    public void setBackground (int state, BBackground background)
+    {
+        _backgrounds[state] = background;
     }
 
     /**
@@ -212,7 +255,10 @@ public class BComponent
      */
     public void setEnabled (boolean enabled)
     {
-        _enabled = enabled;
+        if (enabled != _enabled) {
+            _enabled = enabled;
+            stateDidChange();
+        }
     }
 
     /**
@@ -222,6 +268,15 @@ public class BComponent
     public boolean isEnabled ()
     {
         return _enabled;
+    }
+
+    /**
+     * Returns the state of this component, at this level just {@link #DEFAULT}
+     * and {@link #DISABLED}.
+     */
+    public int getState ()
+    {
+        return _enabled ? (_hover ? HOVER : DEFAULT) : DISABLED;
     }
 
     /**
@@ -446,6 +501,25 @@ public class BComponent
             }
         }
 
+        // handle mouse hover detection
+        if (_enabled && event instanceof MouseEvent) {
+            int ostate = getState();
+            MouseEvent mev = (MouseEvent)event;
+            switch (mev.getType()) {
+            case MouseEvent.MOUSE_ENTERED:
+                _hover = true;
+                break;
+            case MouseEvent.MOUSE_EXITED:
+                _hover = false;
+                break;
+            }
+
+            // update our component state if necessary
+            if (getState() != ostate) {
+                stateDidChange();
+            }
+        }
+
         // dispatch this event to our listeners
         if (_listeners != null) {
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
@@ -479,6 +553,28 @@ public class BComponent
      */
     protected void wasAdded ()
     {
+        configureStyle(getWindow().getStyleSheet());
+    }
+
+    /**
+     * Instructs this component to fetch its style configuration from the
+     * supplied style sheet. This method is called when a component is added to
+     * the interface hierarchy.
+     */
+    protected void configureStyle (BStyleSheet style)
+    {
+        _preferredSize = style.getSize(this, null);
+
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            _colors[ii] = style.getColor(this, getStatePseudoClass(ii));
+            _insets[ii] = style.getInsets(this, getStatePseudoClass(ii));
+            _borders[ii] = style.getBorder(this, getStatePseudoClass(ii));
+            if (_borders[ii] != null) {
+                _insets[ii] = _borders[ii].adjustInsets(_insets[ii]);
+            }
+            _backgrounds[ii] =
+                style.getBackground(this, getStatePseudoClass(ii));
+        }
     }
 
     /**
@@ -498,8 +594,9 @@ public class BComponent
      */
     protected void renderBackground (Renderer renderer)
     {
-        if (_background != null) {
-            _background.render(renderer, 0, 0, _width, _height);
+        BBackground background = getBackground();
+        if (background != null) {
+            background.render(renderer, 0, 0, _width, _height);
         }
     }
 
@@ -508,8 +605,9 @@ public class BComponent
      */
     protected void renderBorder (Renderer renderer)
     {
-        if (_border != null) {
-            _border.render(renderer, 0, 0, _width, _height);
+        BBorder border = getBorder();
+        if (border != null) {
+            border.render(renderer, 0, 0, _width, _height);
         }
     }
 
@@ -523,13 +621,49 @@ public class BComponent
     }
 
     /**
-     * Returns a reference to the look and feel in scope for this
-     * component.
+     * Returns the default stylesheet class to be used for all instances of
+     * this component. Derived classes will likely want to override this method
+     * and set up a default class for their type of component.
      */
-    protected BLookAndFeel getLookAndFeel ()
+    protected String getDefaultStyleClass ()
     {
-        return (_lnf == null && _parent != null) ?
-            _parent.getLookAndFeel() : _lnf;
+        return "component";
+    }
+
+    /**
+     * Returns the number of different states that this component can take.
+     * These states correspond to stylesheet pseudoclasses that allow
+     * components to customize their configuration based on whether they are
+     * enabled or disabled, or pressed if they are a button, etc.
+     */
+    protected int getStateCount ()
+    {
+        return STATE_COUNT;
+    }
+
+    /**
+     * Returns the pseudoclass identifier for the specified component state.
+     * This string will be the way that the state is identified in the
+     * associated stylesheet. For example, the {@link #DISABLED} state maps to
+     * <code>disabled</code> and is configured like so:
+     *
+     * <pre>
+     * component:disabled {
+     *    color: #CCCCCC; // etc.
+     * }
+     * </pre>
+     */
+    protected String getStatePseudoClass (int state)
+    {
+        return STATE_PCLASSES[state];
+    }
+
+    /**
+     * Called when the component's state has changed.
+     */
+    protected void stateDidChange ()
+    {
+        invalidate();
     }
 
     /**
@@ -584,14 +718,20 @@ public class BComponent
     }
 
     protected BComponent _parent;
-    protected BLookAndFeel _lnf;
-    protected BBorder _border;
-    protected BBackground _background;
+    protected String _styleClass;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
-    protected boolean _valid, _enabled = true;
     protected ArrayList _listeners;
     protected HashMap _properties;
 
-    protected static final Insets ZERO_INSETS = new Insets();
+    protected boolean _valid, _enabled = true, _hover;
+
+    protected ColorRGBA[] _colors = new ColorRGBA[getStateCount()];
+    protected Insets[] _insets = new Insets[getStateCount()];
+    protected BBorder[] _borders = new BBorder[getStateCount()];
+    protected BBackground[] _backgrounds = new BBackground[getStateCount()];
+
+    protected static final int STATE_COUNT = 3;
+    protected static final String[] STATE_PCLASSES = {
+        null, "hover", "disabled" };
 }

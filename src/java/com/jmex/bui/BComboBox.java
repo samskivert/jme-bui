@@ -33,8 +33,8 @@ import com.jmex.bui.icon.BIcon;
 import com.jmex.bui.util.Insets;
 
 /**
- * Displays a selected value and allows that value to be changed by
- * selecting from a popup menu.
+ * Displays a selected value and allows that value to be changed by selecting
+ * from a popup menu.
  */
 public class BComboBox extends BLabel
 {
@@ -47,9 +47,8 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Creates a combo box with the supplied set of items. The result of
-     * {@link Object#toString} for each item will be displayed in the
-     * list.
+     * Creates a combo box with the supplied set of items. The result of {@link
+     * Object#toString} for each item will be displayed in the list.
      */
     public BComboBox (Object[] items)
     {
@@ -78,8 +77,7 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Replaces any existing items in this combo box with the supplied
-     * items.
+     * Replaces any existing items in this combo box with the supplied items.
      */
     public void setItems (Object[] items)
     {
@@ -93,8 +91,7 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Returns the index of the selected item or -1 if no item is
-     * selected.
+     * Returns the index of the selected item or -1 if no item is selected.
      */
     public int getSelectedIndex ()
     {
@@ -168,22 +165,13 @@ public class BComboBox extends BLabel
         }
     }
 
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "combobox";
+    }
+
     // TODO: make getPreferredSize() use the widest label
-
-    // documentation inherited
-    protected void wasAdded ()
-    {
-        // add our background; other bits will go on top of that
-        _background = getLookAndFeel().createComboBoxBackground();
-        super.wasAdded();
-    }
-
-    // documentation inherited
-    protected void wasRemoved ()
-    {
-        super.wasRemoved();
-        _background = null;
-    }
 
     protected void selectItem (int index, long when, int modifiers)
     {

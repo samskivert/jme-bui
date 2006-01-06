@@ -32,8 +32,11 @@ import com.jme.scene.Spatial;
  */
 public abstract class BBorder
 {
-    /** Returns the insets needed by this border. */
-    public abstract Insets getInsets ();
+    /**
+     * Adds the supplied insets to this border's insets and returns adjusted
+     * insets.
+     */
+    public abstract Insets adjustInsets (Insets insets);
 
     /** Renders this border. */
     public void render (Renderer renderer, int x, int y, int width, int height)

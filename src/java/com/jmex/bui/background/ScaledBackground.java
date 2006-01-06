@@ -34,19 +34,23 @@ public class ScaledBackground extends BBackground
     /**
      * Creates a scaled background from the specified source image data.
      */
-    public ScaledBackground (
-        Image image, int left, int top, int right, int bottom)
+    public ScaledBackground (Image image)
     {
-        super(left, top, right, bottom);
         _image = image;
     }
 
-    /**
-     * Returns the "natural" size of our background image.
-     */
-    public Dimension getNaturalSize ()
+    // documentation inherited
+    public int getMinimumWidth ()
     {
-        return new Dimension(_image.getWidth(), _image.getHeight());
+        return _image.getWidth();
+    }
+
+    /**
+     * Returns the minimum height allowed by this background.
+     */
+    public int getMinimumHeight ()
+    {
+        return _image.getHeight();
     }
 
     // documentation inherited

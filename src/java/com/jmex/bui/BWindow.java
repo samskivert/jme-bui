@@ -29,15 +29,23 @@ import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
- * A window defines the top-level of a component hierarchy. It must be
- * created with a look and feel and layout manager.
+ * A window defines the top-level of a component hierarchy. It must be created
+ * with a stylesheet and layout manager.
  */
 public class BWindow extends BContainer
 {
-    public BWindow (BLookAndFeel lnf, BLayoutManager layout)
+    public BWindow (BStyleSheet style, BLayoutManager layout)
     {
-        setLookAndFeel(lnf);
+        _style = style;
         setLayoutManager(layout);
+    }
+
+    /**
+     * Returns the stylesheet in effect for this window.
+     */
+    public BStyleSheet getStyleSheet ()
+    {
+        return _style;
     }
 
     /**
@@ -137,6 +145,12 @@ public class BWindow extends BContainer
         return _root != null;
     }
 
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "window";
+    }
+
     /**
      * Configures this window with its root node. Do not call this method,
      * it is called automatically when a window is added to the root node
@@ -173,6 +187,9 @@ public class BWindow extends BContainer
             _root.requestFocus(component);
         }
     }
+
+    /** The stylesheet used to configure components in this window. */
+    protected BStyleSheet _style;
 
     /** The root node that connects us into the JME system. */
     protected BRootNode _root;

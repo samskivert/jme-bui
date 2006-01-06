@@ -31,12 +31,12 @@ public class BPopupWindow extends BWindow
 {
     public BPopupWindow (BWindow parent, BLayoutManager layout)
     {
-        super(parent.getLookAndFeel(), layout);
+        super(parent.getStyleSheet(), layout);
         _parent = parent;
 
         // set up our background and border from the look and feel
-        setBackground(_lnf.createPopupBackground());
-        setBorder(_lnf.createPopupBorder());
+//         setBackground(_lnf.createPopupBackground());
+//         setBorder(_lnf.createPopupBorder());
     }
 
     /**
@@ -62,6 +62,12 @@ public class BPopupWindow extends BWindow
         y = above ?
             Math.min(height - getHeight(), y) : Math.max(0, y - getHeight());
         setLocation(x, y);
+    }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "popupwindow";
     }
 
     protected BWindow _parent;

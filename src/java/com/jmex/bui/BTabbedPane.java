@@ -98,6 +98,12 @@ public class BTabbedPane extends BContainer
     {
         return _selidx;
     }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "tabbedpane";
+    }
     
     protected ActionListener _selector = new ActionListener() {
         public void actionPerformed (ActionEvent event) {

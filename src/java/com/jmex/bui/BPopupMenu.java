@@ -64,6 +64,12 @@ public class BPopupMenu extends BPopupWindow
         }
     }
 
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "popupmenu";
+    }
+
     /**
      * Called by any child {@link BMenuItem}s when they are selected.
      */

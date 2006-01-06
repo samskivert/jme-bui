@@ -20,62 +20,19 @@
 
 package com.jmex.bui;
 
-import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.ActionListener;
-import com.jmex.bui.icon.BIcon;
-import com.jmex.bui.icon.BlankIcon;
-import com.jmex.bui.layout.BorderLayout;
-
 /**
  * Displays a label with a check-box button next to it.
  */
-public class BCheckBox extends BContainer
-    implements ActionListener
+public class BCheckBox extends BToggleButton
 {
     public BCheckBox (String label)
     {
-        super(new BorderLayout(5, 5));
-        add(_check = new BToggleButton(""), BorderLayout.WEST);
-        _check.addListener(this);
-        add(_label = new BLabel(label), BorderLayout.CENTER);;
-    }
-
-    /**
-     * Returns whether or not this checkbox is in the checked state.
-     */
-    public boolean isChecked ()
-    {
-        return _check.isSelected();
-    }
-
-    /**
-     * Checks or unchecks this checkbox.
-     */
-    public void setChecked (boolean checked)
-    {
-        _check.setSelected(checked);
+        super(label);
     }
 
     // documentation inherited
-    public void wasAdded ()
+    protected String getDefaultStyleClass ()
     {
-        super.wasAdded();
-
-        // load up our icons
-        _cicon = getLookAndFeel().createCheckBoxIcon();
-        _bicon = new BlankIcon(_cicon.getWidth(), _cicon.getHeight());
-        _check.setIcon(isChecked() ? _cicon : _bicon);
+        return "checkbox";
     }
-
-    // documentation inherited from interface ActionEvent
-    public void actionPerformed (ActionEvent event)
-    {
-        _check.setIcon(isChecked() ? _cicon : _bicon);
-        dispatchEvent(
-            new ActionEvent(this, event.getWhen(), event.getModifiers(), ""));
-    }
-
-    protected BIcon _cicon, _bicon;
-    protected BToggleButton _check;
-    protected BLabel _label;
 }

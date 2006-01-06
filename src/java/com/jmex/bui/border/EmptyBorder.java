@@ -35,9 +35,9 @@ public class EmptyBorder extends BBorder
     }
 
     // documentation inherited
-    public Insets getInsets ()
+    public Insets adjustInsets (Insets insets)
     {
-        return _insets;
+        return _insets.add(insets);
     }
 
     protected Insets _insets;

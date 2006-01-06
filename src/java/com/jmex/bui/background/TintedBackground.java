@@ -33,20 +33,10 @@ import com.jmex.bui.util.RenderUtil;
 public class TintedBackground extends BBackground
 {
     /**
-     * Creates a tinted background with no insets.
+     * Creates a tinted background with the specified color.
      */
     public TintedBackground (ColorRGBA color)
     {
-        this(color, 0, 0, 0 ,0);
-    }
-
-    /**
-     * Creates a tinted background with the specified insets.
-     */
-    public TintedBackground (
-        ColorRGBA color, int left, int top, int right, int bottom)
-    {
-        super(left, top, right, bottom);
         _color = color;
     }
 

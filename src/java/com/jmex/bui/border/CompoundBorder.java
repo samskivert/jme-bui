@@ -32,24 +32,22 @@ public class CompoundBorder extends BBorder
     {
         _outer = outer;
         _inner = inner;
-        Insets oi = _outer.getInsets(), ii = _inner.getInsets();
-        _insets = new Insets(oi.left + ii.left, oi.top + ii.top,
-                             oi.right + ii.right, oi.bottom + ii.bottom);
+        _insets = outer.adjustInsets(Insets.ZERO_INSETS);
     }
 
     // documentation inherited
-    public Insets getInsets ()
+    public Insets adjustInsets (Insets insets)
     {
-        return _insets;
+        return _outer.adjustInsets(_inner.adjustInsets(insets));
     }
 
     // documentation inherited
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
         _outer.render(renderer, x, y, width, height);
-        Insets oi = _outer.getInsets();
-        _inner.render(renderer, x + oi.left, y + oi.bottom,
-                      width-oi.getHorizontal(), height-oi.getVertical());
+        _inner.render(renderer, x + _insets.left, y + _insets.bottom,
+                      width - _insets.getHorizontal(),
+                      height - _insets.getVertical());
     }
 
     protected BBorder _outer, _inner;

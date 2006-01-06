@@ -66,9 +66,9 @@ public class BMenuItem extends BLabel
         }
         _action = action;
 
-        // stick a small border around ourselves so that our highlight
-        // surrounds us a bit
-        setBorder(new EmptyBorder(2, 2, 2, 2));
+//         // stick a small border around ourselves so that our highlight
+//         // surrounds us a bit
+//         setBorder(new EmptyBorder(2, 2, 2, 2));
 
         // create a quad that will be used to indicate that this menu item
         // is highlighted; start it at zero size and we'll size it
@@ -138,6 +138,12 @@ public class BMenuItem extends BLabel
                 break;
             }
         }
+    }
+
+    // documentation inherited
+    protected String getDefaultStyleClass ()
+    {
+        return "menuitem";
     }
 
     /**
