@@ -78,8 +78,7 @@ import com.jmex.bui.util.Insets;
  *   padding: top, right, bottom, left;
  *   border: 1 solid #FFCC99;
  *   border: 1 blank;
- *   width: 250; // overrrides component preferred width
- *   height: 100; // overrrides component preferred height
+ *   size: 250 100; // overrrides component preferred size
  * }
  * </pre>
  *
@@ -247,7 +246,7 @@ public class BStyleSheet
 
     public Dimension getSize (BComponent component, String pseudoClass)
     {
-        return null;
+        return (Dimension)findProperty(component, pseudoClass, "size", false);
     }
 
     public BKeyMap getKeyMap (BComponent component, String pseudoClass)
@@ -512,16 +511,16 @@ public class BStyleSheet
                     "Unknown border type '" + type + "'");
             }
 
-        } else if (name.equals("width")) {
-
-        } else if (name.equals("height")) {
+        } else if (name.equals("size")) {
+            Dimension size = new Dimension();
+            size.width = parseInt(args.get(0));
+            size.height = parseInt(args.get(1));
+            return size;
 
         } else {
             throw new IllegalArgumentException(
                 "Unknown property '" + name + "'");
         }
-
-        return null;
     }
 
     protected void fail (StreamTokenizer tok, String expected)
