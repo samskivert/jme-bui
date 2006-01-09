@@ -214,7 +214,8 @@ public class Label
         default:
         case LEFT: return insets.left;
         case RIGHT: return _container.getWidth() - width - insets.right;
-        case CENTER: return (_container.getWidth() - width) / 2;
+        case CENTER: return (_container.getWidth() - insets.getHorizontal() -
+                             width) / 2 + insets.left;
         }
     }
 
@@ -224,7 +225,8 @@ public class Label
         default:
         case TOP: return _container.getHeight() - height - insets.top;
         case BOTTOM: return insets.bottom;
-        case CENTER: return (_container.getHeight() - height) / 2;
+        case CENTER: return (_container.getHeight() - insets.getVertical() -
+                             height) / 2 + insets.bottom;
         }
     }
 
