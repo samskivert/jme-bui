@@ -20,6 +20,7 @@
 
 package com.jmex.bui;
 
+import com.jme.renderer.ColorRGBA;
 import com.jmex.bui.text.BTextFactory;
 
 /**
@@ -53,8 +54,11 @@ public abstract class BTextComponent extends BComponent
      */
     public int getHorizontalAlignment ()
     {
-        int halign = _haligns[getState()];
-        return (halign != -1) ? halign : _haligns[DEFAULT];
+        if (_haligns != null) {
+            int halign = _haligns[getState()];
+            return (halign != -1) ? halign : _haligns[DEFAULT];
+        }
+        return BConstants.LEFT;
     }
 
     /**
@@ -62,8 +66,35 @@ public abstract class BTextComponent extends BComponent
      */
     public int getVerticalAlignment ()
     {
-        int valign = _valigns[getState()];
-        return (valign != -1) ? valign : _valigns[DEFAULT];
+        if (_valigns != null) {
+            int valign = _valigns[getState()];
+            return (valign != -1) ? valign : _valigns[DEFAULT];
+        }
+        return BConstants.CENTER;
+    }
+
+    /**
+     * Returns the effect for this component's text.
+     */
+    public int getTextEffect ()
+    {
+        if (_teffects != null) {
+            int teffect = _teffects[getState()];
+            return (teffect != -1) ? teffect : _teffects[DEFAULT];
+        }
+        return BConstants.NORMAL;
+    }
+
+    /**
+     * Returns the color to use for our text effect.
+     */
+    public ColorRGBA getEffectColor ()
+    {
+        if (_effcols != null) {
+            ColorRGBA effcol = _effcols[getState()];
+            return (effcol != null) ? effcol : _effcols[DEFAULT];
+        }
+        return ColorRGBA.white;
     }
 
     // documentation inherited
@@ -71,15 +102,50 @@ public abstract class BTextComponent extends BComponent
     {
         super.configureStyle(style);
 
+        int[] haligns = new int[getStateCount()];
         for (int ii = 0; ii < getStateCount(); ii++) {
-            _haligns[ii] = style.getTextAlignment(this, getStatePseudoClass(ii));
-            _valigns[ii] =
-                style.getVerticalAlignment(this, getStatePseudoClass(ii));
+            haligns[ii] = style.getTextAlignment(this, getStatePseudoClass(ii));
+        }
+        _haligns = checkNonDefault(haligns, BConstants.LEFT);
+
+        int[] valigns = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            valigns[ii] = style.getVerticalAlignment(
+                this, getStatePseudoClass(ii));
+        }
+        _valigns = checkNonDefault(valigns, BConstants.CENTER);
+
+        int[] teffects = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            teffects[ii] = style.getTextEffect(this, getStatePseudoClass(ii));
+        }
+        _teffects = checkNonDefault(teffects, BConstants.NORMAL);
+
+        ColorRGBA[] effcols = new ColorRGBA[getStateCount()];
+        boolean nondef = false;
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            effcols[ii] = style.getEffectColor(this, getStatePseudoClass(ii));
+            nondef = nondef || (effcols[ii] != null);
             _textfacts[ii] = style.getTextFactory(this, getStatePseudoClass(ii));
+        }
+        if (nondef) {
+            _effcols = effcols;
         }
     }
 
-    protected int[] _haligns = new int[getStateCount()];
-    protected int[] _valigns = new int[getStateCount()];
+    protected int[] checkNonDefault (int[] styles, int defval)
+    {
+        for (int ii = 0; ii < styles.length; ii++) {
+            if (styles[ii] != -1 && styles[ii] != defval) {
+                return styles;
+            }
+        }
+        return null;
+    }
+
+    protected int[] _haligns;
+    protected int[] _valigns;
+    protected int[] _teffects;
+    protected ColorRGBA[] _effcols;
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
 }

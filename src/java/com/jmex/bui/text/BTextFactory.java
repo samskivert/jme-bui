@@ -22,11 +22,14 @@ package com.jmex.bui.text;
 
 import com.jme.renderer.ColorRGBA;
 
+import com.jmex.bui.BConstants;
+
 /**
  * Creates instances of {@link BText} using a particular technology and a
  * particular font configuration.
  */
 public abstract class BTextFactory
+    implements BConstants
 {
     /**
      * Returns the height of our text.
@@ -37,7 +40,17 @@ public abstract class BTextFactory
      * Creates a text instance using our the font configuration associated
      * with this text factory and the foreground color specified.
      */
-    public abstract BText createText (String text, ColorRGBA color);
+    public BText createText (String text, ColorRGBA color)
+    {
+        return createText(text, color, NORMAL, null);
+    }
+
+    /**
+     * Creates a text instance using our the font configuration associated
+     * with this text factory and the foreground color specified.
+     */
+    public abstract BText createText (String text, ColorRGBA color,
+                                      int effect, ColorRGBA effectColor);
 
     /**
      * Creates a text that is no wider than the specified maximum width

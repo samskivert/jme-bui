@@ -45,4 +45,13 @@ public interface BConstants
 
     /** An orientation constant. */
     public static final int VERTICAL = 1;
+
+    /** A code for text with no effects.*/
+    public static final int NORMAL = 0;
+
+    /** A code for text with a single pixel outline.*/
+    public static final int OUTLINE = 1;
+
+    /** A code for text with a single pixel drop shadow.*/
+    public static final int SHADOW = 2;
 }

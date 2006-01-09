@@ -22,6 +22,7 @@ package com.jmex.bui.text;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -96,9 +97,10 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (String text, ColorRGBA color)
+    public BText createText (String text, ColorRGBA color,
+                             int effect, ColorRGBA effectColor)
     {
-        return createText(text, color, false);
+        return createText(text, color, effect, effectColor, false);
     }
 
     // documentation inherited
@@ -145,12 +147,13 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        return createText(layout, color, true);
+        return createText(layout, color, NORMAL, null, true);
     }
 
     /** Helper function. */
-    protected BText createText (
-        String text, ColorRGBA color, boolean useAdvance)
+    protected BText createText (String text, ColorRGBA color,
+                                int effect, ColorRGBA effectColor,
+                                boolean useAdvance)
     {
         if (text.equals("")) {
             text = " ";
@@ -169,17 +172,21 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        return createText(layout, color, useAdvance);
+        return createText(layout, color, effect, effectColor, useAdvance);
     }
 
     /** Helper function. */
-    protected BText createText (
-        final TextLayout layout, ColorRGBA color, boolean useAdvance)
+    protected BText createText (final TextLayout layout, ColorRGBA color,
+                                final int effect, ColorRGBA effectColor,
+                                boolean useAdvance)
     {
         // determine the size of our rendered text
         final Dimension size = new Dimension();
-        // TODO: do the Mac hack to get the real bounds
         Rectangle2D bounds = layout.getBounds();
+        // TODO: do this if we're on a Mac as well
+        if (effect == OUTLINE) {
+            bounds = layout.getOutline(null).getBounds();
+        }
         if (useAdvance) {
             size.width = (int)Math.round(
                 Math.max(bounds.getX(), 0) + layout.getAdvance());
@@ -195,18 +202,52 @@ public class AWTTextFactory extends BTextFactory
         size.width = Math.max(size.width, 1);
         size.height = Math.max(size.height, 1);
 
+        switch (effect) {
+        case SHADOW:
+        case OUTLINE:
+            size.width += 1;
+            size.height += 1;
+            break;
+        }
+
         // render the text into the image
         BufferedImage image = new BufferedImage(
             size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
         try {
-            // if we're antialiasing, we need to set a custom compositing rule
-            // to avoid incorrectly blending with the blank background
-            if (_antialias) {
-                gfx.setComposite(AlphaComposite.SrcOut);
+            if (effect == OUTLINE) {
+                if (_antialias) {
+                    gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                         RenderingHints.VALUE_ANTIALIAS_ON);
+                }
+                gfx.translate(0, layout.getAscent());
+                gfx.setColor(new Color(color.r, color.g, color.b, color.a));
+                gfx.fill(layout.getOutline(null));
+                gfx.setColor(new Color(effectColor.r, effectColor.g,
+                                       effectColor.b, effectColor.a));
+                gfx.draw(layout.getOutline(null));
+
+            } else {
+                // if we're antialiasing, we need to set a custom compositing
+                // rule to avoid incorrectly blending with the blank background
+                Composite ocomp = gfx.getComposite();
+                if (_antialias) {
+                    gfx.setComposite(AlphaComposite.SrcOut);
+                }
+
+                int dx = 0;
+                if (effect == SHADOW) {
+                    gfx.setColor(new Color(effectColor.r, effectColor.g,
+                                           effectColor.b, effectColor.a));
+                    layout.draw(gfx, 0, layout.getAscent()+1);
+                    dx = 1;
+                    gfx.setComposite(ocomp);
+                }
+
+                gfx.setColor(new Color(color.r, color.g, color.b, color.a));
+                layout.draw(gfx, dx, layout.getAscent());
             }
-            gfx.setColor(new Color(color.r, color.g, color.b, color.a));
-            layout.draw(gfx, 0, layout.getAscent());
+
         } finally {
             gfx.dispose();
         }

@@ -71,6 +71,7 @@ import com.jmex.bui.util.Insets;
  *   font: Helvetica XX 12; // XX = normal|bold|italic|bolditalic
  *   text-align: XX; // XX = left|center|right
  *   vertical-align: XX; // XX = top|center|bottom
+ *   text-effect: XX; // XX = none|outline|shadow
  *
  *   // box properties
  *   padding: top; // right=top, bottom=top, left=top
@@ -230,6 +231,19 @@ public class BStyleSheet
         Integer value = (Integer)
             findProperty(component, pseudoClass, "vertical-align", true);
         return (value == null) ? BConstants.CENTER : value.intValue();
+    }
+
+    public int getTextEffect (BComponent component, String pseudoClass)
+    {
+        Integer value = (Integer)
+            findProperty(component, pseudoClass, "text-effect", true);
+        return (value == null) ? BConstants.NORMAL : value.intValue();
+    }
+
+    public ColorRGBA getEffectColor (BComponent component, String pseudoClass)
+    {
+        return (ColorRGBA)findProperty(
+            component, pseudoClass, "effect-color", true);
     }
 
     public Insets getInsets (BComponent component, String pseudoClass)
@@ -399,7 +413,7 @@ public class BStyleSheet
 
     protected Object createProperty (String name, ArrayList args)
     {
-        if (name.equals("color")) {
+        if (name.equals("color") || name.equals("effect-color")) {
             return parseColor((String)args.get(0));
 
         } else if (name.equals("background")) {
@@ -481,6 +495,15 @@ public class BStyleSheet
             if (value == null) {
                 throw new IllegalArgumentException(
                     "Unknown vertical-align type '" + type + "'");
+            }
+            return value;
+
+        } else if (name.equals("text-effect")) {
+            String type = (String)args.get(0);
+            Object value = _teconsts.get(type);
+            if (value == null) {
+                throw new IllegalArgumentException(
+                    "Unknown text-effect type '" + type + "'");
             }
             return value;
 
@@ -654,6 +677,7 @@ public class BStyleSheet
 
     protected static HashMap _taconsts = new HashMap();
     protected static HashMap _vaconsts = new HashMap();
+    protected static HashMap _teconsts = new HashMap();
     protected static HashMap _ibconsts = new HashMap();
     static {
         // alignment constants
@@ -664,6 +688,11 @@ public class BStyleSheet
         _vaconsts.put("center", new Integer(BConstants.CENTER));
         _vaconsts.put("top", new Integer(BConstants.TOP));
         _vaconsts.put("bottom", new Integer(BConstants.BOTTOM));
+
+        // effect constants
+        _teconsts.put("none", new Integer(BConstants.NORMAL));
+        _teconsts.put("shadow", new Integer(BConstants.SHADOW));
+        _teconsts.put("outline", new Integer(BConstants.OUTLINE));
 
         // background image constants
         _ibconsts.put("centerxy", new Integer(ImageBackground.CENTER_XY));

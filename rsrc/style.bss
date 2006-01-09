@@ -24,6 +24,7 @@ popupmenu {
   background: solid #00000088;
 //  padding: 5;
   border: 1 solid #FFFFFF;
+  font: "Dialog" bold 16;
 }
 
 component {
@@ -35,6 +36,10 @@ component:disabled {
 button {
   background: image "rsrc/textures/button_up.png" tilexy;
   padding: 3 5;
+  font: "Dialog" bold 24;
+  text-align: center;
+  text-effect: outline;
+  effect-color: #442288;
 }
 
 button:hover {
@@ -48,12 +53,12 @@ button:disabled {
 button:down {
   background: image "rsrc/textures/button_down.png" tilexy;
   color: #FF00FF;
-  padding: 4 4 2 6;
+  padding: 4 6 2 4;
 }
 
 button:selected {
   background: image "rsrc/textures/button_down.png" tilexy;
-  padding: 4 4 2 6;
+  padding: 4 6 2 4;
 }
 
 combobox {

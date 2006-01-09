@@ -242,7 +242,8 @@ public class Label
             return;
         }
         _tgeom = _container.getTextFactory().createText(
-            _text, _container.getColor());
+            _text, _container.getColor(), _container.getTextEffect(),
+            _container.getEffectColor());
     }
 
     protected BTextComponent _container;
