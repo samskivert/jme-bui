@@ -32,8 +32,14 @@ public class BPopupMenu extends BPopupWindow
 {
     public BPopupMenu (BWindow parent)
     {
+        this(parent, false);
+    }
+
+    public BPopupMenu (BWindow parent, boolean horizontal)
+    {
         super(parent, null);
-        GroupLayout gl = GroupLayout.makeVStretch();
+        GroupLayout gl = horizontal ?
+            GroupLayout.makeHStretch() : GroupLayout.makeVStretch();
         gl.setGap(0);
         setLayoutManager(gl);
         _modal = true;

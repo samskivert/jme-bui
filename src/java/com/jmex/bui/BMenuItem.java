@@ -20,11 +20,6 @@
 
 package com.jmex.bui;
 
-import com.jme.math.Vector3f;
-import com.jme.renderer.ColorRGBA;
-import com.jme.scene.shape.Quad;
-
-import com.jmex.bui.border.EmptyBorder;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
@@ -65,20 +60,6 @@ public class BMenuItem extends BLabel
             setIcon(icon);
         }
         _action = action;
-
-//         // stick a small border around ourselves so that our highlight
-//         // surrounds us a bit
-//         setBorder(new EmptyBorder(2, 2, 2, 2));
-
-        // create a quad that will be used to indicate that this menu item
-        // is highlighted; start it at zero size and we'll size it
-        // properly when we are validated
-        _hquad = new Quad("highlight", 0, 0);
-        _hquad.setSolidColor(ColorRGBA.blue); // TODO: get from LNF
-        RenderUtil.makeTransparent(_hquad);
-//         _node.attachChild(_hquad);
-        _hquad.updateRenderState();
-        _hquad.setCullMode(Quad.CULL_ALWAYS);
     }
 
     /**
@@ -90,16 +71,6 @@ public class BMenuItem extends BLabel
     }
 
     // documentation inherited
-    public void validate ()
-    {
-        super.validate();
-
-        _hquad.resize(getWidth(), getHeight());
-        _hquad.setLocalTranslation(
-            new Vector3f(getWidth()/2, getHeight()/2, 0));
-    }
-
-    // documentation inherited
     public void dispatchEvent (BEvent event)
     {
         super.dispatchEvent(event);
@@ -108,12 +79,10 @@ public class BMenuItem extends BLabel
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
-                _hquad.setCullMode(Quad.CULL_DYNAMIC);
                 _armed = _pressed;
                 break;
 
             case MouseEvent.MOUSE_EXITED:
-                _hquad.setCullMode(Quad.CULL_ALWAYS);
                 _armed = false;
                 break;
 
@@ -159,6 +128,5 @@ public class BMenuItem extends BLabel
     }
 
     protected String _action;
-    protected Quad _hquad;
     protected boolean _armed, _pressed;
 }
