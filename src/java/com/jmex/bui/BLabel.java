@@ -43,8 +43,21 @@ public class BLabel extends BTextComponent
      */
     public BLabel (String text)
     {
+        this(text, null);
+    }
+
+    /**
+     * Creates a label that will display the supplied text using the specified
+     * style class.
+     */
+    public BLabel (String text, String styleClass)
+    {
         _label = new Label(this);
         _label.setText(text);
+
+        if (styleClass != null) {
+            setStyleClass(styleClass);
+        }
     }
 
     /**
