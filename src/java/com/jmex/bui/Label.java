@@ -151,12 +151,21 @@ public class Label
         }
 
         int width, height;
-        if (_orient == HORIZONTAL) {
+        switch (_orient) {
+        default:
+        case HORIZONTAL:
             width = iwidth + gap + twidth;
             height = Math.max(iheight, theight);
-        } else {
+            break;
+        case VERTICAL:
             width = Math.max(iwidth, twidth);
             height = iheight + gap + theight;
+            break;
+        case LABEL_OVER_TOP:
+        case LABEL_OVER_BOTTOM:
+            width = Math.max(iwidth, twidth);
+            height = Math.max(iheight, theight);
+            break;
         }
 
         return new Dimension(width, height);
@@ -171,7 +180,8 @@ public class Label
         Insets insets = _container.getInsets();
         int xoff = 0, yoff = 0;
 
-        if (_orient == HORIZONTAL) {
+        switch (_orient) {
+        case HORIZONTAL:
             if (_icon != null) {
                 _ix = getXOffset(insets, size.width);
                 _iy = getYOffset(insets, _icon.getHeight());
@@ -181,8 +191,9 @@ public class Label
                 _tx = getXOffset(insets, size.width) + xoff;
                 _ty = getYOffset(insets, _tgeom.getSize().height);
             }
+            break;
 
-        } else {
+        case VERTICAL:
             if (_tgeom != null) {
                 _tx = getXOffset(insets, _tgeom.getSize().width);
                 _ty = getYOffset(insets, size.height);
@@ -192,6 +203,22 @@ public class Label
                 _ix = getXOffset(insets, _icon.getWidth());
                 _iy = getYOffset(insets, size.height) + yoff;
             }
+            break;
+
+        case LABEL_OVER_TOP:
+        case LABEL_OVER_BOTTOM:
+            if (_icon != null) {
+                _ix = getXOffset(insets, _icon.getWidth());
+                _iy = getYOffset(insets, size.height);
+            }
+            if (_tgeom != null) {
+                _tx = getXOffset(insets, _tgeom.getSize().width);
+                _ty = getYOffset(insets, size.height);
+                if (_orient == LABEL_OVER_TOP) {
+                    _ty += (size.height - _tgeom.getSize().height);
+                }
+            }
+            break;
         }
     }
 
@@ -200,11 +227,11 @@ public class Label
      */
     public void render (Renderer renderer)
     {
-        if (_tgeom != null) {
-            _tgeom.render(renderer, _tx, _ty);
-        }
         if (_icon != null) {
             _icon.render(renderer, _ix, _iy);
+        }
+        if (_tgeom != null) {
+            _tgeom.render(renderer, _tx, _ty);
         }
     }
 
