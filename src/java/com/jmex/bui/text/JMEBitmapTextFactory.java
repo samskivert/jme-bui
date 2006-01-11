@@ -107,7 +107,8 @@ public class JMEBitmapTextFactory extends BTextFactory
 
     // documentation inherited
     public BText wrapText (
-        String text, ColorRGBA color, int maxWidth, int[] remain)
+        String text, ColorRGBA color, int effect, ColorRGBA effectColor,
+        int maxWidth, int[] remain)
     {
         // determine how many characters we can fit (note: JME currently
         // assumes all text is width 10 so we propagate that hack)

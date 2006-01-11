@@ -177,10 +177,9 @@ public class Label
     /**
      * Lays out the label text and icon.
      */
-    public void layout ()
+    public void layout (Insets insets)
     {
         // compute the available width into which we can lay out our text
-        Insets insets = _container.getInsets();
         int twidth = _container.getWidth() - insets.getHorizontal();
         if (_icon != null && _orient == HORIZONTAL) {
             twidth -= _icon.getWidth();
