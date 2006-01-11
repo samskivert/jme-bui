@@ -563,7 +563,9 @@ public class BComponent
      */
     protected void configureStyle (BStyleSheet style)
     {
-        _preferredSize = style.getSize(this, null);
+        if (_preferredSize == null) {
+            _preferredSize = style.getSize(this, null);
+        }
 
         for (int ii = 0; ii < getStateCount(); ii++) {
             _colors[ii] = style.getColor(this, getStatePseudoClass(ii));
