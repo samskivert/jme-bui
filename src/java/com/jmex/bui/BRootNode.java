@@ -21,6 +21,7 @@
 package com.jmex.bui;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import com.jme.intersection.CollisionResults;
 import com.jme.intersection.PickResults;
@@ -29,6 +30,7 @@ import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
 
+import com.jmex.bui.Log;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.MouseEvent;
 
@@ -166,7 +168,11 @@ public abstract class BRootNode extends Geometry
         // render all of our windows
         for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
             BWindow win = (BWindow)_windows.get(ii);
-            win.render(renderer);
+            try {
+                win.render(renderer);
+            } catch (Throwable t) {
+                Log.log.log(Level.WARNING, win + " failed in render()", t);
+            }
         }
     }
 
