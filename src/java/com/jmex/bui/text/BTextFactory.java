@@ -46,8 +46,9 @@ public abstract class BTextFactory
     }
 
     /**
-     * Creates a text instance using our the font configuration associated
-     * with this text factory and the foreground color specified.
+     * Creates a text instance using our the font configuration associated with
+     * this text factory and the foreground color, text effect and text effect
+     * color specified.
      */
     public abstract BText createText (String text, ColorRGBA color,
                                       int effect, ColorRGBA effectColor);
@@ -60,6 +61,21 @@ public abstract class BTextFactory
      * @param remain if non-null, will have the number of unrendered
      * characters filled into the zeroth element.
      */
+    public BText wrapText (
+        String text, ColorRGBA color, int maxWidth, int[] remain)
+    {
+        return wrapText(text, color, NORMAL, null, maxWidth, remain);
+    }
+
+    /**
+     * Creates a text that is no wider than the specified maximum width
+     * but contains as much of the supplied text (terminating on a word
+     * boundary) as is possible within that limit.
+     *
+     * @param remain if non-null, will have the number of unrendered
+     * characters filled into the zeroth element.
+     */
     public abstract BText wrapText (
-        String text, ColorRGBA color, int maxWidth, int[] remain);
+        String text, ColorRGBA color, int effect, ColorRGBA effectColor,
+        int maxWidth, int[] remain);
 }

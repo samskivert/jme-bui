@@ -47,10 +47,7 @@ public interface BConstants
     public static final int VERTICAL = 1;
 
     /** A special orientation constant for labels. */
-    public static final int LABEL_OVER_TOP = 2;
-
-    /** A special orientation constant for labels. */
-    public static final int LABEL_OVER_BOTTOM = 3;
+    public static final int OVERLAPPING = 2;
 
     /** A code for text with no effects.*/
     public static final int NORMAL = 0;

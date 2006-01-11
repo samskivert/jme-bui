@@ -20,10 +20,13 @@
 
 package com.jmex.bui;
 
+import java.util.ArrayList;
+
 import com.jme.renderer.Renderer;
 
 import com.jmex.bui.icon.BIcon;
 import com.jmex.bui.text.BText;
+import com.jmex.bui.text.BTextFactory;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
@@ -44,7 +47,7 @@ public class Label
      */
     public void setText (String text)
     {
-        _text = text;
+        _value = text;
 
         // if we're already part of the hierarchy, recreate our glyps
         if (_container.isAdded()) {
@@ -60,7 +63,7 @@ public class Label
      */
     public String getText ()
     {
-        return _text;
+        return _value;
     }
 
     /**
@@ -142,12 +145,12 @@ public class Label
             iwidth = _icon.getWidth();
             iheight = _icon.getHeight();
         }
-        if (_tgeom != null) {
+        if (_text != null) {
             if (_icon != null) {
                 gap = _gap;
             }
-            twidth = _tgeom.getSize().width;
-            theight = _tgeom.getSize().height;
+            twidth = _text.size.width;
+            theight = _text.size.height;
         }
 
         int width, height;
@@ -161,8 +164,7 @@ public class Label
             width = Math.max(iwidth, twidth);
             height = iheight + gap + theight;
             break;
-        case LABEL_OVER_TOP:
-        case LABEL_OVER_BOTTOM:
+        case OVERLAPPING:
             width = Math.max(iwidth, twidth);
             height = Math.max(iheight, theight);
             break;
@@ -176,10 +178,22 @@ public class Label
      */
     public void layout ()
     {
-        Dimension size = computePreferredSize(-1, -1);
+        // compute the available width into which we can lay out our text
         Insets insets = _container.getInsets();
-        int xoff = 0, yoff = 0;
+        int twidth = _container.getWidth() - insets.getHorizontal();
+        if (_icon != null && _orient == HORIZONTAL) {
+            twidth -= _icon.getWidth();
+            twidth -= _gap;
+        }
+        // if the width changed, re-line-break our text
+        if (twidth != _twidth) {
+            _twidth = twidth;
+            recreateGlyphs();
+        }
 
+        // now compute any offsets needed to center or align things
+        Dimension size = computePreferredSize(-1, -1);
+        int xoff = 0, yoff = 0;
         switch (_orient) {
         case HORIZONTAL:
             if (_icon != null) {
@@ -187,17 +201,17 @@ public class Label
                 _iy = getYOffset(insets, _icon.getHeight());
                 xoff = (_icon.getWidth() + _gap);
             }
-            if (_tgeom != null) {
+            if (_text != null) {
                 _tx = getXOffset(insets, size.width) + xoff;
-                _ty = getYOffset(insets, _tgeom.getSize().height);
+                _ty = getYOffset(insets, _text.size.height);
             }
             break;
 
         case VERTICAL:
-            if (_tgeom != null) {
-                _tx = getXOffset(insets, _tgeom.getSize().width);
+            if (_text != null) {
+                _tx = getXOffset(insets, _text.size.width);
                 _ty = getYOffset(insets, size.height);
-                yoff = (_tgeom.getSize().height + _gap);
+                yoff = (_text.size.height + _gap);
             }
             if (_icon != null) {
                 _ix = getXOffset(insets, _icon.getWidth());
@@ -205,18 +219,14 @@ public class Label
             }
             break;
 
-        case LABEL_OVER_TOP:
-        case LABEL_OVER_BOTTOM:
+        case OVERLAPPING:
             if (_icon != null) {
                 _ix = getXOffset(insets, _icon.getWidth());
-                _iy = getYOffset(insets, size.height);
+                _iy = getYOffset(insets, _icon.getHeight());
             }
-            if (_tgeom != null) {
-                _tx = getXOffset(insets, _tgeom.getSize().width);
-                _ty = getYOffset(insets, size.height);
-                if (_orient == LABEL_OVER_TOP) {
-                    _ty += (size.height - _tgeom.getSize().height);
-                }
+            if (_text != null) {
+                _tx = getXOffset(insets, _text.size.width);
+                _ty = getYOffset(insets, _text.size.height);
             }
             break;
         }
@@ -230,8 +240,8 @@ public class Label
         if (_icon != null) {
             _icon.render(renderer, _ix, _iy);
         }
-        if (_tgeom != null) {
-            _tgeom.render(renderer, _tx, _ty);
+        if (_text != null) {
+            _text.render(renderer, _tx, _ty);
         }
     }
 
@@ -262,25 +272,55 @@ public class Label
      */
     protected void recreateGlyphs ()
     {
-        if (_tgeom != null) {
-            _tgeom = null;
+        if (_text != null) {
+            _text = null;
         }
-        if (_text == null) {
+        if (_value == null) {
             return;
         }
-        _tgeom = _container.getTextFactory().createText(
-            _text, _container.getColor(), _container.getTextEffect(),
-            _container.getEffectColor());
+
+        _text = new Text();
+        ArrayList lines = new ArrayList();
+        BTextFactory tfact = _container.getTextFactory();
+        String text = _value;
+        int[] remain = new int[] { _value.length() };
+        while (remain[0] > 0) {
+            text = text.substring(text.length()-remain[0]);
+            BText line = tfact.wrapText(
+                text, _container.getColor(), _container.getTextEffect(),
+                _container.getEffectColor(), _twidth, remain);
+            _text.size.width = Math.max(_text.size.width, line.getSize().width);
+            _text.size.height += line.getSize().height;
+            lines.add(line);
+        }
+        _text.lines = (BText[])lines.toArray(new BText[lines.size()]);
+    }
+
+    protected static class Text
+    {
+        public BText[] lines;
+
+        public Dimension size = new Dimension();
+
+        public void render (Renderer renderer, int tx, int ty)
+        {
+            // render the lines from the bottom up
+            for (int ii = lines.length-1; ii >= 0; ii--) {
+                lines[ii].render(renderer, tx, ty);
+                ty += lines[ii].getSize().height;
+            }
+        }
     }
 
     protected BTextComponent _container;
-    protected String _text;
-    protected BIcon _icon;
-    protected int _ix, _iy;
+    protected String _value;
 
     protected int _orient = HORIZONTAL;
     protected int _gap;
 
-    protected BText _tgeom;
-    protected int _tx, _ty;
+    protected BIcon _icon;
+    protected int _ix, _iy;
+
+    protected Text _text;
+    protected int _tx, _ty, _twidth = Integer.MAX_VALUE;
 }

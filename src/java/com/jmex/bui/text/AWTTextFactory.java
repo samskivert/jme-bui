@@ -105,7 +105,8 @@ public class AWTTextFactory extends BTextFactory
 
     // documentation inherited
     public BText wrapText (
-        String text, ColorRGBA color, int maxWidth, int[] remain)
+        String text, ColorRGBA color, int effect, ColorRGBA effectColor,
+        int maxWidth, int[] remain)
     {
         // the empty string will break things; so use a single space instead
         if (text.length() == 0) {
@@ -147,7 +148,7 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        return createText(layout, color, NORMAL, null, true);
+        return createText(layout, color, effect, effectColor, true);
     }
 
     /** Helper function. */
