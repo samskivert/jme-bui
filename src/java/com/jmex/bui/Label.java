@@ -48,6 +48,7 @@ public class Label
     public void setText (String text)
     {
         _value = text;
+        _twidth = Integer.MAX_VALUE;
 
         // if we're already part of the hierarchy, recreate our glyps
         if (_container.isAdded()) {
@@ -241,7 +242,8 @@ public class Label
             _icon.render(renderer, _ix, _iy);
         }
         if (_text != null) {
-            _text.render(renderer, _tx, _ty);
+            _text.render(renderer, _tx, _ty,
+                         _container.getHorizontalAlignment());
         }
     }
 
@@ -302,11 +304,17 @@ public class Label
 
         public Dimension size = new Dimension();
 
-        public void render (Renderer renderer, int tx, int ty)
+        public void render (Renderer renderer, int tx, int ty, int halign)
         {
             // render the lines from the bottom up
             for (int ii = lines.length-1; ii >= 0; ii--) {
-                lines[ii].render(renderer, tx, ty);
+                int lx = tx;
+                if (halign == RIGHT) {
+                    lx += size.width - lines[ii].getSize().width;
+                } else if (halign == CENTER) {
+                    lx += (size.width - lines[ii].getSize().width)/2;
+                }
+                lines[ii].render(renderer, lx, ty);
                 ty += lines[ii].getSize().height;
             }
         }
