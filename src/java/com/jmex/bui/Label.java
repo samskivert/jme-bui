@@ -84,7 +84,7 @@ public class Label
         }
         if (owidth != nwidth || oheight != nheight) {
             _container.invalidate();
-        } else {
+        } else if (_container.isAdded()) {
             _container.layout();
         }
     }
