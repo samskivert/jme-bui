@@ -51,6 +51,7 @@ public class RenderUtil
      */
     public static void renderImage (Image image, int x, int y)
     {
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         GL11.glRasterPos2i(x, y);
         GL11.glDrawPixels(image.getWidth(), image.getHeight(),
                           IMAGE_FORMATS[image.getType()],
@@ -94,6 +95,7 @@ public class RenderUtil
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, sx);
             GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_ROWS, sy);
         }
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         GL11.glRasterPos2i(tx, ty);
         GL11.glDrawPixels(swidth, sheight, IMAGE_FORMATS[image.getType()],
                           GL11.GL_UNSIGNED_BYTE, image.getData());
