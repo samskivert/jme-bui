@@ -30,6 +30,7 @@ import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.event.TextEvent;
 import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.EditCommands;
@@ -59,17 +60,7 @@ public class BTextField extends BTextComponent
      */
     public void setText (String text)
     {
-        _text = text;
-
-        // if we're already part of the hierarchy, recreate our glyps
-        if (isAdded()) {
-            recreateGlyphs();
-        }
-
-        // confine the cursor to the new text
-        if (_cursorPos > _text.length()) {
-            setCursorPos(_text.length());
-        }
+        setText(text, -1L);
     }
 
     // documentation inherited
@@ -117,14 +108,15 @@ public class BTextField extends BTextComponent
                         String before = _text.substring(0, _cursorPos - 1);
                         String after = _text.substring(_cursorPos);
                         setCursorPos(_cursorPos - 1);
-                        setText(before + after);
+                        setText(before + after, event.getWhen());
                     }
                     break;
 
                 case DELETE:
                     if (_cursorPos < _text.length()) {
                         String before = _text.substring(0, _cursorPos);
-                        setText(before + _text.substring(_cursorPos + 1));
+                        setText(before + _text.substring(_cursorPos + 1),
+                                event.getWhen());
                     }
                     break;
 
@@ -162,7 +154,8 @@ public class BTextField extends BTextComponent
                         !Character.isISOControl(c)) {
                         String before = _text.substring(0, _cursorPos);
                         String after = _text.substring(_cursorPos);
-                        setText(before + kev.getKeyChar() + after);
+                        setText(before + kev.getKeyChar() + after,
+                                event.getWhen());
                         setCursorPos(_cursorPos + 1);
                     }
                     break;
@@ -234,7 +227,7 @@ public class BTextField extends BTextComponent
 
         // render the cursor if we have focus
         if (_showCursor) {
-            ColorRGBA c = ColorRGBA.white;
+            ColorRGBA c = getColor();
             GL11.glColor4f(c.r, c.g, c.b, c.a);
             GL11.glBegin(GL11.GL_LINE_STRIP);
             GL11.glVertex2f(cx, insets.bottom);
@@ -254,6 +247,29 @@ public class BTextField extends BTextComponent
             d.width = _prefWidth;
         }
         return d;
+    }
+
+    protected void setText (String text, long when)
+    {
+        // NOOP de NOOP
+        if (_text == text || (_text != null && _text.equals(text))) {
+            return;
+        }
+
+        _text = text;
+
+        // if we're already part of the hierarchy, recreate our glyps
+        if (isAdded()) {
+            recreateGlyphs();
+        }
+
+        // confine the cursor to the new text
+        if (_cursorPos > _text.length()) {
+            setCursorPos(_text.length());
+        }
+
+        // let anyone who is around to hear know that a tree fell in the woods
+        dispatchEvent(new TextEvent(this, when));
     }
 
     /**
