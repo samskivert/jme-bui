@@ -45,14 +45,14 @@ public class AbsoluteLayout extends BLayoutManager
             Point p = (Point)constraints;
             if (p.x < 0 || p.y < 0) {
                 throw new IllegalArgumentException(
-                    "Components must be laid out at positive coordinates: " + p);
+                    "Components must be laid out at positive coords: " + p);
             }
 
         } else if (constraints instanceof Rectangle) {
             Rectangle r = (Rectangle)constraints;
             if (r.x < 0 || r.y < 0) {
                 throw new IllegalArgumentException(
-                    "Components must be laid out at positive coordinates: " + r);
+                    "Components must be laid out at positive coords: " + r);
             }
             if (r.width < 0 || r.height < 0) {
                 throw new IllegalArgumentException(
@@ -92,7 +92,6 @@ public class AbsoluteLayout extends BLayoutManager
                 rec.add(r.x, r.y, r.width, r.height);
             }
         }
-
         return new Dimension(rec.x + rec.width, rec.y + rec.height);
     }
 

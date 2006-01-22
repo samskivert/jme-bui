@@ -126,7 +126,8 @@ public abstract class BTextComponent extends BComponent
         for (int ii = 0; ii < getStateCount(); ii++) {
             effcols[ii] = style.getEffectColor(this, getStatePseudoClass(ii));
             nondef = nondef || (effcols[ii] != null);
-            _textfacts[ii] = style.getTextFactory(this, getStatePseudoClass(ii));
+            _textfacts[ii] =
+                style.getTextFactory(this, getStatePseudoClass(ii));
         }
         if (nondef) {
             _effcols = effcols;
