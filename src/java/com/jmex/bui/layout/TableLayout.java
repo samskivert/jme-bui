@@ -20,6 +20,8 @@
 
 package com.jmex.bui.layout;
 
+import java.util.Arrays;
+
 import com.jmex.bui.BComponent;
 import com.jmex.bui.BContainer;
 import com.jmex.bui.Log;
@@ -117,7 +119,10 @@ public class TableLayout extends BLayoutManager
         int rows = computeRows(target);
         if (_rowHeights == null || _rowHeights.length != rows) {
             _rowHeights = new int[rows];
-        }
+        } else {
+            Arrays.fill(_rowHeights, 0);
+        }            
+        Arrays.fill(_columnWidths, 0);
 
         int row = 0, col = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
