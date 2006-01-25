@@ -481,10 +481,15 @@ public class BComponent
     }
 
     /**
-     * Instructs this component to process the supplied event.
+     * Instructs this component to process the supplied event. If the event is
+     * not processed, it will be passed up to its parent component for
+     * processing. Derived classes should thus only call
+     * <code>super.dispatchEvent</code> for events that they did not "consume".
      */
     public void dispatchEvent (BEvent event)
     {
+        boolean processed = false;
+
         // handle focus traversal
         if (event instanceof KeyEvent) {
             KeyEvent kev = (KeyEvent)event;
@@ -494,8 +499,10 @@ public class BComponent
                     if (modifiers == 0) {
                         // TODO: can getWindow() be null here?
                         getWindow().requestFocus(getNextFocus());
+                        processed = true;
                     } else if (modifiers == KeyEvent.SHIFT_DOWN_MASK) {
                         getWindow().requestFocus(getPreviousFocus());
+                        processed = true;
                     }
                 }
             }
@@ -508,9 +515,11 @@ public class BComponent
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
                 _hover = true;
+                processed = true;
                 break;
             case MouseEvent.MOUSE_EXITED:
                 _hover = false;
+                processed = true;
                 break;
             }
 
@@ -525,6 +534,11 @@ public class BComponent
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
                 event.dispatch((ComponentListener)_listeners.get(ii));
             }
+        }
+
+        // if we didn't process the event, pass it up to our parent
+        if (!processed && _parent != null) {
+            getParent().dispatchEvent(event);
         }
     }
 

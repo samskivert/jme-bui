@@ -73,8 +73,6 @@ public class BMenuItem extends BLabel
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
-        super.dispatchEvent(event);
-
         if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
@@ -105,7 +103,14 @@ public class BMenuItem extends BLabel
                 }
                 _pressed = false;
                 break;
+
+            default:
+                super.dispatchEvent(event);
+                break;
             }
+
+        } else {
+            super.dispatchEvent(event);
         }
     }
 

@@ -96,8 +96,6 @@ public class BTextField extends BTextComponent
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
-        super.dispatchEvent(event);
-
         if (event instanceof KeyEvent) {
             KeyEvent kev = (KeyEvent)event;
             if (kev.getType() == KeyEvent.KEY_PRESSED) {
@@ -157,6 +155,8 @@ public class BTextField extends BTextComponent
                         setText(before + kev.getKeyChar() + after,
                                 event.getWhen());
                         setCursorPos(_cursorPos + 1);
+                    } else {
+                        super.dispatchEvent(event);
                     }
                     break;
                 }
@@ -174,6 +174,9 @@ public class BTextField extends BTextComponent
                 _showCursor = false;
                 break;
             }
+
+        } else {
+            super.dispatchEvent(event);
         }
     }
 

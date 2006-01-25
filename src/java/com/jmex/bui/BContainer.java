@@ -59,6 +59,14 @@ public class BContainer extends BComponent
     }
 
     /**
+     * Returns the layout manager configured for this container.
+     */
+    public BLayoutManager getLayoutManager ()
+    {
+        return _layout;
+    }
+
+    /**
      * Adds a child to this container.
      */
     public void add (BComponent child)

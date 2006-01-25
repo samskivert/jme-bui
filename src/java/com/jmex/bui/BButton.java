@@ -119,8 +119,6 @@ public class BButton extends BLabel
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
-        super.dispatchEvent(event);
-
         if (_enabled && event instanceof MouseEvent) {
             int ostate = getState();
             MouseEvent mev = (MouseEvent)event;
@@ -152,6 +150,10 @@ public class BButton extends BLabel
                 }
                 _pressed = false;
                 break;
+
+            default:
+                super.dispatchEvent(event);
+                break;
             }
 
             // update our background image if necessary
@@ -159,6 +161,9 @@ public class BButton extends BLabel
             if (state != ostate) {
                 stateDidChange();
             }
+
+        } else {
+            super.dispatchEvent(event);
         }
     }
 

@@ -57,8 +57,6 @@ public class BPopupMenu extends BPopupWindow
     // documentation inherited
     public void dispatchEvent (BEvent event)
     {
-        super.dispatchEvent(event);
-
         if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
             // if the mouse clicked outside of our window bounds, dismiss
@@ -66,7 +64,12 @@ public class BPopupMenu extends BPopupWindow
             if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
                 getHitComponent(mev.getX(), mev.getY()) == null) {
                 dismiss();
+            } else {
+                super.dispatchEvent(event);
             }
+
+        } else {
+            super.dispatchEvent(event);
         }
     }
 

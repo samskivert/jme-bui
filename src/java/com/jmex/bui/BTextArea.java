@@ -188,14 +188,6 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
-    {
-        super.dispatchEvent(event);
-
-        // TBD
-    }
-
-    // documentation inherited
     protected String getDefaultStyleClass ()
     {
         return "textarea";
@@ -207,7 +199,8 @@ public class BTextArea extends BContainer
         super.configureStyle(style);
 
         for (int ii = 0; ii < getStateCount(); ii++) {
-            _textfacts[ii] = style.getTextFactory(this, getStatePseudoClass(ii));
+            _textfacts[ii] = style.getTextFactory(
+                this, getStatePseudoClass(ii));
         }
     }
 
