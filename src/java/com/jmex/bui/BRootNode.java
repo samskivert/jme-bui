@@ -53,12 +53,15 @@ public abstract class BRootNode extends Geometry
     public void addWindow (BWindow window)
     {
         _windows.add(window);
-        window.setRootNode(this);
 
-        // if this window is modal, make it the default event target
+        // if this window is modal, make it the default event target (which
+        // will save the current focus for later restoration)
         if (window.isModal()) {
             pushDefaultEventTarget(window);
         }
+
+        // add this window to the hierarchy (which may set a new focus)
+        window.setRootNode(this);
 
         // recompute the hover component; the window may be under the mouse
         computeHoverComponent(_mouseX, _mouseY);
@@ -104,16 +107,17 @@ public abstract class BRootNode extends Geometry
     public abstract void rootInvalidated (BComponent root);
 
     /**
-     * Configures a component (which would generally not be part of a
-     * normal interface hierarchy) to receive all events that are not sent
-     * to some other component.
+     * Configures a component to receive all events that are not sent to some
+     * other component. This is generally done for modal windows but can be
+     * used in other circumstances. The current focus is stored and the focus
+     * is cleared. When the event target is popped the previous focus will be
+     * restored.
      */
     public void pushDefaultEventTarget (BComponent component)
     {
-        if (_dcomponent != null) {
-            _defaults.add(0, _dcomponent);
-        }
+        _defaults.add(0, new TargetRecord(_dcomponent, _focus));
         _dcomponent = component;
+        setFocus(null);
     }
 
     /**
@@ -123,12 +127,28 @@ public abstract class BRootNode extends Geometry
     {
         if (_dcomponent == component) {
             if (_defaults.size() > 0) {
-                _dcomponent = (BComponent)_defaults.remove(0);
+                TargetRecord record = (TargetRecord)_defaults.remove(0);
+                _dcomponent = record.target;
+                // restore the saved focus if possible
+                if (record.priorFocus != null && record.priorFocus.isAdded()) {
+                    setFocus(record.priorFocus);
+                }
+
             } else {
                 _dcomponent = null;
             }
+
         } else {
-            _defaults.remove(component);
+            // this doesn't do the precisely correct thing with the focus if an
+            // intermediate window is removed, but it's not a common enough
+            // circumstance to merit fiddling around with
+            for (int ii = 0, ll = _defaults.size(); ii < ll; ii++) {
+                TargetRecord record = (TargetRecord)_defaults.get(ii);
+                if (record.target == component) {
+                    _defaults.remove(ii);
+                    break;
+                }
+            }
         }
     }
 
@@ -248,6 +268,17 @@ public abstract class BRootNode extends Geometry
                                    MouseEvent.MOUSE_ENTERED, mx, my));
             }
             _hcomponent = nhcomponent;
+        }
+    }
+
+    protected static class TargetRecord
+    {
+        public BComponent target;
+        public BComponent priorFocus;
+
+        public TargetRecord (BComponent target, BComponent priorFocus) {
+            this.target = target;
+            this.priorFocus = priorFocus;
         }
     }
 
