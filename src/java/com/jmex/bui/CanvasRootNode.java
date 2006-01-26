@@ -24,6 +24,7 @@ import java.awt.Canvas;
 
 import com.jme.input.KeyInput;
 
+import com.jmex.bui.event.InputEvent;
 import com.jmex.bui.event.KeyEvent;
 import com.jmex.bui.event.MouseEvent;
 
@@ -213,8 +214,29 @@ public class CanvasRootNode extends BRootNode
 
     protected int convertModifiers (int modifiers)
     {
-        // TODO
-        return modifiers;
+        int nmodifiers = 0;
+        if ((modifiers & java.awt.event.InputEvent.BUTTON1_MASK) != 0) {
+            nmodifiers |= InputEvent.BUTTON1_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.BUTTON3_MASK) != 0) {
+            nmodifiers |= InputEvent.BUTTON2_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.BUTTON2_MASK) != 0) {
+            nmodifiers |= InputEvent.BUTTON3_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.SHIFT_MASK) != 0) {
+            nmodifiers |= InputEvent.SHIFT_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+            nmodifiers |= InputEvent.CTRL_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.ALT_MASK) != 0) {
+            nmodifiers |= InputEvent.ALT_DOWN_MASK;
+        }
+        if ((modifiers & java.awt.event.InputEvent.META_MASK) != 0) {
+            nmodifiers |= InputEvent.META_DOWN_MASK;
+        }
+        return nmodifiers;
     }
 
     protected int convertButton (java.awt.event.MouseEvent e)
