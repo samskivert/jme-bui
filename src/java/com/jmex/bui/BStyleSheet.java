@@ -80,6 +80,9 @@ import com.jmex.bui.util.Insets;
  *   border: 1 solid #FFCC99;
  *   border: 1 blank;
  *   size: 250 100; // overrrides component preferred size
+ *
+ *   // explicit inheritance
+ *   parent: other_class; // other_class must be defined *before* this one
  * }
  * </pre>
  *
@@ -214,7 +217,8 @@ public class BStyleSheet
         return (BIcon)findProperty(component, pseudoClass, "icon", false);
     }
 
-    public BTextFactory getTextFactory (BComponent component, String pseudoClass)
+    public BTextFactory getTextFactory (
+        BComponent component, String pseudoClass)
     {
         return (BTextFactory)findProperty(component, pseudoClass, "font", true);
     }
@@ -268,8 +272,8 @@ public class BStyleSheet
         return new DefaultKeyMap();
     }
 
-    protected Object findProperty (
-        BComponent component, String pseudoClass, String property, boolean climb)
+    protected Object findProperty (BComponent component, String pseudoClass,
+                                   String property, boolean climb)
     {
         Object value;
 
@@ -315,7 +319,7 @@ public class BStyleSheet
         }
 
         // we need to lazily resolve certain properties at this time
-        Object prop = rule.properties.get(property);
+        Object prop = rule.get(_rules, property);
         if (prop instanceof Property) {
             prop = ((Property)prop).resolve(_rsrcprov);
             rule.properties.put(property, prop);
@@ -399,8 +403,7 @@ public class BStyleSheet
 
         try {
             rule.properties.put(name, createProperty(name, args));
-//             System.out.println("  " + name + " -> " +
-//                                rule.properties.get(name));
+//             System.out.println("  " + name + " -> " + rule.get(name));
         } catch (Exception e) {
             System.err.println("Failure parsing property '" + name +
                                "' line " + sline + ": " + e.getMessage());
@@ -540,6 +543,14 @@ public class BStyleSheet
             size.height = parseInt(args.get(1));
             return size;
 
+        } else if (name.equals("parent")) {
+            Rule parent = (Rule)_rules.get(args.get(0));
+            if (parent == null) {
+                throw new IllegalArgumentException(
+                    "Unknown parent class '" + args.get(0) + "'");
+            }
+            return parent;
+
         } else {
             throw new IllegalArgumentException(
                 "Unknown property '" + name + "'");
@@ -583,10 +594,11 @@ public class BStyleSheet
     }
 
     protected static String makeFQClass (String styleClass, String pseudoClass)
-        {
-            return (pseudoClass == null) ? styleClass :
-                (styleClass + ":" + pseudoClass);
-        }
+    {
+        return (pseudoClass == null) ? styleClass :
+            (styleClass + ":" + pseudoClass);
+    }
+
     protected static class Rule
     {
         public String styleClass;
@@ -594,6 +606,16 @@ public class BStyleSheet
         public String pseudoClass;
 
         public HashMap properties = new HashMap();
+
+        public Object get (HashMap rules, String key)
+        {
+            Object value = properties.get(key);
+            if (value != null) {
+                return value;
+            }
+            Rule prule = (Rule)properties.get("parent");
+            return (prule != null) ? prule.get(rules, key) : null;
+        }
 
         public String toString () {
             return "[class=" + styleClass + ", pclass=" + pseudoClass + "]";
