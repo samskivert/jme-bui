@@ -31,7 +31,8 @@ import com.jmex.bui.util.RenderUtil;
  * <ul>
  * <li> Centering the image either horizontally, vertically or both.
  * <li> Scaling the image either horizontally, vertically or both.
- * <li> Tiling the image in a fancy way: the background image is divided into
+ * <li> Tiling the image either horizontally, vertically or both.
+ * <li> Framing the image in a fancy way: the background image is divided into
  * nine sections (three across and three down), the corners are rendered
  * unscaled, the central edges are scaled in one direction and the center
  * section is scaled in both directions.
@@ -62,6 +63,10 @@ public class ImageBackground extends BBackground
     public static final int TILE_XY = 6;
     public static final int TILE_X = 7;
     public static final int TILE_Y = 8;
+
+    public static final int FRAME_XY = 9;
+    public static final int FRAME_X = 10;
+    public static final int FRAME_Y = 11;
 
     public ImageBackground (int mode, Image image)
     {
@@ -102,6 +107,10 @@ public class ImageBackground extends BBackground
         case TILE:
             renderTiled(renderer, x, y, width, height);
             break;
+
+        case FRAME:
+            renderFramed(renderer, x, y, width, height);
+            break;
         }
     }
 
@@ -138,6 +147,56 @@ public class ImageBackground extends BBackground
     }
 
     protected void renderTiled (
+        Renderer renderer, int x, int y, int width, int height)
+    {
+        int iwidth = _image.getWidth(), iheight = _image.getHeight();
+        if (_mode == TILE_X) {
+            renderRow(renderer, x, y, width, Math.min(height, iheight));
+
+        } else if (_mode == TILE_Y) {
+            int up = height / iheight;
+            iwidth = Math.min(width, iwidth);
+            for (int yy = 0; yy < up; yy++) {
+                RenderUtil.renderImage(
+                    _image, 0, 0, iwidth, iheight,
+                    x, y + yy*iheight, iwidth, iheight);
+            }
+            int remain = height % iheight;
+            if (remain > 0) {
+                RenderUtil.renderImage(
+                    _image, 0, 0, iwidth, remain,
+                    x, y + up*iheight, iwidth, remain);
+            }
+
+        } else if (_mode == TILE_XY) {
+            int up = height / iheight;
+            for (int yy = 0; yy < up; yy++) {
+                renderRow(renderer, x, y + yy*iheight, width, iheight);
+            }
+            int remain = height % iheight;
+            if (remain > 0) {
+                renderRow(renderer, x, y + up*iheight, width, remain);
+            }
+        }
+    }
+
+    protected void renderRow (
+        Renderer renderer, int x, int y, int width, int iheight)
+    {
+        int iwidth = _image.getWidth();
+        int across = width / iwidth;
+        for (int xx = 0; xx < across; xx++) {
+            RenderUtil.renderImage(_image, 0, 0, iwidth, iheight,
+                                   x + xx*iwidth, y, iwidth, iheight);
+        }
+        int remain = width % iwidth;
+        if (remain > 0) {
+            RenderUtil.renderImage(_image, 0, 0, remain, iheight,
+                                   x + across*iwidth, y, remain, iheight);
+        }
+    }
+
+    protected void renderFramed (
         Renderer renderer, int x, int y, int width, int height)
     {
         // render each of our image sections appropriately
@@ -182,4 +241,5 @@ public class ImageBackground extends BBackground
     protected static final int CENTER = 0;
     protected static final int SCALE = 1;
     protected static final int TILE = 2;
+    protected static final int FRAME = 3;
 }

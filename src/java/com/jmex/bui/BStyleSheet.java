@@ -66,6 +66,7 @@ import com.jmex.bui.util.Insets;
  *   background: image monkey.png XX; // XX = centerx|centery|centerxy|
  *                                    //      scalex|scaley|scalexy|
  *                                    //      tilex|tiley|tilexy
+ *                                    //      framex|framey|framexy
  *
  *   // text properties
  *   font: Helvetica XX 12; // XX = normal|bold|italic|bolditalic
@@ -726,5 +727,8 @@ public class BStyleSheet
         _ibconsts.put("tilexy", new Integer(ImageBackground.TILE_XY));
         _ibconsts.put("tilex", new Integer(ImageBackground.TILE_X));
         _ibconsts.put("tiley", new Integer(ImageBackground.TILE_Y));
+        _ibconsts.put("framexy", new Integer(ImageBackground.FRAME_XY));
+        _ibconsts.put("framex", new Integer(ImageBackground.FRAME_X));
+        _ibconsts.put("framey", new Integer(ImageBackground.FRAME_Y));
     }
 }

@@ -34,7 +34,7 @@ component:disabled {
 }
 
 button {
-  background: image "rsrc/textures/button_up.png" tilexy;
+  background: image "rsrc/textures/button_up.png" framexy;
   padding: 3 5;
   font: "Dialog" bold 24;
   text-align: center;
@@ -47,22 +47,22 @@ button:hover {
 }
 
 button:disabled {
-  background: image "rsrc/textures/button_disabled.png" tilexy;
+  background: image "rsrc/textures/button_disabled.png" framexy;
 }
 
 button:down {
-  background: image "rsrc/textures/button_down.png" tilexy;
+  background: image "rsrc/textures/button_down.png" framexy;
   color: #FF00FF;
   padding: 4 6 2 4;
 }
 
 button:selected {
-  background: image "rsrc/textures/button_down.png" tilexy;
+  background: image "rsrc/textures/button_down.png" framexy;
   padding: 4 6 2 4;
 }
 
 combobox {
-  background: image "rsrc/textures/button_up.png" tilexy;
+  background: image "rsrc/textures/button_up.png" framexy;
   padding: 3 5;
 }
 
@@ -93,12 +93,12 @@ scrollbar_vthumb {
 }
 
 scrollbar_hwell {
-  background: image "rsrc/textures/button_up.png" tilexy;
+  background: image "rsrc/textures/button_up.png" framexy;
   padding: 3;
 }
 
 scrollbar_vwell {
-  background: image "rsrc/textures/button_up.png" tilexy;
+  background: image "rsrc/textures/button_up.png" framexy;
   padding: 3;
 }
 
