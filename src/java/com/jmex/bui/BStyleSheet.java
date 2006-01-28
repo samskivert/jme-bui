@@ -65,7 +65,7 @@ import com.jmex.bui.util.Insets;
  *   background: solid #00000088; // note the 50% alpha
  *   background: image monkey.png XX; // XX = centerx|centery|centerxy|
  *                                    //      scalex|scaley|scalexy|
- *                                    //      tilex|tiley|tilexy
+ *                                    //      tilex|tiley|tilexy|
  *                                    //      framex|framey|framexy
  *
  *   // text properties
