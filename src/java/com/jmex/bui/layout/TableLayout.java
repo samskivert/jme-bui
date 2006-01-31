@@ -76,10 +76,46 @@ public class TableLayout extends BLayoutManager
      */
     public TableLayout (int columns, int rowgap, int colgap, Mode mode)
     {
+        this(columns, rowgap, colgap, mode, false);
+    }
+
+    /**
+     * Creates a table layout with the specified configuration.
+     *
+     * @param columns the number of columns in the table.
+     * @param rowgap the gap in pixels between rows.
+     * @param colgap the gap in pixels between columns.
+     * @param mode the horizontal stretching or justification mode.
+     * @param equalRows whether or not to force all rows to be of equal height.
+     */
+    public TableLayout (int columns, int rowgap, int colgap, Mode mode,
+                        boolean equalRows)
+    {
         _columnWidths = new int[columns];
         _rowgap = rowgap;
         _colgap = colgap;
         _mode = mode;
+        _equalRows = equalRows;
+    }
+
+    /**
+     * Configures the horizontal justification or stretching mode of this
+     * table. This must be called before the container using this layout is
+     * validated.
+     */
+    public void setMode (Mode mode)
+    {
+        _mode = mode;
+    }
+
+    /**
+     * Configures whether or not the table will force all rows to be a uniform
+     * size. This must be called before the container using this layout is
+     * validated.
+     */
+    public void setEqualRows (boolean equalRows)
+    {
+        _equalRows = equalRows;
     }
 
     // documentation inherited
@@ -124,12 +160,15 @@ public class TableLayout extends BLayoutManager
         }            
         Arrays.fill(_columnWidths, 0);
 
-        int row = 0, col = 0;
+        int row = 0, col = 0, maxrh = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
             Dimension psize = child.getPreferredSize(-1, -1);
             if (psize.height > _rowHeights[row]) {
                 _rowHeights[row] = psize.height;
+                if (maxrh < _rowHeights[row]) {
+                    maxrh = _rowHeights[row];
+                }
             }
             if (psize.width > _columnWidths[col]) {
                 _columnWidths[col] = psize.width;
@@ -156,6 +195,11 @@ public class TableLayout extends BLayoutManager
                 _columnWidths[0] += (avail - used);
             }
         }
+
+        // if we're equalizing rows, make all row heights the max
+        if (_equalRows) {
+            Arrays.fill(_rowHeights, maxrh);
+        }
     }
 
     protected int computeRows (BContainer target)
@@ -178,6 +222,7 @@ public class TableLayout extends BLayoutManager
     }
 
     protected Mode _mode;
+    protected boolean _equalRows;
     protected int _rowgap, _colgap;
     protected int[] _columnWidths;
     protected int[] _rowHeights;
