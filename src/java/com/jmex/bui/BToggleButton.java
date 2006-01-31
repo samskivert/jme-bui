@@ -105,6 +105,8 @@ public class BToggleButton extends BButton
     // documentation inherited
     protected void fireAction (long when, int modifiers)
     {
+        // when the button fires its action (it was clicked) we know that it's
+        // time to change state from selected to deselected or vice versa
         _selected = !_selected;
         super.fireAction(when, modifiers);
     }

@@ -77,11 +77,11 @@ textarea {
 }
 
 checkbox {
-  icon: blank 7 7;
+  padding: 0 0 0 7;
 }
 
 checkbox:selected {
-  icon: image "rsrc/textures/checkbox.png";
+  background: image "rsrc/textures/checkbox.png" centery;
 }
 
 scrollbar_hthumb {

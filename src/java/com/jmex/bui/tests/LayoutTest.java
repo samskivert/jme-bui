@@ -143,7 +143,7 @@ public class LayoutTest extends SimpleGame
         label.setIconTextGap(1);
         label.setOrientation(BLabel.VERTICAL);
         cont.add(label);
-        cont.add(new BLabel("Four"));
+        cont.add(new BCheckBox("Four"));
         cont.add(new BLabel("Five"));
         cont.add(new BLabel("Six"));
         cont.add(new BLabel("Seven"));
