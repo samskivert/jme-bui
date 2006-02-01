@@ -110,32 +110,40 @@ public class BorderLayout extends BLayoutManager
     {
         Dimension psize = new Dimension();
         int horizComps = 0, vertComps = 0;
-
-        BComponent comp = _components[SOUTH.intValue()];
-        if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize(whint, -1);
-            psize.width = Math.max(psize.width, cpsize.width);
-            psize.height += cpsize.height;
-            vertComps++;
-        }
-
-        comp = _components[NORTH.intValue()];
-        if (comp != null) {
-            Dimension cpsize = comp.getPreferredSize(whint, -1);
-            psize.width = Math.max(psize.width, cpsize.width);
-            psize.height += cpsize.height;
-            vertComps++;
+        BComponent comp;
+        for (int cidx = 0; cidx < VERTS.length; cidx++) {
+            comp = _components[VERTS[cidx].intValue()];
+            if (comp != null) {
+                Dimension cpsize = comp.getPreferredSize(whint, -1);
+                psize.width = Math.max(psize.width, cpsize.width);
+                psize.height += cpsize.height;
+                vertComps++;
+                if (hhint > 0) {
+                    hhint -= (cpsize.height + _vgap);
+                }
+            }
         }
 
         int centerWidth = 0, centerHeight = 0;
-        for (int ii = EAST.intValue(); ii <= CENTER.intValue(); ii++) {
-            comp = _components[ii];
+        for (int cidx = 0; cidx < HORIZS.length; cidx++) {
+            comp = _components[HORIZS[cidx].intValue()];
             if (comp != null) {
-                Dimension cpsize = comp.getPreferredSize(-1, -1);
+                Dimension cpsize = comp.getPreferredSize(-1, hhint);
                 centerWidth += cpsize.width;
                 centerHeight = Math.max(centerHeight, cpsize.height);
                 horizComps++;
+                if (whint > 0) {
+                    whint -= (cpsize.width + _hgap);
+                }
             }
+        }
+
+        comp = _components[CENTER.intValue()];
+        if (comp != null) {
+            Dimension cpsize = comp.getPreferredSize(whint, hhint);
+            centerWidth += cpsize.width;
+            centerHeight = Math.max(centerHeight, cpsize.height);
+            horizComps++;
         }
         centerWidth += Math.max(horizComps - 1, 0) * _hgap; 
 
@@ -195,4 +203,7 @@ public class BorderLayout extends BLayoutManager
 
     protected int _hgap, _vgap;
     protected BComponent[] _components = new BComponent[5];
+
+    protected static final Integer[] VERTS = { SOUTH, NORTH };
+    protected static final Integer[] HORIZS = { EAST, WEST };
 }
