@@ -247,19 +247,7 @@ public class BContainer extends BComponent
     protected Dimension computePreferredSize (int whint, int hhint)
     {
         if (_layout != null) {
-            // extract space from the hints for our insets
-            Insets insets = getInsets();
-            if (whint > 0) {
-                whint -= insets.getHorizontal();
-            }
-            if (hhint > 0) {
-                hhint -= insets.getVertical();
-            }
-            Dimension ps = _layout.computePreferredSize(this, whint, hhint);
-            // now add our insets back into our preferred size
-            ps.width += insets.getHorizontal();
-            ps.height += insets.getVertical();
-            return ps;
+            return _layout.computePreferredSize(this, whint, hhint);
         } else {
             return super.computePreferredSize(whint, hhint);
         }
