@@ -23,9 +23,11 @@ package com.jmex.bui;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import com.jme.renderer.Renderer;
+
 import com.jmex.bui.layout.BLayoutManager;
 import com.jmex.bui.util.Dimension;
-import com.jme.renderer.Renderer;
+import com.jmex.bui.util.Insets;
 
 /**
  * A user interface element that is meant to contain other interface
@@ -245,7 +247,19 @@ public class BContainer extends BComponent
     protected Dimension computePreferredSize (int whint, int hhint)
     {
         if (_layout != null) {
-            return _layout.computePreferredSize(this, whint, hhint);
+            // extract space from the hints for our insets
+            Insets insets = getInsets();
+            if (whint > 0) {
+                whint -= insets.getHorizontal();
+            }
+            if (hhint > 0) {
+                hhint -= insets.getVertical();
+            }
+            Dimension ps = _layout.computePreferredSize(this, whint, hhint);
+            // now add our insets back into our preferred size
+            ps.width += insets.getHorizontal();
+            ps.height += insets.getVertical();
+            return ps;
         } else {
             return super.computePreferredSize(whint, hhint);
         }

@@ -58,14 +58,13 @@ public class VGroupLayout extends GroupLayout
     // documentation inherited
     public void layoutContainer (BContainer target)
     {
-	Rectangle b = target.getBounds();
-	DimenInfo info = computeDimens(target, b.width, -1);
-
 	// adjust the bounds width and height to account for the insets
+	Rectangle b = target.getBounds();
 	Insets insets = target.getInsets();
 	b.width -= insets.getHorizontal();
 	b.height -= insets.getVertical();
 
+	DimenInfo info = computeDimens(target, b.width, -1);
 	int nk = target.getComponentCount();
 	int sx, sy;
 	int tothei, totgap = _gap * (info.count-1);

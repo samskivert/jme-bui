@@ -48,7 +48,7 @@ public class Label
     public void setText (String text)
     {
         _value = text;
-        _twidth = Integer.MAX_VALUE;
+        _twidth = Short.MAX_VALUE;
 
         // if we're already part of the hierarchy, recreate our glyps
         if (_container.isAdded()) {
@@ -146,10 +146,13 @@ public class Label
             iwidth = _icon.getWidth();
             iheight = _icon.getHeight();
         }
+
         if (_text != null) {
             if (_icon != null) {
                 gap = _gap;
             }
+            // find out how tall our text will be based on our allowed width
+            layoutText(whint > 0 ? whint : Short.MAX_VALUE);
             twidth = _text.size.width;
             theight = _text.size.height;
         }
@@ -179,20 +182,9 @@ public class Label
      */
     public void layout (Insets insets)
     {
-        // compute the available width into which we can lay out our text
-        int twidth = _container.getWidth() - insets.getHorizontal();
-        if (_icon != null && _orient == HORIZONTAL) {
-            twidth -= _icon.getWidth();
-            twidth -= _gap;
-        }
-        // if the width changed, re-line-break our text
-        if (twidth != _twidth) {
-            _twidth = twidth;
-            recreateGlyphs();
-        }
-
-        // now compute any offsets needed to center or align things
-        Dimension size = computePreferredSize(-1, -1);
+        // compute any offsets needed to center or align things
+        Dimension size = computePreferredSize(
+            _container.getWidth() - insets.getHorizontal(), -1);
         int xoff = 0, yoff = 0;
         switch (_orient) {
         case HORIZONTAL:
@@ -243,6 +235,21 @@ public class Label
         if (_text != null) {
             _text.render(renderer, _tx, _ty,
                          _container.getHorizontalAlignment());
+        }
+    }
+
+    protected void layoutText (int twidth)
+    {
+        // compute the available width into which we can lay out our text
+        if (_icon != null && _orient == HORIZONTAL) {
+            twidth -= _icon.getWidth();
+            twidth -= _gap;
+        }
+
+        // if the width changed, re-line-break our text
+        if (twidth != _twidth) {
+            _twidth = twidth;
+            recreateGlyphs();
         }
     }
 
@@ -329,5 +336,5 @@ public class Label
     protected int _ix, _iy;
 
     protected Text _text;
-    protected int _tx, _ty, _twidth = Integer.MAX_VALUE;
+    protected int _tx, _ty, _twidth = Short.MAX_VALUE;
 }

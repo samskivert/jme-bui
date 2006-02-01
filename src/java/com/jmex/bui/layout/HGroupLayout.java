@@ -58,14 +58,13 @@ public class HGroupLayout extends GroupLayout
     // documentation inherited
     public void layoutContainer (BContainer target)
     {
-	Rectangle b = target.getBounds();
-	DimenInfo info = computeDimens(target, -1, b.height);
-
 	// adjust the bounds width and height to account for the insets
+	Rectangle b = target.getBounds();
 	Insets insets = target.getInsets();
 	b.width -= insets.getHorizontal();
 	b.height -= insets.getVertical();
 
+	DimenInfo info = computeDimens(target, -1, b.height);
 	int nk = target.getComponentCount();
 	int sx, sy;
 	int totwid, totgap = _gap * (info.count-1);
