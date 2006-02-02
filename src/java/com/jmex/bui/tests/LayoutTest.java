@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import com.jme.app.SimpleGame;
 import com.jme.input.KeyBindingManager;
 import com.jme.input.MouseInput;
+import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
@@ -53,7 +54,7 @@ public class LayoutTest extends SimpleGame
 {
     protected void simpleInitGame ()
     {
-        _root = new PolledRootNode(timer, input);
+        _root = new PolledRootNode(timer, /* input */ null);
         rootNode.attachChild(_root);
 
         // we don't hide the cursor
@@ -89,7 +90,11 @@ public class LayoutTest extends SimpleGame
         pane.addTab("One", button);
         button.setEnabled(false);
 
-        Box box = new Box("box", new Vector3f(), 1, 1, 1);
+        Box box = new Box("box", new Vector3f(), 2, 2, 2);
+        Quaternion quat45 = new Quaternion();
+        quat45.fromAngleAxis(0.7854f, new Vector3f(1, 1, 1));
+        box.setLocalRotation(quat45);
+
         BGeomView nview = new BGeomView(box);
         pane.addTab("Two", nview);
         pane.addTab("Three", new BTextArea());
@@ -174,8 +179,6 @@ public class LayoutTest extends SimpleGame
         KeyBindingManager.getKeyBindingManager().remove("toggle_lights");
         KeyBindingManager.getKeyBindingManager().remove("toggle_bounds");
         KeyBindingManager.getKeyBindingManager().remove("camera_out");
-
-        lightState.setEnabled(false);
 
         display.getRenderer().setBackgroundColor(ColorRGBA.gray);
     }

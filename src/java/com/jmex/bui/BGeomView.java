@@ -22,23 +22,56 @@ package com.jmex.bui;
 
 import org.lwjgl.opengl.GL11;
 
+import com.jme.math.Vector3f;
 import com.jme.renderer.Camera;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
+import com.jme.system.DisplaySystem;
 
 import com.jmex.bui.util.Dimension;
 
 /**
- * Displays a 3D geometry {@link Spatial} inside a normal user interface.
+ * Displays 3D geometry (a {@link Spatial}) inside a normal user interface.
  */
 public class BGeomView extends BComponent
 {
     /**
-     * Creates a node view with the specified {@link Spatial} to be rendered.
+     * Creates a view with no configured geometry. Geometry can be set later
+     * with {@link #setGeometry}.
      */
-    public BGeomView (Spatial node)
+    public BGeomView ()
     {
-        _geom = node;
+        this(null);
+    }
+
+    /**
+     * Creates a view with the specified {@link Spatial} to be rendered.
+     */
+    public BGeomView (Spatial geom)
+    {
+        _geom = geom;
+
+        DisplaySystem display = DisplaySystem.getDisplaySystem();
+        _scrwidth = display.getWidth();
+        _scrheight = display.getHeight();
+        _camera = createCamera(display);
+        _camera.update();
+    }
+
+    /**
+     * Returns the camera used when rendering our geometry.
+     */
+    public Camera getCamera ()
+    {
+        return _camera;
+    }
+
+    /**
+     * Configures the spatial to be rendered by this view.
+     */
+    public void setGeometry (Spatial geom)
+    {
+        _geom = geom;
     }
 
     /**
@@ -47,7 +80,20 @@ public class BGeomView extends BComponent
      */
     public void update (float frameTime)
     {
-        _geom.updateGeometricState(frameTime, true);
+        if (_geom != null) {
+            _geom.updateGeometricState(frameTime, true);
+        }
+    }
+
+    public void validate ()
+    {
+        super.validate();
+
+        // set up our camera viewport
+        int ax = getAbsoluteX(), ay = getAbsoluteY();
+        float left =  ax / _scrwidth, right = left + _width / _scrwidth;
+        float bottom = ay / _scrheight, top = bottom + _height / _scrheight;
+        _camera.setViewPort(left, right, bottom, top);
     }
 
     // documentation inherited
@@ -70,34 +116,54 @@ public class BGeomView extends BComponent
     protected void renderComponent (Renderer renderer)
     {
         super.renderComponent(renderer);
+        if (_geom == null) {
+            return;
+        }
 
-        int ax = getAbsoluteX(), ay = getAbsoluteY();
-        float width = renderer.getWidth(), height = renderer.getHeight();
-        float left =  ax / width, right = left + _width / width;
-        float bottom = ay / height, top = bottom + _height / height;
         Camera cam = renderer.getCamera();
-
         try {
-            // now set up the custom viewport and render our node
+            // now set up the custom camera and render our geometry
             renderer.unsetOrtho();
-            cam.setViewPort(left, right, bottom, top);
-            cam.update();
-
+            renderer.setCamera(_camera);
+            _camera.update();
             renderer.draw(_geom);
 
         } finally {
-            // restore the viewport
-            cam.setViewPort(0, 1, 0, 1);
+            // restore the camera
+            renderer.setCamera(cam);
             cam.update();
             renderer.setOrtho();
 
             // we need to restore the GL translation as that got wiped out when
             // we left and re-entered ortho mode
-            GL11.glTranslatef(ax, ay, 0);
+            GL11.glTranslatef(getAbsoluteX(), getAbsoluteY(), 0);
         }
     }
 
+    /**
+     * Called to create and configure the camera that we'll use when rendering
+     * our geometry.
+     */
+    protected Camera createCamera (DisplaySystem ds)
+    {
+        // create a standard camera and frustum
+        Camera camera = ds.getRenderer().createCamera(
+            (int)_scrwidth, (int)_scrheight);
+        camera.setFrustumPerspective(45.0f, _scrwidth / _scrheight, 1, 1000);
+        camera.setParallelProjection(false);
+
+        // put and point it somewhere sensible by default
+        Vector3f loc = new Vector3f(0.0f, 0.0f, 25.0f);
+        Vector3f left = new Vector3f(-1.0f, 0.0f, 0.0f);
+        Vector3f up = new Vector3f(0.0f, 1.0f, 0.0f);
+        Vector3f dir = new Vector3f(0.0f, 0f, -1.0f);
+        camera.setFrame(loc, left, up, dir);
+
+        return camera;
+    }
+
     protected BRootNode _root;
-    protected Spatial _geom;
     protected Camera _camera;
+    protected Spatial _geom;
+    protected float _scrwidth, _scrheight;
 }
