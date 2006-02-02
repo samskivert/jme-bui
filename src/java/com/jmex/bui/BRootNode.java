@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import com.jme.intersection.CollisionResults;
 import com.jme.intersection.PickResults;
 import com.jme.math.Ray;
+import com.jme.renderer.Camera;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
@@ -170,6 +171,17 @@ public abstract class BRootNode extends Geometry
     }
 
     // documentation inherited
+    public void updateGeometricState (float time, boolean initiator)
+    {
+        super.updateGeometricState(time, initiator);
+
+        // update our geometry views if we have any
+        for (int ii = 0, ll = _geomviews.size(); ii < ll; ii++) {
+            ((BGeomView)_geomviews.get(ii)).update(time);
+        }
+    }
+
+    // documentation inherited
     public void onDraw (Renderer renderer)
     {
         // we're rendered in the ortho queue, so we just add ourselves to
@@ -233,6 +245,24 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Registers a {@link BGeomView} with the root node. This is called
+     * automatically from {@link BGeomView#wasAdded}.
+     */
+    protected void registerGeomView (BGeomView nview)
+    {
+        _geomviews.add(nview);
+    }
+
+    /**
+     * Clears out a node view registration. This is called automatically from
+     * {@link BGeomView#wasRemoved}.
+     */
+    protected void unregisterGeomView (BGeomView nview)
+    {
+        _geomviews.remove(nview);
+    }
+
+    /**
      * Recomputes the component over which the mouse is hovering,
      * generating mouse exit and entry events as necessary.
      */
@@ -290,4 +320,5 @@ public abstract class BRootNode extends Geometry
     protected BComponent _hcomponent, _ccomponent;
     protected BComponent _dcomponent, _focus;
     protected ArrayList _defaults = new ArrayList();
+    protected ArrayList _geomviews = new ArrayList();
 }

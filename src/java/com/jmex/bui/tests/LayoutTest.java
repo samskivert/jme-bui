@@ -28,7 +28,9 @@ import java.util.logging.Level;
 import com.jme.app.SimpleGame;
 import com.jme.input.KeyBindingManager;
 import com.jme.input.MouseInput;
+import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.scene.shape.Box;
 import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
@@ -85,7 +87,10 @@ public class LayoutTest extends SimpleGame
         BButton button = new BButton("One contents");
         pane.addTab("One", button);
         button.setEnabled(false);
-        pane.addTab("Two", new BLabel("Two contents"));
+
+        Box box = new Box("box", new Vector3f(), 10, 10, 10); 
+        BGeomView nview = new BGeomView(100, 100, box);
+        pane.addTab("Two", nview);
         pane.addTab("Three", new BTextArea());
         _root.addWindow(window);
         window.setSize(200, 150);
