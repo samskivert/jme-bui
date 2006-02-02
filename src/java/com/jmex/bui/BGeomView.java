@@ -94,6 +94,7 @@ public class BGeomView extends BComponent
         float left =  ax / _scrwidth, right = left + _width / _scrwidth;
         float bottom = ay / _scrheight, top = bottom + _height / _scrheight;
         _camera.setViewPort(left, right, bottom, top);
+        _camera.setFrustumPerspective(45.0f, _width / (float)_height, 1, 1000);
     }
 
     // documentation inherited
@@ -149,7 +150,6 @@ public class BGeomView extends BComponent
         // create a standard camera and frustum
         Camera camera = ds.getRenderer().createCamera(
             (int)_scrwidth, (int)_scrheight);
-        camera.setFrustumPerspective(45.0f, _scrwidth / _scrheight, 1, 1000);
         camera.setParallelProjection(false);
 
         // put and point it somewhere sensible by default
