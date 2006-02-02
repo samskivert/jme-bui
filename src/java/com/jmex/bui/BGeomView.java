@@ -20,6 +20,8 @@
 
 package com.jmex.bui;
 
+import org.lwjgl.opengl.GL11;
+
 import com.jme.renderer.Camera;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
@@ -32,12 +34,10 @@ import com.jmex.bui.util.Dimension;
 public class BGeomView extends BComponent
 {
     /**
-     * Creates a node view with the specified viewport dimensions and the
-     * specified {@link Spatial} to be rendered.
+     * Creates a node view with the specified {@link Spatial} to be rendered.
      */
-    public BGeomView (int width, int height, Spatial node)
+    public BGeomView (Spatial node)
     {
-        _size = new Dimension(width, height);
         _geom = node;
     }
 
@@ -67,39 +67,36 @@ public class BGeomView extends BComponent
     }
 
     // documentation inherited
-    protected Dimension computePreferredSize (int whint, int hhint)
-    {
-        return new Dimension(_size);
-    }
-
-    // documentation inherited
     protected void renderComponent (Renderer renderer)
     {
         super.renderComponent(renderer);
 
-        // we need to create our camera the first time through
-        if (_camera == null) {
-            _camera = renderer.createCamera(_size.width, _size.height);
-            int ax = getAbsoluteX(), ay = getAbsoluteY();
-            int sw = renderer.getWidth(), sh = renderer.getHeight();
-            _camera.setViewPort(ax, ax + _size.width, ay, ay + _size.height);
-            System.out.println("Creating camera: +" + ax + "+" + ay +
-                               " in " + sw + "x" + sh);
-        }
-
-        // now set up our custom camera and render our node
+        int ax = getAbsoluteX(), ay = getAbsoluteY();
+        float width = renderer.getWidth(), height = renderer.getHeight();
+        float left =  ax / width, right = left + _width / width;
+        float bottom = ay / height, top = bottom + _height / height;
         Camera cam = renderer.getCamera();
+
         try {
-            renderer.setCamera(_camera);
-            _camera.update();
-            renderer.draw(_geom);
-        } finally {
-            renderer.setCamera(cam);
+            // now set up the custom viewport and render our node
+            renderer.unsetOrtho();
+            cam.setViewPort(left, right, bottom, top);
             cam.update();
+
+            renderer.draw(_geom);
+
+        } finally {
+            // restore the viewport
+            cam.setViewPort(0, 1, 0, 1);
+            cam.update();
+            renderer.setOrtho();
+
+            // we need to restore the GL translation as that got wiped out when
+            // we left and re-entered ortho mode
+            GL11.glTranslatef(ax, ay, 0);
         }
     }
 
-    protected Dimension _size;
     protected BRootNode _root;
     protected Spatial _geom;
     protected Camera _camera;
