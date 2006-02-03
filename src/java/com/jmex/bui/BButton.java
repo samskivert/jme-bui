@@ -74,15 +74,26 @@ public class BButton extends BLabel
     }
 
     /**
-     * Creates a button with the specified icon and action. The action
-     * will be dispatched via an {@link ActionEvent} when the button is
-     * clicked.
+     * Creates a button with the specified icon and action. The action will be
+     * dispatched via an {@link ActionEvent} when the button is clicked.
      */
     public BButton (BIcon icon, String action)
     {
+        this(icon, null, action);
+    }
+
+    /**
+     * Creates a button with the specified icon and action. The action will be
+     * dispatched via an {@link ActionEvent} to the specified {@link
+     * ActionListener} when the button is clicked.
+     */
+    public BButton (BIcon icon, ActionListener listener, String action)
+    {
         super(icon);
         _action = action;
-        invalidate();
+        if (listener != null) {
+            addListener(listener);
+        }
     }
 
     /**
