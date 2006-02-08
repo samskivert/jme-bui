@@ -146,6 +146,9 @@ public class BorderLayout extends BLayoutManager
             horizComps++;
         }
         centerWidth += Math.max(horizComps - 1, 0) * _hgap; 
+        if (centerHeight > 0) {
+            vertComps++;
+        }
 
         psize.width = Math.max(psize.width, centerWidth);
         psize.height += centerHeight;
