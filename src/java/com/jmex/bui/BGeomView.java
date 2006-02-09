@@ -52,8 +52,8 @@ public class BGeomView extends BComponent
         _geom = geom;
 
         DisplaySystem display = DisplaySystem.getDisplaySystem();
-        _scrwidth = display.getWidth();
-        _scrheight = display.getHeight();
+        _swidth = display.getWidth();
+        _sheight = display.getHeight();
         _camera = createCamera(display);
         _camera.update();
     }
@@ -85,16 +85,22 @@ public class BGeomView extends BComponent
         }
     }
 
+    // documentation inherited
     public void validate ()
     {
         super.validate();
 
         // set up our camera viewport
-        int ax = getAbsoluteX(), ay = getAbsoluteY();
-        float left =  ax / _scrwidth, right = left + _width / _scrwidth;
-        float bottom = ay / _scrheight, top = bottom + _height / _scrheight;
-        _camera.setViewPort(left, right, bottom, top);
-        _camera.setFrustumPerspective(45.0f, _width / (float)_height, 1, 1000);
+        if (_cwidth != _width || _cheight != _height) {
+            _cwidth = _width;
+            _cheight = _height;
+            int ax = getAbsoluteX(), ay = getAbsoluteY();
+            float left =  ax / _swidth, right = left + _cwidth / _swidth;
+            float bottom = ay / _sheight, top = bottom + _cheight / _sheight;
+            _camera.setViewPort(left, right, bottom, top);
+            _camera.setFrustumPerspective(
+                45.0f, _width / (float)_height, 1, 1000);
+        }
     }
 
     // documentation inherited
@@ -149,7 +155,7 @@ public class BGeomView extends BComponent
     {
         // create a standard camera and frustum
         Camera camera = ds.getRenderer().createCamera(
-            (int)_scrwidth, (int)_scrheight);
+            (int)_swidth, (int)_sheight);
         camera.setParallelProjection(false);
 
         // put and point it somewhere sensible by default
@@ -165,5 +171,5 @@ public class BGeomView extends BComponent
     protected BRootNode _root;
     protected Camera _camera;
     protected Spatial _geom;
-    protected float _scrwidth, _scrheight;
+    protected float _swidth, _sheight, _cwidth, _cheight;
 }
