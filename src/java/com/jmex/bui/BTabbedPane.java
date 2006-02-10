@@ -69,6 +69,50 @@ public class BTabbedPane extends BContainer
     }
 
     /**
+     * Removes the tab at the specified index.
+     */
+    public void removeTab (int tabidx)
+    {
+        _buttons.remove(_buttons.getComponent(tabidx));
+        _tabs.remove(tabidx);
+        
+        // update the selected index
+        if (_selidx == tabidx) {
+            _selidx = -1;
+            if (tabidx < _tabs.size()) {
+                selectTab(tabidx);
+                
+            } else {
+                selectTab(tabidx - 1); // no-op if -1
+            }
+            
+        } else if (_selidx > tabidx) {
+            _selidx--;
+        }
+    }
+    
+    /**
+     * Removes all tabs.
+     */
+    public void removeAllTabs ()
+    {
+        if (_selidx != -1) {
+            remove((BComponent)_tabs.get(_selidx));
+        }
+        _selidx = -1;
+        _buttons.removeAll();
+        _tabs.clear();
+    }
+    
+    /**
+     * Returns the number of tabs in this pane.
+     */
+    public int getTabCount ()
+    {
+        return _tabs.size();
+    }
+    
+    /**
      * Selects the tab with the specified index.
      */
     public void selectTab (int tabidx)
@@ -91,6 +135,14 @@ public class BTabbedPane extends BContainer
         _selidx = tabidx;
     }
 
+    /**
+     * Returns the selected tab component.
+     */
+    public BComponent getSelectedTab ()
+    {
+        return (_selidx == -1) ? null : (BComponent)_tabs.get(_selidx);
+    }
+    
     /**
      * Returns the index of the selected tab.
      */

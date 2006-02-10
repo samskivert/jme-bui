@@ -35,12 +35,19 @@ public class BScrollPane extends BContainer
     {
         super(new BorderLayout(0, 0));
 
-        BViewport vport = new BViewport(child);
-        add(vport, BorderLayout.CENTER);
-        add(new BScrollBar(BScrollBar.VERTICAL, vport.getModel()),
+        add(_vport = new BViewport(child), BorderLayout.CENTER);
+        add(new BScrollBar(BScrollBar.VERTICAL, _vport.getModel()),
             BorderLayout.EAST);
     }
 
+    /**
+     * Returns a reference to the child of this scroll pane.
+     */
+    public BComponent getChild ()
+    {
+        return _vport.getTarget();
+    }
+    
     /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
@@ -51,6 +58,14 @@ public class BScrollPane extends BContainer
             add(_target = target);
         }
 
+        /**
+         * Returns a reference to the target of this viewport.
+         */
+        public BComponent getTarget ()
+        {
+            return _target;
+        }
+        
         /**
          * Returns the range model defined by this viewport's size and the
          * preferred size of its target component.
@@ -163,4 +178,6 @@ public class BScrollPane extends BContainer
         protected BoundedRangeModel _model;
         protected BComponent _target;
     }
+    
+    protected BViewport _vport;
 }
