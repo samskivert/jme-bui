@@ -93,6 +93,9 @@ public class JMEBitmapTextFactory extends BTextFactory
             public Dimension getSize () {
                 return dims;
             }
+            public int getHitPos (int x, int y) {
+                return (x-5)/10;
+            }
             public int getCursorPos (int index) {
                 // JME characters are hardcoded to 10x16
                 return 10 * index;

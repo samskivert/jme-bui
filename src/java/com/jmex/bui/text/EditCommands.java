@@ -48,4 +48,7 @@ public interface EditCommands
 
     /** A text editing command. */
     public static final int RELEASE_FOCUS = 7;
+
+    /** A text editing command. */
+    public static final int CLEAR = 8;
 }

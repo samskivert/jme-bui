@@ -50,5 +50,7 @@ public class DefaultKeyMap extends BKeyMap
                    EditCommands.END_OF_LINE);
         addMapping(InputEvent.CTRL_DOWN_MASK, KeyInput.KEY_D,
                    EditCommands.DELETE);
+        addMapping(InputEvent.CTRL_DOWN_MASK, KeyInput.KEY_K,
+                   EditCommands.CLEAR);
     }
 }

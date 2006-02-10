@@ -40,6 +40,13 @@ public abstract class BText
     public abstract Dimension getSize ();
 
     /**
+     * Returns the character position to which the cursor should be moved given
+     * that the user clicked the specified coordinate (relative to the text's
+     * bounds).
+     */
+    public abstract int getHitPos (int x, int y);
+
+    /**
      * Returns the x position for the cursor at the specified character
      * index. Note that the position should be "before" that character.
      */

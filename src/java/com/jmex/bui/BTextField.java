@@ -30,6 +30,7 @@ import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.KeyEvent;
+import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.TextEvent;
 import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
@@ -144,6 +145,10 @@ public class BTextField extends BTextComponent
                     getWindow().requestFocus(null);
                     break;
 
+                case CLEAR:
+                    setText("");
+                    break;
+
                 default:
                     // append printable and shifted printable characters
                     // to the text
@@ -160,6 +165,17 @@ public class BTextField extends BTextComponent
                     }
                     break;
                 }
+            }
+
+        } else if (event instanceof MouseEvent) {
+            MouseEvent mev = (MouseEvent)event;
+            if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
+                // don't adjust the cursor if we have no text
+                _text != null && _text.length() > 0) {
+                Insets insets = getInsets();
+                int mx = mev.getX() - getAbsoluteX() - insets.left,
+                    my = mev.getY() - getAbsoluteY() - insets.bottom;
+                setCursorPos(_glyphs.getHitPos(mx, my));
             }
 
         } else if (event instanceof FocusEvent) {

@@ -29,6 +29,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
+import java.awt.font.TextHitInfo;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -266,6 +267,10 @@ public class AWTTextFactory extends BTextFactory
         return new BText() {
             public Dimension getSize () {
                 return size;
+            }
+            public int getHitPos (int x, int y) {
+                TextHitInfo info = layout.hitTestChar(x, y);
+                return info.getInsertionIndex();
             }
             public int getCursorPos (int index) {
                 Shape[] carets = layout.getCaretShapes(index);
