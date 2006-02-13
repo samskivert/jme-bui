@@ -113,6 +113,9 @@ public class BTextField extends BTextComponent
         if (isAdded()) {
             recreateGlyphs();
         }
+
+        // let anyone who is around to hear know that a tree fell in the woods
+        dispatchEvent(new TextEvent(this, -1L));
     }
 
     // documentation inherited from interface Document.Listener
@@ -127,6 +130,9 @@ public class BTextField extends BTextComponent
         if (isAdded()) {
             recreateGlyphs();
         }
+
+        // let anyone who is around to hear know that a tree fell in the woods
+        dispatchEvent(new TextEvent(this, -1L));
     }
 
     // documentation inherited
@@ -319,15 +325,9 @@ public class BTextField extends BTextComponent
         if (text == null) {
             text = "";
         }
-        if (_text.getText().equals(text)) {
-            return;
+        if (!_text.getText().equals(text)) {
+            _text.setText(text);
         }
-
-        // update our document which will trigger the recreation of our glyphs
-        _text.setText(text);
-
-        // let anyone who is around to hear know that a tree fell in the woods
-        dispatchEvent(new TextEvent(this, when));
     }
 
     /**
