@@ -69,7 +69,12 @@ public class BTextField extends BTextComponent
      */
     public void setText (String text)
     {
-        setText(text, -1L);
+        if (text == null) {
+            text = "";
+        }
+        if (!_text.getText().equals(text)) {
+            _text.setText(text);
+        }
     }
 
     // documentation inherited
@@ -318,16 +323,6 @@ public class BTextField extends BTextComponent
             d.width = _prefWidth;
         }
         return d;
-    }
-
-    protected void setText (String text, long when)
-    {
-        if (text == null) {
-            text = "";
-        }
-        if (!_text.getText().equals(text)) {
-            _text.setText(text);
-        }
     }
 
     /**
