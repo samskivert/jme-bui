@@ -108,24 +108,7 @@ public class Document
      */
     public boolean insertText (int offset, String text)
     {
-        // no NOOPing
-        if (text == null || text.length() == 0) {
-            return false;
-        }
-
-        StringBuffer buf = new StringBuffer();
-        buf.append(_text, 0, offset);
-        buf.append(text);
-        buf.append(_text, offset, _text.length());
-
-        String ntext = buf.toString();
-        if (!validateEdit(_text, ntext)) {
-            return false;
-        }
-
-        _text = ntext;
-        notify(true, offset, text.length());
-        return true;
+        return replace(offset, 0, text);
     }
 
     /**
@@ -136,18 +119,7 @@ public class Document
      */
     public boolean remove (int offset, int length)
     {
-        StringBuffer buf = new StringBuffer();
-        buf.append(_text, 0, offset);
-        buf.append(_text, offset+length, _text.length());
-
-        String ntext = buf.toString();
-        if (!validateEdit(_text, ntext)) {
-            return false;
-        }
-
-        _text = ntext;
-        notify(false, offset, length);
-        return true;
+        return replace(offset, length, "");
     }
 
     /**
@@ -169,8 +141,12 @@ public class Document
         }
 
         _text = ntext;
-        notify(false, offset, length);
-        notify(true, offset, text.length());
+        if (length > 0) {
+            notify(false, offset, length);
+        }
+        if (text.length() > 0) {
+            notify(true, offset, text.length());
+        }
         return true;
     }
 
