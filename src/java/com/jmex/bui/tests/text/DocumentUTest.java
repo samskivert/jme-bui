@@ -54,18 +54,18 @@ public class DocumentUTest extends TestCase
     {
         Document doc = new Document();
         int lineidx = 0;
-        doc.insertText(0, "The quick brown fox jumped over the lazy dog.");
+        doc.insert(0, "The quick brown fox jumped over the lazy dog.");
         assertTrue("Check line: " + OUTPUT[lineidx],
                    doc.getText().equals(OUTPUT[lineidx++]));
-        doc.insertText(0, "I heard that ");
+        doc.insert(0, "I heard that ");
         assertTrue("Check line " + OUTPUT[lineidx],
                    doc.getText().equals(OUTPUT[lineidx++]));
         doc.remove(0, "I heard that ".length());
         assertTrue("Check line " + OUTPUT[lineidx],
                    doc.getText().equals(OUTPUT[lineidx++]));
 
-        doc.insertText(0, "Some guy said, \"");
-        doc.insertText(doc.getLength(), "\"");
+        doc.insert(0, "Some guy said, \"");
+        doc.insert(doc.getLength(), "\"");
         assertTrue("Check line " + OUTPUT[lineidx],
                    doc.getText().equals(OUTPUT[lineidx++]));
 

@@ -214,7 +214,7 @@ public class BTextField extends BTextComponent
                     if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 &&
                         !Character.isISOControl(c)) {
                         String text = String.valueOf(kev.getKeyChar());
-                        if (_text.insertText(_cursorPos, text)) {
+                        if (_text.insert(_cursorPos, text)) {
                             setCursorPos(_cursorPos + 1);
                         }
                     } else {

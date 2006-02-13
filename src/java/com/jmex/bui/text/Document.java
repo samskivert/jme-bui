@@ -106,7 +106,7 @@ public class Document
      * @return true if the text was inserted, false if it was rejected by the
      * document validator.
      */
-    public boolean insertText (int offset, String text)
+    public boolean insert (int offset, String text)
     {
         return replace(offset, 0, text);
     }
