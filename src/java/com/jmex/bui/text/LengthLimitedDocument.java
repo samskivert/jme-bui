@@ -2,7 +2,7 @@
 // $Id$
 //
 // BUI - a user interface library for the JME 3D engine
-// Copyright (C) 2005, Michael Bayne, All Rights Reserved
+// Copyright (C) 2005-2006, Michael Bayne, All Rights Reserved
 //
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -18,38 +18,30 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jmex.bui;
+package com.jmex.bui.text;
+
+import com.jmex.bui.BTextField;
 
 /**
- * A derivation of {@link BTextField} that does not display the actual
- * text, but asterisks instead.
+ * A document for use with a {@link BTextField} that limits the input to a
+ * maximum length.
  */
-public class BPasswordField extends BTextField
+public class LengthLimitedDocument extends Document
 {
-    public BPasswordField ()
+    /**
+     * Creates a document that will limit its maximum length to the specified
+     * value.
+     */
+    public LengthLimitedDocument (int maxLength)
     {
-    }
-
-    public BPasswordField (String text)
-    {
-        super(text);
+        _maxLength = maxLength;
     }
 
     // documentation inherited
-    protected String getDisplayText ()
+    protected boolean validateEdit (String oldText, String newText)
     {
-        String text = super.getDisplayText();
-        if (text == null) {
-            return null;
-        } else if (_stars == null || _stars.length() != text.length()) {
-            StringBuffer stars = new StringBuffer();
-            for (int ii = 0; ii < text.length(); ii++) {
-                stars.append("*");
-            }
-            _stars = stars.toString();
-        }
-        return _stars;
+        return newText.length() <= _maxLength;
     }
 
-    protected String _stars;
+    protected int _maxLength;
 }

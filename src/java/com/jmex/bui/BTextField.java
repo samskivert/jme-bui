@@ -34,6 +34,7 @@ import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.TextEvent;
 import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
+import com.jmex.bui.text.Document;
 import com.jmex.bui.text.EditCommands;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
@@ -42,15 +43,22 @@ import com.jmex.bui.util.Insets;
  * Displays and allows for the editing of a single line of text.
  */
 public class BTextField extends BTextComponent
-    implements EditCommands
+    implements EditCommands, Document.Listener
 {
+    /**
+     * Creates a blank text field.
+     */
     public BTextField ()
     {
         this("");
     }
 
+    /**
+     * Creates a text field with the specified starting text.
+     */
     public BTextField (String text)
     {
+        setDocument(new Document());
         setText(text);
     }
 
@@ -67,6 +75,25 @@ public class BTextField extends BTextComponent
     // documentation inherited
     public String getText ()
     {
+        return _text.getText();
+    }
+
+    /**
+     * Configures this text field with a custom document.
+     */
+    public void setDocument (Document document)
+    {
+        _text = document;
+        _text.addListener(this);
+    }
+
+    /**
+     * Returns the underlying document used by this text field to maintain its
+     * state. Changes to the document will be reflected in the text field
+     * display.
+     */
+    public Document getDocument ()
+    {
         return _text;
     }
 
@@ -77,6 +104,29 @@ public class BTextField extends BTextComponent
     public void setPreferredWidth (int width)
     {
         _prefWidth = width;
+    }
+
+    // documentation inherited from interface Document.Listener
+    public void textInserted (Document document, int offset, int length)
+    {
+        // if we're already part of the hierarchy, recreate our glyps
+        if (isAdded()) {
+            recreateGlyphs();
+        }
+    }
+
+    // documentation inherited from interface Document.Listener
+    public void textRemoved (Document document, int offset, int length)
+    {
+        // confine the cursor to the new text
+        if (_cursorPos > _text.getLength()) {
+            setCursorPos(_text.getLength());
+        }
+
+        // if we're already part of the hierarchy, recreate our glyps
+        if (isAdded()) {
+            recreateGlyphs();
+        }
     }
 
     // documentation inherited
@@ -103,19 +153,17 @@ public class BTextField extends BTextComponent
                 int modifiers = kev.getModifiers(), keyCode = kev.getKeyCode();
                 switch (_keymap.lookupMapping(modifiers, keyCode)) {
                 case BACKSPACE:
-                    if (_cursorPos > 0 && _text.length() > 0) {
-                        String before = _text.substring(0, _cursorPos - 1);
-                        String after = _text.substring(_cursorPos);
-                        setCursorPos(_cursorPos - 1);
-                        setText(before + after, event.getWhen());
+                    if (_cursorPos > 0 && _text.getLength() > 0) {
+                        int pos = _cursorPos-1;
+                        if (_text.remove(pos, 1)) { // might change _cursorPos
+                            setCursorPos(pos);
+                        }
                     }
                     break;
 
                 case DELETE:
-                    if (_cursorPos < _text.length()) {
-                        String before = _text.substring(0, _cursorPos);
-                        setText(before + _text.substring(_cursorPos + 1),
-                                event.getWhen());
+                    if (_cursorPos < _text.getLength()) {
+                        _text.remove(_cursorPos, 1);
                     }
                     break;
 
@@ -124,7 +172,7 @@ public class BTextField extends BTextComponent
                     break;
 
                 case CURSOR_RIGHT:
-                    setCursorPos(Math.min(_text.length(), _cursorPos+1));
+                    setCursorPos(Math.min(_text.getLength(), _cursorPos+1));
                     break;
 
                 case START_OF_LINE:
@@ -132,13 +180,13 @@ public class BTextField extends BTextComponent
                     break;
 
                 case END_OF_LINE:
-                    setCursorPos(_text.length());
+                    setCursorPos(_text.getLength());
                     break;
 
                 case ACTION:
-                    ActionEvent aev = new ActionEvent(
-                        this, kev.getWhen(), kev.getModifiers(), "");
-                    dispatchEvent(aev);
+                    dispatchEvent(
+                        new ActionEvent(
+                            this, kev.getWhen(), kev.getModifiers(), ""));
                     break;
 
                 case RELEASE_FOCUS:
@@ -146,20 +194,18 @@ public class BTextField extends BTextComponent
                     break;
 
                 case CLEAR:
-                    setText("");
+                    _text.setText("");
                     break;
 
                 default:
-                    // append printable and shifted printable characters
-                    // to the text
+                    // insert printable and shifted printable characters
                     char c = kev.getKeyChar();
                     if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 &&
                         !Character.isISOControl(c)) {
-                        String before = _text.substring(0, _cursorPos);
-                        String after = _text.substring(_cursorPos);
-                        setText(before + kev.getKeyChar() + after,
-                                event.getWhen());
-                        setCursorPos(_cursorPos + 1);
+                        String text = String.valueOf(kev.getKeyChar());
+                        if (_text.insertText(_cursorPos, text)) {
+                            setCursorPos(_cursorPos + 1);
+                        }
                     } else {
                         super.dispatchEvent(event);
                     }
@@ -171,7 +217,7 @@ public class BTextField extends BTextComponent
             MouseEvent mev = (MouseEvent)event;
             if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
                 // don't adjust the cursor if we have no text
-                _text != null && _text.length() > 0) {
+                _text.getLength() > 0) {
                 Insets insets = getInsets();
                 int mx = mev.getX() - getAbsoluteX() - insets.left,
                     my = mev.getY() - getAbsoluteY() - insets.bottom;
@@ -270,22 +316,15 @@ public class BTextField extends BTextComponent
 
     protected void setText (String text, long when)
     {
-        // NOOP de NOOP
-        if (_text == text || (_text != null && _text.equals(text))) {
+        if (text == null) {
+            text = "";
+        }
+        if (_text.getText().equals(text)) {
             return;
         }
 
-        _text = text;
-
-        // if we're already part of the hierarchy, recreate our glyps
-        if (isAdded()) {
-            recreateGlyphs();
-        }
-
-        // confine the cursor to the new text
-        if (_cursorPos > _text.length()) {
-            setCursorPos(_text.length());
-        }
+        // update our document which will trigger the recreation of our glyphs
+        _text.setText(text);
 
         // let anyone who is around to hear know that a tree fell in the woods
         dispatchEvent(new TextEvent(this, when));
@@ -299,11 +338,9 @@ public class BTextField extends BTextComponent
         if (_glyphs != null) {
             _glyphs = null;
         }
-
-        if (_text == null) {
+        if (_text.getLength() == 0) {
             return;
         }
-
         _glyphs = getTextFactory().createText(getDisplayText(), getColor());
     }
 
@@ -314,7 +351,7 @@ public class BTextField extends BTextComponent
      */
     protected String getDisplayText ()
     {
-        return _text;
+        return _text.getText();
     }
 
     /**
@@ -334,7 +371,7 @@ public class BTextField extends BTextComponent
         }
     }
 
-    protected String _text;
+    protected Document _text;
     protected BText _glyphs;
     protected BKeyMap _keymap;
 

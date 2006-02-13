@@ -43,6 +43,8 @@ import com.jmex.bui.layout.AbsoluteLayout;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
+import com.jmex.bui.text.IntegerDocument;
+import com.jmex.bui.text.LengthLimitedDocument;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Point;
 import com.jmex.bui.util.Rectangle;

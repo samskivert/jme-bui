@@ -70,6 +70,19 @@
     </copy>
   </target>
 
+  <!-- runs our unit tests -->
+  <target name="tests" depends="compile" description="Runs unit tests.">
+    <junit printsummary="no" haltonfailure="yes" fork="false">
+      <classpath refid="classpath"/>
+      <formatter type="brief" usefile="false"/>
+      <batchtest>
+        <fileset dir="${src.dir}">
+          <include name="**/*UTest.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
   <!-- builds our distribution files (war and jar) -->
   <target name="dist" depends="prepare,compile">
     <jar destfile="${deploy.dir}/${dist.jar}"
