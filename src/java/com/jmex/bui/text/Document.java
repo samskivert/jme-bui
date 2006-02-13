@@ -131,9 +131,13 @@ public class Document
     public boolean replace (int offset, int length, String text)
     {
         StringBuffer buf = new StringBuffer();
-        buf.append(_text, 0, offset);
+        if (offset > 0) {
+            buf.append(_text.substring(0, offset));
+        }
         buf.append(text);
-        buf.append(_text, offset+length, _text.length());
+        if (_text.length() > 0) {
+            buf.append(_text.substring(offset+length, _text.length()));
+        }
 
         String ntext = buf.toString();
         if (!validateEdit(_text, ntext)) {
