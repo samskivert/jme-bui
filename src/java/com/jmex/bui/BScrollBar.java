@@ -80,6 +80,14 @@ public class BScrollBar extends BContainer
         _model.addChangeListener(_updater);
     }
 
+    /**
+     * Returns a reference to the scrollbar's range model.
+     */
+    public BoundedRangeModel getModel ()
+    {
+        return _model;
+    }
+    
     // documentation inherited
     public void wasAdded ()
     {

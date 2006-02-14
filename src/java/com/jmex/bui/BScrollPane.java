@@ -36,7 +36,7 @@ public class BScrollPane extends BContainer
         super(new BorderLayout(0, 0));
 
         add(_vport = new BViewport(child), BorderLayout.CENTER);
-        add(new BScrollBar(BScrollBar.VERTICAL, _vport.getModel()),
+        add(_vbar = new BScrollBar(BScrollBar.VERTICAL, _vport.getModel()),
             BorderLayout.EAST);
     }
 
@@ -46,6 +46,14 @@ public class BScrollPane extends BContainer
     public BComponent getChild ()
     {
         return _vport.getTarget();
+    }
+    
+    /**
+     * Returns a reference to the vertical scroll bar.
+     */
+    public BScrollBar getVerticalScrollBar ()
+    {
+        return _vbar;
     }
     
     /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
@@ -180,4 +188,5 @@ public class BScrollPane extends BContainer
     }
     
     protected BViewport _vport;
+    protected BScrollBar _vbar;
 }
