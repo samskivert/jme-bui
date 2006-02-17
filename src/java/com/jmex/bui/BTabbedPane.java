@@ -22,6 +22,9 @@ package com.jmex.bui;
 
 import java.util.ArrayList;
 
+import com.jme.renderer.Renderer;
+
+import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.BorderLayout;
@@ -58,6 +61,7 @@ public class BTabbedPane extends BContainer
                 }
             }
         };
+        tbutton.setStyleClass("tab");
         tbutton.addListener(_selector);
         _buttons.add(tbutton);
         _tabs.add(tab);
