@@ -128,7 +128,7 @@ public class BButton extends BLabel
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         if (_enabled && event instanceof MouseEvent) {
             int ostate = getState();
@@ -163,8 +163,7 @@ public class BButton extends BLabel
                 break;
 
             default:
-                super.dispatchEvent(event);
-                break;
+                return super.dispatchEvent(event);
             }
 
             // update our background image if necessary
@@ -173,9 +172,10 @@ public class BButton extends BLabel
                 stateDidChange();
             }
 
-        } else {
-            super.dispatchEvent(event);
+            return true;
         }
+
+        return super.dispatchEvent(event);
     }
 
     // documentation inherited

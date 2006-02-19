@@ -32,6 +32,7 @@ import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
 
 import com.jmex.bui.Log;
+import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.MouseEvent;
 
@@ -55,10 +56,10 @@ public abstract class BRootNode extends Geometry
     {
         _windows.add(window);
 
-        // if this window is modal, make it the default event target (which
-        // will save the current focus for later restoration)
-        if (window.isModal()) {
-            pushDefaultEventTarget(window);
+        // if the current top window has a focus, store it and clear the focus
+        if (_focus != null) {
+            ((BWindow)_windows.get(_windows.size()-1))._savedFocus = _focus;
+            setFocus(null);
         }
 
         // add this window to the hierarchy (which may set a new focus)
@@ -78,6 +79,9 @@ public abstract class BRootNode extends Geometry
             setFocus(null);
         }
 
+        // clear any saved focus reference
+        window._savedFocus = null;
+
         // first remove the window from our list
         if (!_windows.remove(window)) {
             Log.log.warning("Requested to remove unmanaged window " +
@@ -86,18 +90,20 @@ public abstract class BRootNode extends Geometry
             return;
         }
 
-        // if the window is modal, pop the default event target
-        if (window.isModal()) {
-            popDefaultEventTarget(window);
-        }
-
-        // then remove the hover component (which may result in a mouse
-        // exited even being dispatched to the window or one of its
-        // children)
+        // then remove the hover component (which may result in a mouse exited
+        // even being dispatched to the window or one of its children)
         computeHoverComponent(_mouseX, _mouseY);
 
-        // finally remove the window from the interface heirarchy
+        // remove the window from the interface heirarchy
         window.setRootNode(null);
+
+        // finally restore the focus to the new top-most window if it has a
+        // saved focus
+        if (_windows.size() > 0) {
+            BWindow top = (BWindow)_windows.get(_windows.size()-1);
+            setFocus(top._savedFocus);
+            top._savedFocus = null;
+        }
     }
 
     /**
@@ -109,16 +115,13 @@ public abstract class BRootNode extends Geometry
 
     /**
      * Configures a component to receive all events that are not sent to some
-     * other component. This is generally done for modal windows but can be
-     * used in other circumstances. The current focus is stored and the focus
-     * is cleared. When the event target is popped the previous focus will be
-     * restored.
+     * other component. When an event is not consumed during normal processing,
+     * it is sent to the default event targets, most recently registered to
+     * least recently registered.
      */
     public void pushDefaultEventTarget (BComponent component)
     {
-        _defaults.add(0, new TargetRecord(_dcomponent, _focus));
-        _dcomponent = component;
-        setFocus(null);
+        _defaults.add(component);
     }
 
     /**
@@ -126,31 +129,7 @@ public abstract class BRootNode extends Geometry
      */
     public void popDefaultEventTarget (BComponent component)
     {
-        if (_dcomponent == component) {
-            if (_defaults.size() > 0) {
-                TargetRecord record = (TargetRecord)_defaults.remove(0);
-                _dcomponent = record.target;
-                // restore the saved focus if possible
-                if (record.priorFocus != null && record.priorFocus.isAdded()) {
-                    setFocus(record.priorFocus);
-                }
-
-            } else {
-                _dcomponent = null;
-            }
-
-        } else {
-            // this doesn't do the precisely correct thing with the focus if an
-            // intermediate window is removed, but it's not a common enough
-            // circumstance to merit fiddling around with
-            for (int ii = 0, ll = _defaults.size(); ii < ll; ii++) {
-                TargetRecord record = (TargetRecord)_defaults.get(ii);
-                if (record.target == component) {
-                    _defaults.remove(ii);
-                    break;
-                }
-            }
-        }
+        _defaults.remove(component);
     }
 
     /**
@@ -218,6 +197,46 @@ public abstract class BRootNode extends Geometry
     public boolean hasCollision (Spatial scene, boolean checkTriangles)
     {
         return false; // nothing doing
+    }
+
+    /**
+     * Dispatches an event to the specified target (which may be null). If the
+     * target is null, or did not consume the event, it will be passed on to
+     * the most recently opened modal window if one exists (and the supplied
+     * target component was not a child of that window) and then to the default
+     * event targets if the event is still unconsumed.
+     */
+    protected void dispatchEvent (BComponent target, BEvent event)
+    {
+        // first try the "natural" target of the event if there is one
+        BWindow sentwin = null;
+        if (target != null) {
+            if (target.dispatchEvent(event)) {
+                return;
+            }
+            sentwin = target.getWindow();
+        }
+
+        // next try the most recently opened modal window, if we have one
+        for (int ii = _windows.size()-1; ii >= 0; ii--) {
+            BWindow window = (BWindow)_windows.get(ii);
+            if (window.isModal()) {
+                if (window != sentwin) {
+                    if (window.dispatchEvent(event)) {
+                        return;
+                    }
+                }
+                break;
+            }
+        }
+
+        // finally try the default event targets
+        for (int ii = _defaults.size()-1; ii >= 0; ii--) {
+            BComponent deftarg = (BComponent)_defaults.get(ii);
+            if (deftarg.dispatchEvent(event)) {
+                return;
+            }
+        }
     }
 
     /**
@@ -298,17 +317,6 @@ public abstract class BRootNode extends Geometry
                                    MouseEvent.MOUSE_ENTERED, mx, my));
             }
             _hcomponent = nhcomponent;
-        }
-    }
-
-    protected static class TargetRecord
-    {
-        public BComponent target;
-        public BComponent priorFocus;
-
-        public TargetRecord (BComponent target, BComponent priorFocus) {
-            this.target = target;
-            this.priorFocus = priorFocus;
         }
     }
 

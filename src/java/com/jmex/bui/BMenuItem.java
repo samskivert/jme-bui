@@ -71,18 +71,18 @@ public class BMenuItem extends BLabel
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
                 _armed = _pressed;
-                break;
+                break; // we don't consume this event
 
             case MouseEvent.MOUSE_EXITED:
                 _armed = false;
-                break;
+                break; // we don't consume this event
 
             case MouseEvent.MOUSE_PRESSED:
                 if (mev.getButton() == 0) {
@@ -93,7 +93,7 @@ public class BMenuItem extends BLabel
                     // component disarms it
                     _armed = false;
                 }
-                break;
+                return true; // consume this event
 
             case MouseEvent.MOUSE_RELEASED:
                 if (_armed && _pressed) {
@@ -102,16 +102,11 @@ public class BMenuItem extends BLabel
                     _armed = false;
                 }
                 _pressed = false;
-                break;
-
-            default:
-                super.dispatchEvent(event);
-                break;
+                return true; // consume this event
             }
-
-        } else {
-            super.dispatchEvent(event);
         }
+
+        return super.dispatchEvent(event);
     }
 
     // documentation inherited

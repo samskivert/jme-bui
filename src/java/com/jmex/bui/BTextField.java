@@ -156,7 +156,7 @@ public class BTextField extends BTextComponent
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         if (event instanceof KeyEvent) {
             KeyEvent kev = (KeyEvent)event;
@@ -218,10 +218,12 @@ public class BTextField extends BTextComponent
                             setCursorPos(_cursorPos + 1);
                         }
                     } else {
-                        super.dispatchEvent(event);
+                        return super.dispatchEvent(event);
                     }
                     break;
                 }
+
+                return true; // we've consumed these events
             }
 
         } else if (event instanceof MouseEvent) {
@@ -233,6 +235,7 @@ public class BTextField extends BTextComponent
                 int mx = mev.getX() - getAbsoluteX() - insets.left,
                     my = mev.getY() - getAbsoluteY() - insets.bottom;
                 setCursorPos(_glyphs.getHitPos(mx, my));
+                return true;
             }
 
         } else if (event instanceof FocusEvent) {
@@ -242,15 +245,14 @@ public class BTextField extends BTextComponent
                 _showCursor = true;
                 setCursorPos(_cursorPos);
                 break;
-
             case FocusEvent.FOCUS_LOST:
                 _showCursor = false;
                 break;
             }
-
-        } else {
-            super.dispatchEvent(event);
+            return true;
         }
+
+        return super.dispatchEvent(event);
     }
 
     // documentation inherited

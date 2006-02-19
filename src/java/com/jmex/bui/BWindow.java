@@ -197,4 +197,8 @@ public class BWindow extends BContainer
     /** Whether or not this window steals all input from other windows
      * further down the hierarchy. */
     protected boolean _modal;
+
+    /** Used to store a reference to our focus when this window is no longer
+     * the top-most window. */
+    protected BComponent _savedFocus;
 }

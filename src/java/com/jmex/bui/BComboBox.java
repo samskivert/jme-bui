@@ -141,7 +141,7 @@ public class BComboBox extends BLabel
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
@@ -161,13 +161,13 @@ public class BComboBox extends BLabel
                 break;
 
             default:
-                super.dispatchEvent(event);
-                break;
+                return super.dispatchEvent(event);
             }
 
-        } else {
-            super.dispatchEvent(event);
+            return true;
         }
+
+        return super.dispatchEvent(event);
     }
 
     // documentation inherited

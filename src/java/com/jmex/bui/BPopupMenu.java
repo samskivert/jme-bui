@@ -55,7 +55,7 @@ public class BPopupMenu extends BPopupWindow
     }
 
     // documentation inherited
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         if (event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
@@ -64,13 +64,10 @@ public class BPopupMenu extends BPopupWindow
             if (mev.getType() == MouseEvent.MOUSE_PRESSED &&
                 getHitComponent(mev.getX(), mev.getY()) == null) {
                 dismiss();
-            } else {
-                super.dispatchEvent(event);
+                return true;
             }
-
-        } else {
-            super.dispatchEvent(event);
         }
+        return super.dispatchEvent(event);
     }
 
     // documentation inherited

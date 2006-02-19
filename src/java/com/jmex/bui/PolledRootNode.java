@@ -87,20 +87,15 @@ public class PolledRootNode extends BRootNode
             computeHoverComponent(mx, my);
         }
 
-        // mouse press and mouse motion events do not necessarily go to
-        // the component under the mouse. when the mouse is clicked down
-        // on a component (any button), it becomes the "clicked"
-        // component, the target for all subsequent click and motion
-        // events (which become drag events) until all buttons are
-        // released
+        // mouse press and mouse motion events do not necessarily go to the
+        // component under the mouse. when the mouse is clicked down on a
+        // component (any button), it becomes the "clicked" component, the
+        // target for all subsequent click and motion events (which become drag
+        // events) until all buttons are released
         BComponent tcomponent = _ccomponent;
         // if there's no clicked component, use the hover component
         if (tcomponent == null) {
             tcomponent = _hcomponent;
-        }
-        // if there's no hover component, use the default event target
-        if (tcomponent == null) {
-            tcomponent = _dcomponent;
         }
 
         // update the mouse modifiers, possibly generating events
@@ -110,9 +105,9 @@ public class PolledRootNode extends BRootNode
             boolean wasDown = ((_modifiers & modifierMask) != 0);
             int type = -1;
             if (down && !wasDown) {
-                // if we had no mouse button down previous to this,
-                // whatever's under the mouse becomes the "clicked"
-                // component (which might be null)
+                // if we had no mouse button down previous to this, whatever's
+                // under the mouse becomes the "clicked" component (which might
+                // be null)
                 if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
                     _ccomponent = tcomponent;
                     setFocus(tcomponent);
@@ -125,31 +120,29 @@ public class PolledRootNode extends BRootNode
                 _modifiers &= ~modifierMask;
             }
 
-            if (type != -1 && tcomponent != null) {
-                tcomponent.dispatchEvent(
-                    new MouseEvent(this, _tickStamp, _modifiers,
-                                   type, ii, mx, my));
+            if (type != -1) {
+                MouseEvent event = new MouseEvent(
+                    this, _tickStamp, _modifiers, type, ii, mx, my);
+                dispatchEvent(tcomponent, event);
             }
         }
 
-        // if the mouse has moved, let the target component know about
-        // that as well
+        // if the mouse has moved, repotr that as well
         if (mouseMoved) {
-            if (tcomponent != null) {
-                int type = (tcomponent == _ccomponent) ?
-                    MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
-                tcomponent.dispatchEvent(
-                    new MouseEvent(this, _tickStamp, _modifiers,
-                                   type, mx, my));
-            }
+            int type = (tcomponent == _ccomponent) ?
+                MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
+            MouseEvent event = new MouseEvent(
+                this, _tickStamp, _modifiers, type, mx, my);
+            dispatchEvent(tcomponent, event);
         }
 
         // process any mouse wheel events
         int wdelta = mousein.getWheelDelta();
-        if (wdelta != 0 && tcomponent != null) {
-            tcomponent.dispatchEvent(
-                new MouseEvent(this, _tickStamp, _modifiers,
-                               MouseEvent.MOUSE_WHEELED, -1, mx, my, wdelta));
+        if (wdelta != 0) {
+            MouseEvent event = new MouseEvent(
+                this, _tickStamp, _modifiers, MouseEvent.MOUSE_WHEELED,
+                -1, mx, my, wdelta);
+            dispatchEvent(tcomponent, event);
         }
 
         // finally, if no buttons are up after processing, clear out our
@@ -200,18 +193,12 @@ public class PolledRootNode extends BRootNode
                 }
             }
 
-            // if we have a focus, generate a key event and dispatch it
-            BComponent target = _focus;
-            if (target == null) {
-                target = _dcomponent;
-            }
-            if (target != null) {
-                KeyEvent event = new KeyEvent(
-                    this, _tickStamp, _modifiers,
-                    pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
-                    character, keyCode);
-                target.dispatchEvent(event);
-            }
+            // generate a key event and dispatch it
+            KeyEvent event = new KeyEvent(
+                this, _tickStamp, _modifiers,
+                pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
+                character, keyCode);
+            dispatchEvent(_focus, event);
         }
     };
 

@@ -485,8 +485,10 @@ public class BComponent
      * not processed, it will be passed up to its parent component for
      * processing. Derived classes should thus only call
      * <code>super.dispatchEvent</code> for events that they did not "consume".
+     *
+     * @return true if this event was consumed, false if not.
      */
-    public void dispatchEvent (BEvent event)
+    public boolean dispatchEvent (BEvent event)
     {
         boolean processed = false;
 
@@ -538,8 +540,10 @@ public class BComponent
 
         // if we didn't process the event, pass it up to our parent
         if (!processed && _parent != null) {
-            getParent().dispatchEvent(event);
+            return getParent().dispatchEvent(event);
         }
+
+        return processed;
     }
 
     /**
