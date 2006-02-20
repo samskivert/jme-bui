@@ -75,14 +75,11 @@ public class CanvasRootNode extends BRootNode
     {
         updateState(e);
 
-        BComponent tcomponent = getTargetComponent();
-        if (tcomponent != null) {
-            _ccomponent = tcomponent;
-            tcomponent.dispatchEvent(
-                new MouseEvent(this, e.getWhen(), _modifiers,
-                               MouseEvent.MOUSE_PRESSED,
-                               convertButton(e), _mouseX, _mouseY));
-        }
+        _ccomponent = getTargetComponent();
+        MouseEvent event = new MouseEvent(
+            this, e.getWhen(), _modifiers, MouseEvent.MOUSE_PRESSED,
+            convertButton(e), _mouseX, _mouseY);
+        dispatchEvent(_ccomponent, event);
     }
 
     // documentation inherited from interface MouseListener
@@ -90,14 +87,10 @@ public class CanvasRootNode extends BRootNode
     {
         updateState(e);
 
-        BComponent tcomponent = getTargetComponent();
-        if (tcomponent != null) {
-            tcomponent.dispatchEvent(
-                new MouseEvent(this, e.getWhen(), _modifiers,
-                               MouseEvent.MOUSE_RELEASED,
-                               convertButton(e), _mouseX, _mouseY));
-        }
-
+        MouseEvent event = new MouseEvent(
+            this, e.getWhen(), _modifiers, MouseEvent.MOUSE_RELEASED,
+            convertButton(e), _mouseX, _mouseY);
+        dispatchEvent(getTargetComponent(), event);
         _ccomponent = null;
     }
 
@@ -115,13 +108,12 @@ public class CanvasRootNode extends BRootNode
         // if the mouse has moved, generate a moved or dragged event
         if (mouseMoved) {
             BComponent tcomponent = getTargetComponent();
-            if (tcomponent != null) {
-                int type = (tcomponent == _ccomponent) ?
-                    MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
-                tcomponent.dispatchEvent(
-                    new MouseEvent(this, e.getWhen(), _modifiers,
-                                   type, _mouseX, _mouseY));
-            }
+            int type = (tcomponent != null && tcomponent == _ccomponent) ?
+                MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
+            System.err.println(tcomponent + " =? " + _ccomponent);
+            MouseEvent event = new MouseEvent(
+                this, e.getWhen(), _modifiers, type, _mouseX, _mouseY);
+            dispatchEvent(tcomponent, event);
         }
     }
 
@@ -130,14 +122,10 @@ public class CanvasRootNode extends BRootNode
     {
         updateState(e);
 
-        BComponent tcomponent = getTargetComponent();
-        if (tcomponent != null) {
-            tcomponent.dispatchEvent(
-                new MouseEvent(this, e.getWhen(), _modifiers,
-                               MouseEvent.MOUSE_WHEELED,
-                               convertButton(e), _mouseX, _mouseY,
-                               e.getWheelRotation()));
-        }
+        MouseEvent event = new MouseEvent(
+            this, e.getWhen(), _modifiers, MouseEvent.MOUSE_WHEELED,
+            convertButton(e), _mouseX, _mouseY, e.getWheelRotation());
+        dispatchEvent(getTargetComponent(), event);
     }
 
     // documentation inherited from interface KeyListener
@@ -145,14 +133,11 @@ public class CanvasRootNode extends BRootNode
     {
         // update our modifiers
         _modifiers = convertModifiers(e.getModifiers());
-        
-        BComponent tcomponent = getTargetComponent();
-        if (tcomponent != null) {
-            tcomponent.dispatchEvent(
-                new KeyEvent(this, e.getWhen(), _modifiers,
-                             KeyEvent.KEY_PRESSED,
-                             e.getKeyChar(), convertKeyCode(e)));
-        }
+
+        KeyEvent event = new KeyEvent(
+            this, e.getWhen(), _modifiers, KeyEvent.KEY_PRESSED,
+            e.getKeyChar(), convertKeyCode(e));
+        dispatchEvent(getTargetComponent(),event);
     }
     
     // documentation inherited from interface KeyListener
@@ -160,14 +145,11 @@ public class CanvasRootNode extends BRootNode
     {
         // update our modifiers
         _modifiers = convertModifiers(e.getModifiers());
-        
-        BComponent tcomponent = getTargetComponent();
-        if (tcomponent != null) {
-            tcomponent.dispatchEvent(
-                new KeyEvent(this, e.getWhen(), _modifiers,
-                             KeyEvent.KEY_RELEASED,
-                             e.getKeyChar(), convertKeyCode(e)));
-        }
+
+        KeyEvent event = new KeyEvent(
+            this, e.getWhen(), _modifiers, KeyEvent.KEY_RELEASED,
+            e.getKeyChar(), convertKeyCode(e));
+        dispatchEvent(getTargetComponent(), event);
     }
     
     // documentation inherited from interface KeyListener
@@ -209,7 +191,7 @@ public class CanvasRootNode extends BRootNode
             return _hcomponent;
         }
         // if there's no hover component, use the default event target
-        return _dcomponent;
+        return null;
     }
 
     protected int convertModifiers (int modifiers)

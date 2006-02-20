@@ -326,7 +326,7 @@ public abstract class BRootNode extends Geometry
 
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
-    protected BComponent _dcomponent, _focus;
+    protected BComponent _focus;
     protected ArrayList _defaults = new ArrayList();
     protected ArrayList _geomviews = new ArrayList();
 }
