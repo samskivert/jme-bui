@@ -20,13 +20,12 @@
 
 package com.jmex.bui;
 
-import com.jmex.bui.layout.BorderLayout;
+import com.jmex.bui.layout.GroupLayout;
 
 /**
- * A top-level window with a border, a background and a title bar. Note
- * that a decorated window always uses a {@link BorderLayout} and makes
- * use of the {@link BorderLayout#NORTH} position to display its title bar
- * (if a title was specified).
+ * A top-level window with a border, a background and a title bar. Note that a
+ * decorated window uses a stretching {@link GroupLayout} and adds a label at
+ * the top in the <code>window_title</code> style if a title was specified.
  */
 public class BDecoratedWindow extends BWindow
 {
@@ -38,10 +37,11 @@ public class BDecoratedWindow extends BWindow
      */
     public BDecoratedWindow (BStyleSheet style, String title)
     {
-        super(style, new BorderLayout(5, 5));
+        super(style, GroupLayout.makeVStretch());
+        ((GroupLayout)getLayoutManager()).setOffAxisPolicy(GroupLayout.NONE);
 
         if (title != null) {
-            add(new BLabel(title), BorderLayout.NORTH);
+            add(new BLabel(title, "window_title"), GroupLayout.FIXED);
         }
     }
 
