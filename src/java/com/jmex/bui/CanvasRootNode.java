@@ -110,7 +110,6 @@ public class CanvasRootNode extends BRootNode
             BComponent tcomponent = getTargetComponent();
             int type = (tcomponent != null && tcomponent == _ccomponent) ?
                 MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
-            System.err.println(tcomponent + " =? " + _ccomponent);
             MouseEvent event = new MouseEvent(
                 this, e.getWhen(), _modifiers, type, _mouseX, _mouseY);
             dispatchEvent(tcomponent, event);
