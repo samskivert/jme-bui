@@ -83,20 +83,6 @@ public class BScrollPane extends BContainer
         {
             return _model;
         }
-
-        /**
-         * Sets the insets of this viewport.
-         */
-        public void setInsets (Insets insets)
-        {
-            _insets = insets;
-        }
-        
-        // documentation inherited
-        public Insets getInsets ()
-        {
-            return (_insets != null) ? _insets : super.getInsets();
-        }
         
         // documentation inherited
         public void invalidate ()
@@ -208,7 +194,6 @@ public class BScrollPane extends BContainer
 
         protected BoundedRangeModel _model;
         protected BComponent _target;
-        protected Insets _insets;
     }
     
     protected BViewport _vport;
