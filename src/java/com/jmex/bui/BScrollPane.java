@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 import com.jme.renderer.Renderer;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Provides a scrollable clipped view on a sub-heirarchy of components.
@@ -83,6 +84,20 @@ public class BScrollPane extends BContainer
             return _model;
         }
 
+        /**
+         * Sets the insets of this viewport.
+         */
+        public void setInsets (Insets insets)
+        {
+            _insets = insets;
+        }
+        
+        // documentation inherited
+        public Insets getInsets ()
+        {
+            return (_insets != null) ? _insets : super.getInsets();
+        }
+        
         // documentation inherited
         public void invalidate ()
         {
@@ -103,25 +118,22 @@ public class BScrollPane extends BContainer
         {
             // resize our target component to the larger of our size and its
             // preferred size
+            Insets insets = getInsets();
             Dimension d = _target.getPreferredSize(-1, -1);
-            d.width = Math.max(d.width, getWidth());
-            d.height = Math.max(d.height, getHeight());
+            d.width = Math.max(d.width, getWidth() - insets.getHorizontal());
+            d.height = Math.max(d.height, getHeight() - insets.getVertical());
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
-                _target.setBounds(0, 0, d.width, d.height);
+                _target.setBounds(insets.left, insets.bottom, d.width,
+                    d.height);
             }
 
             // lay out our target component
             _target.layout();
 
             // and recompute our scrollbar range
-            _model.setRange(0, _model.getValue(), getHeight(), d.height);
-        }
-
-        // documentation inherited
-        public Dimension getPreferredSize (int whint, int hhint)
-        {
-            return _target.getPreferredSize(whint, hhint);
+            _model.setRange(0, _model.getValue(),
+                getHeight() - insets.getVertical(), d.height);
         }
 
 //         // documentation inherited
@@ -140,14 +152,16 @@ public class BScrollPane extends BContainer
         public BComponent getHitComponent (int mx, int my)
         {
             // if we're not within our bounds, we needn't check our target
-            if ((mx < _x) || (my < _y) ||
-                (mx >= _x + _width) || (my > _y + _height)) {
+            Insets insets = getInsets();
+            if ((mx < _x + insets.left) || (my < _y + insets.bottom) ||
+                (mx >= _x + _width - insets.right) ||
+                (my > _y + _height - insets.top)) {
                 return null;
             }
 
             // translate the coordinate into our children's coordinates
-            mx -= _x;
-            my -= (_y + getYOffset());
+            mx -= (_x + insets.left);
+            my -= (_y + insets.bottom + getYOffset());
 
             BComponent hit = null;
             for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
@@ -160,14 +174,23 @@ public class BScrollPane extends BContainer
         }
 
         // documentation inherited
+        protected Dimension computePreferredSize (int whint, int hhint)
+        {
+            return new Dimension(_target.getPreferredSize(whint, hhint));
+        }
+        
+        // documentation inherited
         protected void renderComponent (Renderer renderer)
         {
             // translate by our offset into the viewport
+            Insets insets = getInsets();
             int offset = getYOffset();
             GL11.glTranslatef(0, offset, 0);
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(getAbsoluteX(), getAbsoluteY()-offset,
-                           _width, _height);
+            GL11.glScissor(getAbsoluteX() + insets.left,
+                           (getAbsoluteY() + insets.bottom) - offset,
+                           _width - insets.getHorizontal(),
+                           _height - insets.getVertical());
             try {
                 // and then render our target component
                 _target.render(renderer);
@@ -185,6 +208,7 @@ public class BScrollPane extends BContainer
 
         protected BoundedRangeModel _model;
         protected BComponent _target;
+        protected Insets _insets;
     }
     
     protected BViewport _vport;
