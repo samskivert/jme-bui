@@ -20,6 +20,8 @@
 
 package com.jmex.bui;
 
+import com.jmex.bui.icon.BIcon;
+
 /**
  * Displays a label with a check-box button next to it.
  */
@@ -35,4 +37,25 @@ public class BCheckBox extends BToggleButton
     {
         return "checkbox";
     }
+
+    // documentation inherited
+    protected void configureStyle (BStyleSheet style)
+    {
+        super.configureStyle(style);
+
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            _icons[ii] = style.getIcon(this, getStatePseudoClass(ii));
+        }
+    }
+
+    // documentation inherited
+    protected void stateDidChange ()
+    {
+        super.stateDidChange();
+
+        // configure our checkbox icon
+        _label.setIcon(_icons[getState()]);
+    }
+
+    protected BIcon[] _icons = new BIcon[getStateCount()];
 }

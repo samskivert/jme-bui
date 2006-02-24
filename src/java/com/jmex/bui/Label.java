@@ -330,7 +330,7 @@ public class Label
     protected String _value;
 
     protected int _orient = HORIZONTAL;
-    protected int _gap;
+    protected int _gap = 3;
 
     protected BIcon _icon;
     protected int _ix, _iy;
