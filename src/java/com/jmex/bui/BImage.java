@@ -21,11 +21,8 @@
 package com.jmex.bui;
 
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import com.jme.image.Image;
 import com.jme.image.Texture;
@@ -34,7 +31,6 @@ import com.jme.scene.Spatial;
 import com.jme.scene.state.AlphaState;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
-import com.jme.util.geom.BufferUtils;
 import com.jme.util.TextureManager;
 
 /**
@@ -211,61 +207,14 @@ public class BImage
                         int sx, int sy, int swidth, int sheight,
                         int tx, int ty, int twidth, int theight)
     {
-//         swidth = 32;
-//         sheight = 16;
-//         twidth = 32;
-//         theight = 16;
-
         float lx = sx / (float)_width;
         float ly = sy / (float)_height;
         float ux = (sx+swidth) / (float)_width;
         float uy = (sy+sheight) / (float)_height;
 
-//         if (lx != 0 || ly != 0) {
-//             return;
-//         }
-
-//         System.out.println(_width + "x" + _height + ", " + swidth + "x" + sheight + ", " + twidth + "x" + theight + ", " + ux + "/" + uy);
-
         if (_transparent) {
             blendState.apply();
         }
-
-        if (_texture.getTextureId() == 0) {
-            id.clear();
-            GL11.glGenTextures(id);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, id.get(0));
-
-            _texture.setTextureId(id.get(0));
-            Image image = _texture.getImage();
-            GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-            int[] mipSizes = image.getMipMapSizes();
-            ByteBuffer data = image.getData();
-            data.position(0);
-            data.limit(data.position() + data.capacity());
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0,
-                              imageComponents[image.getType()], image.getWidth(),
-                              image.getHeight(), 0, imageFormats[image.getType()],
-                              GL11.GL_UNSIGNED_BYTE, data);
-
-        } else {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, _texture.getTextureId());
-        }
-
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                             GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                             GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                             GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,
-                             GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-
-        // turn off anything that other maps might have turned on
-        GL11.glDisable(GL11.GL_TEXTURE_GEN_Q);
-        GL11.glDisable(GL11.GL_TEXTURE_GEN_R);
-        GL11.glDisable(GL11.GL_TEXTURE_GEN_S);
-        GL11.glDisable(GL11.GL_TEXTURE_GEN_T);
 
         _tstate.apply();
         GL11.glBegin(GL11.GL_QUADS);
@@ -274,15 +223,6 @@ public class BImage
         GL11.glTexCoord2f(ux, uy); GL11.glVertex3f(tx+twidth, ty+theight, 0);
         GL11.glTexCoord2f(ux, ly); GL11.glVertex3f(tx+twidth, ty, 0);
         GL11.glEnd();
-
-//         GL11.glColor4f(1, 1, 1, 1);
-//         GL11.glBegin(GL11.GL_LINE_STRIP);
-//         GL11.glVertex2f(tx + 0.5f, ty + 0.5f);
-//         GL11.glVertex2f(tx + twidth - 0.5f, ty + 0.5f);
-//         GL11.glVertex2f(tx + twidth - 0.5f, ty + theight - 0.5f);
-//         GL11.glVertex2f(tx + 0.5f, ty + theight - 0.5f);
-//         GL11.glVertex2f(tx + 0.5f, ty + 0.5f);
-//         GL11.glEnd();
     }
 
     protected Texture _texture;
@@ -298,13 +238,4 @@ public class BImage
         blendState.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
         blendState.setEnabled(true);
     }
-
-    private transient IntBuffer id = BufferUtils.createIntBuffer(1);
-
-    private static int[] imageComponents = { GL11.GL_RGBA4, GL11.GL_RGB8,
-            GL11.GL_RGB5_A1, GL11.GL_RGBA8, GL11.GL_LUMINANCE8_ALPHA8 };
-
-    private static int[] imageFormats = { GL11.GL_RGBA, GL11.GL_RGB,
-            GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_LUMINANCE_ALPHA,
-            GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_RGBA };
 }
