@@ -75,8 +75,8 @@ public class LayoutTest extends SimpleGame
         }
 
         BWindow window = new BDecoratedWindow(style, null);
-        URL icon = getClass().getClassLoader().
-            getResource("rsrc/textures/scroll_up.png");
+        BImage icon = new BImage(getClass().getClassLoader().
+                                 getResource("rsrc/textures/scroll_up.png"));
 //         BLabel label = new BLabel(new ImageIcon(icon));
 //         label.setText("NORTH");
 //         window.add(label, BorderLayout.NORTH);

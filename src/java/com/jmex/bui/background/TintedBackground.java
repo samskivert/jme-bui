@@ -25,7 +25,7 @@ import org.lwjgl.opengl.GL11;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 
-import com.jmex.bui.util.RenderUtil;
+import com.jmex.bui.BImage;
 
 /**
  * Displays a partially transparent solid color in the background.
@@ -45,7 +45,8 @@ public class TintedBackground extends BBackground
     {
         super.render(renderer, x, y, width, height);
 
-        RenderUtil.blendState.apply();
+        BImage.blendState.apply();
+
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x, y);

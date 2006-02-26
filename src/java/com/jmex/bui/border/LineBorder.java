@@ -52,11 +52,11 @@ public class LineBorder extends BBorder
 
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
         GL11.glBegin(GL11.GL_LINE_STRIP);
-        GL11.glVertex2f(x, y);
-        GL11.glVertex2f(x + width - 1, y);
-        GL11.glVertex2f(x + width, y + height - 1);
-        GL11.glVertex2f(x, y + height - 1);
-        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x + 0.5f, y + 0.5f);
+        GL11.glVertex2f(x + width - 0.5f, y + 0.5f);
+        GL11.glVertex2f(x + width - 0.5f, y + height - 0.5f);
+        GL11.glVertex2f(x + 0.5f, y + height - 0.5f);
+        GL11.glVertex2f(x + 0.5f, y + 0.5f);
         GL11.glEnd();
     }
 

@@ -20,10 +20,9 @@
 
 package com.jmex.bui.background;
 
-import com.jme.image.Image;
 import com.jme.renderer.Renderer;
 
-import com.jmex.bui.util.RenderUtil;
+import com.jmex.bui.BImage;
 
 /**
  * Supports image backgrounds in a variety of ways. Specifically:
@@ -68,7 +67,7 @@ public class ImageBackground extends BBackground
     public static final int FRAME_X = 10;
     public static final int FRAME_Y = 11;
 
-    public ImageBackground (int mode, Image image)
+    public ImageBackground (int mode, BImage image)
     {
         _mode = mode;
         _image = image;
@@ -92,8 +91,6 @@ public class ImageBackground extends BBackground
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
         super.render(renderer, x, y, width, height);
-
-        RenderUtil.blendState.apply();
 
         switch (_mode/3) {
         case CENTER:
@@ -123,9 +120,7 @@ public class ImageBackground extends BBackground
         if (_mode == CENTER_Y || _mode == CENTER_XY) {
             y += (height-_image.getHeight())/2;
         }
-        RenderUtil.renderImage(
-            _image, 0, 0, _image.getWidth(), _image.getHeight(),
-            x, y, _image.getWidth(), _image.getHeight());
+        _image.render(renderer, x, y);
     }
 
     protected void renderScaled (
@@ -141,9 +136,7 @@ public class ImageBackground extends BBackground
             width = _image.getWidth();
             break;
         }
-        RenderUtil.renderImage(
-            _image, 0, 0, _image.getWidth(), _image.getHeight(),
-            x, y, width, height);
+        _image.render(renderer, x, y, width, height);
     }
 
     protected void renderTiled (
@@ -157,15 +150,13 @@ public class ImageBackground extends BBackground
             int up = height / iheight;
             iwidth = Math.min(width, iwidth);
             for (int yy = 0; yy < up; yy++) {
-                RenderUtil.renderImage(
-                    _image, 0, 0, iwidth, iheight,
-                    x, y + yy*iheight, iwidth, iheight);
+                _image.render(renderer, 0, 0, iwidth, iheight,
+                              x, y + yy*iheight, iwidth, iheight);
             }
             int remain = height % iheight;
             if (remain > 0) {
-                RenderUtil.renderImage(
-                    _image, 0, 0, iwidth, remain,
-                    x, y + up*iheight, iwidth, remain);
+                _image.render(renderer, 0, 0, iwidth, remain,
+                              x, y + up*iheight, iwidth, remain);
             }
 
         } else if (_mode == TILE_XY) {
@@ -186,13 +177,13 @@ public class ImageBackground extends BBackground
         int iwidth = _image.getWidth();
         int across = width / iwidth;
         for (int xx = 0; xx < across; xx++) {
-            RenderUtil.renderImage(_image, 0, 0, iwidth, iheight,
-                                   x + xx*iwidth, y, iwidth, iheight);
+            _image.render(renderer, 0, 0, iwidth, iheight,
+                          x + xx*iwidth, y, iwidth, iheight);
         }
         int remain = width % iwidth;
         if (remain > 0) {
-            RenderUtil.renderImage(_image, 0, 0, remain, iheight,
-                                   x + across*iwidth, y, remain, iheight);
+            _image.render(renderer, 0, 0, remain, iheight,
+                          x + across*iwidth, y, remain, iheight);
         }
     }
 
@@ -205,38 +196,34 @@ public class ImageBackground extends BBackground
         int wmiddle = twidth - 2*wthird, hmiddle = theight - 2*hthird;
 
         // draw the corners
-        RenderUtil.renderImage(
-            _image, 0, 0, wthird, hthird, 0, 0);
-        RenderUtil.renderImage(
-            _image, twidth-wthird, 0, wthird, hthird, width-wthird, 0);
-        RenderUtil.renderImage(
-            _image, 0, theight-hthird, wthird, hthird, 0, height-hthird);
-        RenderUtil.renderImage(
-            _image, twidth-wthird, theight-hthird, wthird, hthird,
-            width-wthird, height-hthird);
+        _image.render(renderer, 0, 0, wthird, hthird, 0, 0);
+        _image.render(renderer, twidth-wthird, 0, wthird, hthird,
+                      width-wthird, 0);
+        _image.render(renderer, 0, theight-hthird, wthird, hthird,
+                      0, height-hthird);
+        _image.render(renderer, twidth-wthird, theight-hthird, wthird, hthird,
+                      width-wthird, height-hthird);
 
         // draw the "gaps"
         int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
-        RenderUtil.renderImage(
-            _image, wthird, 0, wmiddle, hthird, wthird, 0, ghmiddle, hthird);
-        RenderUtil.renderImage(
-            _image, wthird, theight-hthird, wmiddle, hthird,
-            wthird, height-hthird, ghmiddle, hthird);
+        _image.render(renderer, wthird, 0, wmiddle, hthird, wthird, 0,
+                      ghmiddle, hthird);
+        _image.render(renderer, wthird, theight-hthird, wmiddle, hthird,
+                      wthird, height-hthird, ghmiddle, hthird);
 
-        RenderUtil.renderImage(
-            _image, 0, hthird, wthird, hmiddle, 0, hthird, wthird, gvmiddle);
-        RenderUtil.renderImage(
-            _image, twidth-wthird, hthird, wthird, hmiddle,
-            width-wthird, hthird, wthird, gvmiddle);
+        _image.render(renderer, 0, hthird, wthird, hmiddle, 0, hthird,
+                      wthird, gvmiddle);
+        _image.render(renderer, twidth-wthird, hthird, wthird, hmiddle,
+                      width-wthird, hthird, wthird, gvmiddle);
 
         // draw the center
-        RenderUtil.renderImage(
-            _image, wthird, hthird, twidth-2*wthird, theight-2*hthird,
-            wthird, hthird, width-2*wthird, height-2*hthird);
+        _image.render(renderer, wthird, hthird, twidth-2*wthird,
+                      theight-2*hthird, wthird, hthird, width-2*wthird,
+                      height-2*hthird);
     }
 
     protected int _mode;
-    protected Image _image;
+    protected BImage _image;
 
     protected static final int CENTER = 0;
     protected static final int SCALE = 1;

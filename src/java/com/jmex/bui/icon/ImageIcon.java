@@ -20,44 +20,19 @@
 
 package com.jmex.bui.icon;
 
-import java.net.URL;
-
-import java.awt.image.BufferedImage;
-
-import org.lwjgl.opengl.GL11;
-
-import com.jme.image.Image;
 import com.jme.renderer.Renderer;
-import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
 
-import com.jmex.bui.util.RenderUtil;
+import com.jmex.bui.BImage;
 
 /**
- * Provides icon imagery for various components which make use of it.
+ * Displays an image as an icon.
  */
 public class ImageIcon extends BIcon
 {
     /**
-     * Creates an icon from the image referenced by the supplied URL.
-     */
-    public ImageIcon (URL image)
-    {
-        this(TextureManager.loadImage(image, true));
-    }
-
-    /**
      * Creates an icon from the supplied source image.
      */
-    public ImageIcon (java.awt.Image image)
-    {
-        this(TextureManager.loadImage(image, true));
-    }
-
-    /**
-     * Creates an icon from the supplied source texture.
-     */
-    public ImageIcon (Image image)
+    public ImageIcon (BImage image)
     {
         _image = image;
     }
@@ -78,10 +53,8 @@ public class ImageIcon extends BIcon
     public void render (Renderer renderer, int x, int y)
     {
         super.render(renderer, x, y);
-
-        RenderUtil.blendState.apply();
-        RenderUtil.renderImage(_image, x, y);
+        _image.render(renderer, x, y);
     }
 
-    protected Image _image;
+    protected BImage _image;
 }

@@ -30,9 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jme.image.Image;
 import com.jme.renderer.ColorRGBA;
-import com.jme.util.TextureManager;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.background.BlankBackground;
@@ -127,7 +125,7 @@ public class BStyleSheet
         /**
          * Loads the image with the specified path.
          */
-        public Image loadImage (String path) throws IOException;
+        public BImage loadImage (String path) throws IOException;
     }
 
     /** A default implementation of the stylesheet resource provider. */
@@ -146,7 +144,7 @@ public class BStyleSheet
             return new AWTTextFactory(new Font(family, nstyle, size), true);
         }
 
-        public Image loadImage (String path) throws IOException {
+        public BImage loadImage (String path) throws IOException {
             if (!path.startsWith("/")) {
                 path = "/" + path;
             }
@@ -154,7 +152,7 @@ public class BStyleSheet
             if (url == null) {
                 throw new IOException("Can't locate image '" + path + "'.");
             }
-            return TextureManager.loadImage(url, true);
+            return new BImage(url);
         }
     }
 
@@ -652,7 +650,7 @@ public class BStyleSheet
             if (type.equals("solid")) {
                 return new TintedBackground(color);
             } else if (type.equals("image")) {
-                Image image;
+                BImage image;
                 try {
                     image = rsrcprov.loadImage(ipath);
                 } catch (IOException ioe) {
@@ -660,7 +658,6 @@ public class BStyleSheet
                                        ipath + "': " + ioe);
                     return new BlankBackground();
                 }
-                // TODO: parse stretching/centering/tiling rule
                 return new ImageBackground(scale, image);
             } else {
                 return new BlankBackground();
@@ -676,13 +673,13 @@ public class BStyleSheet
 
         public Object resolve (ResourceProvider rsrcprov) {
             if (type.equals("image")) {
-                Image image;
+                BImage image;
                 try {
                     image = rsrcprov.loadImage(ipath);
                 } catch (IOException ioe) {
                     System.err.println("Failed to load icon image '" +
                                        ipath + "': " + ioe);
-                    return new BlankBackground();
+                    return new BlankIcon(10, 10);
                 }
                 return new ImageIcon(image);
 

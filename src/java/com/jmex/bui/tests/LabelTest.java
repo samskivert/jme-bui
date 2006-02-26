@@ -64,8 +64,8 @@ public class LabelTest extends SimpleGame
         window.setLayoutManager(GroupLayout.makeVStretch());
 
         ImageIcon icon = new ImageIcon(
-            getClass().getClassLoader().getResource(
-                "rsrc/textures/scroll_right.png"));
+            new BImage(getClass().getClassLoader().getResource(
+                           "rsrc/textures/scroll_right.png")));
         String[] aligns = { "left", "center", "right" };
         int[] orients = { HORIZONTAL, VERTICAL, OVERLAPPING };
 

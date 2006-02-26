@@ -20,19 +20,8 @@
 
 package com.jmex.bui.icon;
 
-import java.net.URL;
-
-import java.awt.image.BufferedImage;
-
-import org.lwjgl.opengl.GL11;
-
-import com.jme.image.Image;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
-import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
-
-import com.jmex.bui.util.RenderUtil;
 
 /**
  * Provides icon imagery for various components which make use of it.
