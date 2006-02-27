@@ -24,7 +24,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.ActionEvent;
@@ -306,7 +305,7 @@ public class BTextField extends BTextComponent
 
         // render the cursor if we have focus
         if (_showCursor) {
-            Spatial.applyDefaultStates();
+            BComponent.applyDefaultStates();
             ColorRGBA c = getColor();
             GL11.glColor4f(c.r, c.g, c.b, c.a);
             GL11.glBegin(GL11.GL_LINE_STRIP);

@@ -20,10 +20,8 @@
 
 package com.jmex.bui.border;
 
-import com.jmex.bui.BComponent;
-import com.jmex.bui.util.Insets;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
+import com.jmex.bui.util.Insets;
 
 /**
  * Configures a border around a component that may or may not have
@@ -41,6 +39,5 @@ public abstract class BBorder
     /** Renders this border. */
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        Spatial.applyDefaultStates();
     }
 }

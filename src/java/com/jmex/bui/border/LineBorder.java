@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import org.lwjgl.opengl.GL11;
 
+import com.jmex.bui.BComponent;
 import com.jmex.bui.util.Insets;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
@@ -50,6 +51,7 @@ public class LineBorder extends BBorder
     {
         super.render(renderer, x, y, width, height);
 
+        BComponent.applyDefaultStates();
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
         GL11.glBegin(GL11.GL_LINE_STRIP);
         GL11.glVertex2f(x + 0.5f, y + 0.5f);

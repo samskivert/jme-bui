@@ -21,7 +21,6 @@
 package com.jmex.bui.icon;
 
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 
 /**
  * Provides icon imagery for various components which make use of it.
@@ -37,6 +36,5 @@ public abstract class BIcon
     /** Renders this icon. */
     public void render (Renderer renderer, int x, int y)
     {
-        Spatial.applyDefaultStates();
     }
 }

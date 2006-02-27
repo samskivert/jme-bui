@@ -127,6 +127,7 @@ public class BGeomView extends BComponent
             return;
         }
 
+        applyDefaultStates();
         Camera cam = renderer.getCamera();
         try {
             // now set up the custom camera and render our geometry

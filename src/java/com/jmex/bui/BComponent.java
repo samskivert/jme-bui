@@ -60,6 +60,17 @@ public class BComponent
      * used to select the component's style pseudoclass among other things. */
     public static final int DISABLED = 2;
 
+    public static void applyDefaultStates ()
+    {
+        for (int ii = 0; ii < Spatial.defaultStateList.length; ii++) {
+            if (Spatial.defaultStateList[ii] != null &&
+                Spatial.defaultStateList[ii] != Spatial.getCurrentState(ii)) {
+                Spatial.defaultStateList[ii].apply();
+            }
+        }
+        Spatial.clearCurrentStates();
+    }
+
     /**
      * Configures this component with a custom stylesheet class. By default a
      * component's class is defined by its component type (label, button,
@@ -637,7 +648,6 @@ public class BComponent
      */
     protected void renderComponent (Renderer renderer)
     {
-        Spatial.applyDefaultStates();
     }
 
     /**

@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 
+import com.jmex.bui.BComponent;
 import com.jmex.bui.BImage;
 
 /**
@@ -45,6 +46,7 @@ public class TintedBackground extends BBackground
     {
         super.render(renderer, x, y, width, height);
 
+        BComponent.applyDefaultStates();
         BImage.blendState.apply();
 
         GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);

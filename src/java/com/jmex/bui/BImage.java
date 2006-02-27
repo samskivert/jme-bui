@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import javax.imageio.ImageIO;
 
 import java.awt.Graphics2D;
@@ -37,7 +38,9 @@ import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
+import com.jme.scene.shape.Quad;
 import com.jme.scene.state.AlphaState;
+import com.jme.scene.state.RenderState;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
@@ -45,7 +48,7 @@ import com.jme.util.TextureManager;
 /**
  * Contains a texture, its dimensions and a texture state.
  */
-public class BImage
+public class BImage extends Quad
 {
     /** An alpha state that blends the source plus one minus destination. */
     public static AlphaState blendState;
@@ -172,10 +175,12 @@ public class BImage
      */
     public BImage (int width, int height)
     {
+        super("name", width, height);
         _width = width;
         _height = height;
         _tstate = DisplaySystem.getDisplaySystem().getRenderer().
             createTextureState();
+        setTransparent(true);
     }
 
     /**
@@ -199,7 +204,12 @@ public class BImage
      */
     public void setTransparent (boolean transparent)
     {
-        _transparent = transparent;
+        if (transparent) {
+            setRenderState(blendState);
+        } else {
+            clearRenderState(RenderState.RS_ALPHA);
+        }
+        updateRenderState();
     }
 
     /**
@@ -249,6 +259,8 @@ public class BImage
 
         _tstate.setTexture(_texture);
         _tstate.setEnabled(true);
+        setRenderState(_tstate);
+        updateRenderState();
     }
 
     /**
@@ -291,17 +303,20 @@ public class BImage
         float ux = (sx+swidth) / (float)_twidth;
         float uy = (sy+sheight) / (float)_theight;
 
-        if (_transparent) {
-            blendState.apply();
-        }
+        FloatBuffer tcoords = getTextureBuffer();
+        tcoords.clear();
+        tcoords.put(lx).put(uy);
+        tcoords.put(lx).put(ly);
+        tcoords.put(ux).put(ly);
+        tcoords.put(ux).put(uy);
+        tcoords.flip();
 
-        _tstate.apply();
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(lx, ly); GL11.glVertex3f(tx, ty, 0);
-        GL11.glTexCoord2f(lx, uy); GL11.glVertex3f(tx, ty+theight, 0);
-        GL11.glTexCoord2f(ux, uy); GL11.glVertex3f(tx+twidth, ty+theight, 0);
-        GL11.glTexCoord2f(ux, ly); GL11.glVertex3f(tx+twidth, ty, 0);
-        GL11.glEnd();
+        resize(twidth, theight);
+        localTranslation.x = tx + twidth/2f;
+        localTranslation.y = ty + theight/2f;
+        updateGeometricState(0, true);
+
+        draw(renderer);
     }
 
     /** Rounds the supplied value up to a power of two. */
@@ -311,11 +326,11 @@ public class BImage
             (Integer.highestOneBit(value) << 1) : value;
     }
 
+    protected Quad _quad;
     protected Texture _texture;
     protected TextureState _tstate;
     protected int _width, _height;
     protected int _twidth, _theight;
-    protected boolean _transparent = true;
 
     protected static boolean _supportsNonPowerOfTwo;
 

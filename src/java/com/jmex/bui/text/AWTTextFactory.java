@@ -273,7 +273,6 @@ public class AWTTextFactory extends BTextFactory
                 return (int)Math.round(bounds.getX() + bounds.getWidth()/2);
             }
             public void render (Renderer renderer, int x, int y) {
-                Spatial.applyDefaultStates();
                 bimage.render(renderer, x, y);
             }
         };

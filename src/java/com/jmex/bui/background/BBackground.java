@@ -21,7 +21,6 @@
 package com.jmex.bui.background;
 
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 
 /**
  * Provides additional information about a background that is used to display
@@ -48,6 +47,5 @@ public abstract class BBackground
     /** Renders this background. */
     public void render (Renderer renderer, int x, int y, int width, int height)
     {
-        Spatial.applyDefaultStates();
     }
 }
