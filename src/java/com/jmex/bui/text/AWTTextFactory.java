@@ -49,10 +49,10 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
-import com.jme.scene.state.AlphaState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
+import com.jmex.bui.BImage;
 import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 
@@ -70,15 +70,6 @@ public class AWTTextFactory extends BTextFactory
         _font = font;
         _antialias = antialias;
         _attrs.put(TextAttribute.FONT, _font);
-
-        // create an alpha state that we'll use to draw our text over the
-        // background
-        _astate = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
-        _astate.setBlendEnabled(true);
-        _astate.setSrcFunction(AlphaState.SB_SRC_ALPHA);
-        _astate.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
-        _astate.setEnabled(true);
 
         // we need a graphics context to figure out how big our text is
         // going to be, but we need an image to get the graphics context,
@@ -254,14 +245,18 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        final ByteBuffer idata =
-            ByteBuffer.allocateDirect(4 * image.getWidth() * image.getHeight());
-        idata.order(ByteOrder.nativeOrder());
-        byte[] data = (byte[])image.getRaster().getDataElements(
-            0, 0, image.getWidth(), image.getHeight(), null);
-        idata.clear();
-        idata.put(data);
-        idata.flip();
+        // TODO: render into a properly sized image in the first place and
+        // create a JME Image directly
+        final BImage bimage = new BImage(image);
+
+//         final ByteBuffer idata =
+//             ByteBuffer.allocateDirect(4 * image.getWidth() * image.getHeight());
+//         idata.order(ByteOrder.nativeOrder());
+//         byte[] data = (byte[])image.getRaster().getDataElements(
+//             0, 0, image.getWidth(), image.getHeight(), null);
+//         idata.clear();
+//         idata.put(data);
+//         idata.flip();
 
         // wrap it all up in the right object
         return new BText() {
@@ -279,13 +274,7 @@ public class AWTTextFactory extends BTextFactory
             }
             public void render (Renderer renderer, int x, int y) {
                 Spatial.applyDefaultStates();
-                _astate.apply();
-
-                GL11.glRasterPos2i(x, y + size.height);
-                GL11.glPixelZoom(1f, -1f);
-                GL11.glDrawPixels(size.width, size.height,
-                                  GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, idata);
-                GL11.glPixelZoom(1f, 1f);
+                bimage.render(renderer, x, y);
             }
         };
     }
@@ -294,6 +283,5 @@ public class AWTTextFactory extends BTextFactory
     protected boolean _antialias;
     protected HashMap _attrs = new HashMap();
     protected int _height;
-    protected AlphaState _astate;
     protected BufferedImage _stub;
 }

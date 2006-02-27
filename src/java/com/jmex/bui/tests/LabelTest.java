@@ -63,9 +63,14 @@ public class LabelTest extends SimpleGame
         BWindow window = new BDecoratedWindow(style, null);
         window.setLayoutManager(GroupLayout.makeVStretch());
 
-        ImageIcon icon = new ImageIcon(
-            new BImage(getClass().getClassLoader().getResource(
-                           "rsrc/textures/scroll_right.png")));
+        BImage image = null;
+        try {
+            image = new BImage(getClass().getClassLoader().
+                              getResource("rsrc/textures/scroll_right.png"));
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+        ImageIcon icon = new ImageIcon(image);
         String[] aligns = { "left", "center", "right" };
         int[] orients = { HORIZONTAL, VERTICAL, OVERLAPPING };
 

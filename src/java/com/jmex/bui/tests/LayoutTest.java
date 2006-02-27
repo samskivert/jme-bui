@@ -75,8 +75,14 @@ public class LayoutTest extends SimpleGame
         }
 
         BWindow window = new BDecoratedWindow(style, null);
-        BImage icon = new BImage(getClass().getClassLoader().
-                                 getResource("rsrc/textures/scroll_up.png"));
+        BImage icon = null;
+        try {
+            icon = new BImage(getClass().getClassLoader().
+                              getResource("rsrc/textures/scroll_up.png"));
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+
 //         BLabel label = new BLabel(new ImageIcon(icon));
 //         label.setText("NORTH");
 //         window.add(label, BorderLayout.NORTH);
@@ -191,7 +197,7 @@ public class LayoutTest extends SimpleGame
 
     public static void main (String[] args)
     {
-        LoggingSystem.getLogger().setLevel(Level.OFF);
+        LoggingSystem.getLogger().setLevel(Level.WARNING);
         LayoutTest test = new LayoutTest();
         test.start();
     }

@@ -20,9 +20,18 @@
 
 package com.jmex.bui;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import javax.imageio.ImageIO;
+
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 import com.jme.image.Image;
 import com.jme.image.Texture;
@@ -56,13 +65,9 @@ public class BImage
      * Creates an image from the supplied source URL.
      */
     public BImage (URL image)
+        throws IOException
     {
-        this(-1, -1);
-        setTexture(TextureManager.loadTexture(
-                       image, Texture.FM_LINEAR, Texture.MM_NONE,
-                       Image.GUESS_FORMAT_NO_S3TC, 1.0f, true));
-        _width = _texture.getImage().getWidth();
-        _height = _texture.getImage().getHeight();
+        this(ImageIO.read(image), true);
     }
 
     /**
@@ -79,37 +84,85 @@ public class BImage
     public BImage (java.awt.Image image, boolean flip)
     {
         this(image.getWidth(null), image.getHeight(null));
-        setTexture(TextureManager.loadTexture(
-                       image, Texture.FM_LINEAR, Texture.MM_NONE, flip));
+
+        // expand the texture data to a power of two if necessary
+        int twidth = _width, theight = _height;
+        if (!_supportsNonPowerOfTwo) {
+            twidth = nextPOT(twidth);
+            theight = nextPOT(theight);
+        }
+
+        // render the image into a raster of the proper format
+        boolean hasAlpha = TextureManager.hasAlpha(image);
+        int type = hasAlpha ?
+            BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR;
+        BufferedImage tex = new BufferedImage(twidth, theight, type);
+        AffineTransform tx = null;
+        if (flip) {
+            tx = AffineTransform.getScaleInstance(1, -1);
+            tx.translate(0, -_height);
+        }
+        Graphics2D gfx = (Graphics2D) tex.getGraphics();
+        gfx.drawImage(image, tx, null);
+        gfx.dispose();
+
+        // grab the image memory and stuff it into a direct byte buffer
+        ByteBuffer scratch = ByteBuffer.allocateDirect(
+            4 * twidth * theight).order(ByteOrder.nativeOrder());
+        byte data[] = (byte[])tex.getRaster().getDataElements(
+            0, 0, twidth, theight, null);
+        scratch.clear();
+        scratch.put(data);
+        scratch.flip();
+        Image textureImage = new Image();
+        textureImage.setType(hasAlpha ? Image.RGBA8888 : Image.RGB888);
+        textureImage.setWidth(twidth);
+        textureImage.setHeight(theight);
+        textureImage.setData(scratch);
+
+        setImage(textureImage);
     }
 
     /**
-     * Creates an image with the supplied texture. The texture is assumed to
-     * have an underlying image from which we can obtain our width and height.
+     * Creates an image of the specified size, using the supplied JME image
+     * data. The image should be a power of two size if OpenGL requires it.
      *
-     * <p><em>Note:</em> the texture will be placed into
-     * <code>AM_REPLACE</code> mode (which is not JME's default) to avoid
-     * strange interaction with the current color. If this is not desirable,
-     * change it after constructing the icon.
+     * @param width the width of the renderable image.
+     * @param height the height of the renderable image.
+     * @param image the image data.
      */
-    public BImage (Texture texture)
+    public BImage (int width, int height, Image image)
     {
-        this(texture.getImage().getWidth(), texture.getImage().getHeight());
+        this(width, height);
+        setImage(image);
+    }
+
+    /**
+     * Creates an image of the specified size, with the supplied texture. The
+     * texture is assumed to have an underlying image from which we can obtain
+     * the texture width and height (which must be a power of two and may
+     * differ from the renderable image width and height supplied to the
+     * constructor).
+     */
+    public BImage (int width, int height, Texture texture)
+    {
+        this(width, height);
         setTexture(texture);
     }
 
     /**
      * Creates an image with the supplied texture.
      *
-     * <p><em>Note:</em> the texture will be placed into
-     * <code>AM_REPLACE</code> mode (which is not JME's default) to avoid
-     * strange interaction with the current color. If this is not desirable,
-     * change it after constructing the icon.
+     * @param width the width of the renderable image.
+     * @param height the height of the renderable image.
+     * @param twidth the width of the texture (this should be a power of two).
+     * @param theight the height of the texture (this should be a power of two).
      */
-    public BImage (Texture texture, int width, int height)
+    public BImage (int width, int height,
+                   Texture texture, int twidth, int theight)
     {
         this(width, height);
-        setTexture(texture);
+        setTexture(texture, twidth, theight);
     }
 
     /**
@@ -119,10 +172,10 @@ public class BImage
      */
     public BImage (int width, int height)
     {
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
         _width = width;
         _height = height;
+        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
+            createTextureState();
     }
 
     /**
@@ -150,13 +203,50 @@ public class BImage
     }
 
     /**
-     * Configures the texture to be used for this image.
+     * Configures the image data to be used by this image.
+     *
+     * @param width the width of the renderable image (the image data itself
+     * should be a power of two if OpenGL requires it).
+     * @param height the height of the renderable image (the image data itself
+     * should be a power of two if OpenGL requires it).
+     */
+    public void setImage (Image image)
+    {
+        Texture texture = new Texture();
+        texture.setImage(image);
+        setTexture(texture);
+    }
+
+    /**
+     * Configures the texture to be used for this image. The texture is assumed
+     * to have an underlying image from which we can obtain the texture width
+     * and height.
      */
     public void setTexture (Texture texture)
     {
+        setTexture(texture, texture.getImage().getWidth(),
+                   texture.getImage().getHeight());
+    }
+
+    /**
+     * Configures the texture to be used for this image.
+     *
+     * @param twidth the width of the texture image data (must be a power of
+     * two if OpenGL requires it).
+     * @param theight the height of the texture image data (must be a power of
+     * two if OpenGL requires it).
+     */
+    public void setTexture (Texture texture, int twidth, int theight)
+    {
+        _twidth = twidth;
+        _theight = theight;
+
         _texture = texture;
         _texture.setApply(Texture.AM_REPLACE);
+        _texture.setFilter(Texture.FM_LINEAR);
+        _texture.setMipmapState(Texture.MM_NONE);
         _texture.setCorrection(Texture.CM_AFFINE);
+
         _tstate.setTexture(_texture);
         _tstate.setEnabled(true);
     }
@@ -176,18 +266,7 @@ public class BImage
     public void render (Renderer renderer, int tx, int ty,
                         int twidth, int theight)
     {
-        if (_transparent) {
-            blendState.apply();
-        }
-
-        _tstate.apply();
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 0); GL11.glVertex3f(tx, ty, 0);
-        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(tx, ty + theight, 0);
-        GL11.glTexCoord2f(1, 1);
-        GL11.glVertex3f(tx + twidth, ty + theight, 0);
-        GL11.glTexCoord2f(1, 0); GL11.glVertex3f(tx + twidth, ty, 0);
-        GL11.glEnd();
+        render(renderer, 0, 0, _width, _height, tx, ty, twidth, theight);
     }
 
     /**
@@ -207,10 +286,10 @@ public class BImage
                         int sx, int sy, int swidth, int sheight,
                         int tx, int ty, int twidth, int theight)
     {
-        float lx = sx / (float)_width;
-        float ly = sy / (float)_height;
-        float ux = (sx+swidth) / (float)_width;
-        float uy = (sy+sheight) / (float)_height;
+        float lx = sx / (float)_twidth;
+        float ly = sy / (float)_theight;
+        float ux = (sx+swidth) / (float)_twidth;
+        float uy = (sy+sheight) / (float)_theight;
 
         if (_transparent) {
             blendState.apply();
@@ -225,10 +304,20 @@ public class BImage
         GL11.glEnd();
     }
 
+    /** Rounds the supplied value up to a power of two. */
+    protected static int nextPOT (int value)
+    {
+        return (Integer.bitCount(value) > 1) ?
+            (Integer.highestOneBit(value) << 1) : value;
+    }
+
     protected Texture _texture;
     protected TextureState _tstate;
     protected int _width, _height;
+    protected int _twidth, _theight;
     protected boolean _transparent = true;
+
+    protected static boolean _supportsNonPowerOfTwo;
 
     static {
         blendState = DisplaySystem.getDisplaySystem().getRenderer().
@@ -237,5 +326,8 @@ public class BImage
         blendState.setSrcFunction(AlphaState.SB_SRC_ALPHA);
         blendState.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
         blendState.setEnabled(true);
+
+        _supportsNonPowerOfTwo =
+            GLContext.getCapabilities().GL_ARB_texture_non_power_of_two;
     }
 }
