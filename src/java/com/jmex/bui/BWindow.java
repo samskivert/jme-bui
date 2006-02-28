@@ -33,6 +33,7 @@ import com.jmex.bui.util.Insets;
  * with a stylesheet and layout manager.
  */
 public class BWindow extends BContainer
+    implements Comparable
 {
     public BWindow (BStyleSheet style, BLayoutManager layout)
     {
@@ -114,6 +115,23 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Configures the "layer" occupied by this window. Windows normally stack
+     * one atop another with the most recently added window being highest in
+     * the stack. The layer configuration allows a window to be added above
+     * windows in a lower layer regardless of when it or other windows are
+     * added. All windows default to a layer of zero, windows with a higher
+     * layer will be "above" those with a lower layer. Windows in the same
+     * layer stack according to the order in which they are added.
+     */
+    public void setLayer (int layer)
+    {
+        _layer = layer;
+        if (_root != null) {
+            _root.resortWindows();
+        }
+    }
+
+    /**
      * Detaches this window from the root node and removes it from the
      * display.
      */
@@ -125,6 +143,12 @@ public class BWindow extends BContainer
             Log.log.warning("Unmanaged window dismissed: " + this + ".");
             Thread.dumpStack();
         }
+    }
+
+    // documentation inherited from interface Comparable
+    public int compareTo (Object other)
+    {
+        return _layer - ((BWindow)other)._layer;
     }
 
     // documentation inherited
@@ -197,6 +221,9 @@ public class BWindow extends BContainer
     /** Whether or not this window steals all input from other windows
      * further down the hierarchy. */
     protected boolean _modal;
+
+    /** The "layer" in the window stack occupied by this window. */
+    protected int _layer;
 
     /** Used to store a reference to our focus when this window is no longer
      * the top-most window. */

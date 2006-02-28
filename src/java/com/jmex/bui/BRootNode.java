@@ -21,6 +21,7 @@
 package com.jmex.bui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 
 import com.jme.intersection.CollisionResults;
@@ -54,7 +55,9 @@ public abstract class BRootNode extends Geometry
      */
     public void addWindow (BWindow window)
     {
+        // add this window into the stack and resort
         _windows.add(window);
+        resortWindows();
 
         // if the current top window has a focus, store it and clear the focus
         if (_focus != null) {
@@ -67,6 +70,15 @@ public abstract class BRootNode extends Geometry
 
         // recompute the hover component; the window may be under the mouse
         computeHoverComponent(_mouseX, _mouseY);
+    }
+
+    /**
+     * Called when an added window's layer is changed. Adjusts the ordering of
+     * the windows in the stack.
+     */
+    public void resortWindows ()
+    {
+        Collections.sort(_windows);
     }
 
     /**
