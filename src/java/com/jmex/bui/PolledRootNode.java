@@ -29,6 +29,7 @@ import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
 import com.jme.input.KeyInputListener;
 import com.jme.input.MouseInput;
+import com.jme.input.MouseInputListener;
 import com.jme.scene.Node;
 import com.jme.util.Timer;
 
@@ -48,8 +49,9 @@ public class PolledRootNode extends BRootNode
         _timer = timer;
         _handler = handler;
 
-        // register our interest in key presses
+        // register our interest in key presses and mouse events
         KeyInput.get().addListener(_keyListener);
+        MouseInput.get().addListener(_mouseListener);
     }
 
     // documentation inherited
@@ -69,91 +71,10 @@ public class PolledRootNode extends BRootNode
         // determine our tick stamp in milliseconds
         _tickStamp = _timer.getTime() * 1000 / _timer.getResolution();
 
-        // update the mouse input system
-        MouseInput mousein = MouseInput.get();
-        mousein.update();
-
-        // determine whether the mouse has moved in the last frame
-        int mx = mousein.getXAbsolute();
-        int my = mousein.getYAbsolute();
-        boolean mouseMoved = false;
-        if (_mouseX != mx || _mouseY != my) {
-            _mouseX = mx;
-            _mouseY = my;
-            mouseMoved = true;
-        }
-
-        if (mouseMoved) {
-            computeHoverComponent(mx, my);
-        }
-
-        // mouse press and mouse motion events do not necessarily go to the
-        // component under the mouse. when the mouse is clicked down on a
-        // component (any button), it becomes the "clicked" component, the
-        // target for all subsequent click and motion events (which become drag
-        // events) until all buttons are released
-        BComponent tcomponent = _ccomponent;
-        // if there's no clicked component, use the hover component
-        if (tcomponent == null) {
-            tcomponent = _hcomponent;
-        }
-
-        // update the mouse modifiers, possibly generating events
-        for (int ii = 0; ii < MOUSE_MODIFIER_MAP.length; ii++) {
-            int modifierMask = MOUSE_MODIFIER_MAP[ii];
-            boolean down = mousein.isButtonDown(ii);
-            boolean wasDown = ((_modifiers & modifierMask) != 0);
-            int type = -1;
-            if (down && !wasDown) {
-                // if we had no mouse button down previous to this, whatever's
-                // under the mouse becomes the "clicked" component (which might
-                // be null)
-                if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
-                    _ccomponent = tcomponent;
-                    setFocus(tcomponent);
-                }
-                type = MouseEvent.MOUSE_PRESSED;
-                _modifiers |= modifierMask;
-
-            } else if (!down && wasDown) {
-                type = MouseEvent.MOUSE_RELEASED;
-                _modifiers &= ~modifierMask;
-            }
-
-            if (type != -1) {
-                MouseEvent event = new MouseEvent(
-                    this, _tickStamp, _modifiers, type, ii, mx, my);
-                dispatchEvent(tcomponent, event);
-            }
-        }
-
-        // if the mouse has moved, repotr that as well
-        if (mouseMoved) {
-            int type = (tcomponent == _ccomponent) ?
-                MouseEvent.MOUSE_DRAGGED : MouseEvent.MOUSE_MOVED;
-            MouseEvent event = new MouseEvent(
-                this, _tickStamp, _modifiers, type, mx, my);
-            dispatchEvent(tcomponent, event);
-        }
-
-        // process any mouse wheel events
-        int wdelta = mousein.getWheelDelta();
-        if (wdelta != 0) {
-            MouseEvent event = new MouseEvent(
-                this, _tickStamp, _modifiers, MouseEvent.MOUSE_WHEELED,
-                -1, mx, my, wdelta);
-            dispatchEvent(tcomponent, event);
-        }
-
-        // finally, if no buttons are up after processing, clear out our
-        // "clicked" component
-        if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
-            _ccomponent = null;
-        }
-
-        // poll the keyboard and notify event listeners
+        // poll the keyboard and mouse and notify event listeners
         KeyInput.get().update();
-
+        MouseInput.get().update();
+        
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
@@ -195,13 +116,61 @@ public class PolledRootNode extends BRootNode
 
             // generate a key event and dispatch it
             KeyEvent event = new KeyEvent(
-                this, _tickStamp, _modifiers,
+                PolledRootNode.this, _tickStamp, _modifiers,
                 pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
                 character, keyCode);
             dispatchEvent(_focus, event);
         }
     };
 
+    /** This listener is notified when the mouse is updated. */
+    protected MouseInputListener _mouseListener = new MouseInputListener() {
+        public void onButton (int button, boolean pressed, int x, int y) {
+            // if we had no mouse button down previous to this, whatever's
+            // under the mouse becomes the "clicked" component (which might
+            // be null)
+            if (pressed && (_modifiers & ANY_BUTTON_PRESSED) == 0) {
+                setFocus(_ccomponent = _hcomponent);
+            }
+            
+            // update the state of the modifiers
+            if (pressed) {
+                _modifiers |= MOUSE_MODIFIER_MAP[button];
+            } else {
+                _modifiers &= ~MOUSE_MODIFIER_MAP[button];
+            }
+
+            // generate a mouse event and dispatch it
+            dispatchEvent(new MouseEvent(
+                PolledRootNode.this, _tickStamp, _modifiers,
+                pressed ? MouseEvent.MOUSE_PRESSED : MouseEvent.MOUSE_RELEASED,
+                button, x, y));
+
+            // finally, if no buttons are up after processing, clear out our
+            // "clicked" component
+            if ((_modifiers & ANY_BUTTON_PRESSED) == 0) {
+                _ccomponent = null;
+            }
+        }
+        public void onMove (int xDelta, int yDelta, int newX, int newY) {
+            computeHoverComponent(newX, newY);
+            dispatchEvent(new MouseEvent(
+                PolledRootNode.this, _tickStamp, _modifiers,
+                _ccomponent != null ? MouseEvent.MOUSE_DRAGGED :
+                    MouseEvent.MOUSE_MOVED,
+                newX, newY));
+        }
+        public void onWheel (int wheelDelta, int x, int y) {
+            dispatchEvent(new MouseEvent(
+                PolledRootNode.this, _tickStamp, _modifiers,
+                MouseEvent.MOUSE_WHEELED, -1, x, y, wheelDelta));
+        }
+        protected void dispatchEvent (MouseEvent event) {
+            PolledRootNode.this.dispatchEvent(
+                _ccomponent != null ? _ccomponent : _hcomponent, event);
+        }
+    };
+    
     protected Timer _timer;
     protected InputHandler _handler;
     protected ArrayList _invalidRoots = new ArrayList();
