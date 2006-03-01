@@ -127,8 +127,8 @@ public class PolledRootNode extends BRootNode
     protected MouseInputListener _mouseListener = new MouseInputListener() {
         public void onButton (int button, boolean pressed, int x, int y) {
             // if we had no mouse button down previous to this, whatever's
-            // under the mouse becomes the "clicked" component (which might
-            // be null)
+            // under the mouse becomes the "clicked" component (which might be
+            // null)
             if (pressed && (_modifiers & ANY_BUTTON_PRESSED) == 0) {
                 setFocus(_ccomponent = _hcomponent);
             }
@@ -142,9 +142,9 @@ public class PolledRootNode extends BRootNode
 
             // generate a mouse event and dispatch it
             dispatchEvent(new MouseEvent(
-                PolledRootNode.this, _tickStamp, _modifiers,
-                pressed ? MouseEvent.MOUSE_PRESSED : MouseEvent.MOUSE_RELEASED,
-                button, x, y));
+                              PolledRootNode.this, _tickStamp, _modifiers,
+                              pressed ? MouseEvent.MOUSE_PRESSED :
+                              MouseEvent.MOUSE_RELEASED, button, x, y));
 
             // finally, if no buttons are up after processing, clear out our
             // "clicked" component
@@ -152,19 +152,22 @@ public class PolledRootNode extends BRootNode
                 _ccomponent = null;
             }
         }
+
         public void onMove (int xDelta, int yDelta, int newX, int newY) {
-            computeHoverComponent(newX, newY);
+            computeHoverComponent(_mouseX = newX, _mouseY = newY);
             dispatchEvent(new MouseEvent(
-                PolledRootNode.this, _tickStamp, _modifiers,
-                _ccomponent != null ? MouseEvent.MOUSE_DRAGGED :
-                    MouseEvent.MOUSE_MOVED,
-                newX, newY));
+                              PolledRootNode.this, _tickStamp, _modifiers,
+                              _ccomponent != null ? MouseEvent.MOUSE_DRAGGED :
+                              MouseEvent.MOUSE_MOVED,
+                              newX, newY));
         }
+
         public void onWheel (int wheelDelta, int x, int y) {
             dispatchEvent(new MouseEvent(
-                PolledRootNode.this, _tickStamp, _modifiers,
-                MouseEvent.MOUSE_WHEELED, -1, x, y, wheelDelta));
+                              PolledRootNode.this, _tickStamp, _modifiers,
+                              MouseEvent.MOUSE_WHEELED, -1, x, y, wheelDelta));
         }
+
         protected void dispatchEvent (MouseEvent event) {
             PolledRootNode.this.dispatchEvent(
                 _ccomponent != null ? _ccomponent : _hcomponent, event);

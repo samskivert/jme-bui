@@ -294,6 +294,16 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Called by a window when its position changes. This triggers a
+     * recomputation of the hover component as the window may have moved out
+     * from under or under the mouse.
+     */
+    protected void windowDidMove (BWindow window)
+    {
+        computeHoverComponent(_mouseX, _mouseY);
+    }
+
+    /**
      * Recomputes the component over which the mouse is hovering,
      * generating mouse exit and entry events as necessary.
      */

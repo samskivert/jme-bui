@@ -164,6 +164,19 @@ public class BWindow extends BContainer
     }
 
     // documentation inherited
+    public void setBounds (int x, int y, int width, int height)
+    {
+        boolean relocated = (x != _x || y != _y);
+        super.setBounds(x, y, width, height);
+
+        // if this window was moved, we need to tell our root node to recomput
+        // the hover component
+        if (relocated && _root != null) {
+            _root.windowDidMove(this);
+        }
+    }
+
+    // documentation inherited
     public boolean isAdded ()
     {
         return _root != null;
