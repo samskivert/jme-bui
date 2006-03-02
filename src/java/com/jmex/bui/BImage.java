@@ -252,7 +252,6 @@ public class BImage extends Quad
         _theight = theight;
 
         _texture = texture;
-        _texture.setApply(Texture.AM_REPLACE);
         _texture.setFilter(Texture.FM_LINEAR);
         _texture.setMipmapState(Texture.MM_NONE);
         _texture.setCorrection(Texture.CM_AFFINE);
