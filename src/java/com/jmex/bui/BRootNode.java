@@ -55,18 +55,38 @@ public abstract class BRootNode extends Geometry
      */
     public void addWindow (BWindow window)
     {
+        // make a note of the current top window
+        BWindow curtop = null;
+        if (_windows.size() > 0) {
+            curtop = (BWindow)_windows.get(_windows.size()-1);
+        }
+
         // add this window into the stack and resort
         _windows.add(window);
         resortWindows();
 
-        // if the current top window has a focus, store it and clear the focus
-        if (_focus != null) {
-            ((BWindow)_windows.get(_windows.size()-1))._savedFocus = _focus;
-            setFocus(null);
+        // if this window is now the top window, we need to transfer the focus
+        // to it (and save the previous top window's focus)
+        BComponent pendfocus = null;
+        if (_windows.get(_windows.size()-1) == window) {
+            // store the previous top window's focus and clear it
+            if (_focus != null && curtop != null) {
+                curtop._savedFocus = _focus;
+                setFocus(null);
+            }
+            // make a note of the window's previous saved focus
+            pendfocus = window._savedFocus;
+            window._savedFocus = null;
         }
 
         // add this window to the hierarchy (which may set a new focus)
         window.setRootNode(this);
+
+        // if no new focus was set when we added the window, give the focus to
+        // the previously pending focus component
+        if (_focus == null && pendfocus != null) {
+            setFocus(pendfocus);
+        }
 
         // recompute the hover component; the window may be under the mouse
         computeHoverComponent(_mouseX, _mouseY);

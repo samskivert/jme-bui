@@ -217,9 +217,7 @@ public class BWindow extends BContainer
     protected void requestFocus (BComponent component)
     {
         if (_root == null) {
-            Log.log.warning("Un-added window requested to change focus " +
-                            "[win=" + this + ", focus=" + component + "].");
-            Thread.dumpStack();
+            _savedFocus = component;
         } else {
             _root.requestFocus(component);
         }
