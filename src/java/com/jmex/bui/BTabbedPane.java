@@ -71,6 +71,14 @@ public class BTabbedPane extends BContainer
     }
 
     /**
+     * Removes the specified tab.
+     */
+    public void removeTab (BComponent tab)
+    {
+        removeTab(indexOfTab(tab));
+    }
+    
+    /**
      * Removes the tab at the specified index.
      */
     public void removeTab (int tabidx)
@@ -115,6 +123,14 @@ public class BTabbedPane extends BContainer
     }
     
     /**
+     * Selects the specified tab.
+     */
+    public void selectTab (BComponent tab)
+    {
+        selectTab(indexOfTab(tab));
+    }
+    
+    /**
      * Selects the tab with the specified index.
      */
     public void selectTab (int tabidx)
@@ -126,8 +142,7 @@ public class BTabbedPane extends BContainer
 
         // make sure the appropriate button is selected
         for (int ii = 0; ii < _tabs.size(); ii++) {
-            BToggleButton btn = (BToggleButton)_buttons.getComponent(ii);
-            btn.setSelected(ii == tabidx);
+            getTabButton(ii).setSelected(ii == tabidx);
         }
         // remove the current tab and add the requested one
         if (_selidx != -1) {
@@ -153,6 +168,30 @@ public class BTabbedPane extends BContainer
         return _selidx;
     }
 
+    /**
+     * Returns a reference to the tab button for the given tab.
+     */
+    public BToggleButton getTabButton (BComponent tab)
+    {
+        return getTabButton(indexOfTab(tab));
+    }
+    
+    /**
+     * Returns a reference to the tab button at the given index.
+     */
+    public BToggleButton getTabButton (int idx)
+    {
+        return (BToggleButton)_buttons.getComponent(idx);
+    }
+    
+    /**
+     * Returns the index of the given tab.
+     */
+    public int indexOfTab (BComponent tab)
+    {
+        return _tabs.indexOf(tab);
+    }
+    
     // documentation inherited
     protected String getDefaultStyleClass ()
     {
