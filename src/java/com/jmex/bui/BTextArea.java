@@ -35,6 +35,7 @@ import com.jmex.bui.event.ChangeListener;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.BTextFactory;
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Displays one or more lines of text which may contain basic formatting
@@ -73,6 +74,30 @@ public class BTextArea extends BContainer
         }
     }
 
+    /**
+     * Returns the horizontal alignment for this component's text.
+     */
+    public int getHorizontalAlignment ()
+    {
+        if (_haligns != null) {
+            int halign = _haligns[getState()];
+            return (halign != -1) ? halign : _haligns[DEFAULT];
+        }
+        return BConstants.LEFT;
+    }
+
+    /**
+     * Returns the vertical alignment for this component's text.
+     */
+    public int getVerticalAlignment ()
+    {
+        if (_valigns != null) {
+            int valign = _valigns[getState()];
+            return (valign != -1) ? valign : _valigns[DEFAULT];
+        }
+        return BConstants.CENTER;
+    }
+    
     /**
      * Configures the preferred width of this text area (the preferred height
      * will be calculated from the font).
@@ -202,8 +227,31 @@ public class BTextArea extends BContainer
             _textfacts[ii] = style.getTextFactory(
                 this, getStatePseudoClass(ii));
         }
+        
+        int[] haligns = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            haligns[ii] = style.getTextAlignment(this, getStatePseudoClass(ii));
+        }
+        _haligns = checkNonDefault(haligns, BConstants.LEFT);
+
+        int[] valigns = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            valigns[ii] = style.getVerticalAlignment(
+                this, getStatePseudoClass(ii));
+        }
+        _valigns = checkNonDefault(valigns, BConstants.CENTER);
     }
 
+    protected int[] checkNonDefault (int[] styles, int defval)
+    {
+        for (int ii = 0; ii < styles.length; ii++) {
+            if (styles[ii] != -1 && styles[ii] != defval) {
+                return styles;
+            }
+        }
+        return null;
+    }
+    
     // documentation inherited
     protected void layout ()
     {
@@ -217,17 +265,41 @@ public class BTextArea extends BContainer
     {
         super.renderComponent(renderer);
 
-        int x = getInsets().left;
-        int y = _height - getInsets().top;
-
-        int start = _model.getValue(), stop = start + _model.getExtent();
+        int halign = getHorizontalAlignment(),
+            valign = getVerticalAlignment();
+        
+        // compute the total height of the lines
+        int start = _model.getValue(), stop = start + _model.getExtent(),
+            lheight = 0;
+        for (int ii = start; ii < stop; ii++) {
+            lheight += ((Line)_lines.get(ii)).height;
+        }
+        
+        int x = getInsets().left, y;
+        Insets insets = getInsets();
+        if (valign == BConstants.TOP) {
+            y = _height - insets.top;
+        } else if (valign == BConstants.BOTTOM) {
+            y = lheight + insets.bottom;
+        } else { // valign == BConstants.CENTER
+            y = lheight + insets.bottom +
+                (_height - insets.getVertical() - lheight) / 2;
+        }
+        
+        // render the lines
         for (int ii = start; ii < stop; ii++) {
             Line line = (Line)_lines.get(ii);
             y -= line.height;
+            if (halign == BConstants.RIGHT) {
+                x = _width - line.getWidth() - insets.right;
+            } else if (halign == BConstants.CENTER) {
+                x = insets.left +
+                    (_width - insets.getHorizontal() - line.getWidth()) / 2;
+            }
             line.render(renderer, x, y);
         }
     }
-
+    
     // documentation inherited
     protected Dimension computePreferredSize (int whint, int hhint)
     {
@@ -400,6 +472,8 @@ public class BTextArea extends BContainer
         }
     }
 
+    protected int[] _haligns;
+    protected int[] _valigns;
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
     protected int _prefWidth = -1;

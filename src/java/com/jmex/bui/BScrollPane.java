@@ -105,8 +105,9 @@ public class BScrollPane extends BContainer
             // resize our target component to the larger of our size and its
             // preferred size
             Insets insets = getInsets();
-            Dimension d = _target.getPreferredSize(-1, -1);
-            d.width = Math.max(d.width, getWidth() - insets.getHorizontal());
+            int twidth = getWidth() - insets.getHorizontal();
+            Dimension d = _target.getPreferredSize(twidth, -1);
+            d.width = twidth;
             d.height = Math.max(d.height, getHeight() - insets.getVertical());
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
