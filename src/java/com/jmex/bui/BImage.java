@@ -263,6 +263,27 @@ public class BImage extends Quad
     }
 
     /**
+     * Configures our texture coordinates to the specified subimage. This does
+     * not normally need to be called, but if one is stealthily using a BImage
+     * as a quad, then it does.
+     */
+    public void setTextureCoords (int sx, int sy, int swidth, int sheight)
+    {
+        float lx = sx / (float)_twidth;
+        float ly = sy / (float)_theight;
+        float ux = (sx+swidth) / (float)_twidth;
+        float uy = (sy+sheight) / (float)_theight;
+
+        FloatBuffer tcoords = getTextureBuffer();
+        tcoords.clear();
+        tcoords.put(lx).put(uy);
+        tcoords.put(lx).put(ly);
+        tcoords.put(ux).put(ly);
+        tcoords.put(ux).put(uy);
+        tcoords.flip();
+    }
+
+    /**
      * Renders this image at the specified coordinates.
      */
     public void render (Renderer renderer, int tx, int ty)
@@ -297,18 +318,7 @@ public class BImage extends Quad
                         int sx, int sy, int swidth, int sheight,
                         int tx, int ty, int twidth, int theight)
     {
-        float lx = sx / (float)_twidth;
-        float ly = sy / (float)_theight;
-        float ux = (sx+swidth) / (float)_twidth;
-        float uy = (sy+sheight) / (float)_theight;
-
-        FloatBuffer tcoords = getTextureBuffer();
-        tcoords.clear();
-        tcoords.put(lx).put(uy);
-        tcoords.put(lx).put(ly);
-        tcoords.put(ux).put(ly);
-        tcoords.put(ux).put(uy);
-        tcoords.flip();
+        setTextureCoords(sx, sy, swidth, sheight);
 
         resize(twidth, theight);
         localTranslation.x = tx + twidth/2f;
