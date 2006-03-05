@@ -373,8 +373,8 @@ public class AWTTextFactory extends BTextFactory
 
             run.styles = new char[styles.length()];
             for (int ss = 0, ssl = styles.length(); ss < ssl; ss++) {
-                char style = (run.styles[ss] = styles.charAt(ss));
-                if (style == '#') {
+                run.styles[ss] = Character.toLowerCase(styles.charAt(ss));
+                if (run.styles[ss] == '#') {
                     if (ss > ssl-7) {
                         Log.log.warning("Invalid color definition " +
                                         "[text=" + text + ", color=" +
