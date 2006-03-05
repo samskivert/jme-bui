@@ -438,12 +438,14 @@ public class BTextArea extends BContainer
                 start = run;
             }
             String rtext = run.text.substring(offset);
-            int[] remainder = new int[1];
-            BText text = tfact.wrapText(rtext, color, maxWidth-dx, remainder);
-            segments.add(text);
-            height = Math.max(height, text.getSize().height);
-            dx += text.getSize().width;
-            return (remainder[0] == 0) ? -1 : run.text.length() - remainder[0];
+            // TODO: this could perhaps be done more efficiently now that the
+            // text factory breaks things down into multiple lines for us
+            BText[] text = tfact.wrapText(rtext, color, maxWidth-dx);
+            segments.add(text[0]);
+            int remainder = rtext.length() - text[0].getLength();
+            height = Math.max(height, text[0].getSize().height);
+            dx += text[0].getSize().width;
+            return (remainder == 0) ? -1 : run.text.length() - remainder;
         }
 
         /**

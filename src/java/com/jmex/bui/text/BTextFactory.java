@@ -54,28 +54,19 @@ public abstract class BTextFactory
                                       int effect, ColorRGBA effectColor);
 
     /**
-     * Creates a text that is no wider than the specified maximum width
-     * but contains as much of the supplied text (terminating on a word
-     * boundary) as is possible within that limit.
-     *
-     * @param remain if non-null, will have the number of unrendered
-     * characters filled into the zeroth element.
+     * Wraps a string into a set of text objects that do not exceed the
+     * specified width.
      */
-    public BText wrapText (
-        String text, ColorRGBA color, int maxWidth, int[] remain)
+    public BText[] wrapText (String text, ColorRGBA color, int maxWidth)
     {
-        return wrapText(text, color, NORMAL, null, maxWidth, remain);
+        return wrapText(text, color, NORMAL, null, maxWidth);
     }
 
     /**
-     * Creates a text that is no wider than the specified maximum width
-     * but contains as much of the supplied text (terminating on a word
-     * boundary) as is possible within that limit.
-     *
-     * @param remain if non-null, will have the number of unrendered
-     * characters filled into the zeroth element.
+     * Wraps a string into a set of text objects that do not exceed the
+     * specified width.
      */
-    public abstract BText wrapText (
+    public abstract BText[] wrapText (
         String text, ColorRGBA color, int effect, ColorRGBA effectColor,
-        int maxWidth, int[] remain);
+        int maxWidth);
 }

@@ -74,7 +74,9 @@ public class LayoutTest extends SimpleGame
             System.exit(-1);
         }
 
-        BWindow window = new BDecoratedWindow(style, null);
+        BWindow window;
+        BContainer cont;
+
         BImage icon = null;
         try {
             icon = new BImage(getClass().getClassLoader().
@@ -83,6 +85,7 @@ public class LayoutTest extends SimpleGame
             e.printStackTrace(System.err);
         }
 
+        window = new BDecoratedWindow(style, null);
 //         BLabel label = new BLabel(new ImageIcon(icon));
 //         label.setText("NORTH");
 //         window.add(label, BorderLayout.NORTH);
@@ -128,13 +131,12 @@ public class LayoutTest extends SimpleGame
             }
         });
         _root.addWindow(window);
-        window.setBounds(300, 125, 400, 250);
+        window.setBounds(300, 140, 400, 250);
 
         window = new BWindow(style, GroupLayout.makeVStretch());
-
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
-        BContainer cont = new BContainer(glay);
+        cont = new BContainer(glay);
         cont.add(new BComboBox(new String[] { "one", "two", "three" }));
         cont.add(new BButton("Two"));
         cont.add(new BMenuItem("Three", "three"));
@@ -176,7 +178,17 @@ public class LayoutTest extends SimpleGame
         window = new BWindow(style, new AbsoluteLayout());
         window.add(new BLabel("+0+0"), new Point(0, 0));
         window.add(new BLabel("+10+35"), new Point(10, 35));
-        window.add(new BButton("200x25+50+75"), new Rectangle(50, 75, 200, 25));
+        window.add(new BButton("250x25+50+75"), new Rectangle(50, 75, 250, 25));
+        _root.addWindow(window);
+        window.pack();
+        window.setLocation(300, 25);
+
+        window = new BWindow(style, new BorderLayout());
+        window.add(new BLabel("This is some styled text.\n" +
+                              "@b(bold) @i(italic) @u(underline) @s(strike)\n" +
+                              "@#FFCC99(colored)\n" +
+                              "@bu#99CCFF(bold, underlined and colored)"),
+                   BorderLayout.CENTER);
         _root.addWindow(window);
         window.pack();
         window.setLocation(300, 450);

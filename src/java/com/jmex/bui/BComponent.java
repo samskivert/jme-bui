@@ -427,6 +427,14 @@ public class BComponent
     }
 
     /**
+     * Returns true if this component has been validated and laid out.
+     */
+    public boolean isValid ()
+    {
+        return _valid;
+    }
+
+    /**
      * Instructs this component to lay itself out and then mark itself as
      * valid.
      */

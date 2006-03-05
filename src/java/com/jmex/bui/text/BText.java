@@ -35,6 +35,11 @@ import com.jme.scene.shape.Quad;
 public abstract class BText
 {
     /**
+     * Returns the length in characters of this text.
+     */
+    public abstract int getLength ();
+
+    /**
      * Returns the screen dimensions of this text.
      */
     public abstract Dimension getSize ();

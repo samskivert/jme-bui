@@ -37,6 +37,7 @@ import java.text.AttributedString;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -57,8 +58,18 @@ import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 
 /**
- * Formats text by using the AWT to render runs of text into a bitmap and
- * then texturing a quad with the result.
+ * Formats text by using the AWT to render runs of text into a bitmap and then
+ * texturing a quad with the result.  This text factory handles a simple styled
+ * text syntax:
+ *
+ * <pre>
+ * @b(this text would be bold)
+ * @i(this text would be italic)
+ * @s(this text would be striked-through)
+ * @u(this text would be underlined)
+ * @bi(this text would be bold and italic)
+ * @bi#FFCC99(this text would be bold, italic and pink)
+ * </pre>
  */
 public class AWTTextFactory extends BTextFactory
 {
@@ -67,9 +78,8 @@ public class AWTTextFactory extends BTextFactory
      */
     public AWTTextFactory (Font font, boolean antialias)
     {
-        _font = font;
         _antialias = antialias;
-        _attrs.put(TextAttribute.FONT, _font);
+        _attrs.put(TextAttribute.FONT, font);
 
         // we need a graphics context to figure out how big our text is
         // going to be, but we need an image to get the graphics context,
@@ -96,51 +106,57 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText wrapText (
-        String text, ColorRGBA color, int effect, ColorRGBA effectColor,
-        int maxWidth, int[] remain)
+    public BText[] wrapText (String text, ColorRGBA color, int effect,
+                             ColorRGBA effectColor, int maxWidth)
     {
         // the empty string will break things; so use a single space instead
         if (text.length() == 0) {
             text = " ";
         }
 
+        ArrayList texts = new ArrayList();
         Graphics2D gfx = _stub.createGraphics();
         TextLayout layout;
         try {
-            gfx.setFont(_font);
             if (_antialias) {
                 gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                      RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             }
 
-            // stop at the next newline or the end of the line if there
-            // are no newlines in the text
-            int nextret = text.indexOf('\n', 1);
-            if (nextret == -1) {
-                nextret = text.length();
-            }
-
-            // measure out as much text as we can render in one line
+            String[] bare = new String[1];
+            AttributedString atext = parseStyledText(text, _attrs, bare);
             LineBreakMeasurer measurer = new LineBreakMeasurer(
-                new AttributedString(text, _attrs).getIterator(),
-                gfx.getFontRenderContext());
-            layout = measurer.nextLayout(maxWidth, nextret, false);
+                atext.getIterator(), gfx.getFontRenderContext());
+            text = bare[0];
 
-            // skip past any newline that we used to terminate our wrap
-            int pos = measurer.getPosition();
-            if (pos < text.length() && text.charAt(pos) == '\n') {
-                pos++;
+            int pos = 0;
+            while (pos < text.length()) {
+                // stop at the next newline or the end of the line if there
+                // are no newlines in the text
+                int nextret = text.indexOf('\n', pos);
+                if (nextret == -1) {
+                    nextret = text.length();
+                }
+
+                // measure out as much text as we can render in one line
+                layout = measurer.nextLayout(maxWidth, nextret, false);
+                int length = measurer.getPosition() - pos;
+
+                // skip past any newline that we used to terminate our wrap
+                pos = measurer.getPosition();
+                if (pos < text.length() && text.charAt(pos) == '\n') {
+                    pos++;
+                }
+
+                texts.add(createText(layout, color, effect, effectColor,
+                                     length, true));
             }
-
-            // note the characters that we were unable to include
-            remain[0] = text.length() - pos;
 
         } finally {
             gfx.dispose();
         }
 
-        return createText(layout, color, effect, effectColor, true);
+        return (BText[])texts.toArray(new BText[texts.size()]);
     }
 
     /** Helper function. */
@@ -155,23 +171,25 @@ public class AWTTextFactory extends BTextFactory
         Graphics2D gfx = _stub.createGraphics();
         TextLayout layout;
         try {
-            gfx.setFont(_font);
             if (_antialias) {
                 gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                      RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             }
-            layout = new TextLayout(text, _font, gfx.getFontRenderContext());
+            layout = new TextLayout(
+                parseStyledText(text, _attrs, null).getIterator(),
+                gfx.getFontRenderContext());
         } finally {
             gfx.dispose();
         }
 
-        return createText(layout, color, effect, effectColor, useAdvance);
+        return createText(layout, color, effect, effectColor,
+                          text.length(), useAdvance);
     }
 
     /** Helper function. */
     protected BText createText (final TextLayout layout, ColorRGBA color,
                                 final int effect, ColorRGBA effectColor,
-                                boolean useAdvance)
+                                final int length, boolean useAdvance)
     {
         // determine the size of our rendered text
         final Dimension size = new Dimension();
@@ -260,6 +278,9 @@ public class AWTTextFactory extends BTextFactory
 
         // wrap it all up in the right object
         return new BText() {
+            public int getLength () {
+                return length;
+            }
             public Dimension getSize () {
                 return size;
             }
@@ -278,9 +299,199 @@ public class AWTTextFactory extends BTextFactory
         };
     }
 
-    protected Font _font;
+    /**
+     * Parses our simple styled text formatting codes and creates an attributed
+     * string to render them.
+     */
+    protected AttributedString parseStyledText (
+        String text, HashMap attrs, String[] bare)
+    {
+        // if there are no style commands in the text, skip the complexity
+        if (text.indexOf("@") == -1) {
+            if (bare != null) {
+                bare[0] = text;
+            }
+            return new AttributedString(text, attrs);
+        }
+
+        // parse the style commands into an array of styled runs and extract
+        // the raw text along the way
+        ArrayList stack = new ArrayList(), runs = new ArrayList();
+        StringBuffer raw = new StringBuffer();
+        int rawpos = 0;
+        for (int ii = 0, ll = text.length(); ii < ll; ii++) {
+            char c = text.charAt(ii);
+
+            if (c == ')') { // end of run
+                if (stack.size() == 0) {
+                    Log.log.warning("Found end of run with empty stack. " +
+                                    "[text=" + text + ", pos=" + ii + "].");
+                } else {
+                    StyleRun run = (StyleRun)stack.remove(0);
+                    run.end = rawpos;
+                    runs.add(run);
+                }
+                continue;
+
+            } else if (c == '@') { // start of run
+                // a @ as the last character is not valid
+                if (ii >= ll-1) {
+                    Log.log.warning("Invalid @ at end of string " +
+                                    "[text=" + text + "].");
+                    continue;
+                }
+
+                // check for escaped parenthesis
+                if ((c = text.charAt(++ii)) == '(' || c == ')') {
+                    raw.append(c);
+                    rawpos++;
+                    continue;
+                }
+
+                // otherwise fall through and parse the run
+
+            } else { // plain old character
+                raw.append(c);
+                rawpos++;
+                continue;
+            }
+
+            // otherwise this is the start of a style run
+            StyleRun run = new StyleRun();
+            run.start = rawpos;
+            stack.add(0, run);
+
+            int parenidx = text.indexOf('(', ii);
+            if (parenidx == -1) {
+                Log.log.warning("Invalid style specification, missing paren " +
+                                "[text=" + text + ", pos=" + ii + "].");
+                continue;
+            }
+
+            String styles = text.substring(ii, parenidx);
+            ii = parenidx;
+
+            run.styles = new char[styles.length()];
+            for (int ss = 0, ssl = styles.length(); ss < ssl; ss++) {
+                char style = (run.styles[ss] = styles.charAt(ss));
+                if (style == '#') {
+                    if (ss > ssl-7) {
+                        Log.log.warning("Invalid color definition " +
+                                        "[text=" + text + ", color=" +
+                                        styles.substring(ss) + "].");
+                        ss = ssl;
+                    } else {
+                        String hex = styles.substring(ss+1, ss+7);
+                        ss += 6;
+                        try {
+                            run.color = new Color(Integer.parseInt(hex, 16));
+                        } catch (Exception e) {
+                            Log.log.warning("Invalid color definition " +
+                                            "[text=" + text +
+                                            ", color=#" + hex +"].");
+                        }
+                    }
+                }
+            }
+        }
+
+        // now create an attributed string and add our styles
+        String rawtext = raw.toString();
+        if (bare != null) {
+            bare[0] = rawtext;
+        }
+        AttributedString string = new AttributedString(rawtext, attrs);
+        for (int ii = 0; ii < runs.size(); ii++) {
+            StyleRun run = (StyleRun)runs.get(ii);
+            if (run.styles == null) {
+                continue; // ignore runs we failed to parse
+            }
+            for (int ss = 0; ss < run.styles.length; ss++) {
+                switch (run.styles[ss]) {
+                case '#':
+                    if (run.color != null) {
+                        string.addAttribute(
+                            TextAttribute.FOREGROUND,
+                            run.color, run.start, run.end);
+                    }
+                    break;
+
+                case 'i':
+                    string.addAttribute(
+                        TextAttribute.POSTURE,
+                        TextAttribute.POSTURE_OBLIQUE,
+                        run.start, run.end);
+                    break;
+
+                case 'b':
+                    // setting TextAttribute.WEIGHT doesn't seem to work
+                    string.addAttribute(
+                        TextAttribute.FONT,
+                        ((Font)attrs.get(TextAttribute.FONT)).
+                        deriveFont(Font.BOLD),
+                        run.start, run.end);
+                    break;
+
+                case 's':
+                    string.addAttribute(
+                        TextAttribute.STRIKETHROUGH,
+                        TextAttribute.STRIKETHROUGH_ON,
+                        run.start, run.end);
+                    break;
+
+                case 'u':
+                    string.addAttribute(
+                        TextAttribute.UNDERLINE,
+                        TextAttribute.UNDERLINE_ON,
+                        run.start, run.end);
+                    break;
+
+                case 0: // ignore blank spots
+                    break;
+
+                default:
+                    Log.log.warning("Invalid style command [text=" + text +
+                                    ", command=" + run.styles[ss] +
+                                    ", run=" + run + "].");
+                    break;
+                }
+            }
+        }
+
+        return string;
+    }
+
+    protected static class StyleRun
+    {
+        public char[] styles;
+        public Color color;
+        public int start;
+        public int end;
+
+        public String toString () {
+            StringBuffer buf = new StringBuffer();
+            for (int ii = 0; ii < styles.length; ii++) {
+                if (styles[ii] > 0) {
+                    buf.append(styles[ii]);
+                }
+            }
+            if (color != null) {
+                buf.append(":").append(Integer.toHexString(color.getRGB()));
+            }
+            buf.append(":").append(start).append("-").append(end);
+            return buf.toString();
+        }
+    }
+
     protected boolean _antialias;
     protected HashMap _attrs = new HashMap();
     protected int _height;
     protected BufferedImage _stub;
+
+    protected static final char NONE = '!';
+    protected static final char BOLD = 'b';
+    protected static final char ITALIC = 'i';
+    protected static final char UNDERLINE = 'u';
+    protected static final char STRIKE = 's';
+    protected static final char COLOR = '#';
 }
