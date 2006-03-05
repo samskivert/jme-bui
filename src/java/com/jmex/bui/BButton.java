@@ -136,11 +136,13 @@ public class BButton extends BLabel
             switch (mev.getType()) {
             case MouseEvent.MOUSE_ENTERED:
                 _armed = _pressed;
-                break;
+                // let the normal component hovered processing take place
+                return super.dispatchEvent(event);
 
             case MouseEvent.MOUSE_EXITED:
                 _armed = false;
-                break;
+                // let the normal component hovered processing take place
+                return super.dispatchEvent(event);
 
             case MouseEvent.MOUSE_PRESSED:
                 if (mev.getButton() == 0) {
