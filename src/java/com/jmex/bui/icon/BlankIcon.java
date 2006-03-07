@@ -46,7 +46,7 @@ public class BlankIcon extends BIcon
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y)
+    public void render (Renderer renderer, int x, int y, float alpha)
     {
         // nothing doing
     }

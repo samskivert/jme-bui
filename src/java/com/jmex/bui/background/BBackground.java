@@ -45,7 +45,8 @@ public abstract class BBackground
     }
 
     /** Renders this background. */
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height,
+        float alpha)
     {
     }
 }

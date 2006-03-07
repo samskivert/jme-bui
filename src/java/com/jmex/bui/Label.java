@@ -207,14 +207,14 @@ public class Label
     /**
      * Renders the label text and icon.
      */
-    public void render (Renderer renderer)
+    public void render (Renderer renderer, float alpha)
     {
         if (_icon != null) {
-            _icon.render(renderer, _ix, _iy);
+            _icon.render(renderer, _ix, _iy, alpha);
         }
         if (_text != null) {
             _text.render(renderer, _tx, _ty,
-                         _container.getHorizontalAlignment());
+                         _container.getHorizontalAlignment(), alpha);
         }
     }
 
@@ -389,7 +389,8 @@ public class Label
         public BText[] lines;
         public Dimension size = new Dimension();
 
-        public void render (Renderer renderer, int tx, int ty, int halign)
+        public void render (Renderer renderer, int tx, int ty, int halign,
+            float alpha)
         {
             // render the lines from the bottom up
             for (int ii = lines.length-1; ii >= 0; ii--) {
@@ -399,7 +400,7 @@ public class Label
                 } else if (halign == CENTER) {
                     lx += (size.width - lines[ii].getSize().width)/2;
                 }
-                lines[ii].render(renderer, lx, ty);
+                lines[ii].render(renderer, lx, ty, alpha);
                 ty += lines[ii].getSize().height;
             }
         }
@@ -417,6 +418,7 @@ public class Label
     protected Config _config;
     protected Text _text;
     protected int _tx, _ty, _twidth = Short.MAX_VALUE;
+    protected float _alpha = 1f;
 
     protected Config _prefconfig;
     protected Dimension _prefsize;

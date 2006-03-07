@@ -74,7 +74,7 @@ public class JMEBitmapTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (final String text, ColorRGBA color,
+    public BText createText (final String text, final ColorRGBA color,
                              int effect, ColorRGBA effectColor)
     {
         // compute the dimensions of this text
@@ -86,8 +86,8 @@ public class JMEBitmapTextFactory extends BTextFactory
         tgeom.setTextureCombineMode(TextureState.REPLACE);
         tgeom.setRenderState(_tstate);
         tgeom.setRenderState(_astate);
-        tgeom.setTextColor(color);
-
+        tgeom.setTextColor(new ColorRGBA(color));
+        
         // wrap it all up in the right object
         return new BText() {
             public int getLength () {
@@ -103,9 +103,10 @@ public class JMEBitmapTextFactory extends BTextFactory
                 // JME characters are hardcoded to 10x16
                 return 10 * index;
             }
-            public void render (Renderer renderer, int x, int y) {
+            public void render (Renderer renderer, int x, int y, float alpha) {
                 x -= 4; // TEMP: handle Text offset bug
                 tgeom.setLocalTranslation(new Vector3f(x, y, 0));
+                tgeom.getTextColor().a = alpha * color.a;
                 renderer.draw(tgeom);
             }
         };

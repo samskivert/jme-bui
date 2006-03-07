@@ -266,7 +266,7 @@ public class AWTTextFactory extends BTextFactory
         // TODO: render into a properly sized image in the first place and
         // create a JME Image directly
         final BImage bimage = new BImage(image);
-
+        
 //         final ByteBuffer idata =
 //             ByteBuffer.allocateDirect(4 * image.getWidth() * image.getHeight());
 //         idata.order(ByteOrder.nativeOrder());
@@ -293,8 +293,8 @@ public class AWTTextFactory extends BTextFactory
                 Rectangle2D bounds = carets[0].getBounds2D();
                 return (int)Math.round(bounds.getX() + bounds.getWidth()/2);
             }
-            public void render (Renderer renderer, int x, int y) {
-                bimage.render(renderer, x, y);
+            public void render (Renderer renderer, int x, int y, float alpha) {
+                bimage.render(renderer, x, y, alpha);
             }
         };
     }

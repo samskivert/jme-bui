@@ -88,31 +88,32 @@ public class ImageBackground extends BBackground
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height,
+        float alpha)
     {
-        super.render(renderer, x, y, width, height);
+        super.render(renderer, x, y, width, height, alpha);
 
         switch (_mode/3) {
         case CENTER:
-            renderCentered(renderer, x, y, width, height);
+            renderCentered(renderer, x, y, width, height, alpha);
             break;
 
         case SCALE:
-            renderScaled(renderer, x, y, width, height);
+            renderScaled(renderer, x, y, width, height, alpha);
             break;
 
         case TILE:
-            renderTiled(renderer, x, y, width, height);
+            renderTiled(renderer, x, y, width, height, alpha);
             break;
 
         case FRAME:
-            renderFramed(renderer, x, y, width, height);
+            renderFramed(renderer, x, y, width, height, alpha);
             break;
         }
     }
 
     protected void renderCentered (
-        Renderer renderer, int x, int y, int width, int height)
+        Renderer renderer, int x, int y, int width, int height, float alpha)
     {
         if (_mode == CENTER_X || _mode == CENTER_XY) {
             x += (width-_image.getWidth())/2;
@@ -120,11 +121,11 @@ public class ImageBackground extends BBackground
         if (_mode == CENTER_Y || _mode == CENTER_XY) {
             y += (height-_image.getHeight())/2;
         }
-        _image.render(renderer, x, y);
+        _image.render(renderer, x, y, alpha);
     }
 
     protected void renderScaled (
-        Renderer renderer, int x, int y, int width, int height)
+        Renderer renderer, int x, int y, int width, int height, float alpha)
     {
         switch (_mode) {
         case SCALE_X:
@@ -136,59 +137,59 @@ public class ImageBackground extends BBackground
             width = _image.getWidth();
             break;
         }
-        _image.render(renderer, x, y, width, height);
+        _image.render(renderer, x, y, width, height, alpha);
     }
 
     protected void renderTiled (
-        Renderer renderer, int x, int y, int width, int height)
+        Renderer renderer, int x, int y, int width, int height, float alpha)
     {
         int iwidth = _image.getWidth(), iheight = _image.getHeight();
         if (_mode == TILE_X) {
-            renderRow(renderer, x, y, width, Math.min(height, iheight));
+            renderRow(renderer, x, y, width, Math.min(height, iheight), alpha);
 
         } else if (_mode == TILE_Y) {
             int up = height / iheight;
             iwidth = Math.min(width, iwidth);
             for (int yy = 0; yy < up; yy++) {
                 _image.render(renderer, 0, 0, iwidth, iheight,
-                              x, y + yy*iheight, iwidth, iheight);
+                              x, y + yy*iheight, iwidth, iheight, alpha);
             }
             int remain = height % iheight;
             if (remain > 0) {
                 _image.render(renderer, 0, 0, iwidth, remain,
-                              x, y + up*iheight, iwidth, remain);
+                              x, y + up*iheight, iwidth, remain, alpha);
             }
 
         } else if (_mode == TILE_XY) {
             int up = height / iheight;
             for (int yy = 0; yy < up; yy++) {
-                renderRow(renderer, x, y + yy*iheight, width, iheight);
+                renderRow(renderer, x, y + yy*iheight, width, iheight, alpha);
             }
             int remain = height % iheight;
             if (remain > 0) {
-                renderRow(renderer, x, y + up*iheight, width, remain);
+                renderRow(renderer, x, y + up*iheight, width, remain, alpha);
             }
         }
     }
 
     protected void renderRow (
-        Renderer renderer, int x, int y, int width, int iheight)
+        Renderer renderer, int x, int y, int width, int iheight, float alpha)
     {
         int iwidth = _image.getWidth();
         int across = width / iwidth;
         for (int xx = 0; xx < across; xx++) {
             _image.render(renderer, 0, 0, iwidth, iheight,
-                          x + xx*iwidth, y, iwidth, iheight);
+                          x + xx*iwidth, y, iwidth, iheight, alpha);
         }
         int remain = width % iwidth;
         if (remain > 0) {
             _image.render(renderer, 0, 0, remain, iheight,
-                          x + across*iwidth, y, remain, iheight);
+                          x + across*iwidth, y, remain, iheight, alpha);
         }
     }
 
     protected void renderFramed (
-        Renderer renderer, int x, int y, int width, int height)
+        Renderer renderer, int x, int y, int width, int height, float alpha)
     {
         // render each of our image sections appropriately
         int twidth = _image.getWidth(), theight = _image.getHeight();
@@ -196,30 +197,30 @@ public class ImageBackground extends BBackground
         int wmiddle = twidth - 2*wthird, hmiddle = theight - 2*hthird;
 
         // draw the corners
-        _image.render(renderer, 0, 0, wthird, hthird, 0, 0);
+        _image.render(renderer, 0, 0, wthird, hthird, 0, 0, alpha);
         _image.render(renderer, twidth-wthird, 0, wthird, hthird,
-                      width-wthird, 0);
+                      width-wthird, 0, alpha);
         _image.render(renderer, 0, theight-hthird, wthird, hthird,
-                      0, height-hthird);
+                      0, height-hthird, alpha);
         _image.render(renderer, twidth-wthird, theight-hthird, wthird, hthird,
-                      width-wthird, height-hthird);
+                      width-wthird, height-hthird, alpha);
 
         // draw the "gaps"
         int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
         _image.render(renderer, wthird, 0, wmiddle, hthird, wthird, 0,
-                      ghmiddle, hthird);
+                      ghmiddle, hthird, alpha);
         _image.render(renderer, wthird, theight-hthird, wmiddle, hthird,
-                      wthird, height-hthird, ghmiddle, hthird);
+                      wthird, height-hthird, ghmiddle, hthird, alpha);
 
         _image.render(renderer, 0, hthird, wthird, hmiddle, 0, hthird,
-                      wthird, gvmiddle);
+                      wthird, gvmiddle, alpha);
         _image.render(renderer, twidth-wthird, hthird, wthird, hmiddle,
-                      width-wthird, hthird, wthird, gvmiddle);
+                      width-wthird, hthird, wthird, gvmiddle, alpha);
 
         // draw the center
         _image.render(renderer, wthird, hthird, twidth-2*wthird,
                       theight-2*hthird, wthird, hthird, width-2*wthird,
-                      height-2*hthird);
+                      height-2*hthird, alpha);
     }
 
     protected int _mode;

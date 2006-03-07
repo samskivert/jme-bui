@@ -53,11 +53,11 @@ public class SubimageIcon extends BIcon
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y)
+    public void render (Renderer renderer, int x, int y, float alpha)
     {
-        super.render(renderer, x, y);
+        super.render(renderer, x, y, alpha);
         _image.render(renderer, _region.x, _region.y,
-                      _region.width, _region.height, x, y);
+                      _region.width, _region.height, x, y, alpha);
     }
 
     protected BImage _image;

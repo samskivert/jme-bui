@@ -60,5 +60,5 @@ public abstract class BText
     /**
      * Renders this text to the display.
      */
-    public abstract void render (Renderer render, int x, int y);
+    public abstract void render (Renderer render, int x, int y, float alpha);
 }

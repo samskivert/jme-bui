@@ -34,7 +34,7 @@ public abstract class BIcon
     public abstract int getHeight ();
 
     /** Renders this icon. */
-    public void render (Renderer renderer, int x, int y)
+    public void render (Renderer renderer, int x, int y, float alpha)
     {
     }
 }

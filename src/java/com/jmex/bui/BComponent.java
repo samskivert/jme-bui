@@ -260,6 +260,22 @@ public class BComponent
     }
 
     /**
+     * Sets the alpha level for this component.
+     */
+    public void setAlpha (float alpha)
+    {
+        _alpha = alpha;
+    }
+    
+    /**
+     * Returns the alpha transparency of this component.
+     */
+    public float getAlpha ()
+    {
+        return _alpha;
+    }
+    
+    /**
      * Sets this components enabled state. A component that is not enabled
      * should not respond to user interaction and should render itself in such
      * a way as not to afford user interaction.
@@ -388,7 +404,7 @@ public class BComponent
             invalidate();
         }
     }
-
+    
     /**
      * Adds a listener to this component. The listener will be notified
      * when events of the appropriate type are dispatched on this
@@ -498,7 +514,7 @@ public class BComponent
         }
         return null;
     }
-
+    
     /**
      * Instructs this component to process the supplied event. If the event is
      * not processed, it will be passed up to its parent component for
@@ -635,7 +651,7 @@ public class BComponent
     {
         BBackground background = getBackground();
         if (background != null) {
-            background.render(renderer, 0, 0, _width, _height);
+            background.render(renderer, 0, 0, _width, _height, _alpha);
         }
     }
 
@@ -646,7 +662,7 @@ public class BComponent
     {
         BBorder border = getBorder();
         if (border != null) {
-            border.render(renderer, 0, 0, _width, _height);
+            border.render(renderer, 0, 0, _width, _height, _alpha);
         }
     }
 
@@ -763,6 +779,7 @@ public class BComponent
     protected HashMap _properties;
 
     protected boolean _valid, _enabled = true, _hover;
+    protected float _alpha = 1f;
 
     protected ColorRGBA[] _colors = new ColorRGBA[getStateCount()];
     protected Insets[] _insets = new Insets[getStateCount()];

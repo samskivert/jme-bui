@@ -42,14 +42,15 @@ public class TintedBackground extends BBackground
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height,
+        float alpha)
     {
-        super.render(renderer, x, y, width, height);
+        super.render(renderer, x, y, width, height, alpha);
 
         BComponent.applyDefaultStates();
         BImage.blendState.apply();
 
-        GL11.glColor4f(_color.r, _color.g, _color.b, _color.a);
+        GL11.glColor4f(_color.r, _color.g, _color.b, _color.a * alpha);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x, y);
         GL11.glVertex2f(x + width, y);

@@ -154,7 +154,7 @@ public class BLabel extends BTextComponent
     protected void renderComponent (Renderer renderer)
     {
         super.renderComponent(renderer);
-        _label.render(renderer);
+        _label.render(renderer, _alpha);
     }
 
     // documentation inherited

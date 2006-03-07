@@ -36,6 +36,7 @@ import org.lwjgl.opengl.GLContext;
 
 import com.jme.image.Image;
 import com.jme.image.Texture;
+import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
 import com.jme.scene.shape.Quad;
@@ -124,6 +125,9 @@ public class BImage extends Quad
         textureImage.setData(scratch);
 
         setImage(textureImage);
+        
+        // make sure we have a unique default color object
+        defaultColor = new ColorRGBA(ColorRGBA.white);
     }
 
     /**
@@ -286,9 +290,9 @@ public class BImage extends Quad
     /**
      * Renders this image at the specified coordinates.
      */
-    public void render (Renderer renderer, int tx, int ty)
+    public void render (Renderer renderer, int tx, int ty, float alpha)
     {
-        render(renderer, tx, ty, _width, _height);
+        render(renderer, tx, ty, _width, _height, alpha);
     }
 
     /**
@@ -296,18 +300,20 @@ public class BImage extends Quad
      * size.
      */
     public void render (Renderer renderer, int tx, int ty,
-                        int twidth, int theight)
+                        int twidth, int theight, float alpha)
     {
-        render(renderer, 0, 0, _width, _height, tx, ty, twidth, theight);
+        render(renderer, 0, 0, _width, _height, tx, ty, twidth, theight,
+            alpha);
     }
 
     /**
      * Renders a region of this image at the specified coordinates.
      */
     public void render (Renderer renderer, int sx, int sy,
-                        int swidth, int sheight, int tx, int ty)
+                        int swidth, int sheight, int tx, int ty, float alpha)
     {
-        render(renderer, sx, sy, swidth, sheight, tx, ty, swidth, sheight);
+        render(renderer, sx, sy, swidth, sheight, tx, ty, swidth, sheight,
+            alpha);
     }
 
     /**
@@ -316,7 +322,7 @@ public class BImage extends Quad
      */
     public void render (Renderer renderer,
                         int sx, int sy, int swidth, int sheight,
-                        int tx, int ty, int twidth, int theight)
+                        int tx, int ty, int twidth, int theight, float alpha)
     {
         setTextureCoords(sx, sy, swidth, sheight);
 
@@ -325,6 +331,7 @@ public class BImage extends Quad
         localTranslation.y = ty + theight/2f;
         updateGeometricState(0, true);
 
+        defaultColor.a = alpha;
         draw(renderer);
     }
 
@@ -335,7 +342,6 @@ public class BImage extends Quad
             (Integer.highestOneBit(value) << 1) : value;
     }
 
-    protected Quad _quad;
     protected Texture _texture;
     protected TextureState _tstate;
     protected int _width, _height;

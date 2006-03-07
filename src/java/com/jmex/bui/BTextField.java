@@ -295,7 +295,7 @@ public class BTextField extends BTextComponent
 
         // render our text
         if (_glyphs != null) {
-            _glyphs.render(renderer, tx, ty);
+            _glyphs.render(renderer, tx, ty, _alpha);
 
             // locate the cursor position
             if (_showCursor) {

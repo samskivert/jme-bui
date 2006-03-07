@@ -296,7 +296,7 @@ public class BTextArea extends BContainer
                 x = insets.left +
                     (_width - insets.getHorizontal() - line.getWidth()) / 2;
             }
-            line.render(renderer, x, y);
+            line.render(renderer, x, y, _alpha);
         }
     }
     
@@ -451,12 +451,12 @@ public class BTextArea extends BContainer
         /**
          * Renders this line of text.
          */
-        public void render (Renderer renderer, int x, int y)
+        public void render (Renderer renderer, int x, int y, float alpha)
         {
             int dx = x;
             for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
                 BText text = (BText)segments.get(ii);
-                text.render(renderer, dx, y);
+                text.render(renderer, dx, y, alpha);
                 dx += text.getSize().width;
             }
         }

@@ -42,12 +42,13 @@ public class CompoundBorder extends BBorder
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height,
+        float alpha)
     {
-        _outer.render(renderer, x, y, width, height);
+        _outer.render(renderer, x, y, width, height, alpha);
         _inner.render(renderer, x + _insets.left, y + _insets.bottom,
                       width - _insets.getHorizontal(),
-                      height - _insets.getVertical());
+                      height - _insets.getVertical(), alpha);
     }
 
     protected BBorder _outer, _inner;

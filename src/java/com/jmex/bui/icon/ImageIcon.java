@@ -50,10 +50,10 @@ public class ImageIcon extends BIcon
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y)
+    public void render (Renderer renderer, int x, int y, float alpha)
     {
-        super.render(renderer, x, y);
-        _image.render(renderer, x, y);
+        super.render(renderer, x, y, alpha);
+        _image.render(renderer, x, y, alpha);
     }
 
     protected BImage _image;

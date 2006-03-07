@@ -37,7 +37,8 @@ public abstract class BBorder
     public abstract Insets adjustInsets (Insets insets);
 
     /** Renders this border. */
-    public void render (Renderer renderer, int x, int y, int width, int height)
+    public void render (Renderer renderer, int x, int y, int width, int height,
+        float alpha)
     {
     }
 }
