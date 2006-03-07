@@ -49,6 +49,7 @@ public class Label
     public void setText (String text)
     {
         _value = text;
+        releaseText();
         _twidth = Short.MAX_VALUE;
 
         // if we're already part of the hierarchy, recreate our glyps
@@ -301,9 +302,7 @@ public class Label
         _config = config;
 
         // clear out any previous rendered text
-        if (_text != null) {
-            _text = null;
-        }
+        releaseText();
 
         // if we have no text, we're done
         if (_value == null) {
@@ -327,6 +326,14 @@ public class Label
             _text.size.width = Math.max(
                 _text.size.width, _text.lines[ii].getSize().width);
             _text.size.height += _text.lines[ii].getSize().height;
+        }
+    }
+
+    protected void releaseText ()
+    {
+        if (_text != null) {
+            // TODO: delete texture
+            _text = null;
         }
     }
 
@@ -363,14 +370,14 @@ public class Label
             if (effect != oc.effect) {
                 return false;
             }
-            if (text != oc.text && (text != null && !text.equals(oc.text))) {
+            if (text != oc.text && (text == null || !text.equals(oc.text))) {
                 return false;
             }
             if (!color.equals(oc.color)) {
                 return false;
             }
             if (effectColor != oc.effectColor &&
-                (effectColor != null && !effectColor.equals(oc.effectColor))) {
+                (effectColor == null || !effectColor.equals(oc.effectColor))) {
                 return false;
             }
             return true;
