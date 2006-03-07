@@ -305,7 +305,7 @@ public class Label
         releaseText();
 
         // if we have no text, we're done
-        if (_value == null) {
+        if (_value == null || _value.equals("")) {
             return;
         }
 
