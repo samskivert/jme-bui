@@ -107,6 +107,15 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Returns whether or not this window is an overlay, in which case its
+     * children will not receive input focus by default.
+     */
+    public boolean isOverlay ()
+    {
+        return false;
+    }
+    
+    /**
      * Returns the root node that manages this window.
      */
     public BRootNode getRootNode ()

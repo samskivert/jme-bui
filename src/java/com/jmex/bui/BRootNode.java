@@ -68,7 +68,7 @@ public abstract class BRootNode extends Geometry
         // if this window is now the top window, we need to transfer the focus
         // to it (and save the previous top window's focus)
         BComponent pendfocus = null;
-        if (_windows.get(_windows.size()-1) == window) {
+        if (_windows.get(_windows.size()-1) == window && !window.isOverlay()) {
             // store the previous top window's focus and clear it
             if (_focus != null && curtop != null) {
                 curtop._savedFocus = _focus;
