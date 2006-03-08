@@ -188,6 +188,20 @@ public class BImage extends Quad
     }
 
     /**
+     * Creates an image with the supplied texture state. The texture is assumed
+     * to be the same size as the supplied width and height.
+     */
+    public BImage (TextureState tstate, int width, int height)
+    {
+        super("name", width, height);
+        _width = _twidth = width;
+        _height = _theight = height;
+        _tstate = tstate;
+        setRenderState(_tstate);
+        setTransparent(true);
+    }
+
+    /**
      * Returns the width of this image.
      */
     public int getWidth ()
@@ -255,12 +269,10 @@ public class BImage extends Quad
         _twidth = twidth;
         _theight = theight;
 
-        _texture = texture;
-        _texture.setFilter(Texture.FM_LINEAR);
-        _texture.setMipmapState(Texture.MM_NONE);
-        _texture.setCorrection(Texture.CM_AFFINE);
-
-        _tstate.setTexture(_texture);
+        texture.setFilter(Texture.FM_LINEAR);
+        texture.setMipmapState(Texture.MM_NONE);
+        texture.setCorrection(Texture.CM_AFFINE);
+        _tstate.setTexture(texture);
         _tstate.setEnabled(true);
         setRenderState(_tstate);
         updateRenderState();
@@ -342,7 +354,6 @@ public class BImage extends Quad
             (Integer.highestOneBit(value) << 1) : value;
     }
 
-    protected Texture _texture;
     protected TextureState _tstate;
     protected int _width, _height;
     protected int _twidth, _theight;
