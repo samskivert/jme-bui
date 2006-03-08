@@ -54,8 +54,6 @@ public class BGeomView extends BComponent
         DisplaySystem display = DisplaySystem.getDisplaySystem();
         _swidth = display.getWidth();
         _sheight = display.getHeight();
-        _camera = createCamera(display);
-        _camera.update();
     }
 
     /**
@@ -86,24 +84,6 @@ public class BGeomView extends BComponent
     }
 
     // documentation inherited
-    public void validate ()
-    {
-        super.validate();
-
-        // set up our camera viewport
-        if (_cwidth != _width || _cheight != _height) {
-            _cwidth = _width;
-            _cheight = _height;
-            int ax = getAbsoluteX(), ay = getAbsoluteY();
-            float left =  ax / _swidth, right = left + _cwidth / _swidth;
-            float bottom = ay / _sheight, top = bottom + _cheight / _sheight;
-            _camera.setViewPort(left, right, bottom, top);
-            _camera.setFrustumPerspective(
-                45.0f, _width / (float)_height, 1, 1000);
-        }
-    }
-
-    // documentation inherited
     protected void wasAdded ()
     {
         super.wasAdded();
@@ -130,8 +110,27 @@ public class BGeomView extends BComponent
         applyDefaultStates();
         Camera cam = renderer.getCamera();
         try {
-            // now set up the custom camera and render our geometry
             renderer.unsetOrtho();
+
+            // create our camera if necessary
+            if (_camera == null) {
+                _camera = createCamera(DisplaySystem.getDisplaySystem());
+            }
+
+            // set up our camera viewport if it has changed
+            if (_cwidth != _width || _cheight != _height) {
+                _cwidth = _width;
+                _cheight = _height;
+                int ax = getAbsoluteX(), ay = getAbsoluteY();
+                float left =  ax / _swidth, right = left + _cwidth / _swidth;
+                float bottom = ay / _sheight;
+                float top = bottom + _cheight / _sheight;
+                _camera.setViewPort(left, right, bottom, top);
+                _camera.setFrustumPerspective(
+                    45.0f, _width / (float)_height, 1, 1000);
+            }
+
+            // now set up the custom camera and render our geometry
             renderer.setCamera(_camera);
             _camera.update();
             renderer.draw(_geom);
