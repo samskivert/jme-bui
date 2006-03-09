@@ -167,12 +167,23 @@ public class BContainer extends BComponent
     }
 
     // documentation inherited
+    public void setAlpha (float alpha)
+    {
+        super.setAlpha(alpha);
+
+        // set our children's alpha values accordingly
+        for (int ii = getComponentCount() - 1; ii >= 0; ii--) {
+            getComponent(ii).setAlpha(alpha);
+        }
+    }
+    
+    // documentation inherited
     public void setEnabled (boolean enabled)
     {
         super.setEnabled(enabled);
 
         // enable or disable our children accordingly
-        for (int ii = getComponentCount() - 1; ii > 0; ii--) {
+        for (int ii = getComponentCount() - 1; ii >= 0; ii--) {
             getComponent(ii).setEnabled(enabled);
         }
     }
