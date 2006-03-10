@@ -164,7 +164,7 @@ public class BTextArea extends BContainer
             _runs.add(new Run(text.substring(offset), color, style, false));
         }
         // TODO: optimize appending
-        refigureContents(getWidth());
+        invalidate();
     }
 
     /**
@@ -173,7 +173,7 @@ public class BTextArea extends BContainer
     public void clearText ()
     {
         _runs.clear();
-        refigureContents(getWidth());
+        invalidate();
     }
 
     /**
