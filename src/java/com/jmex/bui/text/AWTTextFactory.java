@@ -324,8 +324,9 @@ public class AWTTextFactory extends BTextFactory
 
             if (c == ')') { // end of run
                 if (stack.size() == 0) {
-                    Log.log.warning("Found end of run with empty stack. " +
-                                    "[text=" + text + ", pos=" + ii + "].");
+                    // not a problem, this is just a bare parenthesis
+                    raw.append(c);
+                    rawpos++;
                 } else {
                     StyleRun run = (StyleRun)stack.remove(0);
                     run.end = rawpos;
@@ -395,11 +396,12 @@ public class AWTTextFactory extends BTextFactory
             }
         }
 
-        // now create an attributed string and add our styles
         String rawtext = raw.toString();
         if (bare != null) {
             bare[0] = rawtext;
         }
+
+        // now create an attributed string and add our styles
         AttributedString string = new AttributedString(rawtext, attrs);
         for (int ii = 0; ii < runs.size(); ii++) {
             StyleRun run = (StyleRun)runs.get(ii);
