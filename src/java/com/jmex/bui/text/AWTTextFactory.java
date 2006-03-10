@@ -341,8 +341,8 @@ public class AWTTextFactory extends BTextFactory
                     continue;
                 }
 
-                // check for escaped parenthesis
-                if ((c = text.charAt(++ii)) == '(' || c == ')') {
+                // check for escaped parenthesis and @s
+                if ((c = text.charAt(++ii)) == '(' || c == ')' || c == '@') {
                     raw.append(c);
                     rawpos++;
                     continue;
