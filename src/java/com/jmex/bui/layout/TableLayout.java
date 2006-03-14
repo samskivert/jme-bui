@@ -32,29 +32,39 @@ import com.jmex.bui.util.Insets;
  * Lays out components in a simple grid arrangement, wherein the width and
  * height of each column and row is defined by the widest preferred width
  * and height of any component in that column and row.
+ *
+ * <p> The table layout defaults to left horizontal alignment and top vertical
+ * alignment.
  */
 public class TableLayout extends BLayoutManager
 {
-    /** An enumeration class represnting layout modes. */
-    public static class Mode
+    /** An enumeration class representing alignments. */
+    public static class Alignment
     {
     }
 
     /** Left justifies the table contents within the container. */
-    public static final Mode LEFT = new Mode();
+    public static final Alignment LEFT = new Alignment();
 
     /** Centers the table contents within the container. */
-    public static final Mode CENTER = new Mode();
+    public static final Alignment CENTER = new Alignment();
 
     /** Right justifies the table contents within the container. */
-    public static final Mode RIGHT = new Mode();
+    public static final Alignment RIGHT = new Alignment();
+
+    /** Top justifies the table contents within the container. */
+    public static final Alignment TOP = new Alignment();
+
+    /** Bottom justifies the table contents within the container. */
+    public static final Alignment BOTTOM = new Alignment();
 
     /** Divides the column space among the columns in proportion to their
-     * preferred size. */
-    public static final Mode STRETCH = new Mode();
+     * preferred size. This only works with {@link #setHorizontalAlignment}. */
+    public static final Alignment STRETCH = new Alignment();
 
     /**
-     * Creates a table layout with the specified number of columns.
+     * Creates a table layout with the specified number of columns and a zero
+     * pixel gap between rows and columns.
      */
     public TableLayout (int columns)
     {
@@ -67,45 +77,27 @@ public class TableLayout extends BLayoutManager
      */
     public TableLayout (int columns, int rowgap, int colgap)
     {
-        this(columns, rowgap, colgap, LEFT);
-    }
-
-    /**
-     * Creates a table layout with the specified number of columns and the
-     * specifeid gap between rows and columns.
-     */
-    public TableLayout (int columns, int rowgap, int colgap, Mode mode)
-    {
-        this(columns, rowgap, colgap, mode, false);
-    }
-
-    /**
-     * Creates a table layout with the specified configuration.
-     *
-     * @param columns the number of columns in the table.
-     * @param rowgap the gap in pixels between rows.
-     * @param colgap the gap in pixels between columns.
-     * @param mode the horizontal stretching or justification mode.
-     * @param equalRows whether or not to force all rows to be of equal height.
-     */
-    public TableLayout (int columns, int rowgap, int colgap, Mode mode,
-                        boolean equalRows)
-    {
         _columnWidths = new int[columns];
         _rowgap = rowgap;
         _colgap = colgap;
-        _mode = mode;
-        _equalRows = equalRows;
     }
 
     /**
-     * Configures the horizontal justification or stretching mode of this
-     * table. This must be called before the container using this layout is
-     * validated.
+     * Configures the horizontal alignment (or stretching) of this table. This
+     * must be called before the container using this layout is validated.
      */
-    public void setMode (Mode mode)
+    public void setHorizontalAlignment (Alignment align)
     {
-        _mode = mode;
+        _halign = align;
+    }
+
+    /**
+     * Configures the vertical alignment of this table. This must be called
+     * before the container using this layout is validated.
+     */
+    public void setVerticalAlignment (Alignment align)
+    {
+        _valign = align;
     }
 
     /**
@@ -136,13 +128,21 @@ public class TableLayout extends BLayoutManager
         int totheight = sum(_rowHeights) + (computeRows(target)-1) * _rowgap;
         Insets insets = target.getInsets();
 
-        // for now we always center vertically
-        int sx = insets.left, y = insets.bottom + totheight +
-            (target.getHeight() - insets.getVertical() - totheight)/2;
-        if (_mode == RIGHT) {
+        // account for our horizontal alignment
+        int sx = insets.left;
+        if (_halign == RIGHT) {
             sx += target.getWidth() - insets.getHorizontal() - totwidth;
-        } else if (_mode == CENTER) {
+        } else if (_halign == CENTER) {
             sx += (target.getWidth() - insets.getHorizontal() - totwidth)/2;
+        }
+
+        // account for our vertical alignment
+        int y = insets.bottom;
+        if (_valign == CENTER) {
+            y += totheight +
+                (target.getHeight() - insets.getVertical() - totheight)/2;
+        } else if (_valign == TOP) {
+            y = target.getHeight() - insets.top;
         }
 
         int row = 0, col = 0, x = sx;
@@ -190,7 +190,7 @@ public class TableLayout extends BLayoutManager
         }
 
         // if we are stretching, adjust the column widths accordingly
-        if (_mode == STRETCH) {
+        if (_halign == STRETCH) {
             int naturalWidth = sum(_columnWidths);
             int avail = target.getWidth() - target.getInsets().getHorizontal() -
                 naturalWidth - (_colgap * (_columnWidths.length-1));
@@ -231,7 +231,7 @@ public class TableLayout extends BLayoutManager
         return total;
     }
 
-    protected Mode _mode;
+    protected Alignment _halign = LEFT, _valign = TOP;
     protected boolean _equalRows;
     protected int _rowgap, _colgap;
     protected int[] _columnWidths;
