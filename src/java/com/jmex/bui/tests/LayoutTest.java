@@ -109,6 +109,7 @@ public class LayoutTest extends SimpleGame
         BGeomView nview = new BGeomView(box);
         pane.addTab("Two", nview);
         pane.addTab("Three", new BTextArea());
+        pane.addTab("Four", new BLabel("Four contents"));
         _root.addWindow(window);
         window.setSize(200, 150);
         window.setLocation(25, 25);

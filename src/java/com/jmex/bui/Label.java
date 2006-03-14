@@ -49,8 +49,10 @@ public class Label
     public void setText (String text)
     {
         _value = text;
-        releaseText();
         _twidth = Short.MAX_VALUE;
+
+        // clear out our old text texture
+        releaseText();
 
         // if we're already part of the hierarchy, recreate our glyps
         if (_container.isAdded()) {
@@ -218,6 +220,17 @@ public class Label
         }
     }
 
+    /**
+     * Releases any underlying texture resources created by this label.
+     */
+    public void releaseText ()
+    {
+        if (_text != null) {
+            _text.release();
+            _text = null;
+        }
+    }
+
     protected Dimension layoutAndComputeSize (int tgtwidth)
     {
         // find out how tall our text will be based on our allowed width
@@ -296,7 +309,7 @@ public class Label
     {
         // no need to recreate our glyphs if our config hasn't changed
         Config config = getConfig(twidth);
-        if (config.equals(_config)) {
+        if (config.equals(_config) && _text != null) {
             return;
         }
         _config = config;
@@ -326,14 +339,6 @@ public class Label
             _text.size.width = Math.max(
                 _text.size.width, _text.lines[ii].getSize().width);
             _text.size.height += _text.lines[ii].getSize().height;
-        }
-    }
-
-    protected void releaseText ()
-    {
-        if (_text != null) {
-            // TODO: delete texture
-            _text = null;
         }
     }
 
@@ -390,8 +395,7 @@ public class Label
         public Dimension size = new Dimension();
 
         public void render (Renderer renderer, int tx, int ty, int halign,
-            float alpha)
-        {
+                            float alpha) {
             // render the lines from the bottom up
             for (int ii = lines.length-1; ii >= 0; ii--) {
                 int lx = tx;
@@ -402,6 +406,12 @@ public class Label
                 }
                 lines[ii].render(renderer, lx, ty, alpha);
                 ty += lines[ii].getSize().height;
+            }
+        }
+
+        public void release () {
+            for (int ii = 0; ii < lines.length; ii++) {
+                lines[ii].release();
             }
         }
     }

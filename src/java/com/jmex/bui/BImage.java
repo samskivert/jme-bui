@@ -150,11 +150,14 @@ public class BImage extends Quad
      * the texture width and height (which must be a power of two and may
      * differ from the renderable image width and height supplied to the
      * constructor).
+     *
+     * @param mustFreeTexture see {@link #setTexture}.
      */
-    public BImage (int width, int height, Texture texture)
+    public BImage (int width, int height, Texture texture,
+                   boolean mustFreeTexture)
     {
         this(width, height);
-        setTexture(texture);
+        setTexture(texture, mustFreeTexture);
     }
 
     /**
@@ -164,12 +167,13 @@ public class BImage extends Quad
      * @param height the height of the renderable image.
      * @param twidth the width of the texture (this should be a power of two).
      * @param theight the height of the texture (this should be a power of two).
+     * @param mustFreeTexture see {@link #setTexture}.
      */
-    public BImage (int width, int height,
-                   Texture texture, int twidth, int theight)
+    public BImage (int width, int height, Texture texture,
+                   int twidth, int theight, boolean mustFreeTexture)
     {
         this(width, height);
-        setTexture(texture, twidth, theight);
+        setTexture(texture, twidth, theight, mustFreeTexture);
     }
 
     /**
@@ -242,18 +246,23 @@ public class BImage extends Quad
     {
         Texture texture = new Texture();
         texture.setImage(image);
-        setTexture(texture);
+        setTexture(texture, true);
     }
 
     /**
      * Configures the texture to be used for this image. The texture is assumed
      * to have an underlying image from which we can obtain the texture width
      * and height.
+     *
+     * @param mustFreeTexture If true, the {@link BImage} will take
+     * responsibility for freeing the texture memory when it's own {@link
+     * #release} method is called. If false, it is assumed the caller will free
+     * the texture.
      */
-    public void setTexture (Texture texture)
+    public void setTexture (Texture texture, boolean mustFreeTexture)
     {
         setTexture(texture, texture.getImage().getWidth(),
-                   texture.getImage().getHeight());
+                   texture.getImage().getHeight(), mustFreeTexture);
     }
 
     /**
@@ -263,11 +272,20 @@ public class BImage extends Quad
      * two if OpenGL requires it).
      * @param theight the height of the texture image data (must be a power of
      * two if OpenGL requires it).
+     * @param mustFreeTexture If true, the {@link BImage} will take
+     * responsibility for freeing the texture memory when it's own {@link
+     * #release} method is called. If false, it is assumed the caller will free
+     * the texture.
      */
-    public void setTexture (Texture texture, int twidth, int theight)
+    public void setTexture (Texture texture, int twidth, int theight,
+                            boolean mustFreeTexture)
     {
+        // free our old texture as appropriate
+        release();
+
         _twidth = twidth;
         _theight = theight;
+        _mustFreeTexture = mustFreeTexture;
 
         texture.setFilter(Texture.FM_LINEAR);
         texture.setMipmapState(Texture.MM_NONE);
@@ -347,6 +365,17 @@ public class BImage extends Quad
         draw(renderer);
     }
 
+    /**
+     * Releases any underlying texture resources created by this image. The
+     * image <em>must not be used</em> after this call is made.
+     */
+    public void release ()
+    {
+        if (_tstate != null && _mustFreeTexture) {
+            _tstate.deleteAll();
+        }
+    }
+
     /** Rounds the supplied value up to a power of two. */
     protected static int nextPOT (int value)
     {
@@ -357,6 +386,7 @@ public class BImage extends Quad
     protected TextureState _tstate;
     protected int _width, _height;
     protected int _twidth, _theight;
+    protected boolean _mustFreeTexture;
 
     protected static boolean _supportsNonPowerOfTwo;
 

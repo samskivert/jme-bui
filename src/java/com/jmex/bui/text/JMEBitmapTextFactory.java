@@ -109,6 +109,9 @@ public class JMEBitmapTextFactory extends BTextFactory
                 tgeom.getTextColor().a = alpha * color.a;
                 renderer.draw(tgeom);
             }
+            public void release () {
+                // TODO: unload factory wide texture at some point?
+            }
         };
     }
 

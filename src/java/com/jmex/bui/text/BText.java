@@ -61,4 +61,10 @@ public abstract class BText
      * Renders this text to the display.
      */
     public abstract void render (Renderer render, int x, int y, float alpha);
+
+    /**
+     * Instructs this text to release any underlying texture resources it has
+     * created.
+     */
+    public abstract void release ();
 }
