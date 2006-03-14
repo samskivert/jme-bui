@@ -132,10 +132,20 @@ public class TableLayout extends BLayoutManager
     public void layoutContainer (BContainer target)
     {
         computeMetrics(target);
-
+        int totwidth = sum(_columnWidths) + (_columnWidths.length-1) * _colgap;
+        int totheight = sum(_rowHeights) + (computeRows(target)-1) * _rowgap;
         Insets insets = target.getInsets();
-        int x = insets.left, y = target.getHeight() - insets.top;
-        int row = 0, col = 0;
+
+        // for now we always center vertically
+        int sx = insets.left, y = insets.bottom + totheight +
+            (target.getHeight() - insets.getVertical() - totheight)/2;
+        if (_mode == RIGHT) {
+            sx += target.getWidth() - insets.getHorizontal() - totwidth;
+        } else if (_mode == CENTER) {
+            sx += (target.getWidth() - insets.getHorizontal() - totwidth)/2;
+        }
+
+        int row = 0, col = 0, x = sx;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
             child.setBounds(x, y - _rowHeights[row],
@@ -145,7 +155,7 @@ public class TableLayout extends BLayoutManager
                 y -= (_rowHeights[row] + _rowgap);
                 row++;
                 col = 0;
-                x = insets.left;
+                x = sx;
             }
         }
     }
