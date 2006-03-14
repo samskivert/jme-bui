@@ -33,6 +33,10 @@ component {
 component:disabled {
 }
 
+label {
+//  border: 1 solid #FFFFFF;
+}
+
 button {
   background: image "rsrc/textures/button_up.png" framexy;
   padding: 3 5;

@@ -178,8 +178,17 @@ public class LayoutTest extends SimpleGame
 
         window = new BWindow(style, new AbsoluteLayout());
         window.add(new BLabel("+0+0"), new Point(0, 0));
-        window.add(new BLabel("+10+35"), new Point(10, 35));
-        window.add(new BButton("250x25+50+75"), new Rectangle(50, 75, 250, 25));
+        final BLabel lbl = new BLabel("+10+35");
+        window.add(lbl, new Point(10, 35));
+        ActionListener list = new ActionListener() {
+            public void actionPerformed (ActionEvent event) {
+                _count += 9;
+                lbl.setText(String.valueOf(_count));
+            }
+            protected int _count;
+        };
+        window.add(new BButton("250x25+50+75", list, ""),
+                   new Rectangle(50, 75, 250, 25));
         _root.addWindow(window);
         window.pack();
         window.setLocation(300, 25);
