@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
@@ -54,6 +55,13 @@ import com.jmex.bui.util.Dimension;
  * HTML. This is not a part of the text factory system as we're not going to
  * write our own HTML renderer to avoid dependence on Sun's JDK. If you don't
  * want to depend on that, don't use this class.
+ *
+ * <p>Note: width and height hints do not work. The Java HTML code doesn't seem
+ * to handle being sized to a particular width or height and then determining
+ * its preferred span along the other axis. So we always get the "natural"
+ * preferred size of the HTML without any forced wrapping. Of course if the
+ * component is forcibly made smaller, the HTML will be wrapped, but it may not
+ * fit in the vertical or horizontal space made available. Caveat user.
  */
 public class HTMLView extends BComponent
 {
@@ -70,27 +78,69 @@ public class HTMLView extends BComponent
      */
     public HTMLView (String stylesheet, String contents)
     {
-        setContents(stylesheet, contents);
+        setStyleSheet(stylesheet);
+        setContents(contents);
+    }
+
+    /**
+     * Configures whether or not our text is antialiased. Antialiasing is on by
+     * default.
+     */
+    public void setAntialiased (boolean antialias)
+    {
+        if (_antialias != antialias) {
+            _antialias = antialias;
+            forceRelayout();
+        }
+    }
+
+    /**
+     * Configures the stylesheet used to render HTML in this view.
+     */
+    public void setStyleSheet (String stylesheet)
+    {
+        StyleSheet ss = new StyleSheet();
+        try {
+            // parse the stylesheet definition
+            ss.loadRules(new StringReader(stylesheet), null);
+            setStyleSheet(ss);
+        } catch (Throwable t) {
+            Log.log.log(Level.WARNING, "Failed to parse stylesheet " +
+                        "[sheet=" + stylesheet + "].", t);
+        }
+    }
+
+    /**
+     * Configures the stylesheet used to render HTML in this view.
+     */
+    public void setStyleSheet (StyleSheet stylesheet)
+    {
+        _style = stylesheet;
+        forceRelayout();
+    }
+
+    /**
+     * Returns the stylesheet in effect for this view.
+     */
+    public StyleSheet getStyleSheet ()
+    {
+        return _style;
     }
 
     /**
      * Configures the contents of this HTML view. This should be well-formed
-     * HTML which will be laid out according to the supplied style sheet.
+     * HTML which will be laid out according to the previously configured style
+     * sheet (which must be set before the contents).
      */
-    public void setContents (String stylesheet, String contents)
+    public void setContents (String contents)
     {
-        // parse the style sheet
-        StyleSheet ss = new StyleSheet();
-        try {
-            ss.loadRules(new StringReader(stylesheet), null);
-        } catch (Throwable t) {
-            Log.log.log(Level.WARNING, "Failed to parse stylesheet " +
-                        "[sheet=" + stylesheet + "].", t);
-            return;
+        // lazily create a blank stylesheet
+        if (_style == null) {
+            _style = new StyleSheet();
         }
 
         // then parse the HTML document
-        HTMLDocument document = new HTMLDocument(ss);
+        HTMLDocument document = new HTMLDocument(_style);
         try {
             _kit.read(new StringReader(contents), document, 0);
             setContents(document);
@@ -101,25 +151,13 @@ public class HTMLView extends BComponent
     }
 
     /**
-     * Configures whether or not our text is antialiased. This is true by
-     * default.
-     */
-    public void setAntialiased (boolean antialias)
-    {
-        if (_antialias != antialias) {
-            _antialias = antialias;
-            invalidate();
-        }
-    }
-
-    /**
      * Configures the contents of this HTML view.
      */
     public void setContents (HTMLDocument document)
     {
         _view = new BridgeView(
             _kit.getViewFactory().create(document.getDefaultRootElement()));
-        invalidate();
+        forceRelayout();
     }
 
     // documentation inherited
@@ -133,20 +171,29 @@ public class HTMLView extends BComponent
     protected void layout ()
     {
         super.layout();
+
+        // avoid rerendering our HTML unless something changed
+        if (_rendered != null && _rsize != null &&
+            _rsize.width == getWidth() && _rsize.height == getHeight()) {
+            return;
+        }
+        _rsize = new Rectangle(0, 0, getWidth(), getHeight());
+
+        // release our old texture image
         release();
+
+        System.err.println("Recreating " + _rsize);
 
         BufferedImage image = new BufferedImage(
             getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-        Rectangle size = new Rectangle(0, 0, getWidth(), getHeight());
         Graphics2D gfx = image.createGraphics();
         try {
-            gfx.setClip(size);
+            gfx.setClip(_rsize);
             if (_antialias) {
                 gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                      RenderingHints.VALUE_ANTIALIAS_ON);
             }
-            _view.setSize(size.width, size.height);
-            _view.paint(gfx, size);
+            _view.paint(gfx, _rsize);
         } finally {
             gfx.dispose();
         }
@@ -169,14 +216,49 @@ public class HTMLView extends BComponent
     // documentation inherited
     protected Dimension computePreferredSize (int whint, int hhint)
     {
-        if (whint != -1) {
-            _view.setSize(whint, Float.MAX_VALUE);
-        } else if (hhint != -1) {
-            _view.setSize(Float.MAX_VALUE, hhint);
-        }
+        // this might in theory work except that for whatever reason our
+        // BoxView claims a size of zero even after we lay it out with
+        // information on the size of one axis; grumble grumble
+//         int px = 0, py = 0;
+//         if (whint > 0) {
+//             _view.setSize(whint, 0);
+//             px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
+//             if (_view.getTarget() instanceof BoxView) {
+//                 // px = ((BoxView)_view.getTarget()).getWidth();
+//                 py = ((BoxView)_view.getTarget()).getHeight();
+//             } else {
+//                 py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
+//             }
+//         } else if (hhint > 0) {
+//             _view.setSize(0, hhint);
+//             py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
+//             if (_view.getTarget() instanceof BoxView) {
+//                 // py = ((BoxView)_view.getTarget()).getHeight();
+//                 px = ((BoxView)_view.getTarget()).getWidth();
+//             } else {
+//                 px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
+//             }
+//         } else {
+//             _view.setSize(0, 0);
+//             if (_view.getTarget() instanceof BoxView) {
+//                 px = ((BoxView)_view.getTarget()).getWidth();
+//                 py = ((BoxView)_view.getTarget()).getHeight();
+//             } else {
+//                 px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
+//                 py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
+//             }
+//         }
+
+        _view.setSize((whint > 0) ? whint : 0, (hhint > 0) ? hhint : 0);
         int px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
         int py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
         return new Dimension(Math.max(1, px), Math.max(1, py));
+    }
+
+    protected void forceRelayout ()
+    {
+        _rsize = null;
+        invalidate();
     }
 
     protected void release ()
@@ -195,15 +277,15 @@ public class HTMLView extends BComponent
             _target.setParent(this);
         }
 
+        public View getTarget () {
+            return _target;
+        }
+
         public AttributeSet getAttributes () {
 	    return null;
 	}
 
         public float getPreferredSpan (int axis) {
-	    if (axis == X_AXIS) {
-		// use our current component width
-		return getWidth();
-	    }
 	    return _target.getPreferredSpan(axis);
         }
 
@@ -217,7 +299,7 @@ public class HTMLView extends BComponent
 
         public void preferenceChanged (
             View child, boolean width, boolean height) {
-            invalidate();
+            forceRelayout();
         }
 
         public float getAlignment (int axis) {
@@ -289,7 +371,9 @@ public class HTMLView extends BComponent
         protected View _target;
     }
 
-    protected View _view;
+    protected StyleSheet _style;
+    protected Rectangle _rsize;
+    protected BridgeView _view;
     protected BImage _rendered;
     protected boolean _antialias = true;
     protected HTMLEditorKit _kit = new HTMLEditorKit();
