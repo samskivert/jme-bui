@@ -20,14 +20,8 @@
 
 package com.jmex.bui.tests;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.logging.Level;
 
-import com.jme.app.SimpleGame;
-import com.jme.input.KeyBindingManager;
-import com.jme.input.MouseInput;
-import com.jme.renderer.ColorRGBA;
 import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
@@ -37,29 +31,11 @@ import com.jmex.bui.icon.ImageIcon;
 /**
  * Does something extraordinary.
  */
-public class LabelTest extends SimpleGame
+public class LabelTest extends BaseTest
     implements BConstants
 {
-    protected void simpleInitGame ()
+    protected void createWindows (BRootNode root, BStyleSheet style)
     {
-        _root = new PolledRootNode(timer, input);
-        rootNode.attachChild(_root);
-
-        // we don't hide the cursor
-        MouseInput.get().setCursorVisible(true);
-
-        // load up the default BUI stylesheet
-        BStyleSheet style = null;
-        try {
-            InputStream stin = getClass().getClassLoader().
-                getResourceAsStream("rsrc/style.bss");
-            style = new BStyleSheet(new InputStreamReader(stin),
-                                    new BStyleSheet.DefaultResourceProvider());
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-            System.exit(-1);
-        }
-
         BWindow window = new BDecoratedWindow(style, null);
         window.setLayoutManager(GroupLayout.makeVStretch());
 
@@ -87,24 +63,9 @@ public class LabelTest extends SimpleGame
             }
         }
 
-        _root.addWindow(window);
+        root.addWindow(window);
         window.setSize(400, 400);
         window.setLocation(25, 25);
-
-        // these just get in the way
-        KeyBindingManager.getKeyBindingManager().remove("toggle_pause");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_wire");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_lights");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_bounds");
-        KeyBindingManager.getKeyBindingManager().remove("camera_out");
-
-        lightState.setEnabled(false);
-
-        display.getRenderer().setBackgroundColor(ColorRGBA.gray);
-    }
-
-    protected void simpleUpdate ()
-    {
     }
 
     public static void main (String[] args)
@@ -113,8 +74,4 @@ public class LabelTest extends SimpleGame
         LabelTest test = new LabelTest();
         test.start();
     }
-
-    protected PolledRootNode _root;
-    protected BTextArea _text;
-    protected BTextField _input;
 }

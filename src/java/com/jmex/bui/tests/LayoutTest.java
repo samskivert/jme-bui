@@ -20,18 +20,11 @@
 
 package com.jmex.bui.tests;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.logging.Level;
 
-import com.jme.app.SimpleGame;
-import com.jme.input.KeyBindingManager;
-import com.jme.input.MouseInput;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
-import com.jme.renderer.Renderer;
 import com.jme.scene.shape.Box;
 import com.jme.util.LoggingSystem;
 
@@ -52,28 +45,10 @@ import com.jmex.bui.util.Rectangle;
 /**
  * Does something extraordinary.
  */
-public class LayoutTest extends SimpleGame
+public class LayoutTest extends BaseTest
 {
-    protected void simpleInitGame ()
+    protected void createWindows (BRootNode root, BStyleSheet style)
     {
-        _root = new PolledRootNode(timer, /* input */ null);
-        rootNode.attachChild(_root);
-
-        // we don't hide the cursor
-        MouseInput.get().setCursorVisible(true);
-
-        // load up the default BUI stylesheet
-        BStyleSheet style = null;
-        try {
-            InputStream stin = getClass().getClassLoader().
-                getResourceAsStream("rsrc/style.bss");
-            style = new BStyleSheet(new InputStreamReader(stin),
-                                    new BStyleSheet.DefaultResourceProvider());
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-            System.exit(-1);
-        }
-
         BWindow window;
         BContainer cont;
 
@@ -110,7 +85,7 @@ public class LayoutTest extends SimpleGame
         pane.addTab("Two", nview);
         pane.addTab("Three", new BTextArea());
         pane.addTab("Four", new BLabel("Four contents"));
-        _root.addWindow(window);
+        root.addWindow(window);
         window.setSize(200, 150);
         window.setLocation(25, 25);
 
@@ -131,7 +106,7 @@ public class LayoutTest extends SimpleGame
                 }
             }
         });
-        _root.addWindow(window);
+        root.addWindow(window);
         window.setBounds(300, 140, 400, 250);
 
         window = new BWindow(style, GroupLayout.makeVStretch());
@@ -149,7 +124,7 @@ public class LayoutTest extends SimpleGame
         cont.add(new BButton("Nine", "nine"));
 
         window.add(new BScrollPane(cont));
-        _root.addWindow(window);
+        root.addWindow(window);
         Dimension ps = window.getPreferredSize(-1, -1);
         window.setBounds(100, 300, ps.width, 2*ps.height/3);
 
@@ -172,7 +147,7 @@ public class LayoutTest extends SimpleGame
         cont.add(new BLabel("Eight"));
         cont.add(new BLabel("Nine"));
         window.add(cont, BorderLayout.CENTER);
-        _root.addWindow(window);
+        root.addWindow(window);
         window.pack();
         window.setLocation(300, 400);
 
@@ -189,7 +164,7 @@ public class LayoutTest extends SimpleGame
         };
         window.add(new BButton("250x25+50+75", list, ""),
                    new Rectangle(50, 75, 250, 25));
-        _root.addWindow(window);
+        root.addWindow(window);
         window.pack();
         window.setLocation(300, 25);
 
@@ -199,22 +174,9 @@ public class LayoutTest extends SimpleGame
                               "@#FFCC99(colored)\n" +
                               "@bu#99CCFF(bold, underlined and colored)"),
                    BorderLayout.CENTER);
-        _root.addWindow(window);
+        root.addWindow(window);
         window.pack();
         window.setLocation(300, 450);
-
-        // these just get in the way
-        KeyBindingManager.getKeyBindingManager().remove("toggle_pause");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_wire");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_lights");
-        KeyBindingManager.getKeyBindingManager().remove("toggle_bounds");
-        KeyBindingManager.getKeyBindingManager().remove("camera_out");
-
-        display.getRenderer().setBackgroundColor(ColorRGBA.gray);
-    }
-
-    protected void simpleUpdate ()
-    {
     }
 
     public static void main (String[] args)
@@ -224,7 +186,6 @@ public class LayoutTest extends SimpleGame
         test.start();
     }
 
-    protected PolledRootNode _root;
     protected BTextArea _text;
     protected BTextField _input;
 }
