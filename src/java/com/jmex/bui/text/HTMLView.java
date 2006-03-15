@@ -49,6 +49,7 @@ import com.jmex.bui.BComponent;
 import com.jmex.bui.BImage;
 import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Displays HTML using Java's HTML rendering support to layout and render the
@@ -128,6 +129,14 @@ public class HTMLView extends BComponent
     }
 
     /**
+     * Returns the HTML editor kit used by this view.
+     */
+    public HTMLEditorKit getEditorKit ()
+    {
+        return _kit;
+    }
+
+    /**
      * Configures the contents of this HTML view. This should be well-formed
      * HTML which will be laid out according to the previously configured style
      * sheet (which must be set before the contents).
@@ -173,17 +182,19 @@ public class HTMLView extends BComponent
         super.layout();
 
         // avoid rerendering our HTML unless something changed
+        int vwidth = getWidth() - getInsets().getHorizontal();
+        int vheight = getHeight() - getInsets().getVertical();
         if (_rendered != null && _rsize != null &&
-            _rsize.width == getWidth() && _rsize.height == getHeight()) {
+            _rsize.width == vwidth && _rsize.height == vheight) {
             return;
         }
-        _rsize = new Rectangle(0, 0, getWidth(), getHeight());
+        _rsize = new Rectangle(0, 0, vwidth, vheight);
 
         // release our old texture image
         release();
 
         BufferedImage image = new BufferedImage(
-            getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            vwidth, vheight, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
         try {
             gfx.setClip(_rsize);
@@ -207,7 +218,8 @@ public class HTMLView extends BComponent
         super.renderComponent(renderer);
 
         if (_rendered != null) {
-            _rendered.render(renderer, 0, 0, _alpha);
+            Insets insets = getInsets();
+            _rendered.render(renderer, insets.left, insets.bottom, _alpha);
         }
     }
 
