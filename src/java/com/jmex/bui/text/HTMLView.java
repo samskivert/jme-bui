@@ -182,8 +182,6 @@ public class HTMLView extends BComponent
         // release our old texture image
         release();
 
-        System.err.println("Recreating " + _rsize);
-
         BufferedImage image = new BufferedImage(
             getWidth(), getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
