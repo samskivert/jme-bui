@@ -284,7 +284,8 @@ public class BTextField extends BTextComponent
     {
         super.layout();
 
-        // TODO cope with becoming smaller or larger
+        // cope with becoming smaller or larger
+        recreateGlyphs();
     }
 
     // documentation inherited
@@ -349,7 +350,10 @@ public class BTextField extends BTextComponent
     protected void recreateGlyphs ()
     {
         clearGlyphs();
+
+        // if we have no text, clear out all our internal markers
         if (_text.getLength() == 0) {
+            _txoff = _cursp = _cursx = 0;
             return;
         }
 
