@@ -42,16 +42,21 @@ public abstract class BTextFactory
      */
     public BText createText (String text, ColorRGBA color)
     {
-        return createText(text, color, NORMAL, null);
+        return createText(text, color, NORMAL, null, false);
     }
 
     /**
      * Creates a text instance using our the font configuration associated with
      * this text factory and the foreground color, text effect and text effect
      * color specified.
+     *
+     * @param useAdvance if true, the advance to the next insertion point will
+     * be included in the bounds of the created text (this is needed by
+     * editable text displays).
      */
     public abstract BText createText (String text, ColorRGBA color,
-                                      int effect, ColorRGBA effectColor);
+                                      int effect, ColorRGBA effectColor,
+                                      boolean useAdvance);
 
     /**
      * Wraps a string into a set of text objects that do not exceed the

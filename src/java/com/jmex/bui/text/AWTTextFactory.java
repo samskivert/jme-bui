@@ -99,10 +99,29 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (String text, ColorRGBA color,
-                             int effect, ColorRGBA effectColor)
+    public BText createText (String text, ColorRGBA color, int effect,
+                             ColorRGBA effectColor, boolean useAdvance)
     {
-        return createText(text, color, effect, effectColor, false);
+        if (text.equals("")) {
+            text = " ";
+        }
+
+        Graphics2D gfx = _stub.createGraphics();
+        TextLayout layout;
+        try {
+            if (_antialias) {
+                gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            }
+            layout = new TextLayout(
+                parseStyledText(text, _attrs, null).getIterator(),
+                gfx.getFontRenderContext());
+        } finally {
+            gfx.dispose();
+        }
+
+        return createText(layout, color, effect, effectColor,
+                          text.length(), useAdvance);
     }
 
     // documentation inherited
@@ -157,33 +176,6 @@ public class AWTTextFactory extends BTextFactory
         }
 
         return (BText[])texts.toArray(new BText[texts.size()]);
-    }
-
-    /** Helper function. */
-    protected BText createText (String text, ColorRGBA color,
-                                int effect, ColorRGBA effectColor,
-                                boolean useAdvance)
-    {
-        if (text.equals("")) {
-            text = " ";
-        }
-
-        Graphics2D gfx = _stub.createGraphics();
-        TextLayout layout;
-        try {
-            if (_antialias) {
-                gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            }
-            layout = new TextLayout(
-                parseStyledText(text, _attrs, null).getIterator(),
-                gfx.getFontRenderContext());
-        } finally {
-            gfx.dispose();
-        }
-
-        return createText(layout, color, effect, effectColor,
-                          text.length(), useAdvance);
     }
 
     /** Helper function. */

@@ -75,7 +75,8 @@ public class JMEBitmapTextFactory extends BTextFactory
 
     // documentation inherited
     public BText createText (final String text, final ColorRGBA color,
-                             int effect, ColorRGBA effectColor)
+                             int effect, ColorRGBA effectColor,
+                             boolean useAdvance)
     {
         // compute the dimensions of this text
         final Dimension dims = new Dimension(text.length() * _width, _height);

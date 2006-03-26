@@ -127,7 +127,7 @@ public class BTextField extends BTextComponent
     public void textRemoved (Document document, int offset, int length)
     {
         // confine the cursor to the new text
-        if (_cursorPos > _text.getLength()) {
+        if (_cursp > _text.getLength()) {
             setCursorPos(_text.getLength());
         }
 
@@ -147,15 +147,6 @@ public class BTextField extends BTextComponent
     }
 
     // documentation inherited
-    public void wasAdded ()
-    {
-        super.wasAdded();
-
-        // create our underlying glyphs
-        recreateGlyphs();
-    }
-
-    // documentation inherited
     public boolean dispatchEvent (BEvent event)
     {
         if (event instanceof KeyEvent) {
@@ -164,26 +155,26 @@ public class BTextField extends BTextComponent
                 int modifiers = kev.getModifiers(), keyCode = kev.getKeyCode();
                 switch (_keymap.lookupMapping(modifiers, keyCode)) {
                 case BACKSPACE:
-                    if (_cursorPos > 0 && _text.getLength() > 0) {
-                        int pos = _cursorPos-1;
-                        if (_text.remove(pos, 1)) { // might change _cursorPos
+                    if (_cursp > 0 && _text.getLength() > 0) {
+                        int pos = _cursp-1;
+                        if (_text.remove(pos, 1)) { // might change _cursp
                             setCursorPos(pos);
                         }
                     }
                     break;
 
                 case DELETE:
-                    if (_cursorPos < _text.getLength()) {
-                        _text.remove(_cursorPos, 1);
+                    if (_cursp < _text.getLength()) {
+                        _text.remove(_cursp, 1);
                     }
                     break;
 
                 case CURSOR_LEFT:
-                    setCursorPos(Math.max(0, _cursorPos-1));
+                    setCursorPos(Math.max(0, _cursp-1));
                     break;
 
                 case CURSOR_RIGHT:
-                    setCursorPos(Math.min(_text.getLength(), _cursorPos+1));
+                    setCursorPos(Math.min(_text.getLength(), _cursp+1));
                     break;
 
                 case START_OF_LINE:
@@ -214,8 +205,8 @@ public class BTextField extends BTextComponent
                     if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 &&
                         !Character.isISOControl(c)) {
                         String text = String.valueOf(kev.getKeyChar());
-                        if (_text.insert(_cursorPos, text)) {
-                            setCursorPos(_cursorPos + 1);
+                        if (_text.insert(_cursp, text)) {
+                            setCursorPos(_cursp + 1);
                         }
                     } else {
                         return super.dispatchEvent(event);
@@ -232,7 +223,7 @@ public class BTextField extends BTextComponent
                 // don't adjust the cursor if we have no text
                 _text.getLength() > 0) {
                 Insets insets = getInsets();
-                int mx = mev.getX() - getAbsoluteX() - insets.left,
+                int mx = mev.getX() - getAbsoluteX() - insets.left + _txoff,
                     my = mev.getY() - getAbsoluteY() - insets.bottom;
                 setCursorPos(_glyphs.getHitPos(mx, my));
                 return true;
@@ -243,7 +234,7 @@ public class BTextField extends BTextComponent
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
                 _showCursor = true;
-                setCursorPos(_cursorPos);
+                setCursorPos(_cursp);
                 break;
             case FocusEvent.FOCUS_LOST:
                 _showCursor = false;
@@ -271,6 +262,24 @@ public class BTextField extends BTextComponent
     }
 
     // documentation inherited
+    protected void wasAdded ()
+    {
+        super.wasAdded();
+
+        // create our underlying text texture
+        recreateGlyphs();
+    }
+
+    // documentation inherited
+    protected void wasRemoved ()
+    {
+        super.wasRemoved();
+
+        // release our underlying text texture
+        clearGlyphs();
+    }
+
+    // documentation inherited
     protected void layout ()
     {
         super.layout();
@@ -291,20 +300,26 @@ public class BTextField extends BTextComponent
         super.renderComponent(renderer);
 
         Insets insets = getInsets();
-        int tx = insets.left, ty = insets.bottom, cx = tx;
 
         // render our text
         if (_glyphs != null) {
-            _glyphs.render(renderer, tx, ty, _alpha);
-
-            // locate the cursor position
-            if (_showCursor) {
-                cx += _glyphs.getCursorPos(_cursorPos);
+            // clip the text to our visible text region
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(getAbsoluteX() + insets.left,
+                           getAbsoluteY() + insets.bottom,
+                           _width - insets.getHorizontal(),
+                           _height - insets.getVertical());
+            try {
+                _glyphs.render(renderer, insets.left - _txoff,
+                               insets.bottom, _alpha);
+            } finally {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
         }
 
         // render the cursor if we have focus
         if (_showCursor) {
+            int cx = insets.left - _txoff + _cursx;
             BComponent.applyDefaultStates();
             ColorRGBA c = getColor();
             GL11.glColor4f(c.r, c.g, c.b, c.a);
@@ -333,14 +348,28 @@ public class BTextField extends BTextComponent
      */
     protected void recreateGlyphs ()
     {
-        if (_glyphs != null) {
-            _glyphs = null;
-        }
+        clearGlyphs();
         if (_text.getLength() == 0) {
             return;
         }
-        _glyphs = getTextFactory().createText(getDisplayText(), getColor());
+
+        // format our text and determine how much of it we can display
+        int avail = getWidth() - getInsets().getHorizontal();
+        _glyphs = getTextFactory().createText(
+            getDisplayText(), getColor(), BConstants.NORMAL, null, true);
+        setCursorPos(_cursp);
     }
+
+    /**
+     * Clears out our text textures and other related bits.
+     */
+    protected void clearGlyphs ()
+    {
+        if (_glyphs != null) {
+            _glyphs.release();
+            _glyphs = null;
+        }
+    }        
 
     /**
      * This method allows a derived class (specifically {@link
@@ -358,14 +387,24 @@ public class BTextField extends BTextComponent
      */
     protected void setCursorPos (int cursorPos)
     {
-        int vizChars = 10; // TODO computeVisibleChars();
-        _cursorPos = cursorPos;
-        if (_cursorPos < _offset) {
-            _offset = _cursorPos;
-        } else if (_cursorPos > (_offset + vizChars)) {
-            _offset = (_cursorPos-vizChars);
-        } else if (_offset > 0 && (_cursorPos < (_offset + vizChars))) {
-            _offset = (_cursorPos-vizChars);
+        // note the new cursor character position
+        _cursp = cursorPos;
+
+        // compute the new cursor screen position
+        if (_glyphs != null) {
+            _cursx = _glyphs.getCursorPos(cursorPos);
+        } else {
+            _cursx = 0;
+        }
+
+        // scroll our text left or right as necessary
+        if (_cursx < _txoff) {
+            _txoff = _cursx;
+        } else {
+            int avail = getWidth() - getInsets().getHorizontal();
+            if (_cursx > _txoff + avail) {
+                _txoff = _cursx - avail;
+            }
         }
     }
 
@@ -375,5 +414,5 @@ public class BTextField extends BTextComponent
 
     protected int _prefWidth = -1;
     protected boolean _showCursor;
-    protected int _cursorPos, _offset;
+    protected int _cursp, _cursx, _txoff;
 }
