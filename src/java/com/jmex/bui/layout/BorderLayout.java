@@ -75,6 +75,14 @@ public class BorderLayout extends BLayoutManager
      */
     public BorderLayout (int hgap, int vgap)
     {
+        setGaps(hgap, vgap);
+    }
+
+    /**
+     * Configures our inter-component gaps.
+     */
+    public void setGaps (int hgap, int vgap)
+    {
         _hgap = hgap;
         _vgap = vgap;
     }

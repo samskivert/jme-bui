@@ -95,7 +95,7 @@ public class BTextArea extends BContainer
             int valign = _valigns[getState()];
             return (valign != -1) ? valign : _valigns[DEFAULT];
         }
-        return BConstants.CENTER;
+        return BConstants.TOP;
     }
     
     /**
@@ -368,7 +368,7 @@ public class BTextArea extends BContainer
         int lines = 0, lheight = 0;
         for (int ll = _lines.size()-1; ll >= 0; ll--) {
             lheight += ((Line)_lines.get(ll)).height;
-            if (lheight > _height) {
+            if (lheight > _height-insets) {
                 break;
             }
             lines++;
