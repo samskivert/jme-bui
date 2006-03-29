@@ -259,10 +259,14 @@ public class HTMLView extends BComponent
 //             }
 //         }
 
-        _view.setSize((whint > 0) ? whint : 0, (hhint > 0) ? hhint : 0);
-        int px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
-        int py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
-        return new Dimension(Math.max(1, px), Math.max(1, py));
+        if (_view != null) {
+            _view.setSize((whint > 0) ? whint : 0, (hhint > 0) ? hhint : 0);
+            int px = (int)Math.ceil(_view.getPreferredSpan(View.X_AXIS));
+            int py = (int)Math.ceil(_view.getPreferredSpan(View.Y_AXIS));
+            return new Dimension(Math.max(1, px), Math.max(1, py));
+        } else {
+            return new Dimension(Math.max(1, whint), Math.max(1, hhint));
+        }
     }
 
     protected void forceRelayout ()
