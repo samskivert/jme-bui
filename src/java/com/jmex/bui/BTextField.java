@@ -233,11 +233,10 @@ public class BTextField extends BTextComponent
             FocusEvent fev = (FocusEvent)event;
             switch (fev.getType()) {
             case FocusEvent.FOCUS_GAINED:
-                _showCursor = true;
-                setCursorPos(_cursp);
+                gainedFocus();
                 break;
             case FocusEvent.FOCUS_LOST:
-                _showCursor = false;
+                lostFocus();
                 break;
             }
             return true;
@@ -342,6 +341,23 @@ public class BTextField extends BTextComponent
             d.width = _prefWidth;
         }
         return d;
+    }
+
+    /**
+     * Called when this text field has gained the focus.
+     */
+    protected void gainedFocus ()
+    {
+        _showCursor = true;
+        setCursorPos(_cursp);
+    }
+
+    /**
+     * Called when this text field has lost the focus.
+     */
+    protected void lostFocus ()
+    {
+        _showCursor = false;
     }
 
     /**

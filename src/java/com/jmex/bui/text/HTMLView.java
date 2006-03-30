@@ -181,6 +181,11 @@ public class HTMLView extends BComponent
     {
         super.layout();
 
+        // if we have no view yet, stop now
+        if (_view == null) {
+            return;
+        }
+
         // avoid rerendering our HTML unless something changed
         int vwidth = getWidth() - getInsets().getHorizontal();
         int vheight = getHeight() - getInsets().getVertical();

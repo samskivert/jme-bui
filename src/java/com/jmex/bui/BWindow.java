@@ -124,6 +124,15 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Returns the layer occupied by this window. See {@link #setLayer} for
+     * more details.
+     */
+    public int getLayer ()
+    {
+        return _layer;
+    }
+
+    /**
      * Configures the "layer" occupied by this window. Windows normally stack
      * one atop another with the most recently added window being highest in
      * the stack. The layer configuration allows a window to be added above
