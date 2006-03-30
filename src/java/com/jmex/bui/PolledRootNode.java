@@ -74,18 +74,34 @@ public class PolledRootNode extends BRootNode
         // poll the keyboard and mouse and notify event listeners
         KeyInput.get().update();
         MouseInput.get().update();
-        
+
         // if we have no focus component, update the normal input handler
         if (_focus == null && _handler != null) {
             _handler.update(timePerFrame);
         }
 
         // if our OpenGL window lost focus, clear our modifiers
-        if (_modifiers != 0 && !Display.isActive()) {
+        boolean lostFocus = !Display.isActive();
+        if (_modifiers != 0 && lostFocus) {
             _modifiers = 0;
         }
 
-        // finally validate all invalid roots
+        // effect key repeat
+        if (_pressed >= 0 && _nextRepeat < _tickStamp) {
+            if (lostFocus) {
+                // stop repeating if our window lost focus
+                _pressed = -1;
+            } else {
+                // otherwise generate and dispatch a key repeat event
+                _nextRepeat += SUBSEQ_REPEAT_DELAY;
+                KeyEvent event = new KeyEvent(
+                    PolledRootNode.this, _tickStamp, _modifiers,
+                    KeyEvent.KEY_PRESSED, _presschar, _pressed);
+                dispatchEvent(_focus, event);
+            }
+        }
+
+        // validate all invalid roots
         while (_invalidRoots.size() > 0) {
             BComponent root = (BComponent)_invalidRoots.remove(0);
             // make sure the root is still added to the view hierarchy
@@ -120,6 +136,17 @@ public class PolledRootNode extends BRootNode
                 pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED,
                 character, keyCode);
             dispatchEvent(_focus, event);
+
+            // update our stored list of pressed keys
+            if (pressed) {
+                _pressed = keyCode;
+                _presschar = character;
+                _nextRepeat = _tickStamp + INITIAL_REPEAT_DELAY;
+            } else {
+                if (_pressed == keyCode) {
+                    _pressed = -1;
+                }
+            }
         }
     };
 
@@ -132,7 +159,7 @@ public class PolledRootNode extends BRootNode
             if (pressed && (_modifiers & ANY_BUTTON_PRESSED) == 0) {
                 setFocus(_ccomponent = _hcomponent);
             }
-            
+
             // update the state of the modifiers
             if (pressed) {
                 _modifiers |= MOUSE_MODIFIER_MAP[button];
@@ -173,10 +200,19 @@ public class PolledRootNode extends BRootNode
                 _ccomponent != null ? _ccomponent : _hcomponent, event);
         }
     };
-    
+
     protected Timer _timer;
     protected InputHandler _handler;
     protected ArrayList _invalidRoots = new ArrayList();
+
+    /** This is used for key repeat. */
+    protected int _pressed = -1;
+
+    /** This is used for key repeat. */
+    protected char _presschar;
+
+    /** This is used for key repeat. */
+    protected long _nextRepeat;
 
     /** Maps key codes to modifier flags. */
     protected static final int[] KEY_MODIFIER_MAP = {
@@ -202,4 +238,7 @@ public class PolledRootNode extends BRootNode
         InputEvent.BUTTON1_DOWN_MASK |
         InputEvent.BUTTON2_DOWN_MASK |
         InputEvent.BUTTON3_DOWN_MASK;
+
+    protected static final long INITIAL_REPEAT_DELAY = 400L;
+    protected static final long SUBSEQ_REPEAT_DELAY = 30L;
 }
