@@ -88,8 +88,9 @@ public class PolledRootNode extends BRootNode
 
         // effect key repeat
         if (_pressed >= 0 && _nextRepeat < _tickStamp) {
-            if (lostFocus) {
-                // stop repeating if our window lost focus
+            if (lostFocus || !KeyInput.get().isKeyDown(_pressed)) {
+                // stop repeating if our window lost focus or for whatever
+                // reason we missed the key up event
                 _pressed = -1;
             } else {
                 // otherwise generate and dispatch a key repeat event
