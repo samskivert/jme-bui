@@ -63,12 +63,12 @@ import com.jmex.bui.util.Dimension;
  * text syntax:
  *
  * <pre>
- * @b(this text would be bold)
- * @i(this text would be italic)
- * @s(this text would be striked-through)
- * @u(this text would be underlined)
- * @bi(this text would be bold and italic)
- * @bi#FFCC99(this text would be bold, italic and pink)
+ * @=b(this text would be bold)
+ * @=i(this text would be italic)
+ * @=s(this text would be striked-through)
+ * @=u(this text would be underlined)
+ * @=bi(this text would be bold and italic)
+ * @=bi#FFCC99(this text would be bold, italic and pink)
  * </pre>
  */
 public class AWTTextFactory extends BTextFactory
@@ -302,7 +302,7 @@ public class AWTTextFactory extends BTextFactory
         String text, HashMap attrs, String[] bare)
     {
         // if there are no style commands in the text, skip the complexity
-        if (text.indexOf("@") == -1) {
+        if (text.indexOf("@=") == -1) {
             if (bare != null) {
                 bare[0] = text;
             }
@@ -330,15 +330,21 @@ public class AWTTextFactory extends BTextFactory
                 continue;
 
             } else if (c == '@') { // start of run
-                // a @ as the last character is not valid
-                if (ii >= ll-1) {
-                    Log.log.warning("Invalid @ at end of string " +
-                                    "[text=" + text + "].");
+                // if we don't have enough characters left in the string for a
+                // complete run, skip it; we need at least 5: @=X()
+                if (ii >= ll-5) {
+                    raw.append(c);
+                    rawpos++;
                     continue;
                 }
 
-                // check for escaped parenthesis and @s
-                if ((c = text.charAt(++ii)) == '(' || c == ')' || c == '@') {
+                // anything other than @= is a non-start-sequence
+                if ((c = text.charAt(++ii)) != '=') {
+                    // @ ( and ) are escaped as @@ @( and @) so we skip the @
+                    if (c != '@' && c != '(' && c != ')') {
+                        raw.append('@');
+                        rawpos++;
+                    }
                     raw.append(c);
                     rawpos++;
                     continue;
@@ -364,7 +370,7 @@ public class AWTTextFactory extends BTextFactory
                 continue;
             }
 
-            String styles = text.substring(ii, parenidx);
+            String styles = text.substring(ii+1, parenidx);
             ii = parenidx;
 
             run.styles = new char[styles.length()];

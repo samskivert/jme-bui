@@ -170,9 +170,10 @@ public class LayoutTest extends BaseTest
 
         window = new BWindow(style, new BorderLayout());
         window.add(new BLabel("This is some styled text.\n" +
-                              "@b(bold) @i(italic) @u(underline) @s(strike)\n" +
-                              "@#FFCC99(colored)\n" +
-                              "@bu#99CCFF(bold, underlined and colored)"),
+                              "@=b(bold) @=i(italic) @=u(underline) " +
+                              "@=s(strike: @*)\n" +
+                              "@=#FFCC99(escaped chars: @@ @( @))\n" +
+                              "@=bu#99CCFF(bold, underlined and colored)"),
                    BorderLayout.CENTER);
         root.addWindow(window);
         window.pack();
