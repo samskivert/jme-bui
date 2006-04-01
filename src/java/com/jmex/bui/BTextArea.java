@@ -219,6 +219,26 @@ public class BTextArea extends BContainer
     }
 
     // documentation inherited
+    protected void wasAdded ()
+    {
+        super.wasAdded();
+
+        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
+            ((Line)_lines.get(ii)).wasAdded();
+        }
+    }
+
+    // documentation inherited
+    protected void wasRemoved ()
+    {
+        super.wasRemoved();
+
+        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
+            ((Line)_lines.get(ii)).wasRemoved();
+        }
+    }
+
+    // documentation inherited
     protected void configureStyle (BStyleSheet style)
     {
         super.configureStyle(style);
@@ -338,6 +358,9 @@ public class BTextArea extends BContainer
         }
 
         // remove and recreate our existing lines
+        for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
+            ((Line)_lines.get(ii)).wasRemoved();
+        }
         _lines.clear();
 
         int insets = getInsets().getHorizontal();
@@ -442,6 +465,8 @@ public class BTextArea extends BContainer
             // text factory breaks things down into multiple lines for us
             BText[] text = tfact.wrapText(rtext, color, maxWidth-dx);
             segments.add(text[0]);
+            // we only ever add runs when we're added
+            text[0].wasAdded();
             int remainder = rtext.length() - text[0].getLength();
             height = Math.max(height, text[0].getSize().height);
             dx += text[0].getSize().width;
@@ -471,6 +496,20 @@ public class BTextArea extends BContainer
                 width += ((BText)segments.get(ii)).getSize().width;
             }
             return width;
+        }
+
+        public void wasAdded ()
+        {
+            for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
+                ((BText)segments.get(ii)).wasAdded();
+            }
+        }
+
+        public void wasRemoved ()
+        {
+            for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
+                ((BText)segments.get(ii)).wasRemoved();
+            }
         }
     }
 

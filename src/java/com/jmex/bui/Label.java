@@ -80,12 +80,18 @@ public class Label
         if (_icon != null) {
             owidth = _icon.getWidth();
             oheight = _icon.getHeight();
+            if (_container.isAdded()) {
+                _icon.wasRemoved();
+            }
         }
 
         _icon = icon;
         if (_icon != null) {
             nwidth = _icon.getWidth();
             nheight = _icon.getHeight();
+            if (_container.isAdded()) {
+                _icon.wasAdded();
+            }
         }
 
         if (owidth != nwidth || oheight != nheight) {
@@ -132,6 +138,36 @@ public class Label
         _orient = orient;
         if (_container.isAdded()) {
             _container.layout();
+        }
+    }
+
+    /**
+     * Called by our containing component when it was added to the interface
+     * hierarchy.
+     */
+    public void wasAdded ()
+    {
+        layoutAndComputeSize(_twidth);
+
+        if (_icon != null) {
+            _icon.wasAdded();
+        }
+        if (_text != null) {
+            _text.wasAdded();
+        }
+    }
+
+    /**
+     * Called by our containing component when it was removed from the
+     * interface hierarchy.
+     */
+    public void wasRemoved ()
+    {
+        if (_icon != null) {
+            _icon.wasRemoved();
+        }
+        if (_text != null) {
+            _text.wasRemoved();
         }
     }
 
@@ -226,7 +262,9 @@ public class Label
     public void releaseText ()
     {
         if (_text != null) {
-            _text.release();
+            if (_container.isAdded()) {
+                _text.wasRemoved();
+            }
             _text = null;
         }
     }
@@ -340,6 +378,10 @@ public class Label
                 _text.size.width, _text.lines[ii].getSize().width);
             _text.size.height += _text.lines[ii].getSize().height;
         }
+
+        if (_container.isAdded()) {
+            _text.wasAdded();
+        }
     }
 
     /**
@@ -409,9 +451,15 @@ public class Label
             }
         }
 
-        public void release () {
+        public void wasAdded () {
             for (int ii = 0; ii < lines.length; ii++) {
-                lines[ii].release();
+                lines[ii].wasAdded();
+            }
+        }
+
+        public void wasRemoved () {
+            for (int ii = 0; ii < lines.length; ii++) {
+                lines[ii].wasRemoved();
             }
         }
     }

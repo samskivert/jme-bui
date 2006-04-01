@@ -145,67 +145,6 @@ public class BImage extends Quad
     }
 
     /**
-     * Creates an image of the specified size, with the supplied texture. The
-     * texture is assumed to have an underlying image from which we can obtain
-     * the texture width and height (which must be a power of two and may
-     * differ from the renderable image width and height supplied to the
-     * constructor).
-     *
-     * @param mustFreeTexture see {@link #setTexture}.
-     */
-    public BImage (int width, int height, Texture texture,
-                   boolean mustFreeTexture)
-    {
-        this(width, height);
-        setTexture(texture, mustFreeTexture);
-    }
-
-    /**
-     * Creates an image with the supplied texture.
-     *
-     * @param width the width of the renderable image.
-     * @param height the height of the renderable image.
-     * @param twidth the width of the texture (this should be a power of two).
-     * @param theight the height of the texture (this should be a power of two).
-     * @param mustFreeTexture see {@link #setTexture}.
-     */
-    public BImage (int width, int height, Texture texture,
-                   int twidth, int theight, boolean mustFreeTexture)
-    {
-        this(width, height);
-        setTexture(texture, twidth, theight, mustFreeTexture);
-    }
-
-    /**
-     * Creates an image with no texture yet assigned. The image will be blank
-     * until a texture is provided with a subsequent call to {@link
-     * #setTexture}.
-     */
-    public BImage (int width, int height)
-    {
-        super("name", width, height);
-        _width = width;
-        _height = height;
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
-        setTransparent(true);
-    }
-
-    /**
-     * Creates an image with the supplied texture state. The texture is assumed
-     * to be the same size as the supplied width and height.
-     */
-    public BImage (TextureState tstate, int width, int height)
-    {
-        super("name", width, height);
-        _width = _twidth = width;
-        _height = _theight = height;
-        _tstate = tstate;
-        setRenderState(_tstate);
-        setTransparent(true);
-    }
-
-    /**
      * Returns the width of this image.
      */
     public int getWidth ()
@@ -244,48 +183,14 @@ public class BImage extends Quad
      */
     public void setImage (Image image)
     {
+        // free our old texture as appropriate
+        releaseTexture();
+
         Texture texture = new Texture();
         texture.setImage(image);
-        setTexture(texture, true);
-    }
 
-    /**
-     * Configures the texture to be used for this image. The texture is assumed
-     * to have an underlying image from which we can obtain the texture width
-     * and height.
-     *
-     * @param mustFreeTexture If true, the {@link BImage} will take
-     * responsibility for freeing the texture memory when it's own {@link
-     * #release} method is called. If false, it is assumed the caller will free
-     * the texture.
-     */
-    public void setTexture (Texture texture, boolean mustFreeTexture)
-    {
-        setTexture(texture, texture.getImage().getWidth(),
-                   texture.getImage().getHeight(), mustFreeTexture);
-    }
-
-    /**
-     * Configures the texture to be used for this image.
-     *
-     * @param twidth the width of the texture image data (must be a power of
-     * two if OpenGL requires it).
-     * @param theight the height of the texture image data (must be a power of
-     * two if OpenGL requires it).
-     * @param mustFreeTexture If true, the {@link BImage} will take
-     * responsibility for freeing the texture memory when it's own {@link
-     * #release} method is called. If false, it is assumed the caller will free
-     * the texture.
-     */
-    public void setTexture (Texture texture, int twidth, int theight,
-                            boolean mustFreeTexture)
-    {
-        // free our old texture as appropriate
-        release();
-
-        _twidth = twidth;
-        _theight = theight;
-        _mustFreeTexture = mustFreeTexture;
+        _twidth = image.getWidth();
+        _theight = image.getHeight();
 
         texture.setFilter(Texture.FM_LINEAR);
         texture.setMipmapState(Texture.MM_NONE);
@@ -354,6 +259,12 @@ public class BImage extends Quad
                         int sx, int sy, int swidth, int sheight,
                         int tx, int ty, int twidth, int theight, float alpha)
     {
+        if (_referents == 0) {
+            Log.log.warning("Unreferenced image rendered " + this + "!");
+            Thread.dumpStack();
+            return;
+        }
+
         setTextureCoords(sx, sy, swidth, sheight);
 
         resize(twidth, theight);
@@ -366,13 +277,51 @@ public class BImage extends Quad
     }
 
     /**
-     * Releases any underlying texture resources created by this image. The
-     * image <em>must not be used</em> after this call is made.
+     * Notes that something is referencing this image and will subsequently
+     * call {@link #render} to render the image. <em>This must be paired with a
+     * call to {@link #release}.</em>
+     */
+    public void reference ()
+    {
+        _referents++;
+    }
+
+    /**
+     * Unbinds our underlying texture from OpenGL, removing the data from
+     * graphics memory. This should be done when the an image is no longer
+     * being displayed. The image will automatically rebind next time it is
+     * rendered.
      */
     public void release ()
     {
-        if (_tstate != null && _mustFreeTexture) {
+        if (_referents == 0) {
+            Log.log.warning("Unreferenced image released " + this + "!");
+            Thread.dumpStack();
+
+        } else if (--_referents == 0) {
+            releaseTexture();
+        }
+    }
+
+    /**
+     * Helper constructor.
+     */
+    protected BImage (int width, int height)
+    {
+        super("name", width, height);
+        _width = width;
+        _height = height;
+        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
+            createTextureState();
+        setTransparent(true);
+    }
+
+    protected void releaseTexture ()
+    {
+        if (_tstate.getNumberOfSetTextures() > 0) {
             _tstate.deleteAll();
+            _tstate.getTexture().setNeedsFilterRefresh(true);
+            _tstate.getTexture().setNeedsWrapRefresh(true);
         }
     }
 
@@ -386,7 +335,7 @@ public class BImage extends Quad
     protected TextureState _tstate;
     protected int _width, _height;
     protected int _twidth, _theight;
-    protected boolean _mustFreeTexture;
+    protected int _referents;
 
     protected static boolean _supportsNonPowerOfTwo;
 

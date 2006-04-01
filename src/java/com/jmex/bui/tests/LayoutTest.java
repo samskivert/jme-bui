@@ -43,11 +43,11 @@ import com.jmex.bui.util.Point;
 import com.jmex.bui.util.Rectangle;
 
 /**
- * Does something extraordinary.
+ * Tests random BUI bits.
  */
 public class LayoutTest extends BaseTest
 {
-    protected void createWindows (BRootNode root, BStyleSheet style)
+    protected void createWindows (final BRootNode root, BStyleSheet style)
     {
         BWindow window;
         BContainer cont;
@@ -153,12 +153,14 @@ public class LayoutTest extends BaseTest
 
         window = new BWindow(style, new AbsoluteLayout());
         window.add(new BLabel("+0+0"), new Point(0, 0));
+        final BWindow fwin = window;
         final BLabel lbl = new BLabel("+10+35");
         window.add(lbl, new Point(10, 35));
         ActionListener list = new ActionListener() {
             public void actionPerformed (ActionEvent event) {
                 _count += 9;
                 lbl.setText(String.valueOf(_count));
+                root.removeWindow(fwin);
             }
             protected int _count;
         };

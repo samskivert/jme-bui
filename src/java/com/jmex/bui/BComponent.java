@@ -489,11 +489,11 @@ public class BComponent
             // render our background
             renderBackground(renderer);
 
-            // render our border
-            renderBorder(renderer);
-
             // render any custom component bits
             renderComponent(renderer);
+
+            // render our border
+            renderBorder(renderer);
 
         } finally {
             GL11.glTranslatef(-_x, -_y, 0);
@@ -607,6 +607,18 @@ public class BComponent
     protected void wasAdded ()
     {
         configureStyle(getWindow().getStyleSheet());
+
+        // let our backgrounds and borders know we're added
+        for (int ii = 0; ii < _backgrounds.length; ii++) {
+            if (_backgrounds[ii] != null) {
+                _backgrounds[ii].wasAdded();
+            }
+        }
+        for (int ii = 0; ii < _borders.length; ii++) {
+            if (_borders[ii] != null) {
+                _borders[ii].wasAdded();
+            }
+        }
     }
 
     /**
@@ -642,6 +654,18 @@ public class BComponent
         // mark ourselves as invalid so that if this component is again
         // added to an interface heirarchy it will revalidate at that time
         _valid = false;
+
+        // let our backgrounds and borders know we're removed
+        for (int ii = 0; ii < _backgrounds.length; ii++) {
+            if (_backgrounds[ii] != null) {
+                _backgrounds[ii].wasRemoved();
+            }
+        }
+        for (int ii = 0; ii < _borders.length; ii++) {
+            if (_borders[ii] != null) {
+                _borders[ii].wasRemoved();
+            }
+        }
     }
 
     /**

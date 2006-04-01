@@ -37,4 +37,20 @@ public abstract class BIcon
     public void render (Renderer renderer, int x, int y, float alpha)
     {
     }
+
+    /**
+     * Called when the component that contains this icon is was added to the
+     * interface hierarchy.
+     */
+    public void wasAdded ()
+    {
+    }
+
+    /**
+     * Called when the component that contains this icon is no longer part of a
+     * user interface hierarchy.
+     */
+    public void wasRemoved ()
+    {
+    }
 }

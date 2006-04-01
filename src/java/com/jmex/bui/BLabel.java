@@ -133,14 +133,14 @@ public class BLabel extends BTextComponent
     protected void wasAdded ()
     {
         super.wasAdded();
-        _label.stateDidChange();
+        _label.wasAdded();
     }
 
     // documentation inherited
     protected void wasRemoved ()
     {
         super.wasRemoved();
-        _label.releaseText();
+        _label.wasRemoved();
     }
 
     // documentation inherited

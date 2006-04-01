@@ -112,6 +112,20 @@ public class ImageBackground extends BBackground
         }
     }
 
+    // documentation inherited
+    public void wasAdded ()
+    {
+        super.wasAdded();
+        _image.reference();
+    }
+
+    // documentation inherited
+    public void wasRemoved ()
+    {
+        super.wasRemoved();
+        _image.release();
+    }
+
     protected void renderCentered (
         Renderer renderer, int x, int y, int width, int height, float alpha)
     {

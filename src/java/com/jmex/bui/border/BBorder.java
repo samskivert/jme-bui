@@ -41,4 +41,20 @@ public abstract class BBorder
         float alpha)
     {
     }
+
+    /**
+     * Called when the component that contains this border is was added to the
+     * interface hierarchy.
+     */
+    public void wasAdded ()
+    {
+    }
+
+    /**
+     * Called when the component that contains this border is no longer part of
+     * a user interface hierarchy.
+     */
+    public void wasRemoved ()
+    {
+    }
 }

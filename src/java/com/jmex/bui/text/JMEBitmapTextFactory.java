@@ -104,6 +104,10 @@ public class JMEBitmapTextFactory extends BTextFactory
                 // JME characters are hardcoded to 10x16
                 return 10 * index;
             }
+            public void wasAdded () {
+            }
+            public void wasRemoved () {
+            }
             public void render (Renderer renderer, int x, int y, float alpha) {
                 x -= 4; // TEMP: handle Text offset bug
                 tgeom.setLocalTranslation(new Vector3f(x, y, 0));

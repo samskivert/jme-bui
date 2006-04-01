@@ -274,8 +274,10 @@ public class BTextField extends BTextComponent
     {
         super.wasRemoved();
 
-        // release our underlying text texture
-        clearGlyphs();
+        if (_glyphs != null) {
+            _glyphs.wasRemoved();
+            _glyphs = null;
+        }
     }
 
     // documentation inherited
@@ -377,6 +379,9 @@ public class BTextField extends BTextComponent
         int avail = getWidth() - getInsets().getHorizontal();
         _glyphs = getTextFactory().createText(
             getDisplayText(), getColor(), BConstants.NORMAL, null, true);
+        if (isAdded()) {
+            _glyphs.wasAdded();
+        }
         setCursorPos(_cursp);
     }
 
@@ -385,10 +390,10 @@ public class BTextField extends BTextComponent
      */
     protected void clearGlyphs ()
     {
-        if (_glyphs != null) {
-            _glyphs.release();
-            _glyphs = null;
+        if (_glyphs != null && isAdded()) {
+            _glyphs.wasRemoved();
         }
+        _glyphs = null;
     }        
 
     /**

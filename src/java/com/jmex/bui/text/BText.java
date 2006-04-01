@@ -63,8 +63,14 @@ public abstract class BText
     public abstract void render (Renderer render, int x, int y, float alpha);
 
     /**
-     * Instructs this text to release any underlying texture resources it has
-     * created.
+     * Called when the component that contains this text is was added to the
+     * interface hierarchy.
      */
-    public abstract void release ();
+    public abstract void wasAdded ();
+
+    /**
+     * Called when the component that contains this text is no longer part of a
+     * user interface hierarchy.
+     */
+    public abstract void wasRemoved ();
 }

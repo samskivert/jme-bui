@@ -53,6 +53,20 @@ public class SubimageIcon extends BIcon
     }
 
     // documentation inherited
+    public void wasAdded ()
+    {
+        super.wasAdded();
+        _image.reference();
+    }
+
+    // documentation inherited
+    public void wasRemoved ()
+    {
+        super.wasRemoved();
+        _image.release();
+    }
+
+    // documentation inherited
     public void render (Renderer renderer, int x, int y, float alpha)
     {
         super.render(renderer, x, y, alpha);

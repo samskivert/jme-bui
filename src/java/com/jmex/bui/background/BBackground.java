@@ -49,4 +49,20 @@ public abstract class BBackground
         float alpha)
     {
     }
+
+    /**
+     * Called when the component that contains this background is was added to
+     * the interface hierarchy.
+     */
+    public void wasAdded ()
+    {
+    }
+
+    /**
+     * Called when the component that contains this background is no longer
+     * part of a user interface hierarchy.
+     */
+    public void wasRemoved ()
+    {
+    }
 }
