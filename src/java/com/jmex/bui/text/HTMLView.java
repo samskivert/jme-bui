@@ -215,6 +215,7 @@ public class HTMLView extends BComponent
         // TODO: render into a properly sized image in the first place and
         // create a JME Image directly
         _rendered = new BImage(image);
+        _rendered.reference();
     }
 
     // documentation inherited
