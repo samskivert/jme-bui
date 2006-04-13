@@ -165,9 +165,7 @@ public class CanvasRootNode extends BRootNode
         // determine whether the mouse moved
         int mx = e.getX(), my = _canvas.getHeight() - e.getY();
         if (_mouseX != mx || _mouseY != my) {
-            _mouseX = mx;
-            _mouseY = my;
-            computeHoverComponent(mx, my);
+            mouseDidMove(mx, my);
             return true;
         }
 

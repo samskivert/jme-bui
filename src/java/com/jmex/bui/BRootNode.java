@@ -31,11 +31,13 @@ import com.jme.renderer.Camera;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
+import com.jme.system.DisplaySystem;
 
 import com.jmex.bui.Log;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.layout.BorderLayout;
 
 /**
  * Connects the BUI system into the JME scene graph.
@@ -89,7 +91,7 @@ public abstract class BRootNode extends Geometry
         }
 
         // recompute the hover component; the window may be under the mouse
-        computeHoverComponent(_mouseX, _mouseY);
+        updateHoverComponent(_mouseX, _mouseY);
     }
 
     /**
@@ -124,7 +126,7 @@ public abstract class BRootNode extends Geometry
 
         // then remove the hover component (which may result in a mouse exited
         // even being dispatched to the window or one of its children)
-        computeHoverComponent(_mouseX, _mouseY);
+        updateHoverComponent(_mouseX, _mouseY);
 
         // remove the window from the interface heirarchy
         window.setRootNode(null);
@@ -136,6 +138,25 @@ public abstract class BRootNode extends Geometry
             setFocus(top._savedFocus);
             top._savedFocus = null;
         }
+    }
+
+    /**
+     * Configures the number of seconds that the mouse must rest over a
+     * component to trigger a tooltip. If the value is set to zero, tips will
+     * appear immediately.
+     */
+    public void setTooltipTimeout (float seconds)
+    {
+        _tipTime = seconds;
+    }
+
+    /**
+     * Returns the tool tip timeout. See {@link #setTooltipTimeout} for
+     * details.
+     */
+    public float getTooltipTimeout ()
+    {
+        return _tipTime;
     }
 
     /**
@@ -189,6 +210,27 @@ public abstract class BRootNode extends Geometry
         // update our geometry views if we have any
         for (int ii = 0, ll = _geomviews.size(); ii < ll; ii++) {
             ((BGeomView)_geomviews.get(ii)).update(time);
+        }
+
+        // check to see if we need to pop up a tooltip
+        _lastMoveTime += time;
+        if (_hcomponent != null && _tipwin == null &&
+            _lastMoveTime > _tipTime &&
+            _hcomponent.getTooltipText() != null) {
+            _tipwin = new BWindow(
+                _hcomponent.getWindow().getStyleSheet(), new BorderLayout());
+            _tipwin.setStyleClass("tooltip_window");
+            BComponent tcomp = _hcomponent.createTooltipComponent();
+            _tipwin.add(tcomp, BorderLayout.CENTER);
+            addWindow(_tipwin);
+            int width = DisplaySystem.getDisplaySystem().getWidth();
+            int height = DisplaySystem.getDisplaySystem().getHeight();
+            _tipwin.pack(width-10, height-10);
+            int tx = Math.max(5, Math.min(_mouseX - _tipwin.getWidth()/2,
+                                          width - _tipwin.getWidth() - 5));
+            int ty = Math.max(5, Math.min(_mouseY,
+                                          height - _tipwin.getHeight() - 5));
+            _tipwin.setLocation(tx, ty);
         }
     }
 
@@ -320,14 +362,31 @@ public abstract class BRootNode extends Geometry
      */
     protected void windowDidMove (BWindow window)
     {
-        computeHoverComponent(_mouseX, _mouseY);
+        updateHoverComponent(_mouseX, _mouseY);
+    }
+
+    protected void mouseDidMove (int mouseX, int mouseY)
+    {
+        // update some tracking bits
+        _mouseX = mouseX;
+        _mouseY = mouseY;
+        _lastMoveTime = 0;
+
+        // calculate our new hover component
+        updateHoverComponent(_mouseX, _mouseY);
+
+        // clear out any tip window if we moved the mouse
+        if (_tipwin != null) {
+            removeWindow(_tipwin);
+            _tipwin = null;
+        }
     }
 
     /**
      * Recomputes the component over which the mouse is hovering,
      * generating mouse exit and entry events as necessary.
      */
-    protected void computeHoverComponent (int mx, int my)
+    protected void updateHoverComponent (int mx, int my)
     {
         // check for a new hover component starting with each of our root
         // components
@@ -365,6 +424,9 @@ public abstract class BRootNode extends Geometry
     protected long _tickStamp;
     protected int _modifiers;
     protected int _mouseX, _mouseY;
+
+    protected BWindow _tipwin;
+    protected float _lastMoveTime, _tipTime = 1;
 
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;

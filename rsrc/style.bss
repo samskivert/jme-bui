@@ -33,6 +33,16 @@ component {
 component:disabled {
 }
 
+tooltip_window {
+  background: solid #FFFFFF;
+  border: 1 solid #000000;
+  padding: 5;
+}
+
+tooltip_label {
+  color: #000000;
+}
+
 label {
 //  border: 1 solid #FFFFFF;
 }

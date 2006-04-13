@@ -37,6 +37,7 @@ import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.ComponentListener;
 import com.jmex.bui.event.KeyEvent;
 import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.text.HTMLView;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 import com.jmex.bui.util.Rectangle;
@@ -433,6 +434,24 @@ public class BComponent
     }
 
     /**
+     * Configures the tooltip text for this component. If the text starts with
+     * &lt;html&gt; then the tooltip will be displayed with an @{link HTMLView}
+     * otherwise it will be displayed with a {@link BLabel}.
+     */
+    public void setTooltipText (String text)
+    {
+        _tiptext = text;
+    }
+
+    /**
+     * Returns the tooltip text configured for this component.
+     */
+    public String getTooltipText ()
+    {
+        return _tiptext;
+    }
+
+    /**
      * Returns true if this component is added to a hierarchy of
      * components that culminates in a top-level window.
      */
@@ -669,6 +688,20 @@ public class BComponent
     }
 
     /**
+     * Creates the component that will be used to display our tooltip. This
+     * method will only be called if {@link #getTooltipText} returns non-null
+     * text.
+     */
+    protected BComponent createTooltipComponent ()
+    {
+        if (_tiptext.startsWith("<html>")) {
+            return new HTMLView("", _tiptext);
+        } else {
+            return new BLabel(_tiptext, "tooltip_label");
+        }
+    }
+
+    /**
      * Renders the background for this component.
      */
     protected void renderBackground (Renderer renderer)
@@ -801,6 +834,7 @@ public class BComponent
     protected int _x, _y, _width, _height;
     protected ArrayList _listeners;
     protected HashMap _properties;
+    protected String _tiptext;
 
     protected boolean _valid, _enabled = true, _hover;
     protected float _alpha = 1f;

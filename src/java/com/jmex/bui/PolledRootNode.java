@@ -182,7 +182,7 @@ public class PolledRootNode extends BRootNode
         }
 
         public void onMove (int xDelta, int yDelta, int newX, int newY) {
-            computeHoverComponent(_mouseX = newX, _mouseY = newY);
+            mouseDidMove(newX, newY);
             dispatchEvent(new MouseEvent(
                               PolledRootNode.this, _tickStamp, _modifiers,
                               _ccomponent != null ? MouseEvent.MOUSE_DRAGGED :

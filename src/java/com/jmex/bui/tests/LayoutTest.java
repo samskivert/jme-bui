@@ -73,6 +73,9 @@ public class LayoutTest extends BaseTest
         BTabbedPane pane = new BTabbedPane();
         window.add(pane);
         BButton button = new BButton("One contents");
+        button.setTooltipText("This is a very long tooltip the likes of " +
+                              "which you may not dare to contemplate. Indeed " +
+                              "it is so long that I expect it to wrap.");
         pane.addTab("One", button);
         button.setEnabled(false);
 
@@ -132,10 +135,12 @@ public class LayoutTest extends BaseTest
         cont = new BContainer(GroupLayout.makeHoriz(GroupLayout.LEFT));
         cont.add(new BToggleButton(new ImageIcon(icon), ""));
         BLabel label = new BLabel("Horizontal");
+        label.setTooltipText("This is a horizontal label.");
         label.setIcon(new ImageIcon(icon));
         label.setIconTextGap(3);
         cont.add(label);
         label = new BLabel("Vertical");
+        label.setTooltipText("This is a vertical label.");
         label.setIcon(new ImageIcon(icon));
         label.setIconTextGap(1);
         label.setOrientation(BLabel.VERTICAL);
@@ -155,6 +160,7 @@ public class LayoutTest extends BaseTest
         window.add(new BLabel("+0+0"), new Point(0, 0));
         final BWindow fwin = window;
         final BLabel lbl = new BLabel("+10+35");
+        lbl.setTooltipText("This is a @=b(funny) label.");
         window.add(lbl, new Point(10, 35));
         ActionListener list = new ActionListener() {
             public void actionPerformed (ActionEvent event) {
