@@ -112,6 +112,12 @@ public class PolledRootNode extends BRootNode
         }
     }
 
+    // documentation inherited
+    public float getTooltipTimeout ()
+    {
+        return KeyInput.get().isKeyDown(KeyInput.KEY_LCONTROL) ? 0 : _tipTime;
+    }
+
     /** This listener is notified when a key is pressed or released. */
     protected KeyInputListener _keyListener = new KeyInputListener() {
         public void onKey (char character, int keyCode, boolean pressed) {

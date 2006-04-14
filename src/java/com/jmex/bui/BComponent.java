@@ -692,12 +692,12 @@ public class BComponent
      * method will only be called if {@link #getTooltipText} returns non-null
      * text.
      */
-    protected BComponent createTooltipComponent ()
+    protected BComponent createTooltipComponent (String tiptext)
     {
-        if (_tiptext.startsWith("<html>")) {
-            return new HTMLView("", _tiptext);
+        if (tiptext.startsWith("<html>")) {
+            return new HTMLView("", tiptext);
         } else {
-            return new BLabel(_tiptext, "tooltip_label");
+            return new BLabel(tiptext, "tooltip_label");
         }
     }
 
