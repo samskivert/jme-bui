@@ -160,6 +160,15 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Sets the preferred width of tooltip windows. The default is to prefer a
+     * width slightly less wide that the entire window.
+     */
+    public void setTooltipPreferredWidth (int width)
+    {
+        _tipWidth = width;
+    }
+
+    /**
      * This is called by a window or a scroll pane when it has become invalid.
      * The root node should schedule a revalidation of this component on the
      * next tick or the next time an event is processed.
@@ -225,10 +234,10 @@ public abstract class BRootNode extends Geometry
             addWindow(_tipwin);
             int width = DisplaySystem.getDisplaySystem().getWidth();
             int height = DisplaySystem.getDisplaySystem().getHeight();
-            _tipwin.pack(width-10, height-10);
+            _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);
             int tx = Math.max(5, Math.min(_mouseX - _tipwin.getWidth()/2,
                                           width - _tipwin.getWidth() - 5));
-            int ty = Math.max(5, Math.min(_mouseY,
+            int ty = Math.max(5, Math.min(_mouseY + 10,
                                           height - _tipwin.getHeight() - 5));
             _tipwin.setLocation(tx, ty);
         }
@@ -370,16 +379,12 @@ public abstract class BRootNode extends Geometry
         // update some tracking bits
         _mouseX = mouseX;
         _mouseY = mouseY;
-        _lastMoveTime = 0;
 
         // calculate our new hover component
         updateHoverComponent(_mouseX, _mouseY);
 
         // clear out any tip window if we moved the mouse
-        if (_tipwin != null) {
-            removeWindow(_tipwin);
-            _tipwin = null;
-        }
+        clearTipWindow();
     }
 
     /**
@@ -418,6 +423,21 @@ public abstract class BRootNode extends Geometry
                                    MouseEvent.MOUSE_ENTERED, mx, my));
             }
             _hcomponent = nhcomponent;
+
+            // clear out any tooltip business in case the hover component
+            // changed as a result of a window popping up
+            if (_hcomponent == null || _hcomponent.getWindow() != _tipwin) {
+                clearTipWindow();
+            }
+        }
+    }
+
+    protected void clearTipWindow ()
+    {
+        _lastMoveTime = 0;
+        if (_tipwin != null) {
+            removeWindow(_tipwin);
+            _tipwin = null;
         }
     }
 
@@ -426,7 +446,8 @@ public abstract class BRootNode extends Geometry
     protected int _mouseX, _mouseY;
 
     protected BWindow _tipwin;
-    protected float _lastMoveTime, _tipTime = 1;
+    protected float _lastMoveTime, _tipTime = 1f;
+    protected int _tipWidth = -1;
 
     protected ArrayList _windows = new ArrayList();
     protected BComponent _hcomponent, _ccomponent;
