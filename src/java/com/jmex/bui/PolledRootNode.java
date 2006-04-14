@@ -115,7 +115,8 @@ public class PolledRootNode extends BRootNode
     // documentation inherited
     public float getTooltipTimeout ()
     {
-        return KeyInput.get().isKeyDown(KeyInput.KEY_LCONTROL) ? 0 : _tipTime;
+        return (KeyInput.get().isKeyDown(KeyInput.KEY_LCONTROL) ||
+                KeyInput.get().isKeyDown(KeyInput.KEY_RCONTROL)) ? 0 : _tipTime;
     }
 
     /** This listener is notified when a key is pressed or released. */
