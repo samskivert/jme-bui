@@ -211,6 +211,18 @@ public abstract class BRootNode extends Geometry
         return "BRootNode@" + hashCode();
     }
 
+    /**
+     * A large component that changes its tooltip while it is the hover
+     * component in the normal course of events can call this method to force
+     * an update to the tooltip window.
+     */
+    public void tipTextChanged (BComponent component)
+    {
+        if (component == _hcomponent) {
+            clearTipWindow();
+        }
+    }
+
     // documentation inherited
     public void updateGeometricState (float time, boolean initiator)
     {
@@ -227,24 +239,26 @@ public abstract class BRootNode extends Geometry
         if (_hcomponent != null && _tipwin == null &&
             _lastMoveTime > getTooltipTimeout() &&
             (tiptext = _hcomponent.getTooltipText()) != null) {
-            _tipwin = new BWindow(
-                _hcomponent.getWindow().getStyleSheet(), new BorderLayout());
-            _tipwin.setLayer(Integer.MAX_VALUE/2);
-            _tipwin.setStyleClass("tooltip_window");
             BComponent tcomp = _hcomponent.createTooltipComponent(tiptext);
-            _tipwin.add(tcomp, BorderLayout.CENTER);
-            addWindow(_tipwin);
-            int width = DisplaySystem.getDisplaySystem().getWidth();
-            int height = DisplaySystem.getDisplaySystem().getHeight();
-            _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);
-            int tx = Math.max(5, Math.min(_mouseX - _tipwin.getWidth()/2,
-                                          width - _tipwin.getWidth() - 5));
-            int ty = Math.max(5, Math.min(_mouseY + 10,
-                                          height - _tipwin.getHeight() - 5));
-            _tipwin.setLocation(tx, ty);
-            // we need to validate here because we're adding a window in the
-            // middle of our normal frame processing
-            _tipwin.validate();
+            if (tcomp != null) {
+                _tipwin = new BWindow(_hcomponent.getWindow().getStyleSheet(),
+                                      new BorderLayout());
+                _tipwin.setLayer(Integer.MAX_VALUE/2);
+                _tipwin.setStyleClass("tooltip_window");
+                _tipwin.add(tcomp, BorderLayout.CENTER);
+                addWindow(_tipwin);
+                int width = DisplaySystem.getDisplaySystem().getWidth();
+                int height = DisplaySystem.getDisplaySystem().getHeight();
+                _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);
+                int tx = _mouseX - _tipwin.getWidth()/2;
+                tx = Math.max(5, Math.min(tx, width-_tipwin.getWidth()-5));
+                int ty = _mouseY + 10;
+                ty = Math.min(ty, height- _tipwin.getHeight() - 5);
+                _tipwin.setLocation(tx, ty);
+                // we need to validate here because we're adding a window in
+                // the middle of our normal frame processing
+                _tipwin.validate();
+            }
         }
     }
 
