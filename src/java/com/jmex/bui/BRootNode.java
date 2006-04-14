@@ -240,6 +240,9 @@ public abstract class BRootNode extends Geometry
             int ty = Math.max(5, Math.min(_mouseY + 10,
                                           height - _tipwin.getHeight() - 5));
             _tipwin.setLocation(tx, ty);
+            // we need to validate here because we're adding a window in the
+            // middle of our normal frame processing
+            _tipwin.validate();
         }
     }
 
