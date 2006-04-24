@@ -175,7 +175,8 @@ public class BoundedRangeModel
         extent = Math.max(Math.min(extent, max - value), 0);
 
         // if anything has changed
-        if (min != _min || _value != value || _extent != extent || _max != max) {
+        if (min != _min || _value != value ||
+            _extent != extent || _max != max) {
             // update our values
             _min = min;
             _value = value;

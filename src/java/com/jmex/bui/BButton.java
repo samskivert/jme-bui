@@ -130,7 +130,7 @@ public class BButton extends BLabel
     // documentation inherited
     public boolean dispatchEvent (BEvent event)
     {
-        if (_enabled && event instanceof MouseEvent) {
+        if (isEnabled() && event instanceof MouseEvent) {
             int ostate = getState();
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {

@@ -38,6 +38,7 @@ import com.jmex.bui.layout.GroupLayout;
 import com.jmex.bui.layout.TableLayout;
 import com.jmex.bui.text.IntegerDocument;
 import com.jmex.bui.text.LengthLimitedDocument;
+import com.jmex.bui.BSlider;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Point;
 import com.jmex.bui.util.Rectangle;
@@ -93,6 +94,8 @@ public class LayoutTest extends BaseTest
         window.setLocation(25, 25);
 
         window = new BWindow(style, new BorderLayout(5, 5));
+        window.add(new BSlider(BSlider.VERTICAL, 0, 100, 25),
+                   BorderLayout.WEST);
         window.add(_text = new BTextArea(), BorderLayout.CENTER);
         window.add(_input = new BTextField(), BorderLayout.SOUTH);
         window.add(new BScrollBar(BScrollBar.VERTICAL, _text.getScrollModel()),
@@ -152,6 +155,8 @@ public class LayoutTest extends BaseTest
         cont.add(new BLabel("Eight"));
         cont.add(new BLabel("Nine"));
         window.add(cont, BorderLayout.CENTER);
+        window.add(new BSlider(BSlider.HORIZONTAL, 0, 100, 25),
+                   BorderLayout.SOUTH);
         root.addWindow(window);
         window.pack();
         window.setLocation(300, 400);
@@ -185,7 +190,7 @@ public class LayoutTest extends BaseTest
                    BorderLayout.CENTER);
         root.addWindow(window);
         window.pack();
-        window.setLocation(300, 450);
+        window.setLocation(300, 470);
     }
 
     public static void main (String[] args)

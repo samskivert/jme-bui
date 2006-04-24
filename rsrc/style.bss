@@ -132,6 +132,16 @@ scrollbar_vmore {
   icon: image "rsrc/textures/scroll_down.png";
 }
 
+hslider {
+  icon: image "rsrc/textures/button_up.png";
+  border: 1 solid #000000;
+}
+
+vslider {
+  icon: image "rsrc/textures/button_up.png";
+  border: 1 solid #000000;
+}
+
 //
 // These are for testing
 
