@@ -46,5 +46,11 @@ public class FocusEvent extends BEvent
         return _type;
     }
 
+    // documentation inherited
+    public boolean propagateUpHierarchy ()
+    {
+        return false;
+    }
+
     protected int _type;
 }

@@ -29,4 +29,10 @@ public class ChangeEvent extends BEvent
     {
         super(source, -1L);
     }
+
+    // documentation inherited
+    public boolean propagateUpHierarchy ()
+    {
+        return false;
+    }
 }

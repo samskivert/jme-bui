@@ -39,4 +39,10 @@ public class TextEvent extends BEvent
             ((TextListener)listener).textChanged(this);
         }
     }
+
+    // documentation inherited
+    public boolean propagateUpHierarchy ()
+    {
+        return false;
+    }
 }

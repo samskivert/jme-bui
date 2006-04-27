@@ -561,7 +561,10 @@ public class BComponent
      */
     public boolean dispatchEvent (BEvent event)
     {
-        boolean processed = false;
+        // events taht should not be propagated up the hierarchy are marked as
+        // processed immediately to avoid sending them to our parent or to
+        // other windows
+        boolean processed = !event.propagateUpHierarchy();
 
         // handle focus traversal
         if (event instanceof KeyEvent) {

@@ -59,6 +59,17 @@ public class BEvent extends EventObject
         }
     }
 
+    /**
+     * Returns true if this event should be propagated up the interface
+     * hierarchy (input events) or false if it should be considered processed
+     * once it is dispatched on its originating component (derivative events
+     * like action or text events).
+     */
+    public boolean propagateUpHierarchy ()
+    {
+        return true;
+    }
+
     protected BEvent (Object source, long when)
     {
         super(source);

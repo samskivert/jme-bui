@@ -49,6 +49,12 @@ public class ActionEvent extends InputEvent
         }
     }
 
+    // documentation inherited
+    public boolean propagateUpHierarchy ()
+    {
+        return false;
+    }
+
     protected void toString (StringBuffer buf)
     {
         super.toString(buf);
