@@ -849,17 +849,20 @@ public class BComponent
      * Dispatches an event emitted by this component. The event is given to the
      * root node for processing though in general it will result in an
      * immediate call to {@link #dispatchEvent} with the event.
+     *
+     * @return true if the event was emitted, false if it was dropped because
+     * we are not currently added to the interface hierarchy.
      */
-    protected void emitEvent (BEvent event)
+    protected boolean emitEvent (BEvent event)
     {
-        BRootNode node = getWindow().getRootNode();
-        if (node == null) {
-            Log.log.warning("Request to dispatch event from non-added comp " +
-                            "[comp=" + this + ", event=" + event + "].");
-            Thread.dumpStack();
-        } else {
-            node.dispatchEvent(this, event);
+        BWindow window;
+        BRootNode node;
+        if ((window = getWindow()) == null ||
+            (node = window.getRootNode()) == null) {
+            return false;
         }
+        node.dispatchEvent(this, event);
+        return true;
     }
 
     protected BComponent _parent;
