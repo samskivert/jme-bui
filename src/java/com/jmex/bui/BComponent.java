@@ -268,6 +268,12 @@ public class BComponent
      */
     public void setBackground (int state, BBackground background)
     {
+        if (isAdded()) {
+            if (_backgrounds[state] != null) {
+                _background[state].wasRemoved();
+            }
+            background.wasAded();
+        }
         _backgrounds[state] = background;
     }
 
