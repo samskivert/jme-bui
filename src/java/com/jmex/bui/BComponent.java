@@ -103,6 +103,17 @@ public class BComponent
      */
     public void setParent (BComponent parent)
     {
+        if (_parent != null && parent != null) {
+            Log.log.warning("Already added child readded to interface " +
+                            "hierarchy! [comp=" + this +
+                            ", oparent=" + _parent +
+                            ", nparent=" + parent + "].");
+            Thread.dumpStack();
+        } else if (_parent == null && parent == null) {
+            Log.log.warning("Already removed child reremoved from interface " +
+                            "hierarchy! [comp=" + this + "].");
+            Thread.dumpStack();
+        }
         _parent = parent;
     }
 
