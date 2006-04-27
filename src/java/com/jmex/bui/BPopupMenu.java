@@ -81,7 +81,7 @@ public class BPopupMenu extends BPopupWindow
      */
     protected void itemSelected (BMenuItem item, long when, int modifiers)
     {
-        dispatchEvent(new ActionEvent(item, when, modifiers, item.getAction()));
+        emitEvent(new ActionEvent(item, when, modifiers, item.getAction()));
         dismiss();
     }
 }

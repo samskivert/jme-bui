@@ -191,8 +191,7 @@ public class BComboBox extends BLabel
         } else {
             setText(item == null ? "" : item.toString());
         }
-        dispatchEvent(
-            new ActionEvent(this, when, modifiers, "selectionChanged"));
+        emitEvent(new ActionEvent(this, when, modifiers, "selectionChanged"));
     }
 
     protected void clearCachedMenu ()

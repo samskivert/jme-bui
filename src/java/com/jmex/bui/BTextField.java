@@ -120,7 +120,7 @@ public class BTextField extends BTextComponent
         }
 
         // let anyone who is around to hear know that a tree fell in the woods
-        dispatchEvent(new TextEvent(this, -1L));
+        emitEvent(new TextEvent(this, -1L));
     }
 
     // documentation inherited from interface Document.Listener
@@ -137,7 +137,7 @@ public class BTextField extends BTextComponent
         }
 
         // let anyone who is around to hear know that a tree fell in the woods
-        dispatchEvent(new TextEvent(this, -1L));
+        emitEvent(new TextEvent(this, -1L));
     }
 
     // documentation inherited
@@ -186,9 +186,8 @@ public class BTextField extends BTextComponent
                     break;
 
                 case ACTION:
-                    dispatchEvent(
-                        new ActionEvent(
-                            this, kev.getWhen(), kev.getModifiers(), ""));
+                    emitEvent(new ActionEvent(
+                                  this, kev.getWhen(), kev.getModifiers(), ""));
                     break;
 
                 case RELEASE_FOCUS:

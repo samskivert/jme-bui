@@ -217,13 +217,13 @@ public class BButton extends BLabel
     }
 
     /**
-     * Called when the button is "clicked" which may due to the mouse
-     * being pressed and released while over the button or due to keyboard
+     * Called when the button is "clicked" which may due to the mouse being
+     * pressed and released while over the button or due to keyboard
      * manipulation while the button has focus.
      */
     protected void fireAction (long when, int modifiers)
     {
-        dispatchEvent(new ActionEvent(this, when, modifiers, _action));
+        emitEvent(new ActionEvent(this, when, modifiers, _action));
     }
 
     protected boolean _armed, _pressed;
