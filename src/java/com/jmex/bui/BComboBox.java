@@ -124,7 +124,6 @@ public class BComboBox extends BLabel
         for (int ii = 0, ll = _items.size(); ii < ll; ii++) {
             ComboMenuItem mitem = (ComboMenuItem)_items.get(ii);
             if (mitem.item.equals(item)) {
-                Log.log.info("Found " + item + " at " + ii);
                 selidx = ii;
                 break;
             }
