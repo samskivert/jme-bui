@@ -351,6 +351,14 @@ public class BComponent
     }
 
     /**
+     * Returns true if this component has the focus.
+     */
+    public boolean hasFocus ()
+    {
+        return isAdded() ? getWindow().getRootNode().getFocus() == this : false;
+    }
+
+    /**
      * Returns the component that should receive focus if this component
      * is clicked. If this component does not accept focus, its parent
      * will be checked and so on.

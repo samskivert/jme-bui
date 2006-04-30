@@ -204,6 +204,14 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Returns the component that currently has the focus, or null.
+     */
+    public BComponent getFocus ()
+    {
+        return _focus;
+    }
+
+    /**
      * Generates a string representation of this instance.
      */
     public String toString ()
