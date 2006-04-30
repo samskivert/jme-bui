@@ -32,6 +32,9 @@ public class BToggleButton extends BButton
     /** Indicates that this button is in the selected state. */
     public static final int SELECTED = BButton.STATE_COUNT + 0;
 
+    /** Indicates that this button is in the selected state and is disabled. */
+    public static final int DISSELECTED = BButton.STATE_COUNT + 1;
+
     /**
      * Creates a button with the specified textual label.
      */
@@ -83,7 +86,7 @@ public class BToggleButton extends BButton
     public int getState ()
     {
         int state = super.getState();
-        return (state == DISABLED || !_selected) ? state : SELECTED;
+        return _selected ? (state == DISABLED ? DISSELECTED : SELECTED) : state;
     }
 
     // documentation inherited
@@ -114,6 +117,7 @@ public class BToggleButton extends BButton
     /** Used to track whether we are selected or not. */
     protected boolean _selected;
 
-    protected static final int STATE_COUNT = BButton.STATE_COUNT + 1;
-    protected static final String[] STATE_PCLASSES = { "selected" };
+    protected static final int STATE_COUNT = BButton.STATE_COUNT + 2;
+    protected static final String[] STATE_PCLASSES = {
+        "selected", "disselected" };
 }

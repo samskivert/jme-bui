@@ -98,6 +98,10 @@ checkbox:selected {
   icon: image "rsrc/textures/checkbox.png" centery;
 }
 
+checkbox:disselected {
+  icon: image "rsrc/textures/checkbox.png" centery;
+}
+
 scrollbar_hthumb {
   background: solid #FFFFFF;
 }
