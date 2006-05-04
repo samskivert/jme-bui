@@ -211,29 +211,29 @@ public class ImageBackground extends BBackground
         int wmiddle = twidth - 2*wthird, hmiddle = theight - 2*hthird;
 
         // draw the corners
-        _image.render(renderer, 0, 0, wthird, hthird, 0, 0, alpha);
+        _image.render(renderer, 0, 0, wthird, hthird, x, y, alpha);
         _image.render(renderer, twidth-wthird, 0, wthird, hthird,
-                      width-wthird, 0, alpha);
+                      x+width-wthird, y, alpha);
         _image.render(renderer, 0, theight-hthird, wthird, hthird,
-                      0, height-hthird, alpha);
+                      x, y+height-hthird, alpha);
         _image.render(renderer, twidth-wthird, theight-hthird, wthird, hthird,
-                      width-wthird, height-hthird, alpha);
+                      x+width-wthird, y+height-hthird, alpha);
 
         // draw the "gaps"
         int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
-        _image.render(renderer, wthird, 0, wmiddle, hthird, wthird, 0,
+        _image.render(renderer, wthird, 0, wmiddle, hthird, x+wthird, y,
                       ghmiddle, hthird, alpha);
         _image.render(renderer, wthird, theight-hthird, wmiddle, hthird,
-                      wthird, height-hthird, ghmiddle, hthird, alpha);
+                      x+wthird, y+height-hthird, ghmiddle, hthird, alpha);
 
-        _image.render(renderer, 0, hthird, wthird, hmiddle, 0, hthird,
+        _image.render(renderer, 0, hthird, wthird, hmiddle, x, y+hthird,
                       wthird, gvmiddle, alpha);
         _image.render(renderer, twidth-wthird, hthird, wthird, hmiddle,
-                      width-wthird, hthird, wthird, gvmiddle, alpha);
+                      x+width-wthird, y+hthird, wthird, gvmiddle, alpha);
 
         // draw the center
         _image.render(renderer, wthird, hthird, twidth-2*wthird,
-                      theight-2*hthird, wthird, hthird, width-2*wthird,
+                      theight-2*hthird, x+wthird, y+hthird, width-2*wthird,
                       height-2*hthird, alpha);
     }
 
