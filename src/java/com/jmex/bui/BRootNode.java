@@ -247,10 +247,10 @@ public abstract class BRootNode extends Geometry
         if (_hcomponent != null && _tipwin == null &&
             _lastMoveTime > getTooltipTimeout() &&
             (tiptext = _hcomponent.getTooltipText()) != null) {
+            BWindow hwin = _hcomponent.getWindow();
             BComponent tcomp = _hcomponent.createTooltipComponent(tiptext);
-            if (tcomp != null) {
-                _tipwin = new BWindow(_hcomponent.getWindow().getStyleSheet(),
-                                      new BorderLayout());
+            if (hwin != null && tcomp != null) {
+                _tipwin = new BWindow(hwin.getStyleSheet(), new BorderLayout());
                 _tipwin.setLayer(Integer.MAX_VALUE/2);
                 _tipwin.setStyleClass("tooltip_window");
                 _tipwin.add(tcomp, BorderLayout.CENTER);
