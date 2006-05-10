@@ -271,10 +271,11 @@ public class Label
 
     protected Dimension layoutAndComputeSize (int tgtwidth)
     {
-        // find out how tall our text will be based on our allowed width
-        if (_value != null && (_text == null || tgtwidth != _twidth)) {
-            _twidth = tgtwidth;
+        // make a note of our current target width
+        _twidth = tgtwidth;
 
+        // maybe relayout our text so that we can find out how tall it will be
+        if (_value != null) {
             // account for the space taken up by the icon
             if (_icon != null && _orient == HORIZONTAL) {
                 tgtwidth -= _gap;
@@ -428,6 +429,11 @@ public class Label
                 return false;
             }
             return true;
+        }
+
+        public String toString () {
+            return text + "(" + color + "," + effect + "," +
+                effectColor + "," + twidth + ")";
         }
     }
 
