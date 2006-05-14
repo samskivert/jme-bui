@@ -147,14 +147,13 @@ public class Label
      */
     public void wasAdded ()
     {
-        layoutAndComputeSize(_twidth);
-
         if (_icon != null) {
             _icon.wasAdded();
         }
         if (_text != null) {
             _text.wasAdded();
         }
+        layoutAndComputeSize(_twidth);
     }
 
     /**
