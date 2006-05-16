@@ -95,6 +95,15 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Returns true if the specified window is on top.
+     */
+    public boolean isOnTop (BWindow window)
+    {
+        return (_windows.size() > 0 &&
+                _windows.get(_windows.size()-1) == window);
+    }
+
+    /**
      * Called when an added window's layer is changed. Adjusts the ordering of
      * the windows in the stack.
      */
@@ -135,8 +144,10 @@ public abstract class BRootNode extends Geometry
         // saved focus
         if (_windows.size() > 0) {
             BWindow top = (BWindow)_windows.get(_windows.size()-1);
-            setFocus(top._savedFocus);
-            top._savedFocus = null;
+            if (top._savedFocus != null) {
+                setFocus(top._savedFocus);
+                top._savedFocus = null;
+            }
         }
     }
 
