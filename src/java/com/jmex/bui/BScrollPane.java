@@ -23,6 +23,7 @@ package com.jmex.bui;
 import org.lwjgl.opengl.GL11;
 
 import com.jme.renderer.Renderer;
+import com.jmex.bui.event.MouseWheelListener;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
@@ -56,7 +57,7 @@ public class BScrollPane extends BContainer
     {
         return _vbar;
     }
-    
+
     /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
@@ -161,6 +162,23 @@ public class BScrollPane extends BContainer
         }
 
         // documentation inherited
+        protected void wasAdded ()
+        {
+            super.wasAdded();
+            addListener(_wheelListener = _model.createWheelListener());
+        }
+
+        // documentation inherited
+        protected void wasRemoved ()
+        {
+            super.wasRemoved();
+            if (_wheelListener != null) {
+                removeListener(_wheelListener);
+                _wheelListener = null;
+            }
+        }
+
+        // documentation inherited
         protected Dimension computePreferredSize (int whint, int hhint)
         {
             return new Dimension(_target.getPreferredSize(whint, hhint));
@@ -195,6 +213,7 @@ public class BScrollPane extends BContainer
 
         protected BoundedRangeModel _model;
         protected BComponent _target;
+        protected MouseWheelListener _wheelListener;
     }
     
     protected BViewport _vport;

@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 import com.jmex.bui.event.ChangeEvent;
 import com.jmex.bui.event.ChangeListener;
+import com.jmex.bui.event.MouseEvent;
+import com.jmex.bui.event.MouseWheelListener;
 
 /**
  * Defines the model used by the {@link BScrollBar} to communicate with
@@ -191,6 +193,27 @@ public class BoundedRangeModel
             return true;
         }
         return false;
+    }
+
+    /**
+     * Creates a mouse wheel listener that will respond to wheel events by
+     * adjusting this model up or down accordingly.
+     */
+    public MouseWheelListener createWheelListener ()
+    {
+        return new MouseWheelListener() {
+            public void mouseWheeled (MouseEvent event) {
+                int delta = getRange()/10;
+                if ((event.getModifiers() & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                    delta *= 2;
+                }
+                if (event.getDelta() > 0) {
+                    setValue(getValue() - delta);
+                } else {
+                    setValue(getValue() + delta);
+                }
+            }
+        };
     }
 
     protected int _min, _max;

@@ -30,6 +30,7 @@ import com.jmex.bui.event.MouseAdapter;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.MouseListener;
 import com.jmex.bui.event.MouseMotionListener;
+import com.jmex.bui.event.MouseWheelListener;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.layout.BorderLayout;
@@ -93,6 +94,9 @@ public class BScrollBar extends BContainer
     {
         super.wasAdded();
 
+        // listen for mouse wheel events
+        addListener(_wheelListener = _model.createWheelListener());
+
         // create our buttons and backgrounds
         String oprefix = "scrollbar_" + ((_orient == HORIZONTAL) ? "h" : "v");
         _well = new BComponent();
@@ -125,6 +129,10 @@ public class BScrollBar extends BContainer
     {
         super.wasRemoved();
 
+        if (_wheelListener != null) {
+            removeListener(_wheelListener);
+            _wheelListener = null;
+        }
         if (_well != null) {
             remove(_well);
             _well = null;
@@ -268,4 +276,6 @@ public class BScrollBar extends BContainer
 
     protected BButton _less, _more;
     protected BComponent _well, _thumb;
+
+    protected MouseWheelListener _wheelListener;
 }
