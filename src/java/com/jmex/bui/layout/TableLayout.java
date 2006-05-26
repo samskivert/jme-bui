@@ -190,8 +190,8 @@ public class TableLayout extends BLayoutManager
         }
 
         // if we are stretching, adjust the column widths accordingly
-        if (_halign == STRETCH) {
-            int naturalWidth = sum(_columnWidths);
+        int naturalWidth;
+        if (_halign == STRETCH && (naturalWidth = sum(_columnWidths)) > 0) {
             int avail = target.getWidth() - target.getInsets().getHorizontal() -
                 naturalWidth - (_colgap * (_columnWidths.length-1));
             int used = 0;
