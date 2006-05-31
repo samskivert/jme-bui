@@ -127,7 +127,7 @@ public class BImage extends Quad
         setImage(textureImage);
         
         // make sure we have a unique default color object
-        defaultColor = new ColorRGBA(ColorRGBA.white);
+        getBatch(0).getDefaultColor().set(ColorRGBA.white);
     }
 
     /**
@@ -213,7 +213,7 @@ public class BImage extends Quad
         float ux = (sx+swidth) / (float)_twidth;
         float uy = (sy+sheight) / (float)_theight;
 
-        FloatBuffer tcoords = getTextureBuffer();
+        FloatBuffer tcoords = getTextureBuffer(0, 0);
         tcoords.clear();
         tcoords.put(lx).put(uy);
         tcoords.put(lx).put(ly);
@@ -272,7 +272,7 @@ public class BImage extends Quad
         localTranslation.y = ty + theight/2f;
         updateGeometricState(0, true);
 
-        defaultColor.a = alpha;
+        getBatch(0).getDefaultColor().a = alpha;
         draw(renderer);
     }
 

@@ -63,13 +63,14 @@ public class BComponent
 
     public static void applyDefaultStates ()
     {
-        for (int ii = 0; ii < Spatial.defaultStateList.length; ii++) {
-            if (Spatial.defaultStateList[ii] != null &&
-                Spatial.defaultStateList[ii] != Spatial.getCurrentState(ii)) {
-                Spatial.defaultStateList[ii].apply();
+        for (int ii = 0; ii < Renderer.defaultStateList.length; ii++) {
+            if (Renderer.defaultStateList[ii] != null &&
+                Renderer.defaultStateList[ii] !=
+                    Renderer.getCurrentState(ii)) {
+                Renderer.defaultStateList[ii].apply();
             }
         }
-        Spatial.clearCurrentStates();
+        Renderer.clearCurrentStates();
     }
 
     /**
