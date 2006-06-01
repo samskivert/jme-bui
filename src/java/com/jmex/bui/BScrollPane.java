@@ -35,11 +35,29 @@ public class BScrollPane extends BContainer
 {
     public BScrollPane (BComponent child)
     {
+        this(child, true, false);
+    }
+
+    public BScrollPane (BComponent child, boolean vert, boolean horiz)
+    {
+        this(child, true, false, 1);
+    }
+
+    public BScrollPane (
+        BComponent child, boolean vert, boolean horiz, int snap)
+    {
         super(new BorderLayout(0, 0));
 
-        add(_vport = new BViewport(child), BorderLayout.CENTER);
-        add(_vbar = new BScrollBar(BScrollBar.VERTICAL, _vport.getModel()),
-            BorderLayout.EAST);
+        add(_vport = new BViewport(child, vert, horiz, snap), 
+                BorderLayout.CENTER);
+        if (vert) {
+            add(_vbar = new BScrollBar(BScrollBar.VERTICAL, 
+                        _vport.getVModel()), BorderLayout.EAST);
+        }
+        if (horiz) {
+            add(_hbar = new BScrollBar(BScrollBar.HORIZONTAL, 
+                        _vport.getHModel()), BorderLayout.SOUTH);
+        }
     }
 
     /**
@@ -58,13 +76,27 @@ public class BScrollPane extends BContainer
         return _vbar;
     }
 
+    /**
+     * Returns a reference to the horizontal scroll bar.
+     */
+    public BScrollBar getHorizontalScrollBar ()
+    {
+        return _hbar;
+    }
+
     /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
     {
-        public BViewport (BComponent target)
+        public BViewport (
+                BComponent target, boolean vert, boolean horiz, int snap)
         {
-            _model = new BoundedRangeModel(0, 0, 10, 10);
+            if (vert) {
+                _vmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+            }
+            if (horiz) {
+                _hmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+            }
             add(_target = target);
         }
 
@@ -80,9 +112,18 @@ public class BScrollPane extends BContainer
          * Returns the range model defined by this viewport's size and the
          * preferred size of its target component.
          */
-        public BoundedRangeModel getModel ()
+        public BoundedRangeModel getVModel ()
         {
-            return _model;
+            return _vmodel;
+        }
+        
+        /**
+         * Returns the range model defined by this viewport's size and the
+         * preferred size of its target component.
+         */
+        public BoundedRangeModel getHModel ()
+        {
+            return _hmodel;
         }
         
         // documentation inherited
@@ -107,9 +148,12 @@ public class BScrollPane extends BContainer
             // preferred size
             Insets insets = getInsets();
             int twidth = getWidth() - insets.getHorizontal();
-            Dimension d = _target.getPreferredSize(twidth, -1);
-            d.width = twidth;
-            d.height = Math.max(d.height, getHeight() - insets.getVertical());
+            int theight = getHeight() - insets.getVertical();
+            Dimension d = _target.getPreferredSize(twidth, theight);
+            d.width = (_hmodel != null) ? 
+                Math.max(d.width, twidth) : twidth;
+            d.height = (_vmodel != null) ? 
+                Math.max(d.height, theight) : theight;
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
                 _target.setBounds(insets.left, insets.bottom, d.width,
@@ -120,15 +164,21 @@ public class BScrollPane extends BContainer
             _target.layout();
 
             // and recompute our scrollbar range
-            _model.setRange(0, _model.getValue(),
-                getHeight() - insets.getVertical(), d.height);
+            if (_vmodel != null) {
+                _vmodel.setRange(0, _vmodel.getValue(),
+                    getHeight() - insets.getVertical(), d.height);
+            }
+            if (_hmodel != null) {
+                _hmodel.setRange(0, _hmodel.getValue(),
+                    getWidth() - insets.getHorizontal(), d.width);
+            }
         }
 
-//         // documentation inherited
-//         public int getAbsoluteX ()
-//         {
-//             return super.getAbsoluteX();
-//         }
+         // documentation inherited
+         public int getAbsoluteX ()
+         {
+             return super.getAbsoluteX() + getXOffset();
+         }
 
         // documentation inherited
         public int getAbsoluteY ()
@@ -148,7 +198,7 @@ public class BScrollPane extends BContainer
             }
 
             // translate the coordinate into our children's coordinates
-            mx -= (_x + insets.left);
+            mx -= (_x + insets.left + getXOffset());
             my -= (_y + insets.bottom + getYOffset());
 
             BComponent hit = null;
@@ -165,7 +215,11 @@ public class BScrollPane extends BContainer
         protected void wasAdded ()
         {
             super.wasAdded();
-            addListener(_wheelListener = _model.createWheelListener());
+            if (_vmodel != null) {
+                addListener(_wheelListener = _vmodel.createWheelListener());
+            } else if (_hmodel != null) {
+                addListener(_wheelListener = _hmodel.createWheelListener());
+            }
         }
 
         // documentation inherited
@@ -189,11 +243,12 @@ public class BScrollPane extends BContainer
         {
             // translate by our offset into the viewport
             Insets insets = getInsets();
-            int offset = getYOffset();
-            GL11.glTranslatef(0, offset, 0);
+            int yoffset = getYOffset();
+            int xoffset = getXOffset();
+            GL11.glTranslatef(xoffset, yoffset, 0);
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(getAbsoluteX() + insets.left,
-                           (getAbsoluteY() + insets.bottom) - offset,
+            GL11.glScissor((getAbsoluteX() + insets.left) - xoffset,
+                           (getAbsoluteY() + insets.bottom) - yoffset,
                            _width - insets.getHorizontal(),
                            _height - insets.getVertical());
             try {
@@ -201,21 +256,27 @@ public class BScrollPane extends BContainer
                 _target.render(renderer);
             } finally {
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                GL11.glTranslatef(0, -offset, 0);
+                GL11.glTranslatef(-xoffset, -yoffset, 0);
             }
         }
 
         protected final int getYOffset ()
         {
-            return _model.getValue() -
-                (_model.getMaximum() - _model.getExtent());
+            return _vmodel == null ? 0 : _vmodel.getValue() -
+                (_vmodel.getMaximum() - _vmodel.getExtent());
         }
 
-        protected BoundedRangeModel _model;
+        protected final int getXOffset ()
+        {
+            return _hmodel == null ? 0 : _hmodel.getValue() -
+                (_hmodel.getMaximum() - _hmodel.getExtent());
+        }
+
+        protected BoundedRangeModel _vmodel, _hmodel;
         protected BComponent _target;
         protected MouseWheelListener _wheelListener;
     }
     
     protected BViewport _vport;
-    protected BScrollBar _vbar;
+    protected BScrollBar _vbar, _hbar;
 }
