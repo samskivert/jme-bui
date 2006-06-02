@@ -268,8 +268,7 @@ public class BScrollPane extends BContainer
 
         protected final int getXOffset ()
         {
-            return _hmodel == null ? 0 : _hmodel.getValue() -
-                (_hmodel.getMaximum() - _hmodel.getExtent());
+            return _hmodel == null ? 0 : -_hmodel.getValue();
         }
 
         protected BoundedRangeModel _vmodel, _hmodel;
