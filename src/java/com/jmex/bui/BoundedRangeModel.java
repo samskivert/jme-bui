@@ -117,6 +117,15 @@ public class BoundedRangeModel
     }
 
     /**
+     * Returns the increment by which this model should be scrolled when the
+     * user presses one of the buttons at the end of the scrollbar.
+     */
+    public int getScrollIncrement ()
+    {
+        return getRange() / 10;
+    }
+
+    /**
      * Configures the minimum value of this model, adjusting the value,
      * extent and maximum as necessary to maintain the consistency of the
      * model.
@@ -203,7 +212,7 @@ public class BoundedRangeModel
     {
         return new MouseWheelListener() {
             public void mouseWheeled (MouseEvent event) {
-                int delta = getRange()/10;
+                int delta = getScrollIncrement();
                 if ((event.getModifiers() & MouseEvent.CTRL_DOWN_MASK) != 0) {
                     delta *= 2;
                 }

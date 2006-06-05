@@ -262,7 +262,7 @@ public class BScrollBar extends BContainer
 
     protected ActionListener _buttoner = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
-            int delta = _model.getRange()/10;
+            int delta = _model.getScrollIncrement();
             if (event.getAction().equals("less")) {
                 _model.setValue(_model.getValue() - delta);
             } else {

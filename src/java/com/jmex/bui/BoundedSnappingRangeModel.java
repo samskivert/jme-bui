@@ -48,6 +48,12 @@ public class BoundedSnappingRangeModel extends BoundedRangeModel
         val = val - (val % _snap);
         setRange(_min, val, _extent, _max);
     }
-    
+
+    // documentation inherited
+    public int getScrollIncrement ()
+    {
+        return _snap;
+    }
+
     protected int _snap;
 }
