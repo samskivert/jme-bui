@@ -40,7 +40,7 @@ public class BScrollPane extends BContainer
 
     public BScrollPane (BComponent child, boolean vert, boolean horiz)
     {
-        this(child, true, false, 1);
+        this(child, true, false, -1);
     }
 
     public BScrollPane (
@@ -88,14 +88,22 @@ public class BScrollPane extends BContainer
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
     {
-        public BViewport (
-                BComponent target, boolean vert, boolean horiz, int snap)
+        public BViewport (BComponent target, boolean vert, boolean horiz,
+                          int snap)
         {
             if (vert) {
-                _vmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+                if (snap > 0) {
+                    _vmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+                } else {
+                    _vmodel = new BoundedRangeModel(0, 0, 10, 10);
+                }
             }
             if (horiz) {
-                _hmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+                if (snap > 0) {
+                    _hmodel = new BoundedSnappingRangeModel(0, 0, 10, 10, snap);
+                } else {
+                    _hmodel = new BoundedRangeModel(0, 0, 10, 10);
+                }
             }
             add(_target = target);
         }
