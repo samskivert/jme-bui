@@ -20,10 +20,16 @@
 
 package com.jmex.bui;
 
+import java.util.ArrayList;
+
+import com.jme.system.DisplaySystem;
+
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.layout.GroupLayout;
+import com.jmex.bui.layout.TableLayout;
+import com.jmex.bui.util.Dimension;
 
 /**
  * Displays a popup menu of items, one of which can be selected.
@@ -74,6 +80,42 @@ public class BPopupMenu extends BPopupWindow
     protected String getDefaultStyleClass ()
     {
         return "popupmenu";
+    }
+
+    // documentation inherited
+    protected void packAndFit (int x, int y, boolean above)
+    {
+        int width = DisplaySystem.getDisplaySystem().getWidth();
+        int height = DisplaySystem.getDisplaySystem().getHeight();
+
+        // determine whether we can fit in the window
+        ArrayList children = null;
+        int columns = 1;
+        do {
+            Dimension d = getPreferredSize(-1, -1);
+            if (d.height > height) {
+                // remove our children, switch to a table layout and readd
+                if (children == null) {
+                    children = new ArrayList(_children);
+                }
+                removeAll();
+                setLayoutManager(new TableLayout(++columns, 0, 5));
+                for (int ii = 0; ii < children.size(); ii++) {
+                    add((BComponent)children.get(ii));
+                }
+            } else {
+                break;
+            }
+        } while (columns < 4);
+
+        // now actually lay ourselves out
+        pack();
+
+        // adjust x and y to ensure that we fit on the screen
+        x = Math.min(width - getWidth(), x);
+        y = above ?
+            Math.min(height - getHeight(), y) : Math.max(0, y - getHeight());
+        setLocation(x, y);
     }
 
     /**

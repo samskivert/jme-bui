@@ -56,6 +56,15 @@ button {
   effect-color: #442288;
 }
 
+menuitem {
+  padding: 0 2;
+}
+
+menuitem:hover {
+  color: #000000;
+  background: solid #FFFFFF88;
+}
+
 button:hover {
   color: #FF00FF;
 }

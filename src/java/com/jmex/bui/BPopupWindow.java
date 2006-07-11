@@ -20,8 +20,9 @@
 
 package com.jmex.bui;
 
-import com.jmex.bui.layout.BLayoutManager;
 import com.jme.system.DisplaySystem;
+
+import com.jmex.bui.layout.BLayoutManager;
 
 /**
  * A window that is popped up to display something like a menu or a
@@ -52,7 +53,16 @@ public class BPopupWindow extends BWindow
             _parent.getRootNode().addWindow(this);
         }
 
-        // size ourselves appropriately
+        // size and position ourselves appropriately
+        packAndFit(x, y, above);
+    }
+
+    /**
+     * Called after we have been added to the display heirarchy to pack and
+     * position this popup window.
+     */
+    protected void packAndFit (int x, int y, boolean above)
+    {
         pack();
 
         // adjust x and y to ensure that we fit on the screen

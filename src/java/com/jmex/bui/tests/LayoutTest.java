@@ -20,6 +20,7 @@
 
 package com.jmex.bui.tests;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.jme.math.Quaternion;
@@ -119,7 +120,11 @@ public class LayoutTest extends BaseTest
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
         cont = new BContainer(glay);
-        cont.add(new BComboBox(new String[] { "one", "two", "three" }));
+        ArrayList items = new ArrayList();
+        for (int ii = 0; ii < 100; ii++) {
+            items.add("item " + ii);
+        }
+        cont.add(new BComboBox(items.toArray()));
         cont.add(new BButton("Two"));
         cont.add(new BMenuItem("Three", "three"));
         cont.add(new BMenuItem("Four", "four"));
