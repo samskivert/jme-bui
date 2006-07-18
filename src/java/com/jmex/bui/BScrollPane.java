@@ -84,6 +84,15 @@ public class BScrollPane extends BContainer
         return _hbar;
     }
 
+    /**
+     * Configures the style class of the viewport (the non-scrolling container
+     * that will hold the scrolling contents).
+     */
+    public void setViewportStyleClass (String styleClass)
+    {
+        _vport.setStyleClass(styleClass);
+    }
+
     /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
