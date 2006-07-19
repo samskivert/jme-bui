@@ -29,6 +29,7 @@ import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 
 import com.jmex.bui.util.Dimension;
+import com.jmex.bui.util.Insets;
 
 /**
  * Displays 3D geometry (a {@link Spatial}) inside a normal user interface.
@@ -118,10 +119,14 @@ public class BGeomView extends BComponent
             }
 
             // set up our camera viewport if it has changed
-            if (_cwidth != _width || _cheight != _height) {
-                _cwidth = _width;
-                _cheight = _height;
-                int ax = getAbsoluteX(), ay = getAbsoluteY();
+            Insets insets = getInsets();
+            int width = _width - insets.getHorizontal();
+            int height = _height - insets.getVertical();
+            if (_cwidth != width || _cheight != height) {
+                _cwidth = width;
+                _cheight = height;
+                int ax = getAbsoluteX() + insets.left, 
+                    ay = getAbsoluteY() + insets.bottom;
                 float left =  ax / _swidth, right = left + _cwidth / _swidth;
                 float bottom = ay / _sheight;
                 float top = bottom + _cheight / _sheight;
