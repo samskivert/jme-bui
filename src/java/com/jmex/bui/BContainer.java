@@ -117,6 +117,28 @@ public class BContainer extends BComponent
     }
 
     /**
+     * Removes the child at a specific position from this container.
+     */
+    public void remove (int index)
+    {
+	BComponent child = getComponent(index);
+	_children.remove(index);
+        if (_layout != null) {
+            _layout.removeLayoutComponent(child);
+        }
+        child.setParent(null);
+
+        // if we're part of the hierarchy we call wasRemoved() on the
+        // child now (which will be propagated to all of its children)
+        if (isAdded()) {
+            child.wasRemoved();
+        }
+
+        // we need to be relayed out
+        invalidate();
+    }
+
+    /**
      * Removes the specified child from this container.
      */
     public void remove (BComponent child)

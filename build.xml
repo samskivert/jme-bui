@@ -42,7 +42,7 @@
   <!-- build the java class files -->
   <target name="compile" depends="prepare">
     <javac srcdir="${src.dir}" destdir="${classes.dir}"
-           debug="on" optimize="on" deprecation="on" source="1.4">
+           debug="on" optimize="on" deprecation="on" source="1.5">
       <classpath refid="classpath"/>
     </javac>
   </target>
@@ -56,7 +56,7 @@
       <bottom>Copyright &#169; ${year} ${copyright.holder}.
               All Rights Reserved.</bottom>
       <classpath refid="classpath"/>
-      <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
+      <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
       <link href="http://www.jmonkeyengine.com/doc/"/>
     </javadoc>
   </target>
