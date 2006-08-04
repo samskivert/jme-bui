@@ -41,14 +41,13 @@ import com.jmex.bui.layout.GroupLayout;
  * Provides a scrollable, lazily instantiated component view of values
  */
 public abstract class BScrollingList<V, C extends BComponent> extends BContainer
-    implements ChangeListener
 {
     /**
      * Instantiates an empty {@link BScrollingList}.
      */
     public BScrollingList ()
     {
-        this(new ArrayList<V>());
+        this(null);
     }
 
     /**
@@ -58,17 +57,20 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
     {
         super(new BorderLayout(0, 0));
 
-        _values = new ArrayList<V>(values);
+        _values = new ArrayList<Entry<V,C>>();
+        if (values != null) {
+            for (V value : values) {
+                _values.add(new Entry<V,C>(value));
+            }
+        }
         _lastBottom = 0;
 
-        int last = _values.size()-1;
-        _model = new BoundedSnappingRangeModel(0, last-EXTENT, EXTENT, last, 1);
-        _model.addChangeListener(this);
+        // we'll set up our model in layout()
+        _model = new BoundedRangeModel(0, 0, 1, 1);
 
-        add(_vport = new BViewport(
-                GroupLayout.makeVert(GroupLayout.NONE, GroupLayout.BOTTOM,
-                                     GroupLayout.STRETCH)),
-            BorderLayout.CENTER);
+        // create our viewport and scrollbar
+        add(_vport = new BViewport(), BorderLayout.CENTER);
+        _model.addChangeListener(_vport);
         add(_vbar = new BScrollBar(BScrollBar.VERTICAL, _model),
             BorderLayout.EAST);
     }
@@ -95,14 +97,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
     public void removeValues ()
     {
         _values.clear();
-        if (isAdded()) {
-            updateModel(true);
-        }
-    }
-
-    // from interface ChangeListener
-    public void stateChanged (ChangeEvent event)
-    {
+        _model.setValue(0);
         _vport.invalidate();
     }
 
@@ -111,7 +106,6 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
     {
         super.wasAdded();
         addListener(_wheelListener = _model.createWheelListener());
-        updateModel(true);
     }
 
     @Override // from BComponent
@@ -135,28 +129,19 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
      */
     protected void addValue (int index, V value, boolean snap)
     {
-        _values.add(index, value);
-        if (isAdded()) {
-            updateModel(snap);
-        }
-    }
-
-    /**
-     * Reconfigures the model whenever underlying data or scrollbar changes.
-     */
-    protected void updateModel (boolean snap)
-    {
-        int last = _values.size()-1;
-        int pos = snap ? Math.max(0, last - EXTENT) : _model.getValue();
-        _model.setRange(0, pos, EXTENT, last);
+        _values.add(index, new Entry<V,C>(value));
+        _vport.invalidateAndSnap();
     }
 
     /** Does all the heavy lifting for the {@link BScrollingList}. */
     protected class BViewport extends BContainer
+        implements ChangeListener
     {
-        public BViewport (BLayoutManager layout)
+        public BViewport ()
         {
-            super(layout);
+            super(GroupLayout.makeVert(
+                      GroupLayout.NONE, GroupLayout.TOP,
+                      GroupLayout.STRETCH));
         }
 
         /**
@@ -165,6 +150,21 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
         public BScrollBar getVerticalScrollBar ()
         {
             return _vbar;
+        }
+
+        /**
+         * Recomputes our layout and snaps to the bottom.
+         */
+        public void invalidateAndSnap ()
+        {
+            _snap = true;
+            invalidate();
+        }
+
+        // from interface ChangeListener
+        public void stateChanged (ChangeEvent event)
+        {
+            invalidate();
         }
 
         @Override // from BComponent
@@ -188,62 +188,95 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
             Insets insets = getInsets();
             int twidth = getWidth() - insets.getHorizontal();
             int theight = getHeight() - insets.getVertical();
+            int gap = ((GroupLayout)getLayoutManager()).getGap();
 
-            int bottomIx = _model.getValue() + _model.getExtent();
-            if (bottomIx < _lastBottom) {
-                // the thumb has moved up; remove entries at the end
-                int cnt = getComponentCount();
-                while (bottomIx < _lastBottom && cnt > 0) {
-                    remove(cnt-1);
-                    _lastBottom --;
-                    cnt --;
-                }
-
-            } else if (bottomIx > _lastBottom) {
-                // if the thumb has moved down, we need to append
-                int appendedHeight = 0;
-                int appendPos = getComponentCount();
-
-                int ix = bottomIx;
-                for (; ix > _lastBottom && appendedHeight < theight; ix--) {
-                    BComponent child = createComponent(_values.get(ix));
-                    add(appendPos, child);
-                    appendedHeight += child.getPreferredSize(twidth, 0).height;
-                }
-
-                if (ix > _lastBottom) {
-                    // there's a gap between the new and old range, wipe out old
-                    while (appendPos > 0) {
-                        remove(0);
-                        appendPos --;
+            // first make sure all of our entries have been measured and
+            // compute our total height and extent
+            int totheight = 0;
+            for (Entry<V,C> entry : _values) {
+                if (entry.height < 0) {
+                    if (entry.component == null) {
+                        entry.component = createComponent(entry.value);
+                    }
+                    boolean remove = false;
+                    if (!entry.component.isAdded()) {
+                        add(entry.component);
+                        remove = true;
+                    }
+                    entry.height =
+                        entry.component.getPreferredSize(twidth, 0).height;
+                    if (remove) {
+                        remove(entry.component);
                     }
                 }
+                totheight += entry.height;
             }
-            _lastBottom = bottomIx;
+            if (_values.size() > 1) {
+                totheight += (gap * _values.size()-1);
+            }
+            int extent = Math.min(theight, totheight);
 
-            // now see if we're underfull or overfull
-            int cheight = 0;
-            int ix = getComponentCount() - 1;
-            for (; ix >= 0 && cheight < theight; ix--) {
-                cheight += getComponent(ix).getPreferredSize(twidth, 0).height;
-            } 
+            // if our most recent value was added with _snap then we scroll to
+            // the bottom on this layout and clear our snappy flag
+            int value = _snap ? (totheight-extent) : _model.getValue();
+            _snap = false;
 
-            if (ix >= 0) {
-                // we filled up early, remove superluous entries
-                do {
-                    remove(ix--);
-                } while (ix >= 0);
+            // if our extent or total height have changed, update the model
+            // (because we're currently invalid, the resulting call to
+            // invalidate() will have no effect)
+            if (extent != _model.getExtent() ||
+                totheight != _model.getMaximum()) {
+                _model.setRange(0, value, extent, totheight);
+            }
 
-            } else if (_values.size() > 0) {
-                // we may need to fill up with more entries
-                for (int top = bottomIx - getComponentCount();
-                     cheight < theight && top >= 0; top--) {
-                    BComponent child = createComponent(_values.get(top));
-                    add(0, child);
-                    cheight += child.getPreferredSize(twidth, 0).height;
+            // now back up from the last component until we reach the first one
+            // that's in view
+            _offset = _model.getValue();
+            int compIx = 0;
+            for (int ii = 0; ii < _values.size(); ii++) {
+                Entry<V,C> entry = _values.get(ii);
+                if (_offset < entry.height) {
+                    compIx = ii;
+                    break;
+                }
+                _offset -= (entry.height + gap);
+
+                // remove and clear out the components before our top component
+                if (entry.component != null) {
+                    if (entry.component.isAdded()) {
+                        remove(entry.component);
+                    }
+                    entry.component = null;
                 }
             }
 
+            // now add components until we use up our extent
+            int topIx = compIx;
+            while (compIx < _values.size() && extent > 0) {
+                Entry<V,C> entry = _values.get(compIx);
+                if (entry.component == null) {
+                    entry.component = createComponent(entry.value);
+                }
+                if (!entry.component.isAdded()) {
+                    add(compIx-topIx, entry.component);
+                }
+                extent -= (entry.height + gap);
+                compIx++;
+            }
+
+            // lastly remove any components below the last visible component
+            while (compIx < _values.size()) {
+                Entry<V,C> entry = _values.get(compIx);
+                if (entry.component != null) {
+                    if (entry.component.isAdded()) {
+                        remove(entry.component);
+                    }
+                    entry.component = null;
+                }
+                compIx++;
+            }
+
+            // now have the layout manager layout our added components
             super.layout();
         }
 
@@ -256,20 +289,36 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
                            getAbsoluteY() + insets.bottom,
                            _width - insets.getHorizontal(),
                            _height - insets.getVertical());
+            GL11.glTranslatef(0, _offset, 0);
             try {
                 // render our children
                 for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
                     getComponent(ii).render(renderer);
                 }
             } finally {
+                GL11.glTranslatef(0, -_offset, 0);
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
+        }
+
+        protected int _offset;
+        protected boolean _snap;
+    }
+
+    /** Used to track the total height of our entries. */
+    protected static class Entry<V, C extends BComponent>
+    {
+        public C component;
+        public V value;
+        public int height = -1;
+        public Entry (V value) {
+            this.value = value;
         }
     }
 
     protected MouseWheelListener _wheelListener;
     protected BoundedRangeModel _model;
-    protected List<V> _values;
+    protected List<Entry<V,C>> _values;
     protected BViewport _vport;
     protected BScrollBar _vbar;
     protected int _lastBottom;
