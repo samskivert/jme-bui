@@ -169,7 +169,14 @@ public class BWindow extends BContainer
         return _layer - ((BWindow)other)._layer;
     }
 
-    // documentation inherited
+    @Override // from BComponent
+    public void setParent (BComponent parent)
+    {
+        throw new RuntimeException("A window may not be added as a child of " +
+            "any other component. Add it to a BRootNode.");
+    }
+
+    @Override // from BComponent
     public void invalidate ()
     {
         super.invalidate();
@@ -181,7 +188,7 @@ public class BWindow extends BContainer
         }
     }
 
-    // documentation inherited
+    @Override // from BComponent
     public void setBounds (int x, int y, int width, int height)
     {
         boolean relocated = (x != _x || y != _y);
@@ -194,13 +201,13 @@ public class BWindow extends BContainer
         }
     }
 
-    // documentation inherited
+    @Override // from BComponent
     public boolean isAdded ()
     {
         return _root != null;
     }
 
-    // documentation inherited
+    @Override // from BComponent
     protected String getDefaultStyleClass ()
     {
         return "window";
