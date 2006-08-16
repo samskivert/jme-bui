@@ -54,10 +54,7 @@ public class BLabel extends BTextComponent
     {
         _label = new Label(this);
         _label.setText(text);
-
-        if (styleClass != null) {
-            setStyleClass(styleClass);
-        }
+        setStyleClass(styleClass);
     }
 
     /**
@@ -76,10 +73,7 @@ public class BLabel extends BTextComponent
     {
         _label = new Label(this);
         _label.setIcon(icon);
-        
-        if (styleClass != null) {
-            setStyleClass(styleClass);
-        }
+        setStyleClass(styleClass);
     }
     
     /**
