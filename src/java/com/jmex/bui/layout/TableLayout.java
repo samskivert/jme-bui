@@ -78,6 +78,7 @@ public class TableLayout extends BLayoutManager
     public TableLayout (int columns, int rowgap, int colgap)
     {
         _columnWidths = new int[columns];
+        _fixedColumns = new boolean[columns];
         _rowgap = rowgap;
         _colgap = colgap;
     }
@@ -101,6 +102,17 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
+     * Configures a column as fixed or free. If a table layout is configured
+     * with <code>STRETCH</code> horizontal alignment, extra space is divided
+     * up among all of the non-fixed columns. All columns are non-fixed by
+     * default.
+     */
+    public void setFixedColumn (int column, boolean fixed)
+    {
+        _fixedColumns[column] = fixed;
+    }
+
+    /**
      * Configures whether or not the table will force all rows to be a uniform
      * size. This must be called before the container using this layout is
      * validated.
@@ -114,7 +126,7 @@ public class TableLayout extends BLayoutManager
     public Dimension computePreferredSize (
         BContainer target, int whint, int hhint)
     {
-        computeMetrics(target);
+        computeMetrics(target, true);
         int cx = (_columnWidths.length-1) * _colgap;
         int rx = (computeRows(target)-1) * _rowgap;
         return new Dimension(sum(_columnWidths) + cx, sum(_rowHeights) + rx);
@@ -123,7 +135,7 @@ public class TableLayout extends BLayoutManager
     // documentation inherited
     public void layoutContainer (BContainer target)
     {
-        computeMetrics(target);
+        computeMetrics(target, false);
         int totwidth = sum(_columnWidths) + (_columnWidths.length-1) * _colgap;
         int totheight = sum(_rowHeights) + (computeRows(target)-1) * _rowgap;
         Insets insets = target.getInsets();
@@ -160,7 +172,7 @@ public class TableLayout extends BLayoutManager
         }
     }
 
-    protected void computeMetrics (BContainer target)
+    protected void computeMetrics (BContainer target, boolean preferred)
     {
         int rows = computeRows(target);
         if (_rowHeights == null || _rowHeights.length != rows) {
@@ -189,20 +201,40 @@ public class TableLayout extends BLayoutManager
             }
         }
 
-        // if we are stretching, adjust the column widths accordingly
+        // if we are stretching, adjust the column widths accordingly (however,
+        // no adjusting if we're computing our preferred size)
         int naturalWidth;
-        if (_halign == STRETCH && (naturalWidth = sum(_columnWidths)) > 0) {
+        if (!preferred && _halign == STRETCH &&
+            (naturalWidth = sum(_columnWidths)) > 0) {
+            // sum the width of the non-fixed columns
+            int freewid = 0;
+            for (int ii = 0; ii < _fixedColumns.length; ii++) {
+                if (!_fixedColumns[ii]) {
+                    freewid += _columnWidths[ii];
+                }
+            }
+
+            // now divide up the extra space among said non-fixed columns
             int avail = target.getWidth() - target.getInsets().getHorizontal() -
                 naturalWidth - (_colgap * (_columnWidths.length-1));
             int used = 0;
             for (int ii = 0; ii < _columnWidths.length; ii++) {
-                int adjust = _columnWidths[ii] * avail / naturalWidth;
+                if (_fixedColumns[ii]) {
+                    continue;
+                }
+                int adjust = _columnWidths[ii] * avail / freewid;
                 _columnWidths[ii] += adjust;
                 used += adjust;
             }
-            // add any rounding error to the first column
+
+            // add any rounding error to the first non-fixed column
             if (_columnWidths.length > 0) {
-                _columnWidths[0] += (avail - used);
+                for (int ii = 0; ii < _fixedColumns.length; ii++) {
+                    if (!_fixedColumns[ii]) {
+                        _columnWidths[ii] += (avail - used);
+                        break;
+                    }
+                }
             }
         }
 
@@ -236,4 +268,5 @@ public class TableLayout extends BLayoutManager
     protected int _rowgap, _colgap;
     protected int[] _columnWidths;
     protected int[] _rowHeights;
+    protected boolean[] _fixedColumns;
 }
