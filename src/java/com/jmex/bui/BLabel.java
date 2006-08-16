@@ -65,10 +65,23 @@ public class BLabel extends BTextComponent
      */
     public BLabel (BIcon icon)
     {
-        _label = new Label(this);
-        _label.setIcon(icon);
+        this(icon, null);
     }
 
+    /**
+     * Creates a label that will display the supplied icon using the specified
+     * style class.
+     */
+    public BLabel (BIcon icon, String styleClass)
+    {
+        _label = new Label(this);
+        _label.setIcon(icon);
+        
+        if (styleClass != null) {
+            setStyleClass(styleClass);
+        }
+    }
+    
     /**
      * Configures the label to display the specified icon.
      */
