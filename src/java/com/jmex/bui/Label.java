@@ -186,7 +186,7 @@ public class Label
     public Dimension computePreferredSize (int whint, int hhint)
     {
         // if our cached preferred size is not valid, recompute it
-        Config prefconfig = getConfig(whint > 0 ? whint : Short.MAX_VALUE);
+        Config prefconfig = getConfig(whint > 0 ? whint : _twidth);
         if (!prefconfig.equals(_prefconfig)) {
             _prefconfig = prefconfig;
             _prefsize = layoutAndComputeSize(prefconfig.twidth);
