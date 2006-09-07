@@ -250,6 +250,9 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
                 }
             }
 
+            // compensate for the partially visible topmost component
+            extent += _offset;
+
             // now add components until we use up our extent
             int topIx = compIx;
             while (compIx < _values.size() && extent > 0) {
