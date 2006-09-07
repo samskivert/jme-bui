@@ -23,6 +23,7 @@ package com.jmex.bui.background;
 import com.jme.renderer.Renderer;
 
 import com.jmex.bui.BImage;
+import com.jmex.bui.util.Insets;
 
 /**
  * Supports image backgrounds in a variety of ways. Specifically:
@@ -69,8 +70,14 @@ public class ImageBackground extends BBackground
 
     public ImageBackground (int mode, BImage image)
     {
+        this(mode, image, null);
+    }
+
+    public ImageBackground (int mode, BImage image, Insets frame)
+    {
         _mode = mode;
         _image = image;
+        _frame = frame;
     }
 
     // documentation inherited
@@ -207,38 +214,49 @@ public class ImageBackground extends BBackground
     {
         // render each of our image sections appropriately
         int twidth = _image.getWidth(), theight = _image.getHeight();
-        int wthird = twidth/3, hthird = theight/3;
-        int wmiddle = twidth - 2*wthird, hmiddle = theight - 2*hthird;
+        if (_frame == null) {
+            _frame = new Insets();
+            _frame.left = twidth/3;
+            _frame.right = twidth/3;
+            _frame.top = theight/3;
+            _frame.bottom = theight/3;
+        }
 
         // draw the corners
-        _image.render(renderer, 0, 0, wthird, hthird, x, y, alpha);
-        _image.render(renderer, twidth-wthird, 0, wthird, hthird,
-                      x+width-wthird, y, alpha);
-        _image.render(renderer, 0, theight-hthird, wthird, hthird,
-                      x, y+height-hthird, alpha);
-        _image.render(renderer, twidth-wthird, theight-hthird, wthird, hthird,
-                      x+width-wthird, y+height-hthird, alpha);
+        _image.render(renderer, 0, 0, _frame.left, _frame.bottom, x, y, alpha);
+        _image.render(renderer, twidth-_frame.right, 0, _frame.right,
+                      _frame.bottom, x+width-_frame.right, y, alpha);
+        _image.render(renderer, 0, theight-_frame.top, _frame.left,
+                      _frame.top, x, y+height-_frame.top, alpha);
+        _image.render(renderer, twidth-_frame.right, theight-_frame.top,
+                      _frame.right, _frame.top, x+width-_frame.right,
+                      y+height-_frame.top, alpha);
 
         // draw the "gaps"
-        int ghmiddle = width-2*wthird, gvmiddle = height-2*hthird;
-        _image.render(renderer, wthird, 0, wmiddle, hthird, x+wthird, y,
-                      ghmiddle, hthird, alpha);
-        _image.render(renderer, wthird, theight-hthird, wmiddle, hthird,
-                      x+wthird, y+height-hthird, ghmiddle, hthird, alpha);
-
-        _image.render(renderer, 0, hthird, wthird, hmiddle, x, y+hthird,
-                      wthird, gvmiddle, alpha);
-        _image.render(renderer, twidth-wthird, hthird, wthird, hmiddle,
-                      x+width-wthird, y+hthird, wthird, gvmiddle, alpha);
+        int wmiddle = twidth - _frame.getHorizontal(),
+            hmiddle = theight - _frame.getVertical();
+        int gwmiddle = width - _frame.getHorizontal(),
+            ghmiddle = height - _frame.getVertical();
+        _image.render(renderer, _frame.left, 0, wmiddle, _frame.bottom,
+                      x+_frame.left, y, gwmiddle, _frame.bottom, alpha);
+        _image.render(renderer, _frame.left, theight-_frame.top, wmiddle,
+                      _frame.top, x+_frame.left, y+height-_frame.top, 
+                      gwmiddle, _frame.top, alpha);
+        _image.render(renderer, 0, _frame.bottom, _frame.left, hmiddle, x,
+                      y+_frame.bottom, _frame.left, ghmiddle, alpha);
+        _image.render(renderer, twidth-_frame.right, _frame.bottom,
+                      _frame.right, hmiddle, x+width-_frame.right,
+                      y+_frame.bottom, _frame.right, ghmiddle, alpha);
 
         // draw the center
-        _image.render(renderer, wthird, hthird, twidth-2*wthird,
-                      theight-2*hthird, x+wthird, y+hthird, width-2*wthird,
-                      height-2*hthird, alpha);
+        _image.render(renderer, _frame.left, _frame.bottom, wmiddle, hmiddle,
+                      x+_frame.left, y+_frame.bottom, gwmiddle, ghmiddle,
+                      alpha);
     }
 
     protected int _mode;
     protected BImage _image;
+    protected Insets _frame;
 
     protected static final int CENTER = 0;
     protected static final int SCALE = 1;

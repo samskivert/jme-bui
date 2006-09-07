@@ -65,6 +65,7 @@ import com.jmex.bui.util.Insets;
  *                                    //      scalex|scaley|scalexy|
  *                                    //      tilex|tiley|tilexy|
  *                                    //      framex|framey|framexy
+ *   background: image monkey.png framexy top right bottom left;
  *
  *   // text properties
  *   font: Helvetica XX 12; // XX = normal|bold|italic|bolditalic
@@ -434,6 +435,17 @@ public class BStyleSheet
                             "Unknown background scaling type: '" + scale + "'");
                     }
                     bprop.scale = scval.intValue();
+                    if (bprop.scale == ImageBackground.FRAME_XY &&
+                            args.size() > 3) {
+                        bprop.frame = new Insets();
+                        bprop.frame.top = parseInt(args.get(3));
+                        bprop.frame.right = (args.size() > 4) ?
+                            parseInt(args.get(4)) : bprop.frame.top;
+                        bprop.frame.bottom = (args.size() > 5) ?
+                            parseInt(args.get(5)) : bprop.frame.top;
+                        bprop.frame.left = (args.size() > 6) ?
+                            parseInt(args.get(6)) : bprop.frame.right;
+                    }
                 }
 
             } else if (bprop.type.equals("blank")) {
@@ -645,6 +657,7 @@ public class BStyleSheet
         ColorRGBA color;
         String ipath;
         int scale = ImageBackground.SCALE_XY;
+        Insets frame;
 
         public Object resolve (ResourceProvider rsrcprov) {
             if (type.equals("solid")) {
@@ -658,7 +671,7 @@ public class BStyleSheet
                                        ipath + "': " + ioe);
                     return new BlankBackground();
                 }
-                return new ImageBackground(scale, image);
+                return new ImageBackground(scale, image, frame);
             } else {
                 return new BlankBackground();
             }
