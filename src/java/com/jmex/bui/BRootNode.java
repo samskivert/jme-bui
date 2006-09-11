@@ -254,10 +254,15 @@ public abstract class BRootNode extends Geometry
 
         // check to see if we need to pop up a tooltip
         _lastMoveTime += time;
+        _lastTipTime += time;
         String tiptext;
         if (_hcomponent == null || _tipwin != null ||
-            _lastMoveTime < getTooltipTimeout() ||
+            (_lastMoveTime < getTooltipTimeout() && 
+             _lastTipTime > TIP_MODE_RESET) ||
             (tiptext = _hcomponent.getTooltipText()) == null) {
+            if (_tipwin != null) {
+                _lastTipTime = 0;
+            }
             return;
         }
 
@@ -430,12 +435,6 @@ public abstract class BRootNode extends Geometry
 
         // calculate our new hover component
         updateHoverComponent(_mouseX, _mouseY);
-
-        // clear out any tip window if we moved the mouse; but not if we're in
-        // always-on tip mode
-        if (getTooltipTimeout() > 0) {
-            clearTipWindow();
-        }
     }
 
     /**
@@ -499,7 +498,7 @@ public abstract class BRootNode extends Geometry
     protected int _mouseX, _mouseY;
 
     protected BWindow _tipwin;
-    protected float _lastMoveTime, _tipTime = 1f;
+    protected float _lastMoveTime, _tipTime = 1f, _lastTipTime;
     protected int _tipWidth = -1;
 
     protected ArrayList _windows = new ArrayList();
@@ -507,4 +506,6 @@ public abstract class BRootNode extends Geometry
     protected BComponent _focus;
     protected ArrayList _defaults = new ArrayList();
     protected ArrayList _geomviews = new ArrayList();
+
+    protected static final float TIP_MODE_RESET = 1f;
 }
