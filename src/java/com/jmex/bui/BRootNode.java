@@ -460,7 +460,7 @@ public abstract class BRootNode extends Geometry
         for (int ii = _windows.size()-1; ii >= 0; ii--) {
             BWindow comp = (BWindow)_windows.get(ii);
             nhcomponent = comp.getHitComponent(mx, my);
-            if (nhcomponent != null) {
+            if (nhcomponent != null && nhcomponent.getWindow() != _tipwin) {
                 break;
             }
             // if this window is modal, stop here
