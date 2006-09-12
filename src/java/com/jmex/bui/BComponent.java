@@ -478,6 +478,27 @@ public class BComponent
     }
 
     /**
+     * Sets where to position the tooltip window.
+     *
+     * @param mouse if true, the window will appear relative to the mouse
+     * position, if false, the window will appear relative to the component
+     * bounds.
+     */
+    public void setTooltipRelativeToMouse (boolean mouse)
+    {
+        _tipmouse = mouse;
+    }
+
+    /**
+     * Returns true if the tooltip window should be position relative to
+     * the mouse.
+     */
+    public boolean isTooltipRelativeToMouse ()
+    {
+        return _tipmouse;
+    }
+
+    /**
      * Returns true if this component is added to a hierarchy of
      * components that culminates in a top-level window.
      */
@@ -884,6 +905,7 @@ public class BComponent
     protected ArrayList _listeners;
     protected HashMap _properties;
     protected String _tiptext;
+    protected boolean _tipmouse;
 
     protected boolean _valid, _enabled = true, _hover;
     protected float _alpha = 1f;

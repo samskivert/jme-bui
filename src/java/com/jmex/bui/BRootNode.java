@@ -286,9 +286,16 @@ public abstract class BRootNode extends Geometry
         int width = DisplaySystem.getDisplaySystem().getWidth();
         int height = DisplaySystem.getDisplaySystem().getHeight();
         _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);
-        int tx = _mouseX - _tipwin.getWidth()/2;
+        int tx = 0, ty = 0;
+        if (_hcomponent.isTooltipRelativeToMouse()) {
+            tx = _mouseX - _tipwin.getWidth()/2;
+            ty = _mouseY + 10;
+        } else {
+            tx = _hcomponent.getAbsoluteX() + 
+                (_hcomponent.getWidth() - _tipwin.getWidth()) / 2;
+            ty = _hcomponent.getAbsoluteY() + _hcomponent.getHeight() + 10;
+        }
         tx = Math.max(5, Math.min(tx, width-_tipwin.getWidth()-5));
-        int ty = _mouseY + 10;
         ty = Math.min(ty, height- _tipwin.getHeight() - 5);
         _tipwin.setLocation(tx, ty);
         // we need to validate here because we're adding a window in the middle
@@ -435,6 +442,10 @@ public abstract class BRootNode extends Geometry
 
         // calculate our new hover component
         updateHoverComponent(_mouseX, _mouseY);
+
+        if (_tipwin == null) {
+            _lastMoveTime = 0;
+        }
     }
 
     /**
@@ -507,5 +518,5 @@ public abstract class BRootNode extends Geometry
     protected ArrayList _defaults = new ArrayList();
     protected ArrayList _geomviews = new ArrayList();
 
-    protected static final float TIP_MODE_RESET = 1f;
+    protected static final float TIP_MODE_RESET = 0.6f;
 }
