@@ -49,14 +49,14 @@ public class BScrollPane extends BContainer
         super(new BorderLayout(0, 0));
 
         add(_vport = new BViewport(child, vert, horiz, snap), 
-                BorderLayout.CENTER);
+            BorderLayout.CENTER);
         if (vert) {
             add(_vbar = new BScrollBar(BScrollBar.VERTICAL, 
-                        _vport.getVModel()), BorderLayout.EAST);
+                    _vport.getVModel()), BorderLayout.EAST);
         }
         if (horiz) {
             add(_hbar = new BScrollBar(BScrollBar.HORIZONTAL, 
-                        _vport.getHModel()), BorderLayout.SOUTH);
+                    _vport.getHModel()), BorderLayout.SOUTH);
         }
     }
 
@@ -97,8 +97,8 @@ public class BScrollPane extends BContainer
      * horizontal scrolling as well. */
     protected static class BViewport extends BContainer
     {
-        public BViewport (BComponent target, boolean vert, boolean horiz,
-                          int snap)
+        public BViewport (
+            BComponent target, boolean vert, boolean horiz, int snap)
         {
             if (vert) {
                 if (snap > 0) {
@@ -191,11 +191,11 @@ public class BScrollPane extends BContainer
             }
         }
 
-         // documentation inherited
-         public int getAbsoluteX ()
-         {
-             return super.getAbsoluteX() + getXOffset();
-         }
+        // documentation inherited
+        public int getAbsoluteX ()
+        {
+            return super.getAbsoluteX() + getXOffset();
+        }
 
         // documentation inherited
         public int getAbsoluteY ()
@@ -210,13 +210,13 @@ public class BScrollPane extends BContainer
             Insets insets = getInsets();
             if ((mx < _x + insets.left) || (my < _y + insets.bottom) ||
                 (mx >= _x + _width - insets.right) ||
-                (my > _y + _height - insets.top)) {
+                (my >= _y + _height - insets.top)) {
                 return null;
             }
 
             // translate the coordinate into our children's coordinates
-            mx -= (_x + insets.left + getXOffset());
-            my -= (_y + insets.bottom + getYOffset());
+            mx -= (_x + getXOffset());
+            my -= (_y + getYOffset());
 
             BComponent hit = null;
             for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
@@ -265,9 +265,9 @@ public class BScrollPane extends BContainer
             GL11.glTranslatef(xoffset, yoffset, 0);
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             GL11.glScissor((getAbsoluteX() + insets.left) - xoffset,
-                           (getAbsoluteY() + insets.bottom) - yoffset,
-                           _width - insets.getHorizontal(),
-                           _height - insets.getVertical());
+                (getAbsoluteY() + insets.bottom) - yoffset,
+                _width - insets.getHorizontal(),
+                _height - insets.getVertical());
             try {
                 // and then render our target component
                 _target.render(renderer);
