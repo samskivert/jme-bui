@@ -115,6 +115,6 @@ public class AbsoluteLayout extends BLayoutManager
         }
     }
 
-    protected HashMap<BComponent,Object> _spots =
-        new HashMap<BComponent,Object>();
+    protected HashMap<BComponent, Object> _spots =
+        new HashMap<BComponent, Object>();
 }

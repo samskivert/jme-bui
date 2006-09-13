@@ -44,8 +44,8 @@ public class ScrollingListTest extends BaseTest
             e.printStackTrace(System.err);
         }
 
-        BScrollingList<String,BButton> list =
-            new BScrollingList<String,BButton>() {
+        BScrollingList<String, BButton> list =
+            new BScrollingList<String, BButton>() {
             public BButton createComponent(String str) {
                 return new BButton(str);
             }

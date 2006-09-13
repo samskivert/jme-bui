@@ -616,7 +616,8 @@ public class BStyleSheet
 
         public String pseudoClass;
 
-        public HashMap<String,Object> properties = new HashMap<String,Object>();
+        public HashMap<String, Object> properties =
+            new HashMap<String, Object>();
 
         public Object get (HashMap rules, String key)
         {
@@ -706,16 +707,16 @@ public class BStyleSheet
     }
 
     protected ResourceProvider _rsrcprov;
-    protected HashMap<String,Rule> _rules = new HashMap<String,Rule>();
+    protected HashMap<String, Rule> _rules = new HashMap<String, Rule>();
 
-    protected static HashMap<String,Integer> _taconsts =
-        new HashMap<String,Integer>();
-    protected static HashMap<String,Integer> _vaconsts =
-        new HashMap<String,Integer>();
-    protected static HashMap<String,Integer> _teconsts =
-        new HashMap<String,Integer>();
-    protected static HashMap<String,Integer> _ibconsts =
-        new HashMap<String,Integer>();
+    protected static HashMap<String, Integer> _taconsts =
+        new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _vaconsts =
+        new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _teconsts =
+        new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _ibconsts =
+        new HashMap<String, Integer>();
 
     static {
         // alignment constants

@@ -57,10 +57,10 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
     {
         super(new BorderLayout(0, 0));
 
-        _values = new ArrayList<Entry<V,C>>();
+        _values = new ArrayList<Entry<V, C>>();
         if (values != null) {
             for (V value : values) {
-                _values.add(new Entry<V,C>(value));
+                _values.add(new Entry<V, C>(value));
             }
         }
         _lastBottom = 0;
@@ -129,7 +129,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
      */
     protected void addValue (int index, V value, boolean snap)
     {
-        _values.add(index, new Entry<V,C>(value));
+        _values.add(index, new Entry<V, C>(value));
         _vport.invalidateAndSnap();
     }
 
@@ -193,7 +193,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
             // first make sure all of our entries have been measured and
             // compute our total height and extent
             int totheight = 0;
-            for (Entry<V,C> entry : _values) {
+            for (Entry<V, C> entry : _values) {
                 if (entry.height < 0) {
                     if (entry.component == null) {
                         entry.component = createComponent(entry.value);
@@ -234,7 +234,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
             _offset = _model.getValue();
             int compIx = 0;
             for (int ii = 0; ii < _values.size(); ii++) {
-                Entry<V,C> entry = _values.get(ii);
+                Entry<V, C> entry = _values.get(ii);
                 if (_offset < entry.height) {
                     compIx = ii;
                     break;
@@ -256,7 +256,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
             // now add components until we use up our extent
             int topIx = compIx;
             while (compIx < _values.size() && extent > 0) {
-                Entry<V,C> entry = _values.get(compIx);
+                Entry<V, C> entry = _values.get(compIx);
                 if (entry.component == null) {
                     entry.component = createComponent(entry.value);
                 }
@@ -269,7 +269,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
 
             // lastly remove any components below the last visible component
             while (compIx < _values.size()) {
-                Entry<V,C> entry = _values.get(compIx);
+                Entry<V, C> entry = _values.get(compIx);
                 if (entry.component != null) {
                     if (entry.component.isAdded()) {
                         remove(entry.component);
@@ -321,7 +321,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
 
     protected MouseWheelListener _wheelListener;
     protected BoundedRangeModel _model;
-    protected List<Entry<V,C>> _values;
+    protected List<Entry<V, C>> _values;
     protected BViewport _vport;
     protected BScrollBar _vbar;
     protected int _lastBottom;

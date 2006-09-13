@@ -333,7 +333,7 @@ public class BComponent
     public void setProperty (String key, Object value)
     {
         if (_properties == null) {
-            _properties = new HashMap<String,Object>();
+            _properties = new HashMap<String, Object>();
         }
         _properties.put(key, value);
     }
@@ -903,7 +903,7 @@ public class BComponent
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
     protected ArrayList<ComponentListener> _listeners;
-    protected HashMap<String,Object> _properties;
+    protected HashMap<String, Object> _properties;
     protected String _tiptext;
     protected boolean _tipmouse;
 

@@ -136,7 +136,7 @@ public class CanvasRootNode extends BRootNode
         KeyEvent event = new KeyEvent(
             this, e.getWhen(), _modifiers, KeyEvent.KEY_PRESSED,
             e.getKeyChar(), convertKeyCode(e));
-        dispatchEvent(getTargetComponent(),event);
+        dispatchEvent(getTargetComponent(), event);
     }
     
     // documentation inherited from interface KeyListener

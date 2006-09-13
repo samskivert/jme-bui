@@ -305,7 +305,7 @@ public class AWTTextFactory extends BTextFactory
      * string to render them.
      */
     protected AttributedString parseStyledText (
-        String text, HashMap<TextAttribute,Font> attrs, String[] bare)
+        String text, HashMap<TextAttribute, Font> attrs, String[] bare)
     {
         // if there are no style commands in the text, skip the complexity
         if (text.indexOf("@=") == -1) {
@@ -494,8 +494,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     protected boolean _antialias;
-    protected HashMap<TextAttribute,Font> _attrs =
-        new HashMap<TextAttribute,Font>();
+    protected HashMap<TextAttribute, Font> _attrs =
+        new HashMap<TextAttribute, Font>();
     protected int _height;
     protected BufferedImage _stub;
 
