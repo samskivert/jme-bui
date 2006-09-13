@@ -89,19 +89,19 @@ public class BPopupMenu extends BPopupWindow
         int height = DisplaySystem.getDisplaySystem().getHeight();
 
         // determine whether we can fit in the window
-        ArrayList children = null;
+        ArrayList<BComponent> children = null;
         int columns = 1;
         do {
             Dimension d = getPreferredSize(-1, -1);
             if (d.height > height) {
                 // remove our children, switch to a table layout and readd
                 if (children == null) {
-                    children = new ArrayList(_children);
+                    children = new ArrayList<BComponent>(_children);
                 }
                 removeAll();
                 setLayoutManager(new TableLayout(++columns, 0, 5));
                 for (int ii = 0; ii < children.size(); ii++) {
-                    add((BComponent)children.get(ii));
+                    add(children.get(ii));
                 }
             } else {
                 break;

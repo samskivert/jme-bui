@@ -58,7 +58,7 @@ public class Document
     public void addListener (Listener listener)
     {
         if (_listeners == null) {
-            _listeners = new ArrayList();
+            _listeners = new ArrayList<Listener>();
         }
         _listeners.add(listener);
     }
@@ -174,7 +174,7 @@ public class Document
         if (_listeners != null) {
             String action = inserted ? "insertion" : "removal";
             for (int ii = _listeners.size()-1; ii >= 0; ii--) {
-                Listener list = (Listener)_listeners.get(ii);
+                Listener list = _listeners.get(ii);
                 try {
                     if (inserted) {
                         list.textInserted(this, offset, length);
@@ -192,5 +192,5 @@ public class Document
     }
 
     protected String _text = "";
-    protected ArrayList _listeners;
+    protected ArrayList<Listener> _listeners;
 }

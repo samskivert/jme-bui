@@ -103,7 +103,7 @@ public class BComboBox extends BLabel
      */
     public Object getSelectedItem ()
     {
-        return _selidx == -1 ? null : ((ComboMenuItem)_items.get(_selidx)).item;
+        return _selidx == -1 ? null : _items.get(_selidx).item;
     }
 
     /**
@@ -122,7 +122,7 @@ public class BComboBox extends BLabel
     {
         int selidx = -1;
         for (int ii = 0, ll = _items.size(); ii < ll; ii++) {
-            ComboMenuItem mitem = (ComboMenuItem)_items.get(ii);
+            ComboMenuItem mitem = _items.get(ii);
             if (mitem.item.equals(item)) {
                 selidx = ii;
                 break;
@@ -150,7 +150,7 @@ public class BComboBox extends BLabel
                     _menu = new BPopupMenu(getWindow());
                     _menu.addListener(_listener);
                     for (int ii = 0; ii < _items.size(); ii++) {
-                        _menu.addMenuItem((ComboMenuItem)_items.get(ii));
+                        _menu.addMenuItem(_items.get(ii));
                     }
                 }
                 _menu.popup(getAbsoluteX(), getAbsoluteY(), false);
@@ -225,6 +225,6 @@ public class BComboBox extends BLabel
     };
 
     protected int _selidx = -1;
-    protected ArrayList _items = new ArrayList();
+    protected ArrayList<ComboMenuItem> _items = new ArrayList<ComboMenuItem>();
     protected BPopupMenu _menu;
 }

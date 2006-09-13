@@ -60,7 +60,7 @@ public abstract class BRootNode extends Geometry
         // make a note of the current top window
         BWindow curtop = null;
         if (_windows.size() > 0) {
-            curtop = (BWindow)_windows.get(_windows.size()-1);
+            curtop = _windows.get(_windows.size()-1);
         }
 
         // add this window into the stack and resort
@@ -143,7 +143,7 @@ public abstract class BRootNode extends Geometry
         // finally restore the focus to the new top-most window if it has a
         // saved focus
         if (_windows.size() > 0) {
-            BWindow top = (BWindow)_windows.get(_windows.size()-1);
+            BWindow top = _windows.get(_windows.size()-1);
             if (top._savedFocus != null) {
                 setFocus(top._savedFocus);
                 top._savedFocus = null;
@@ -249,7 +249,7 @@ public abstract class BRootNode extends Geometry
 
         // update our geometry views if we have any
         for (int ii = 0, ll = _geomviews.size(); ii < ll; ii++) {
-            ((BGeomView)_geomviews.get(ii)).update(time);
+            _geomviews.get(ii).update(time);
         }
 
         // check to see if we need to pop up a tooltip
@@ -321,7 +321,7 @@ public abstract class BRootNode extends Geometry
 
         // render all of our windows
         for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
-            BWindow win = (BWindow)_windows.get(ii);
+            BWindow win = _windows.get(ii);
             try {
                 win.render(renderer);
             } catch (Throwable t) {
@@ -362,7 +362,7 @@ public abstract class BRootNode extends Geometry
 
         // next try the most recently opened modal window, if we have one
         for (int ii = _windows.size()-1; ii >= 0; ii--) {
-            BWindow window = (BWindow)_windows.get(ii);
+            BWindow window = _windows.get(ii);
             if (window.isModal()) {
                 if (window != sentwin) {
                     if (window.dispatchEvent(event)) {
@@ -375,7 +375,7 @@ public abstract class BRootNode extends Geometry
 
         // finally try the default event targets
         for (int ii = _defaults.size()-1; ii >= 0; ii--) {
-            BComponent deftarg = (BComponent)_defaults.get(ii);
+            BComponent deftarg = _defaults.get(ii);
             if (deftarg.dispatchEvent(event)) {
                 return;
             }
@@ -458,7 +458,7 @@ public abstract class BRootNode extends Geometry
         // components
         BComponent nhcomponent = null;
         for (int ii = _windows.size()-1; ii >= 0; ii--) {
-            BWindow comp = (BWindow)_windows.get(ii);
+            BWindow comp = _windows.get(ii);
             nhcomponent = comp.getHitComponent(mx, my);
             if (nhcomponent != null && nhcomponent.getWindow() != _tipwin) {
                 break;
@@ -512,11 +512,11 @@ public abstract class BRootNode extends Geometry
     protected float _lastMoveTime, _tipTime = 1f, _lastTipTime;
     protected int _tipWidth = -1;
 
-    protected ArrayList _windows = new ArrayList();
+    protected ArrayList<BWindow> _windows = new ArrayList<BWindow>();
     protected BComponent _hcomponent, _ccomponent;
     protected BComponent _focus;
-    protected ArrayList _defaults = new ArrayList();
-    protected ArrayList _geomviews = new ArrayList();
+    protected ArrayList<BComponent> _defaults = new ArrayList<BComponent>();
+    protected ArrayList<BGeomView> _geomviews = new ArrayList<BGeomView>();
 
     protected static final float TIP_MODE_RESET = 0.6f;
 }

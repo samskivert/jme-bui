@@ -90,7 +90,7 @@ public class BTabbedPane extends BContainer
     public void removeTab (int tabidx)
     {
         _buttons.remove(_buttons.getComponent(tabidx));
-        BComponent tab = (BComponent)_tabs.remove(tabidx);
+        BComponent tab = _tabs.remove(tabidx);
 
         // if we're removing the selected tab...
         if (_selidx == tabidx) {
@@ -116,7 +116,7 @@ public class BTabbedPane extends BContainer
     public void removeAllTabs ()
     {
         if (_selidx != -1) {
-            remove((BComponent)_tabs.get(_selidx));
+            remove(_tabs.get(_selidx));
         }
         _selidx = -1;
         _buttons.removeAll();
@@ -155,9 +155,9 @@ public class BTabbedPane extends BContainer
         }
         // remove the current tab and add the requested one
         if (_selidx != -1) {
-            remove((BComponent)_tabs.get(_selidx));
+            remove(_tabs.get(_selidx));
         }
-        add((BComponent)_tabs.get(tabidx), BorderLayout.CENTER);
+        add(_tabs.get(tabidx), BorderLayout.CENTER);
         _selidx = tabidx;
     }
 
@@ -219,6 +219,6 @@ public class BTabbedPane extends BContainer
     };
 
     protected BContainer _buttons;
-    protected ArrayList _tabs = new ArrayList();
+    protected ArrayList<BComponent> _tabs = new ArrayList<BComponent>();
     protected int _selidx = -1;
 }

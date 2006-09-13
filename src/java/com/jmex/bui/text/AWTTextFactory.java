@@ -133,7 +133,7 @@ public class AWTTextFactory extends BTextFactory
             text = " ";
         }
 
-        ArrayList texts = new ArrayList();
+        ArrayList<BText> texts = new ArrayList<BText>();
         Graphics2D gfx = _stub.createGraphics();
         TextLayout layout;
         try {
@@ -175,7 +175,7 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        return (BText[])texts.toArray(new BText[texts.size()]);
+        return texts.toArray(new BText[texts.size()]);
     }
 
     /** Helper function. */
@@ -305,7 +305,7 @@ public class AWTTextFactory extends BTextFactory
      * string to render them.
      */
     protected AttributedString parseStyledText (
-        String text, HashMap attrs, String[] bare)
+        String text, HashMap<TextAttribute,Font> attrs, String[] bare)
     {
         // if there are no style commands in the text, skip the complexity
         if (text.indexOf("@=") == -1) {
@@ -317,7 +317,8 @@ public class AWTTextFactory extends BTextFactory
 
         // parse the style commands into an array of styled runs and extract
         // the raw text along the way
-        ArrayList stack = new ArrayList(), runs = new ArrayList();
+        ArrayList<StyleRun> stack = new ArrayList<StyleRun>();
+        ArrayList<StyleRun> runs = new ArrayList<StyleRun>();
         StringBuffer raw = new StringBuffer();
         int rawpos = 0;
         for (int ii = 0, ll = text.length(); ii < ll; ii++) {
@@ -329,7 +330,7 @@ public class AWTTextFactory extends BTextFactory
                     raw.append(c);
                     rawpos++;
                 } else {
-                    StyleRun run = (StyleRun)stack.remove(0);
+                    StyleRun run = stack.remove(0);
                     run.end = rawpos;
                     runs.add(run);
                 }
@@ -411,7 +412,7 @@ public class AWTTextFactory extends BTextFactory
         // now create an attributed string and add our styles
         AttributedString string = new AttributedString(rawtext, attrs);
         for (int ii = 0; ii < runs.size(); ii++) {
-            StyleRun run = (StyleRun)runs.get(ii);
+            StyleRun run = runs.get(ii);
             if (run.styles == null) {
                 continue; // ignore runs we failed to parse
             }
@@ -436,7 +437,7 @@ public class AWTTextFactory extends BTextFactory
                     // setting TextAttribute.WEIGHT doesn't seem to work
                     string.addAttribute(
                         TextAttribute.FONT,
-                        ((Font)attrs.get(TextAttribute.FONT)).
+                        attrs.get(TextAttribute.FONT).
                         deriveFont(Font.BOLD),
                         run.start, run.end);
                     break;
@@ -493,7 +494,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     protected boolean _antialias;
-    protected HashMap _attrs = new HashMap();
+    protected HashMap<TextAttribute,Font> _attrs =
+        new HashMap<TextAttribute,Font>();
     protected int _height;
     protected BufferedImage _stub;
 

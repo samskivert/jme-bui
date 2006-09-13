@@ -313,7 +313,7 @@ public class BStyleSheet
 
     protected Object getProperty (String fqClass, String property)
     {
-        Rule rule = (Rule)_rules.get(fqClass);
+        Rule rule = _rules.get(fqClass);
         if (rule == null) {
             return null;
         }
@@ -383,7 +383,7 @@ public class BStyleSheet
             fail(tok, ":");
         }
 
-        ArrayList args = new ArrayList();
+        ArrayList<Comparable> args = new ArrayList<Comparable>();
         while (tok.nextToken() != ';' && tok.ttype != '}') {
             switch (tok.ttype) {
             case '\'':
@@ -429,7 +429,7 @@ public class BStyleSheet
                 bprop.ipath = (String)args.get(1);
                 if (args.size() > 2) {
                     String scale = (String)args.get(2);
-                    Integer scval = (Integer)_ibconsts.get(scale);
+                    Integer scval = _ibconsts.get(scale);
                     if (scval == null) {
                         throw new IllegalArgumentException(
                             "Unknown background scaling type: '" + scale + "'");
@@ -555,7 +555,7 @@ public class BStyleSheet
             return size;
 
         } else if (name.equals("parent")) {
-            Rule parent = (Rule)_rules.get(args.get(0));
+            Rule parent = _rules.get(args.get(0));
             if (parent == null) {
                 throw new IllegalArgumentException(
                     "Unknown parent class '" + args.get(0) + "'");
@@ -616,7 +616,7 @@ public class BStyleSheet
 
         public String pseudoClass;
 
-        public HashMap properties = new HashMap();
+        public HashMap<String,Object> properties = new HashMap<String,Object>();
 
         public Object get (HashMap rules, String key)
         {
@@ -706,12 +706,17 @@ public class BStyleSheet
     }
 
     protected ResourceProvider _rsrcprov;
-    protected HashMap _rules = new HashMap();
+    protected HashMap<String,Rule> _rules = new HashMap<String,Rule>();
 
-    protected static HashMap _taconsts = new HashMap();
-    protected static HashMap _vaconsts = new HashMap();
-    protected static HashMap _teconsts = new HashMap();
-    protected static HashMap _ibconsts = new HashMap();
+    protected static HashMap<String,Integer> _taconsts =
+        new HashMap<String,Integer>();
+    protected static HashMap<String,Integer> _vaconsts =
+        new HashMap<String,Integer>();
+    protected static HashMap<String,Integer> _teconsts =
+        new HashMap<String,Integer>();
+    protected static HashMap<String,Integer> _ibconsts =
+        new HashMap<String,Integer>();
+
     static {
         // alignment constants
         _taconsts.put("left", new Integer(BConstants.LEFT));

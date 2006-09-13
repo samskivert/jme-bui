@@ -33,7 +33,7 @@ import com.jmex.bui.util.Insets;
  * with a stylesheet and layout manager.
  */
 public class BWindow extends BContainer
-    implements Comparable
+    implements Comparable<BWindow>
 {
     public BWindow (BStyleSheet style, BLayoutManager layout)
     {
@@ -164,9 +164,9 @@ public class BWindow extends BContainer
     }
 
     // documentation inherited from interface Comparable
-    public int compareTo (Object other)
+    public int compareTo (BWindow other)
     {
-        return _layer - ((BWindow)other)._layer;
+        return _layer - other._layer;
     }
 
     @Override // from BComponent

@@ -120,7 +120,7 @@ public class LayoutTest extends BaseTest
         GroupLayout glay = GroupLayout.makeVStretch();
         glay.setGap(0);
         cont = new BContainer(glay);
-        ArrayList items = new ArrayList();
+        ArrayList<String> items = new ArrayList<String>();
         for (int ii = 0; ii < 100; ii++) {
             items.add("item " + ii);
         }

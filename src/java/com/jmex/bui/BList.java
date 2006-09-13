@@ -91,7 +91,7 @@ public class BList extends BContainer
         if (idx == _selidx) {
             _selidx = -1;
         }
-        remove((BComponent)_children.get(idx));
+        remove(_children.get(idx));
         _values.remove(idx);
         return true;
     }
@@ -131,7 +131,7 @@ public class BList extends BContainer
     }
     
     /** The values contained in the list. */
-    protected ArrayList _values = new ArrayList();
+    protected ArrayList<Object> _values = new ArrayList<Object>();
     
     /** The index of the current selection (or -1 for none). */
     protected int _selidx = -1;

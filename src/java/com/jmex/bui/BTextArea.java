@@ -22,14 +22,9 @@ package com.jmex.bui;
 
 import java.util.ArrayList;
 
-import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Text;
-import com.jme.system.DisplaySystem;
 
-import com.jmex.bui.background.BBackground;
-import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.ChangeEvent;
 import com.jmex.bui.event.ChangeListener;
 import com.jmex.bui.text.BText;
@@ -202,7 +197,7 @@ public class BTextArea extends BContainer
         return (textfact != null) ? textfact : _textfacts[DEFAULT];
     }
 
-    // documentation inherited
+    @Override // from BTextArea
     public void setEnabled (boolean enabled)
     {
         boolean wasEnabled = isEnabled();
@@ -212,19 +207,19 @@ public class BTextArea extends BContainer
         }
     }
 
-    // documentation inherited
+    @Override // from BTextArea
     protected String getDefaultStyleClass ()
     {
         return "textarea";
     }
 
-    // documentation inherited
+    @Override // from BTextArea
     protected void wasAdded ()
     {
         super.wasAdded();
 
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            ((Line)_lines.get(ii)).wasAdded();
+            _lines.get(ii).wasAdded();
         }
     }
 
@@ -234,7 +229,7 @@ public class BTextArea extends BContainer
         super.wasRemoved();
 
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            ((Line)_lines.get(ii)).wasRemoved();
+            _lines.get(ii).wasRemoved();
         }
     }
 
@@ -292,7 +287,7 @@ public class BTextArea extends BContainer
         int start = _model.getValue(), stop = start + _model.getExtent(),
             lheight = 0;
         for (int ii = start; ii < stop; ii++) {
-            lheight += ((Line)_lines.get(ii)).height;
+            lheight += _lines.get(ii).height;
         }
         
         int x = getInsets().left, y;
@@ -308,7 +303,7 @@ public class BTextArea extends BContainer
         
         // render the lines
         for (int ii = start; ii < stop; ii++) {
-            Line line = (Line)_lines.get(ii);
+            Line line = _lines.get(ii);
             y -= line.height;
             if (halign == BConstants.RIGHT) {
                 x = _width - line.getWidth() - insets.right;
@@ -339,7 +334,7 @@ public class BTextArea extends BContainer
         // compute our dimensions based on the dimensions of our text
         Dimension d = new Dimension();
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            Line line = (Line)_lines.get(ii);
+            Line line = _lines.get(ii);
             d.width = Math.max(line.getWidth(), d.width);
             d.height += line.height;
         }
@@ -359,7 +354,7 @@ public class BTextArea extends BContainer
 
         // remove and recreate our existing lines
         for (int ii = 0, ll = _lines.size(); ii < ll; ii++) {
-            ((Line)_lines.get(ii)).wasRemoved();
+            _lines.get(ii).wasRemoved();
         }
         _lines.clear();
 
@@ -369,7 +364,7 @@ public class BTextArea extends BContainer
         // wrap our text into lines
         Line current = null;
         for (int ii = 0, ll = _runs.size(); ii < ll; ii++) {
-            Run run = (Run)_runs.get(ii);
+            Run run = _runs.get(ii);
             if (current == null) {
                 _lines.add(current = new Line());
             }
@@ -390,7 +385,7 @@ public class BTextArea extends BContainer
         // start at the last line and see how many we can fit
         int lines = 0, lheight = 0;
         for (int ll = _lines.size()-1; ll >= 0; ll--) {
-            lheight += ((Line)_lines.get(ll)).height;
+            lheight += _lines.get(ll).height;
             if (lheight > _height-insets) {
                 break;
             }
@@ -447,7 +442,7 @@ public class BTextArea extends BContainer
         public int height;
 
         /** A list of {@link BText} instances for the text on this line. */
-        public ArrayList segments = new ArrayList();
+        public ArrayList<BText> segments = new ArrayList<BText>();
 
         /**
          * Adds the supplied run to the line using the supplied text
@@ -480,7 +475,7 @@ public class BTextArea extends BContainer
         {
             int dx = x;
             for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
-                BText text = (BText)segments.get(ii);
+                BText text = segments.get(ii);
                 text.render(renderer, dx, y, alpha);
                 dx += text.getSize().width;
             }
@@ -493,7 +488,7 @@ public class BTextArea extends BContainer
         {
             int width = 0;
             for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
-                width += ((BText)segments.get(ii)).getSize().width;
+                width += segments.get(ii).getSize().width;
             }
             return width;
         }
@@ -501,14 +496,14 @@ public class BTextArea extends BContainer
         public void wasAdded ()
         {
             for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
-                ((BText)segments.get(ii)).wasAdded();
+                segments.get(ii).wasAdded();
             }
         }
 
         public void wasRemoved ()
         {
             for (int ii = 0, ll = segments.size(); ii < ll; ii++) {
-                ((BText)segments.get(ii)).wasRemoved();
+                segments.get(ii).wasRemoved();
             }
         }
     }
@@ -518,6 +513,6 @@ public class BTextArea extends BContainer
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
     protected int _prefWidth = -1;
-    protected ArrayList _runs = new ArrayList();
-    protected ArrayList _lines = new ArrayList();
+    protected ArrayList<Run> _runs = new ArrayList<Run>();
+    protected ArrayList<Line> _lines = new ArrayList<Line>();
 }

@@ -196,7 +196,7 @@ public abstract class GroupLayout extends BLayoutManager
 	if (constraints != null) {
 	    if (constraints instanceof Constraints) {
 		if (_constraints == null) {
-		    _constraints = new HashMap();
+		    _constraints = new HashMap<BComponent,Object>();
 		}
 		_constraints.put(comp, constraints);
 
@@ -393,7 +393,7 @@ public abstract class GroupLayout extends BLayoutManager
     protected Justification _justification = CENTER;
     protected Justification _offjust = CENTER;
 
-    protected HashMap _constraints;
+    protected HashMap<BComponent,Object> _constraints;
 
     protected static final int DEFAULT_GAP = 5;
 }

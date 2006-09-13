@@ -175,7 +175,7 @@ public class BContainer extends BComponent
      */
     public BComponent getComponent (int index)
     {
-        return (BComponent)_children.get(index);
+        return _children.get(index);
     }
 
     /**
@@ -388,6 +388,6 @@ public class BContainer extends BComponent
         public void apply (BComponent child);
     }
 
-    protected ArrayList _children = new ArrayList();
+    protected ArrayList<BComponent> _children = new ArrayList<BComponent>();
     protected BLayoutManager _layout;
 }

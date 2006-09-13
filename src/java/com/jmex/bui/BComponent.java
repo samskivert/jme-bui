@@ -333,7 +333,7 @@ public class BComponent
     public void setProperty (String key, Object value)
     {
         if (_properties == null) {
-            _properties = new HashMap();
+            _properties = new HashMap<String,Object>();
         }
         _properties.put(key, value);
     }
@@ -440,7 +440,7 @@ public class BComponent
     public void addListener (ComponentListener listener)
     {
         if (_listeners == null) {
-            _listeners = new ArrayList();
+            _listeners = new ArrayList<ComponentListener>();
         }
         _listeners.add(listener);
     }
@@ -638,7 +638,7 @@ public class BComponent
         // dispatch this event to our listeners
         if (_listeners != null) {
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
-                event.dispatch((ComponentListener)_listeners.get(ii));
+                event.dispatch(_listeners.get(ii));
             }
         }
 
@@ -902,8 +902,8 @@ public class BComponent
     protected String _styleClass;
     protected Dimension _preferredSize;
     protected int _x, _y, _width, _height;
-    protected ArrayList _listeners;
-    protected HashMap _properties;
+    protected ArrayList<ComponentListener> _listeners;
+    protected HashMap<String,Object> _properties;
     protected String _tiptext;
     protected boolean _tipmouse;
 

@@ -104,7 +104,7 @@ public class PolledRootNode extends BRootNode
 
         // validate all invalid roots
         while (_invalidRoots.size() > 0) {
-            BComponent root = (BComponent)_invalidRoots.remove(0);
+            BComponent root = _invalidRoots.remove(0);
             // make sure the root is still added to the view hierarchy
             if (root.isAdded()) {
                 root.validate();
@@ -211,7 +211,7 @@ public class PolledRootNode extends BRootNode
 
     protected Timer _timer;
     protected InputHandler _handler;
-    protected ArrayList _invalidRoots = new ArrayList();
+    protected ArrayList<BComponent> _invalidRoots = new ArrayList<BComponent>();
 
     /** This is used for key repeat. */
     protected int _pressed = -1;

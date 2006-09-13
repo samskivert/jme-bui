@@ -196,7 +196,7 @@ public class BoundedRangeModel
 
             // and notify our listeners
             for (int ii = 0, ll = _listeners.size(); ii < ll; ii++) {
-                ((ChangeListener)_listeners.get(ii)).stateChanged(_event);
+                _listeners.get(ii).stateChanged(_event);
             }
 
             return true;
@@ -227,6 +227,7 @@ public class BoundedRangeModel
 
     protected int _min, _max;
     protected int _value, _extent;
-    protected ArrayList _listeners = new ArrayList();
+    protected ArrayList<ChangeListener> _listeners =
+        new ArrayList<ChangeListener>();
     protected ChangeEvent _event = new ChangeEvent(this);
 }
