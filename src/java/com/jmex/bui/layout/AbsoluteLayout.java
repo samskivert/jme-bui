@@ -37,6 +37,20 @@ import com.jmex.bui.util.Rectangle;
  */
 public class AbsoluteLayout extends BLayoutManager
 {
+    public AbsoluteLayout ()
+    {
+        this(false);
+    }
+
+    /**
+     * @param flipped If true, will treat the y coordinates as 0 for the top
+     * and height for the bottom.
+     */
+    public AbsoluteLayout (boolean flipped)
+    {
+        _flipped = flipped;
+    }
+
     // documentation inherited
     public void addLayoutComponent (BComponent comp, Object constraints)
     {
@@ -99,22 +113,26 @@ public class AbsoluteLayout extends BLayoutManager
     public void layoutContainer (BContainer target)
     {
         Insets insets = target.getInsets();
+        int height = target.getHeight();
         for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
             BComponent comp = target.getComponent(ii);
             Object cons = _spots.get(comp);
             if (cons instanceof Point) {
                 Point p = (Point)cons;
                 Dimension d = comp.getPreferredSize(-1, -1);
-                comp.setBounds(insets.left + p.x,
-                               insets.bottom + p.y, d.width, d.height);
+                comp.setBounds(insets.left + p.x, 
+                        (_flipped ? height - d.height - insets.top - p.y : 
+                                   insets.bottom + p.y), d.width, d.height);
             } else if (cons instanceof Rectangle) {
                 Rectangle r = (Rectangle)cons;
                 comp.setBounds(insets.left + r.x,
-                               insets.bottom + r.y, r.width, r.height);
+                        (_flipped ? height - r.height - insets.top - r.y : 
+                                   insets.bottom + r.y), r.width, r.height);
             }
         }
     }
 
+    protected boolean _flipped;
     protected HashMap<BComponent, Object> _spots =
         new HashMap<BComponent, Object>();
 }

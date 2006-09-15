@@ -86,6 +86,18 @@ public abstract class BTextComponent extends BComponent
     }
 
     /**
+     * Returns the effect size for this component's text.
+     */
+    public int getEffectSize ()
+    {
+        if (_effsizes != null) {
+            int effsize = _effsizes[getState()];
+            return (effsize > 0) ? effsize : _effsizes[DEFAULT];
+        }
+        return BConstants.DEFAULT_SIZE;
+    }
+
+    /**
      * Returns the color to use for our text effect.
      */
     public ColorRGBA getEffectColor ()
@@ -121,6 +133,12 @@ public abstract class BTextComponent extends BComponent
         }
         _teffects = checkNonDefault(teffects, BConstants.NORMAL);
 
+        int[] effsizes = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            effsizes[ii] = style.getEffectSize(this, getStatePseudoClass(ii));
+        }
+        _effsizes = checkNonDefault(effsizes, BConstants.DEFAULT_SIZE);
+
         ColorRGBA[] effcols = new ColorRGBA[getStateCount()];
         boolean nondef = false;
         for (int ii = 0; ii < getStateCount(); ii++) {
@@ -147,6 +165,7 @@ public abstract class BTextComponent extends BComponent
     protected int[] _haligns;
     protected int[] _valigns;
     protected int[] _teffects;
+    protected int[] _effsizes;
     protected ColorRGBA[] _effcols;
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
 }

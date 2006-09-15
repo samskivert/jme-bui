@@ -21,12 +21,14 @@
 package com.jmex.bui.text;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextHitInfo;
@@ -99,8 +101,9 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (String text, ColorRGBA color, int effect,
-                             ColorRGBA effectColor, boolean useAdvance)
+    public BText createText (
+            String text, ColorRGBA color, int effect, int effectSize,
+            ColorRGBA effectColor, boolean useAdvance)
     {
         if (text.equals("")) {
             text = " ";
@@ -120,13 +123,14 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        return createText(layout, color, effect, effectColor,
+        return createText(layout, color, effect, effectSize, effectColor,
                           text.length(), useAdvance);
     }
 
     // documentation inherited
-    public BText[] wrapText (String text, ColorRGBA color, int effect,
-                             ColorRGBA effectColor, int maxWidth)
+    public BText[] wrapText (
+            String text, ColorRGBA color, int effect, int effectSize,
+            ColorRGBA effectColor, int maxWidth)
     {
         // the empty string will break things; so use a single space instead
         if (text.length() == 0) {
@@ -167,8 +171,8 @@ public class AWTTextFactory extends BTextFactory
                     pos++;
                 }
 
-                texts.add(createText(layout, color, effect, effectColor,
-                                     length, true));
+                texts.add(createText(layout, color, effect, effectSize,
+                                     effectColor, length, true));
             }
 
         } finally {
@@ -179,9 +183,10 @@ public class AWTTextFactory extends BTextFactory
     }
 
     /** Helper function. */
-    protected BText createText (final TextLayout layout, ColorRGBA color,
-                                final int effect, ColorRGBA effectColor,
-                                final int length, boolean useAdvance)
+    protected BText createText (
+            final TextLayout layout, ColorRGBA color, final int effect, 
+            final int effectSize, ColorRGBA effectColor, final int length, 
+            boolean useAdvance)
     {
         // determine the size of our rendered text
         final Dimension size = new Dimension();
@@ -208,8 +213,8 @@ public class AWTTextFactory extends BTextFactory
         switch (effect) {
         case SHADOW:
         case OUTLINE:
-            size.width += 1;
-            size.height += 1;
+            size.width += effectSize;
+            size.height += effectSize;
             break;
         }
 
@@ -224,11 +229,22 @@ public class AWTTextFactory extends BTextFactory
                                          RenderingHints.VALUE_ANTIALIAS_ON);
                 }
                 gfx.translate(0, layout.getAscent());
+                if (effectSize > 1) {
+                    gfx.setColor(new Color(effectColor.r, effectColor.g,
+                                           effectColor.b, effectColor.a));
+                    Stroke oldstroke = gfx.getStroke();
+                    gfx.setStroke(new BasicStroke((float)effectSize, 
+                                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    gfx.draw(layout.getOutline(null));
+                    gfx.setStroke(oldstroke);
+                }
                 gfx.setColor(new Color(color.r, color.g, color.b, color.a));
                 gfx.fill(layout.getOutline(null));
-                gfx.setColor(new Color(effectColor.r, effectColor.g,
-                                       effectColor.b, effectColor.a));
-                gfx.draw(layout.getOutline(null));
+                if (effectSize == 1) {
+                    gfx.setColor(new Color(effectColor.r, effectColor.g,
+                                           effectColor.b, effectColor.a));
+                    gfx.draw(layout.getOutline(null));
+                }
 
             } else {
                 // if we're antialiasing, we need to set a custom compositing
@@ -242,7 +258,8 @@ public class AWTTextFactory extends BTextFactory
                 if (effect == SHADOW) {
                     gfx.setColor(new Color(effectColor.r, effectColor.g,
                                            effectColor.b, effectColor.a));
-                    layout.draw(gfx, 0, layout.getAscent()+1);
+                    layout.draw(
+                            gfx, effectSize - 1, layout.getAscent()+effectSize);
                     dx = 1;
                     gfx.setComposite(ocomp);
                 }

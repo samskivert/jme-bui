@@ -244,6 +244,13 @@ public class BStyleSheet
         return (value == null) ? BConstants.NORMAL : value.intValue();
     }
 
+    public int getEffectSize (BComponent component, String pseudoClass)
+    {
+        Integer value = (Integer)
+            findProperty(component, pseudoClass, "effect-size", true);
+        return (value == null) ? BConstants.DEFAULT_SIZE : value.intValue();
+    }
+
     public ColorRGBA getEffectColor (BComponent component, String pseudoClass)
     {
         return (ColorRGBA)findProperty(
@@ -520,6 +527,11 @@ public class BStyleSheet
                     "Unknown text-effect type '" + type + "'");
             }
             return value;
+
+        } else if (name.equals("effect-size")) {
+            Integer value = new Integer(parseInt(args.get(0)));
+            return value;
+            
 
         } else if (name.equals("padding")) {
             Insets insets = new Insets();

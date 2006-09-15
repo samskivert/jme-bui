@@ -77,12 +77,15 @@ public class ImageBackground extends BBackground
     {
         _mode = mode;
         _image = image;
-        _frame = frame;
+        _suppliedFrame = _frame = frame;
     }
 
     // documentation inherited
     public int getMinimumWidth ()
     {
+        if (_mode == FRAME_XY && _suppliedFrame != null) {
+            return _frame.left + _frame.right;
+        }
         return _image.getWidth();
     }
 
@@ -91,6 +94,9 @@ public class ImageBackground extends BBackground
      */
     public int getMinimumHeight ()
     {
+        if (_mode == FRAME_XY && _suppliedFrame != null) {
+            return _frame.top + _frame.bottom;
+        }
         return _image.getHeight();
     }
 
@@ -256,7 +262,7 @@ public class ImageBackground extends BBackground
 
     protected int _mode;
     protected BImage _image;
-    protected Insets _frame;
+    protected Insets _frame, _suppliedFrame;
 
     protected static final int CENTER = 0;
     protected static final int SCALE = 1;

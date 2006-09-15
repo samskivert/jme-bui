@@ -371,8 +371,9 @@ public class Label
         // render up some new text
         BTextFactory tfact = _container.getTextFactory();
         _text = new Text();
-        _text.lines = tfact.wrapText(_value, config.color, config.effect,
-                                     config.effectColor, twidth);
+        _text.lines = tfact.wrapText(
+                _value, config.color, config.effect, config.effectSize,
+                config.effectColor, twidth);
         for (int ii = 0; ii < _text.lines.length; ii++) {
             _text.size.width = Math.max(
                 _text.size.width, _text.lines[ii].getSize().width);
@@ -393,6 +394,7 @@ public class Label
         config.text = _value;
         config.color = _container.getColor();
         config.effect = _container.getTextEffect();
+        config.effectSize = _container.getEffectSize();
         config.effectColor = _container.getEffectColor();
         config.twidth = twidth;
         return config;
@@ -403,6 +405,7 @@ public class Label
         public String text;
         public ColorRGBA color;
         public int effect;
+        public int effectSize;
         public ColorRGBA effectColor;
         public int twidth;
 

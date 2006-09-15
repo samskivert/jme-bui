@@ -42,7 +42,7 @@ public abstract class BTextFactory
      */
     public BText createText (String text, ColorRGBA color)
     {
-        return createText(text, color, NORMAL, null, false);
+        return createText(text, color, NORMAL, DEFAULT_SIZE, null, false);
     }
 
     /**
@@ -54,9 +54,9 @@ public abstract class BTextFactory
      * be included in the bounds of the created text (this is needed by
      * editable text displays).
      */
-    public abstract BText createText (String text, ColorRGBA color,
-                                      int effect, ColorRGBA effectColor,
-                                      boolean useAdvance);
+    public abstract BText createText (
+            String text, ColorRGBA color, int effect, int effectSize,
+            ColorRGBA effectColor, boolean useAdvance);
 
     /**
      * Wraps a string into a set of text objects that do not exceed the
@@ -64,7 +64,7 @@ public abstract class BTextFactory
      */
     public BText[] wrapText (String text, ColorRGBA color, int maxWidth)
     {
-        return wrapText(text, color, NORMAL, null, maxWidth);
+        return wrapText(text, color, NORMAL, DEFAULT_SIZE, null, maxWidth);
     }
 
     /**
@@ -72,6 +72,6 @@ public abstract class BTextFactory
      * specified width.
      */
     public abstract BText[] wrapText (
-        String text, ColorRGBA color, int effect, ColorRGBA effectColor,
-        int maxWidth);
+        String text, ColorRGBA color, int effect, int effectSize, 
+        ColorRGBA effectColor, int maxWidth);
 }
