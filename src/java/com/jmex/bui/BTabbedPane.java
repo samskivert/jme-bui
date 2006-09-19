@@ -22,7 +22,6 @@ package com.jmex.bui;
 
 import java.util.ArrayList;
 
-import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.BorderLayout;
@@ -35,15 +34,56 @@ public class BTabbedPane extends BContainer
 {
     public BTabbedPane ()
     {
-        this(GroupLayout.LEFT);
+        this(false);
+    }
+
+    public BTabbedPane (boolean hasCloseButton)
+    {
+        this(GroupLayout.LEFT, hasCloseButton);
     }
 
     public BTabbedPane (GroupLayout.Justification tabJustification)
+    {
+        this(tabJustification, false);
+    }
+
+    public BTabbedPane (
+        GroupLayout.Justification tabJustification, boolean hasCloseButton)
     {
         super(new BorderLayout());
 
         _buttons = GroupLayout.makeHBox(tabJustification);
         add(_buttons, BorderLayout.NORTH);
+        setHasCloseButton(hasCloseButton);
+    }
+
+    /**
+     * Returns true if we display a close button after our tabs.
+     */
+    public boolean hasCloseButton ()
+    {
+        return _close != null;
+    }
+
+    /**
+     * Controls whether or not to display a close button after our tabs.
+     */
+    public void setHasCloseButton (boolean hasCloseButton)
+    {
+        if (hasCloseButton) {
+            if (_close == null) {
+                _close = new BButton("", _closer, "close");
+                _close.setStyleClass("tabbedpane_close");
+                int n = _buttons.getComponentCount();
+                if (n > 0) {
+                    _buttons.add(n-1, _close);
+                }
+            }
+
+        } else if (_close != null) {
+            _buttons.remove(_close);
+            _close = null;
+        }
     }
 
     /**
@@ -61,7 +101,18 @@ public class BTabbedPane extends BContainer
         };
         tbutton.setStyleClass("tab");
         tbutton.addListener(_selector);
-        _buttons.add(tbutton);
+
+        if (_close != null) {
+            // add tab before close button, which we may also need to add
+            int n = _buttons.getComponentCount();
+            if (n == 0) {
+                _buttons.add(_close);
+                n += 1;
+            }
+            _buttons.add(n-1, tbutton);
+        } else {
+            _buttons.add(tbutton);
+        }
         _tabs.add(tab);
 
         // if we have no selected tab, select this one
@@ -80,7 +131,7 @@ public class BTabbedPane extends BContainer
             removeTab(idx);
         } else {
             Log.log.warning("Requested to remove non-added tab " +
-                            "[pane=" + this + ", tab=" + tab + "].");
+                "[pane=" + this + ", tab=" + tab + "].");
         }
     }
 
@@ -89,7 +140,19 @@ public class BTabbedPane extends BContainer
      */
     public void removeTab (int tabidx)
     {
+        removeTab(tabidx, 0, 0);
+    }
+
+    /**
+     * Removes the tab at the specified index.
+     */
+    public void removeTab (int tabidx, long when, int modifiers)
+    {
         _buttons.remove(_buttons.getComponent(tabidx));
+        if (_buttons.getComponentCount() == 1) {
+            // only the close button left, nuke it
+            _buttons.remove(0);
+        }
         BComponent tab = _tabs.remove(tabidx);
 
         // if we're removing the selected tab...
@@ -108,6 +171,9 @@ public class BTabbedPane extends BContainer
         } else if (_selidx > tabidx) {
             _selidx--;
         }
+
+        // and let interested parties respond
+        emitEvent(new ActionEvent(tab, when, modifiers, "tabRemoved"));
     }
 
     /**
@@ -218,7 +284,18 @@ public class BTabbedPane extends BContainer
         }
     };
 
+    protected ActionListener _closer = new ActionListener() {
+        public void actionPerformed (ActionEvent event) {
+            if (_selidx >= 0) {
+                removeTab(_selidx);
+            }
+        }
+    };
+
     protected BContainer _buttons;
     protected ArrayList<BComponent> _tabs = new ArrayList<BComponent>();
     protected int _selidx = -1;
+
+    /** A reference to our close button, if we use one, or null otherwise */
+    protected BButton _close;
 }
