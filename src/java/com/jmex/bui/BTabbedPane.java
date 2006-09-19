@@ -172,8 +172,8 @@ public class BTabbedPane extends BContainer
             _selidx--;
         }
 
-        // and let interested parties respond
-        emitEvent(new ActionEvent(tab, when, modifiers, "tabRemoved"));
+        // and let interested parties know what happened
+        tabWasRemoved(tab);
     }
 
     /**
@@ -266,6 +266,13 @@ public class BTabbedPane extends BContainer
     public int indexOfTab (BComponent tab)
     {
         return _tabs.indexOf(tab);
+    }
+
+    /**
+     * Called when a tab was removed.
+     */
+    protected void tabWasRemoved (BComponent tab)
+    {
     }
 
     // documentation inherited
