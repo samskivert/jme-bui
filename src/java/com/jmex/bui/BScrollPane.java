@@ -132,19 +132,34 @@ public class BScrollPane extends BContainer
             _layingOut = false;
             return;
         }
-        if (_vbar != null) {
-            BoundedRangeModel vmodel = _vbar.getModel();
-            if (vmodel.getExtent() != vmodel.getRange()) {
-                add(_vbar, BorderLayout.EAST);
-            }
-        }
+        boolean hadded = false, vadded = false;
+        // Add a horizontal bar if needed
         if (_hbar != null) {
             BoundedRangeModel hmodel = _hbar.getModel();
             if (hmodel.getExtent() != hmodel.getRange()) {
                 add(_hbar, BorderLayout.SOUTH);
+                validate();
+                hadded = true;
             }
         }
-        validate();
+        // Add a vertical bar if needed
+        if (_vbar != null) {
+            BoundedRangeModel vmodel = _vbar.getModel();
+            if (vmodel.getExtent() != vmodel.getRange()) {
+                add(_vbar, BorderLayout.EAST);
+                validate();
+                vadded = true;
+            }
+        }
+        // Check if adding the vertical bar now requires the horizontal bar
+        // to be added
+        if (vadded && hadded) {
+            BoundedRangeModel hmodel = _hbar.getModel();
+            if (hmodel.getExtent() != hmodel.getRange()) {
+                add(_hbar, BorderLayout.SOUTH);
+                validate();
+            }
+        }
         _layingOut = false;
     }
 
