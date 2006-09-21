@@ -167,6 +167,9 @@ public class BScrollBar extends BContainer
      */
     protected void update ()
     {
+        if (!isAdded()) {
+            return;
+        }
         Insets winsets = _well.getInsets();
         int tx = 0, ty = 0;
         int twidth = _well.getWidth() - winsets.getHorizontal();

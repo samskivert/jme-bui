@@ -85,6 +85,18 @@ public class BScrollPane extends BContainer
     }
 
     /**
+     * Toggles the scroll bar policy.  If set to true, the bars will always
+     * show.  If set to false, the bars will only show when needed.
+     */
+    public void setShowScrollbarAlways (boolean showAlways)
+    {
+        if (_showAlways != showAlways) {
+            _showAlways = showAlways;
+            invalidate();
+        }
+    }
+
+    /**
      * Configures the style class of the viewport (the non-scrolling container
      * that will hold the scrolling contents).
      */
@@ -93,8 +105,50 @@ public class BScrollPane extends BContainer
         _vport.setStyleClass(styleClass);
     }
 
-    /** Does all the heavy lifting for the {@link BScrollPane}. TODO: support
-     * horizontal scrolling as well. */
+    @Override // documentation inherited
+    public void layout ()
+    {
+        if (_layingOut || _vport.getTarget().isValid()) {
+            super.layout();
+            return;
+        }
+        _layingOut = true;
+        if (_vbar != null) {
+            if (_showAlways && _vbar.getParent() == null) {
+                add(_vbar, BorderLayout.EAST);
+            } else if (!_showAlways && _vbar.getParent() != null) {
+                remove(_vbar);
+            }
+        }
+        if (_hbar != null) {
+            if (_showAlways && _hbar.getParent() == null) {
+                add(_hbar, BorderLayout.SOUTH);
+            } else if (!_showAlways && _hbar.getParent() != null) {
+                remove(_hbar);
+            }
+        }
+        validate();
+        if (_showAlways) {
+            _layingOut = false;
+            return;
+        }
+        if (_vbar != null) {
+            BoundedRangeModel vmodel = _vbar.getModel();
+            if (vmodel.getExtent() != vmodel.getRange()) {
+                add(_vbar, BorderLayout.EAST);
+            }
+        }
+        if (_hbar != null) {
+            BoundedRangeModel hmodel = _hbar.getModel();
+            if (hmodel.getExtent() != hmodel.getRange()) {
+                add(_hbar, BorderLayout.SOUTH);
+            }
+        }
+        validate();
+        _layingOut = false;
+    }
+
+    /** Does all the heavy lifting for the {@link BScrollPane}. */
     protected static class BViewport extends BContainer
     {
         public BViewport (
@@ -295,4 +349,5 @@ public class BScrollPane extends BContainer
     
     protected BViewport _vport;
     protected BScrollBar _vbar, _hbar;
+    protected boolean _showAlways = true, _layingOut;
 }
