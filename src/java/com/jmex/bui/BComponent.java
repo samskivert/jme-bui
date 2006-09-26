@@ -273,7 +273,9 @@ public class BComponent
             if (_backgrounds[state] != null) {
                 _backgrounds[state].wasRemoved();
             }
-            background.wasAdded();
+            if (background != null) {
+                background.wasAdded();
+            }
         }
         _backgrounds[state] = background;
     }
