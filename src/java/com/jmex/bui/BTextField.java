@@ -375,7 +375,6 @@ public class BTextField extends BTextComponent
         }
 
         // format our text and determine how much of it we can display
-        int avail = getWidth() - getInsets().getHorizontal();
         _glyphs = getTextFactory().createText(
             getDisplayText(), getColor(), BConstants.NORMAL, 
             BConstants.DEFAULT_SIZE, null, true);
@@ -429,6 +428,9 @@ public class BTextField extends BTextComponent
             int avail = getWidth() - getInsets().getHorizontal();
             if (_cursx > _txoff + avail) {
                 _txoff = _cursx - avail;
+            } else if (_glyphs != null && 
+                    _glyphs.getSize().width - _txoff < avail) {
+                _txoff = Math.max(0, _cursx - avail);
             }
         }
     }
