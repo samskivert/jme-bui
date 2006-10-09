@@ -30,6 +30,10 @@ public class BKeyMap
      * modifier and key code combination. */
     public static final int NO_MAPPING = -1;
 
+    /** A modifiers code that if specified, will default any keyCode to
+     * the specified command unless a specific modifier mapping is set. */
+    public static final int ANY_MODIFIER = -1;
+
     /**
      * Adds a mapping for the specified modifier and key code combination
      * to the specified command.
@@ -60,12 +64,15 @@ public class BKeyMap
     public int lookupMapping (int modifiers, int keyCode)
     {
         int kidx = keyCode % BUCKETS;
+        int defaultCommand = NO_MAPPING;
         for (Mapping map = _mappings[kidx]; map != null; map = map.next) {
             if (map.matches(modifiers, keyCode)) {
                 return map.command;
+            } else if (map.matches(ANY_MODIFIER, keyCode)) {
+                defaultCommand = map.command;
             }
         }
-        return NO_MAPPING;
+        return defaultCommand;
     }
 
     /** Contains information about a single key mapping. */
