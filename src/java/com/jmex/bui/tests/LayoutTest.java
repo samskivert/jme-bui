@@ -23,10 +23,17 @@ package com.jmex.bui.tests;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import com.jme.light.DirectionalLight;
+import com.jme.math.FastMath;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.scene.Controller;
+import com.jme.scene.Node;
 import com.jme.scene.shape.Box;
+import com.jme.scene.state.LightState;
+import com.jme.scene.state.ZBufferState;
+import com.jme.system.DisplaySystem;
 import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
@@ -81,12 +88,7 @@ public class LayoutTest extends BaseTest
         pane.addTab("One", button);
         button.setEnabled(false);
 
-        Box box = new Box("box", new Vector3f(), 2, 2, 2);
-        Quaternion quat45 = new Quaternion();
-        quat45.fromAngleAxis(0.7854f, new Vector3f(1, 1, 1));
-        box.setLocalRotation(quat45);
-
-        BGeomView nview = new BGeomView(box);
+        BGeomView nview = new BGeomView(createGeometry());
         pane.addTab("Two", nview);
         pane.addTab("Three", new BTextArea());
         pane.addTab("Four", new BLabel("Four contents"));
@@ -196,6 +198,48 @@ public class LayoutTest extends BaseTest
         root.addWindow(window);
         window.pack();
         window.setLocation(300, 470);
+    }
+
+    protected Node createGeometry ()
+    {
+        DirectionalLight light = new DirectionalLight();
+        light.setDiffuse(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
+        light.setAmbient(new ColorRGBA(0.5f, 0.5f, 1.0f, 1.0f));
+        light.setDirection(new Vector3f(1, -1, 0));
+        light.setEnabled(true);
+
+        LightState ls =
+            DisplaySystem.getDisplaySystem().getRenderer().createLightState();
+        ls.setEnabled(true);
+        ls.attach(light);
+
+        ZBufferState zstate =
+            DisplaySystem.getDisplaySystem().getRenderer().createZBufferState();
+        zstate.setEnabled(true);
+        zstate.setFunction(ZBufferState.CF_LESS);
+
+        final Box box = new Box("box", new Vector3f(), 4, 4, 4);
+        Quaternion quat45 = new Quaternion();
+        quat45.fromAngleAxis(0.7854f, new Vector3f(1, 1, 1));
+        box.setLocalRotation(quat45);
+
+        box.addController(new Controller() {
+            public void update (float time) {
+                _angle += FastMath.HALF_PI * time;
+                _rotation.fromAngleAxis(_angle, UP);
+                box.getLocalRotation().set(_rotation);
+            }
+            protected float _angle;
+            protected Quaternion _rotation = new Quaternion();
+            protected final Vector3f UP = new Vector3f(0, 1, 0);
+        });
+
+        Node n = new Node("geometry");
+        n.setRenderState(ls);
+        n.setRenderState(zstate);
+        n.attachChild(box);
+        n.updateRenderState();
+        return n;
     }
 
     public static void main (String[] args)
