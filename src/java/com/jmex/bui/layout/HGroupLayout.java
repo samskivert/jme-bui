@@ -77,6 +77,7 @@ public class HGroupLayout extends GroupLayout
 
 	// do the on-axis policy calculations
 	int defwid = 0;
+        float conscale = 1f;
         if (_policy == STRETCH) {
 	    if (freecount > 0) {
                 int freewid = b.width - info.fixwid - totgap;
@@ -91,7 +92,15 @@ public class HGroupLayout extends GroupLayout
 	    defwid = info.maxwid;
 	    totwid = info.fixwid + defwid * freecount + totgap;
 
-        } else { // NONE or CONSTRAIN
+        } else if (_policy == CONSTRAIN) {
+	    totwid = info.totwid + totgap;
+            // if we exceed the width available, we must constrain
+            if (totwid > b.width) {
+                conscale = (b.width-totgap) / (float)info.totwid;
+                totwid = b.width;
+            }
+
+        } else { // NONE
 	    totwid = info.totwid + totgap;
 	}
 
@@ -124,6 +133,8 @@ public class HGroupLayout extends GroupLayout
 
 	    if (_policy == NONE || isFixed(child)) {
 		newwid = info.dimens[i].width;
+            } else if (_policy == CONSTRAIN) {
+		newwid = Math.max(1, (int)(conscale * info.dimens[i].width));
 	    } else {
                 newwid = defwid + freefrac;
                 // clear out the extra pixels the first time they're used
