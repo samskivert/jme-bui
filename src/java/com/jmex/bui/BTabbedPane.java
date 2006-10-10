@@ -28,68 +28,44 @@ import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.layout.GroupLayout;
 
 /**
- * Displays one of a set of containers depending on which tab is selected.
+ * Displays one of a set of components (tabs) depending on which tab is
+ * selected.
  */
 public class BTabbedPane extends BContainer
 {
     public BTabbedPane ()
     {
-        this(false);
-    }
-
-    public BTabbedPane (boolean hasCloseButton)
-    {
-        this(GroupLayout.LEFT, hasCloseButton);
+        this(GroupLayout.LEFT);
     }
 
     public BTabbedPane (GroupLayout.Justification tabJustification)
     {
-        this(tabJustification, false);
-    }
-
-    public BTabbedPane (
-        GroupLayout.Justification tabJustification, boolean hasCloseButton)
-    {
         super(new BorderLayout());
 
-        _buttons = GroupLayout.makeHBox(tabJustification);
-        add(_buttons, BorderLayout.NORTH);
-        setHasCloseButton(hasCloseButton);
+        GroupLayout gl = GroupLayout.makeHoriz(
+            GroupLayout.STRETCH, GroupLayout.LEFT, GroupLayout.CONSTRAIN);
+        _top = new BContainer(gl);
+        gl = GroupLayout.makeHoriz(
+            GroupLayout.CONSTRAIN, tabJustification, GroupLayout.CONSTRAIN);
+        _top.add(_buttons = new BContainer(gl));
+        add(_top, BorderLayout.NORTH);
+
+        _close = new BButton("", _closer, "close");
+        _close.setStyleClass("tabbedpane_close");
     }
 
     /**
-     * Returns true if we display a close button after our tabs.
+     * Adds a tab to the pane using the specified title with no close button.
      */
-    public boolean hasCloseButton ()
+    public void addTab (String title, BComponent tab)
     {
-        return _close != null;
-    }
-
-    /**
-     * Controls whether or not to display a close button after our tabs.
-     */
-    public void setHasCloseButton (boolean hasCloseButton)
-    {
-        if (hasCloseButton) {
-            if (_close == null) {
-                _close = new BButton("", _closer, "close");
-                _close.setStyleClass("tabbedpane_close");
-                int n = _buttons.getComponentCount();
-                if (n > 0) {
-                    _buttons.add(n-1, _close);
-                }
-            }
-
-        } else if (_close != null) {
-            _buttons.remove(_close);
-            _close = null;
-        }
+        addTab(title, tab, false);
     }
 
     /**
      * Adds a tab to the pane using the specified tile.
      */
-    public void addTab (String title, BComponent tab)
+    public void addTab (String title, BComponent tab, boolean hasClose)
     {
         BToggleButton tbutton = new BToggleButton(
             title, String.valueOf(_tabs.size())) {
@@ -101,19 +77,10 @@ public class BTabbedPane extends BContainer
         };
         tbutton.setStyleClass("tab");
         tbutton.addListener(_selector);
+        tbutton.setWrap(false);
+        _buttons.add(tbutton);
 
-        if (_close != null) {
-            // add tab before close button, which we may also need to add
-            int n = _buttons.getComponentCount();
-            if (n == 0) {
-                _buttons.add(_close);
-                n += 1;
-            }
-            _buttons.add(n-1, tbutton);
-        } else {
-            _buttons.add(tbutton);
-        }
-        _tabs.add(tab);
+        _tabs.add(new Tab(title, hasClose, tab));
 
         // if we have no selected tab, select this one
         if (_selidx == -1) {
@@ -140,26 +107,19 @@ public class BTabbedPane extends BContainer
      */
     public void removeTab (int tabidx)
     {
-        removeTab(tabidx, 0, 0);
-    }
-
-    /**
-     * Removes the tab at the specified index.
-     */
-    public void removeTab (int tabidx, long when, int modifiers)
-    {
         _buttons.remove(_buttons.getComponent(tabidx));
-        if (_buttons.getComponentCount() == 1) {
-            // only the close button left, nuke it
-            _buttons.remove(0);
-        }
-        BComponent tab = _tabs.remove(tabidx);
+        Tab tab = _tabs.remove(tabidx);
 
         // if we're removing the selected tab...
         if (_selidx == tabidx) {
             // remove the tab component
-            remove(tab);
+            remove(tab.component);
             _selidx = -1;
+
+            // remove the close button, we'll add it later if needed
+            if (_close.getParent() != null) {
+                _top.remove(_close);
+            }
 
             // now display a new tab component
             if (tabidx < _tabs.size()) {
@@ -173,7 +133,7 @@ public class BTabbedPane extends BContainer
         }
 
         // and let interested parties know what happened
-        tabWasRemoved(tab);
+        tabWasRemoved(tab.component);
     }
 
     /**
@@ -182,7 +142,7 @@ public class BTabbedPane extends BContainer
     public void removeAllTabs ()
     {
         if (_selidx != -1) {
-            remove(_tabs.get(_selidx));
+            remove(_tabs.get(_selidx).component);
         }
         _selidx = -1;
         _buttons.removeAll();
@@ -219,11 +179,16 @@ public class BTabbedPane extends BContainer
         for (int ii = 0; ii < _tabs.size(); ii++) {
             getTabButton(ii).setSelected(ii == tabidx);
         }
-        // remove the current tab and add the requested one
+
+        // remove the current tab
         if (_selidx != -1) {
-            remove(_tabs.get(_selidx));
+            remove(_tabs.get(_selidx).component);
         }
-        add(_tabs.get(tabidx), BorderLayout.CENTER);
+
+        // and add the requested one
+        Tab tab = _tabs.get(tabidx);
+        add(tab.component, BorderLayout.CENTER);
+        updateClose(tab.close);
         _selidx = tabidx;
     }
 
@@ -232,7 +197,7 @@ public class BTabbedPane extends BContainer
      */
     public BComponent getSelectedTab ()
     {
-        return (_selidx == -1) ? null : (BComponent)_tabs.get(_selidx);
+        return (_selidx == -1) ? null : _tabs.get(_selidx).component;
     }
 
     /**
@@ -265,7 +230,24 @@ public class BTabbedPane extends BContainer
      */
     public int indexOfTab (BComponent tab)
     {
-        return _tabs.indexOf(tab);
+        for (int ii = 0; ii < _tabs.size(); ii++) {
+            if (_tabs.get(ii).component == tab) {
+                return ii;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Updates the visibility of the close tab button.
+     */
+    protected void updateClose (boolean showClose)
+    {
+        if (showClose && _close.getParent() == null) {
+            _top.add(_close, GroupLayout.FIXED);
+        } else if (!showClose && _close.getParent() != null) {
+            _top.remove(_close);
+        }
     }
 
     /**
@@ -299,10 +281,22 @@ public class BTabbedPane extends BContainer
         }
     };
 
-    protected BContainer _buttons;
-    protected ArrayList<BComponent> _tabs = new ArrayList<BComponent>();
+    protected static class Tab
+    {
+        public String title;
+        public boolean close;
+        public BComponent component;
+
+        public Tab (String title, boolean close, BComponent component) {
+            this.title = title;
+            this.close = close;
+            this.component = component;
+        }
+    }
+
+    protected ArrayList<Tab> _tabs = new ArrayList<Tab>();
     protected int _selidx = -1;
 
-    /** A reference to our close button, if we use one, or null otherwise */
+    protected BContainer _top, _buttons;
     protected BButton _close;
 }
