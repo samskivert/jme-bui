@@ -54,10 +54,27 @@ public class BTextField extends BTextComponent
     }
 
     /**
+     * Creates a blank text field with maximum input size.
+     */
+    public BTextField (int maxLength)
+    {
+        this("", maxLength);
+    }
+
+    /**
      * Creates a text field with the specified starting text.
      */
     public BTextField (String text)
     {
+        this(text, 0);
+    }
+
+    /**
+     * Creates a text field with the specified starting text and max length.
+     */
+    public BTextField (String text, int maxLength)
+    {
+        _maxLength = maxLength;
         setDocument(new Document());
         setText(text);
     }
@@ -72,6 +89,9 @@ public class BTextField extends BTextComponent
         if (text == null) {
             text = "";
         }
+        if (_maxLength > 0) {
+            text = text.substring(0, Math.min(_maxLength, text.length()));
+        }
         if (!_text.getText().equals(text)) {
             _text.setText(text);
         }
@@ -81,6 +101,15 @@ public class BTextField extends BTextComponent
     public String getText ()
     {
         return _text.getText();
+    }
+
+    /**
+     * Configures the maximum length of this text field.  Any value less than
+     * or equal to 0 will imply no limit to the text field.
+     */
+    public void setMaxLength (int maxLength)
+    {
+        _maxLength = maxLength;
     }
 
     /**
@@ -204,7 +233,9 @@ public class BTextField extends BTextComponent
                     if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 &&
                         !Character.isISOControl(c)) {
                         String text = String.valueOf(kev.getKeyChar());
-                        if (_text.insert(_cursp, text)) {
+                        if ((_maxLength == 0 || 
+                             _text.getLength() + text.length() <= _maxLength) &&
+                                _text.insert(_cursp, text)) {
                             setCursorPos(_cursp + 1);
                         }
                     } else {
@@ -440,6 +471,7 @@ public class BTextField extends BTextComponent
     protected BKeyMap _keymap;
 
     protected int _prefWidth = -1;
+    protected int _maxLength;
     protected boolean _showCursor;
     protected int _cursp, _cursx, _txoff;
 }
