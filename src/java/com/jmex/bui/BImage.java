@@ -125,7 +125,7 @@ public class BImage extends Quad
         textureImage.setData(scratch);
 
         setImage(textureImage);
-        
+
         // make sure we have a unique default color object
         getBatch(0).getDefaultColor().set(ColorRGBA.white);
     }

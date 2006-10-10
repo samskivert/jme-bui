@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,15 +147,31 @@ public class BStyleSheet
         }
 
         public BImage loadImage (String path) throws IOException {
+            // normalize the image path
             if (!path.startsWith("/")) {
                 path = "/" + path;
             }
+
+            // first check the cache
+            WeakReference<BImage> iref = _cache.get(path);
+            BImage image;
+            if (iref != null && (image = iref.get()) != null) {
+                return image;
+            }
+
+            // create and cache a new BUI image with the appropriate data
             URL url = getClass().getResource(path);
             if (url == null) {
                 throw new IOException("Can't locate image '" + path + "'.");
             }
-            return new BImage(url);
+            image = new BImage(url);
+            _cache.put(path, new WeakReference<BImage>(image));
+            return image;
         }
+
+        /** A cache of {@link BImage} instances. */
+        protected HashMap<String,WeakReference<BImage>> _cache =
+            new HashMap<String,WeakReference<BImage>>();
     }
 
     /** A font style constant. */
