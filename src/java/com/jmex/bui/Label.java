@@ -20,6 +20,8 @@
 
 package com.jmex.bui;
 
+import org.lwjgl.opengl.GL11;
+
 import java.util.ArrayList;
 
 import com.jme.renderer.ColorRGBA;
@@ -142,6 +144,15 @@ public class Label
     }
 
     /**
+     * Configures this label to wrap or truncate when it cannot fit text into
+     * its allotted width.
+     */
+    public void setWrap (boolean wrap)
+    {
+        _wrap = wrap;
+    }
+
+    /**
      * Called by our containing component when it was added to the interface
      * hierarchy.
      */
@@ -249,9 +260,31 @@ public class Label
         if (_icon != null) {
             _icon.render(renderer, _ix, _iy, alpha);
         }
+
         if (_text != null) {
-            _text.render(renderer, _tx, _ty,
-                         _container.getHorizontalAlignment(), alpha);
+            // if we're not wrapping, clip to the bounds of our container
+            if (!_wrap) {
+                GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                Insets insets = _container.getInsets();
+                int width = _container.getWidth() - insets.getHorizontal();
+                int height = _container.getHeight() - insets.getVertical();
+                if (width <= 0 || height <= 0) {
+                    return;
+                }
+                GL11.glScissor(_container.getAbsoluteX() + insets.left,
+                               _container.getAbsoluteY() + insets.bottom,
+                               width, height);
+            }
+
+            try {
+                // and then render our target component
+                _text.render(renderer, _tx, _ty,
+                             _container.getHorizontalAlignment(), alpha);
+            } finally {
+                if (!_wrap) {
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                }
+            }
         }
     }
 
@@ -270,6 +303,11 @@ public class Label
 
     protected Dimension layoutAndComputeSize (int tgtwidth)
     {
+        // if we're not wrapping, force our target width
+        if (!_wrap) {
+            tgtwidth = Short.MAX_VALUE;
+        }
+
         // make a note of our current target width
         _twidth = tgtwidth;
 
@@ -477,6 +515,7 @@ public class Label
 
     protected int _orient = HORIZONTAL;
     protected int _gap = 3;
+    protected boolean _wrap = true;
 
     protected BIcon _icon;
     protected int _ix, _iy;

@@ -118,6 +118,15 @@ public class BLabel extends BTextComponent
         _label.setOrientation(orient);
     }
 
+    /**
+     * Configures this label to wrap or truncate if it cannot fit text into its
+     * allotted width. The default is to wrap.
+     */
+    public void setWrap (boolean wrap)
+    {
+        _label.setWrap(wrap);
+    }
+
     // documentation inherited
     public void setText (String text)
     {
