@@ -36,6 +36,7 @@ import com.jmex.bui.text.BKeyMap;
 import com.jmex.bui.text.BText;
 import com.jmex.bui.text.Document;
 import com.jmex.bui.text.EditCommands;
+import com.jmex.bui.text.LengthLimitedDocument;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
@@ -54,7 +55,9 @@ public class BTextField extends BTextComponent
     }
 
     /**
-     * Creates a blank text field with maximum input size.
+     * Creates a blank text field with maximum input length.  The maximum input
+     * length is controlled by a {@link LengthLimitedDocument}, changing the
+     * document will remove the length control.
      */
     public BTextField (int maxLength)
     {
@@ -71,11 +74,13 @@ public class BTextField extends BTextComponent
 
     /**
      * Creates a text field with the specified starting text and max length.
+     * The maximum input length is controlled by a {@link 
+     * LengthLimitedDocument}, changing the document will remove the length 
+     * control.
      */
     public BTextField (String text, int maxLength)
     {
-        _maxLength = maxLength;
-        setDocument(new Document());
+        setMaxLength(maxLength);
         setText(text);
     }
 
@@ -89,9 +94,6 @@ public class BTextField extends BTextComponent
         if (text == null) {
             text = "";
         }
-        if (_maxLength > 0) {
-            text = text.substring(0, Math.min(_maxLength, text.length()));
-        }
         if (!_text.getText().equals(text)) {
             _text.setText(text);
         }
@@ -104,12 +106,17 @@ public class BTextField extends BTextComponent
     }
 
     /**
-     * Configures the maximum length of this text field.  Any value less than
-     * or equal to 0 will imply no limit to the text field.
+     * Configures the maximum length of this text field. This will replace
+     * any currently set document with a LengthLimitedDocument (or no document
+     * at all if maxLength is <= 0).
      */
     public void setMaxLength (int maxLength)
     {
-        _maxLength = maxLength;
+        if (maxLength > 0) {
+            setDocument(new LengthLimitedDocument(maxLength));
+        } else {
+            setDocument(new Document());
+        }
     }
 
     /**
@@ -233,9 +240,7 @@ public class BTextField extends BTextComponent
                     if ((modifiers & ~KeyEvent.SHIFT_DOWN_MASK) == 0 &&
                         !Character.isISOControl(c)) {
                         String text = String.valueOf(kev.getKeyChar());
-                        if ((_maxLength == 0 || 
-                             _text.getLength() + text.length() <= _maxLength) &&
-                                _text.insert(_cursp, text)) {
+                        if (_text.insert(_cursp, text)) {
                             setCursorPos(_cursp + 1);
                         }
                     } else {
@@ -471,7 +476,6 @@ public class BTextField extends BTextComponent
     protected BKeyMap _keymap;
 
     protected int _prefWidth = -1;
-    protected int _maxLength;
     protected boolean _showCursor;
     protected int _cursp, _cursx, _txoff;
 }
