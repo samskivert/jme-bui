@@ -30,9 +30,19 @@ public class BPasswordField extends BTextField
     {
     }
 
+    public BPasswordField (int maxLength)
+    {
+        super(maxLength);
+    }
+
     public BPasswordField (String text)
     {
         super(text);
+    }
+
+    public BPasswordField (String text, int maxLength)
+    {
+        super(text, maxLength);
     }
 
     // documentation inherited
