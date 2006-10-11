@@ -207,6 +207,23 @@ public class BWindow extends BContainer
         return _root != null;
     }
 
+    /**
+     * Set the parent window.  If the parent window is removed from its 
+     * root node, this window will also be removed.
+     */
+    public void setParentWindow (BWindow parentWindow)
+    {
+        _parentWindow = parentWindow;
+    }
+
+    /**
+     * Returne the parent window.
+     */
+    public BWindow getParentWindow ()
+    {
+        return _parentWindow;
+    }
+
     @Override // from BComponent
     protected String getDefaultStyleClass ()
     {
@@ -264,4 +281,7 @@ public class BWindow extends BContainer
     /** Used to store a reference to our focus when this window is no longer
      * the top-most window. */
     protected BComponent _savedFocus;
+
+    /** Used to associate this window with a parent window. */
+    protected BWindow _parentWindow;
 }

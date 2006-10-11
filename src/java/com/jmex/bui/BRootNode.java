@@ -140,6 +140,13 @@ public abstract class BRootNode extends Geometry
         // remove the window from the interface heirarchy
         window.setRootNode(null);
 
+        // remove any associated popup windows
+        for (BWindow bwindow : _windows.toArray(new BWindow[_windows.size()])) {
+            if (bwindow.getParentWindow() == window) {
+                removeWindow(bwindow);
+            }
+        }
+
         // finally restore the focus to the new top-most window if it has a
         // saved focus
         if (_windows.size() > 0) {

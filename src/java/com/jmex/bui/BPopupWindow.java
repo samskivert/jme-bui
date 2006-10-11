@@ -33,7 +33,7 @@ public class BPopupWindow extends BWindow
     public BPopupWindow (BWindow parent, BLayoutManager layout)
     {
         super(parent.getStyleSheet(), layout);
-        _parent = parent;
+        _parentWindow = parent;
 
         // set up our background and border from the look and feel
 //         setBackground(_lnf.createPopupBackground());
@@ -50,7 +50,7 @@ public class BPopupWindow extends BWindow
     {
         // add ourselves to the interface hierarchy if we're not already
         if (_root == null) {
-            _parent.getRootNode().addWindow(this);
+            _parentWindow.getRootNode().addWindow(this);
         }
 
         // size and position ourselves appropriately
@@ -79,6 +79,4 @@ public class BPopupWindow extends BWindow
     {
         return "popupwindow";
     }
-
-    protected BWindow _parent;
 }
