@@ -223,7 +223,7 @@ public class BContainer extends BComponent
         my -= _y;
 
         BComponent hit = null;
-        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+        for (int ii = getComponentCount() - 1; ii >= 0; ii--) {
             BComponent child = getComponent(ii);
             if ((hit = child.getHitComponent(mx, my)) != null) {
                 return hit;
