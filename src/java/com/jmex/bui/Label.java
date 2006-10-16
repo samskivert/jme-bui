@@ -305,7 +305,7 @@ public class Label
     {
         // if we're not wrapping, force our target width
         if (!_wrap) {
-            tgtwidth = Short.MAX_VALUE;
+            tgtwidth = Short.MAX_VALUE-1;
         }
 
         // make a note of our current target width
