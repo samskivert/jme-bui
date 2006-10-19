@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- declares the libraries needed to build jme-bui -->
+<project name="library-dependencies">
+  <fileset dir="${projects.root}" id="jme-bui.libs">
+    <include name="${libs.dir}/junit-3.7.jar"/>
+    <include name="lib/jme.jar"/>
+    <include name="lib/lwjgl.jar"/>
+  </fileset>
+</project>

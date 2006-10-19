@@ -13,6 +13,11 @@
   <property name="doc.packages"     value="com.jme.bui.*"/>
   <property name="copyright.holder" value="Michael Bayne"/>
 
+  <!-- import some targets to enumerate library dependencies -->
+  <property name="projects.root" value="."/>
+  <property name="libs.dir" value="lib"/>
+  <import file="libs-incl.xml"/>
+
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
