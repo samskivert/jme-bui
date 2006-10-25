@@ -230,7 +230,7 @@ public class BScrollBar extends BContainer
                 }
             }
             if (dv != 0) {
-                dv *= _model.getRange() / 5;
+                dv *= Math.max(1, _model.getExtent());
                 _model.setValue(_model.getValue() + dv);
             }
         }

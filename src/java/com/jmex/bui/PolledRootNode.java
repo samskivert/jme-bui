@@ -201,6 +201,7 @@ public class PolledRootNode extends BRootNode
             dispatchEvent(new MouseEvent(
                               PolledRootNode.this, _tickStamp, _modifiers,
                               MouseEvent.MOUSE_WHEELED, -1, x, y, wheelDelta));
+            updateHoverComponent(x, y);
         }
 
         protected void dispatchEvent (MouseEvent event) {

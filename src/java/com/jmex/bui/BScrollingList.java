@@ -101,23 +101,6 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
         _vport.invalidate();
     }
 
-    @Override // from BComponent
-    protected void wasAdded ()
-    {
-        super.wasAdded();
-        addListener(_wheelListener = _model.createWheelListener());
-    }
-
-    @Override // from BComponent
-    protected void wasRemoved ()
-    {
-        super.wasRemoved();
-        if (_wheelListener != null) {
-            removeListener(_wheelListener);
-            _wheelListener = null;
-        }
-    }
-
     /**
      * Must be implemented by subclasses to instantiate the correct BComponent
      * subclass for a given list value.
@@ -159,6 +142,23 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
         {
             _snap = true;
             invalidate();
+        }
+
+        @Override // documentation inherited
+        protected void wasAdded ()
+        {
+            super.wasAdded();
+            addListener(_wheelListener = _model.createWheelListener());
+        }
+
+        @Override // from BComponent
+        protected void wasRemoved ()
+        {
+            super.wasRemoved();
+            if (_wheelListener != null) {
+                removeListener(_wheelListener);
+                _wheelListener = null;
+            }
         }
 
         // from interface ChangeListener
@@ -302,6 +302,31 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
                 GL11.glTranslatef(0, -_offset, 0);
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
+        }
+
+        @Override // documentation inherited
+        public BComponent getHitComponent (int mx, int my)
+        {
+            // if we're not within our bounds, we needn't check our target
+            Insets insets = getInsets();
+            if ((mx < _x + insets.left) || (my < _y + insets.bottom) ||
+                (mx >= _x + _width - insets.right) ||
+                (my >= _y + _height - insets.top)) {
+                return null;
+            }
+
+            // translate the coordinate into our children's coordinates
+            mx -= _x;
+            my -= (_y + _offset);
+
+            BComponent hit = null;
+            for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
+                BComponent child = getComponent(ii);
+                if ((hit = child.getHitComponent(mx, my)) != null) {
+                    return hit;
+                }
+            }
+            return this;
         }
 
         protected int _offset;

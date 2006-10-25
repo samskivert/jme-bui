@@ -122,7 +122,7 @@ public class BoundedRangeModel
      */
     public int getScrollIncrement ()
     {
-        return getRange() / 10;
+        return Math.max(1, getExtent() / 2);
     }
 
     /**

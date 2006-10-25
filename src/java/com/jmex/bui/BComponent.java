@@ -593,7 +593,7 @@ public class BComponent
      */
     public boolean dispatchEvent (BEvent event)
     {
-        // events taht should not be propagated up the hierarchy are marked as
+        // events that should not be propagated up the hierarchy are marked as
         // processed immediately to avoid sending them to our parent or to
         // other windows
         boolean processed = !event.propagateUpHierarchy();
