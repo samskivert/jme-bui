@@ -120,14 +120,14 @@ public class BGeomView extends BComponent
 
             // set up our camera viewport if it has changed
             Insets insets = getInsets();
-            int width = _width - insets.getHorizontal();
-            int height = _height - insets.getVertical();
+            int ax = getAbsoluteX() + insets.left,
+                ay = getAbsoluteY() + insets.bottom,
+                width = _width - insets.getHorizontal(),
+                height = _height - insets.getVertical();
             if (_cwidth != width || _cheight != height) {
                 _cwidth = width;
                 _cheight = height;
-                int ax = getAbsoluteX() + insets.left, 
-                    ay = getAbsoluteY() + insets.bottom;
-                float left =  ax / _swidth, right = left + _cwidth / _swidth;
+                float left = ax / _swidth, right = left + _cwidth / _swidth;
                 float bottom = ay / _sheight;
                 float top = bottom + _cheight / _sheight;
                 _camera.setViewPort(left, right, bottom, top);
@@ -135,6 +135,12 @@ public class BGeomView extends BComponent
                     45.0f, _width / (float)_height, 1, 1000);
             }
 
+            // clear the z buffer over the area to which we will be drawing
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(ax, ay, width, height);
+            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            
             // now set up the custom camera and render our geometry
             renderer.setCamera(_camera);
             _camera.update();
