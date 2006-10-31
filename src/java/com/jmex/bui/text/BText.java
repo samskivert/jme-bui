@@ -63,6 +63,15 @@ public abstract class BText
     public abstract void render (Renderer render, int x, int y, float alpha);
 
     /**
+     * Optional rendering this text scaled to a certain height/width.
+     */
+    public void render (
+            Renderer render, int x, int y, int w, int h, float alpha)
+    {
+        render(render, x, y, alpha);
+    }
+
+    /**
      * Called when the component that contains this text is was added to the
      * interface hierarchy.
      */

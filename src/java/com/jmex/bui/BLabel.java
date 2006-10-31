@@ -127,6 +127,15 @@ public class BLabel extends BTextComponent
         _label.setWrap(wrap);
     }
 
+    /**
+     * Configures this label to fit intself into the allotted space.  This
+     * works only when wrap is off.
+     */
+    public void setFit (boolean fit)
+    {
+        _label.setFit(fit);
+    }
+
     // documentation inherited
     public void setText (String text)
     {

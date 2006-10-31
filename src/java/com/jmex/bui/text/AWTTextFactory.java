@@ -311,6 +311,10 @@ public class AWTTextFactory extends BTextFactory
             public void render (Renderer renderer, int x, int y, float alpha) {
                 bimage.render(renderer, x, y, alpha);
             }
+            public void render (Renderer renderer, int x, int y,
+                    int w, int h, float alpha) {
+                bimage.render(renderer, x, y, w, h, alpha);
+            }
             public void release () {
                 bimage.release();
             }

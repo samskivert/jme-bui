@@ -153,6 +153,15 @@ public class Label
     }
 
     /**
+     * Configures a label to shrink itself to fit inside the container size.
+     * This will only occur if the label is non-wrapping.
+     */
+    public void setFit (boolean fit)
+    {
+        _fit = fit;
+    }
+
+    /**
      * Called by our containing component when it was added to the interface
      * hierarchy.
      */
@@ -264,11 +273,18 @@ public class Label
         if (_text != null) {
             // if we're not wrapping, clip to the bounds of our container
             if (!_wrap) {
-                GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                if (!_fit) {
+                    GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                }
                 Insets insets = _container.getInsets();
                 int width = _container.getWidth() - insets.getHorizontal();
                 int height = _container.getHeight() - insets.getVertical();
                 if (width <= 0 || height <= 0) {
+                    return;
+                }
+                if (_fit) {
+                    _text.render(renderer, _tx, _ty, width, height,
+                            _container.getHorizontalAlignment(), alpha);
                     return;
                 }
                 GL11.glScissor(_container.getAbsoluteX() + insets.left,
@@ -497,6 +513,29 @@ public class Label
             }
         }
 
+        public void render (Renderer renderer, int tx, int ty, 
+                int width, int height, int halign, float alpha) {
+            // render only the first line
+            float scale = 1f; 
+            if (size.width > width) {
+                scale = (float)width/size.width;
+            }
+            if (size.height > height) {
+                scale = Math.min(scale, (float)height/size.height);
+            }
+            width = (int)(size.width * scale);
+            height = (int)(size.height * scale);
+            if (height < size.height) {
+                ty += (size.height - height)/2;
+            }
+            if (halign == RIGHT) {
+                tx += size.width - width;
+            } else if (halign == CENTER) {
+                tx += (size.width - width)/2;
+            }
+            lines[0].render(renderer, tx, ty, width, height, alpha);
+        }
+
         public void wasAdded () {
             for (int ii = 0; ii < lines.length; ii++) {
                 lines[ii].wasAdded();
@@ -516,6 +555,7 @@ public class Label
     protected int _orient = HORIZONTAL;
     protected int _gap = 3;
     protected boolean _wrap = true;
+    protected boolean _fit = false;
 
     protected BIcon _icon;
     protected int _ix, _iy;
