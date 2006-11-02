@@ -51,10 +51,6 @@ public class BGeomView extends BComponent
     public BGeomView (Spatial geom)
     {
         _geom = geom;
-
-        DisplaySystem display = DisplaySystem.getDisplaySystem();
-        _swidth = display.getWidth();
-        _sheight = display.getHeight();
     }
 
     /**
@@ -113,9 +109,20 @@ public class BGeomView extends BComponent
         try {
             renderer.unsetOrtho();
 
-            // create our camera if necessary
-            if (_camera == null) {
-                _camera = createCamera(DisplaySystem.getDisplaySystem());
+            // create or resize our camera if necessary
+            DisplaySystem display = DisplaySystem.getDisplaySystem();
+            int swidth = display.getWidth(),
+                sheight = display.getHeight();
+            boolean updateDisplay = false;
+            if (_camera == null || _swidth != swidth || _sheight != sheight) {
+                _swidth = swidth;
+                _sheight = sheight;
+                if (_camera == null) {
+                    _camera = createCamera(display);
+                } else {
+                    _camera.resize(_swidth, _sheight);
+                }
+                updateDisplay = true;
             }
 
             // set up our camera viewport if it has changed
@@ -124,11 +131,14 @@ public class BGeomView extends BComponent
                 ay = getAbsoluteY() + insets.bottom,
                 width = _width - insets.getHorizontal(),
                 height = _height - insets.getVertical();
-            if (_cwidth != width || _cheight != height) {
+            if (updateDisplay || _cx != ax || _cy != ay ||
+                _cwidth != width || _cheight != height) {
+                _cx = ax;
+                _cy = ay;
                 _cwidth = width;
                 _cheight = height;
-                float left = ax / _swidth, right = left + _cwidth / _swidth;
-                float bottom = ay / _sheight;
+                float left = _cx / _swidth, right = left + _cwidth / _swidth;
+                float bottom = _cy / _sheight;
                 float top = bottom + _cheight / _sheight;
                 _camera.setViewPort(left, right, bottom, top);
                 _camera.setFrustumPerspective(
@@ -182,5 +192,6 @@ public class BGeomView extends BComponent
     protected BRootNode _root;
     protected Camera _camera;
     protected Spatial _geom;
-    protected float _swidth, _sheight, _cwidth, _cheight;
+    protected int _swidth, _sheight;
+    protected float _cx, _cy, _cwidth, _cheight;
 }
