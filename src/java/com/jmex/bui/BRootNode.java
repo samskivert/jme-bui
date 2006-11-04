@@ -35,6 +35,7 @@ import com.jme.system.DisplaySystem;
 
 import com.jmex.bui.Log;
 import com.jmex.bui.event.BEvent;
+import com.jmex.bui.event.EventListener;
 import com.jmex.bui.event.FocusEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.layout.BorderLayout;
@@ -184,6 +185,23 @@ public abstract class BRootNode extends Geometry
     public void setTooltipPreferredWidth (int width)
     {
         _tipWidth = width;
+    }
+
+    /**
+     * Registers a listener that will be notified of all events prior to their
+     * being dispatched normally.
+     */
+    public void addGlobalEventListener (EventListener listener)
+    {
+        _globals.add(listener);
+    }
+
+    /**
+     * Removes a global event listener registration.
+     */
+    public void removeGlobalEventListener (EventListener listener)
+    {
+        _globals.remove(listener);
     }
 
     /**
@@ -358,6 +376,16 @@ public abstract class BRootNode extends Geometry
      */
     protected void dispatchEvent (BComponent target, BEvent event)
     {
+        // notify our global listeners if we have any
+        for (int ii = 0, ll = _globals.size(); ii < ll; ii++) {
+            try {
+                _globals.get(ii).eventDispatched(event);
+            } catch (Exception e) {
+                Log.log.log(Level.WARNING, "Global event listener choked " +
+                            "[listener=" + _globals.get(ii) + "].", e);
+            }
+        }
+
         // first try the "natural" target of the event if there is one
         BWindow sentwin = null;
         if (target != null) {
@@ -524,6 +552,7 @@ public abstract class BRootNode extends Geometry
     protected BComponent _focus;
     protected ArrayList<BComponent> _defaults = new ArrayList<BComponent>();
     protected ArrayList<BGeomView> _geomviews = new ArrayList<BGeomView>();
+    protected ArrayList<EventListener> _globals = new ArrayList<EventListener>();
 
     protected static final float TIP_MODE_RESET = 0.6f;
 }
