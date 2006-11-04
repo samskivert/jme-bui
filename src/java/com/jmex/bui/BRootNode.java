@@ -54,6 +54,11 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Returns the current timestamp used to stamp event times.
+     */
+    public abstract long getTickStamp ();
+
+    /**
      * Registers a top-level window with the input system.
      */
     public void addWindow (BWindow window)

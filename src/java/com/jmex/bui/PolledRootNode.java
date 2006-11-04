@@ -55,6 +55,12 @@ public class PolledRootNode extends BRootNode
     }
 
     // documentation inherited
+    public long getTickStamp ()
+    {
+        return _tickStamp;
+    }
+
+    // documentation inherited
     public void rootInvalidated (BComponent root)
     {
         // add the component to the list of invalid roots

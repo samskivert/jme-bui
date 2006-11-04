@@ -48,6 +48,12 @@ public class CanvasRootNode extends BRootNode
     }
 
     // documentation inherited
+    public long getTickStamp ()
+    {
+        return System.currentTimeMillis();
+    }
+
+    // documentation inherited
     public void rootInvalidated (BComponent root)
     {
         // TODO: queue up an event to revalidate this component; for now we'll
