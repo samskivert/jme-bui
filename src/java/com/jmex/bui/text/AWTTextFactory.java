@@ -101,9 +101,9 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (
-            String text, ColorRGBA color, int effect, int effectSize,
-            ColorRGBA effectColor, boolean useAdvance)
+    public BText createText (String text, ColorRGBA color, int effect,
+                             int effectSize, ColorRGBA effectColor,
+                             boolean useAdvance)
     {
         if (text.equals("")) {
             text = " ";
@@ -128,9 +128,9 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText[] wrapText (
-            String text, ColorRGBA color, int effect, int effectSize,
-            ColorRGBA effectColor, int maxWidth)
+    public BText[] wrapText (String text, ColorRGBA color, int effect,
+                             int effectSize, ColorRGBA effectColor,
+                             int maxWidth)
     {
         // the empty string will break things; so use a single space instead
         if (text.length() == 0) {
@@ -191,8 +191,10 @@ public class AWTTextFactory extends BTextFactory
         // determine the size of our rendered text
         final Dimension size = new Dimension();
         Rectangle2D bounds = layout.getBounds();
-        // TODO: do this if we're on a Mac as well
-        if (effect == OUTLINE) {
+
+        // MacOS font rendering is buggy, so we must compute the outline and
+        // use that for bounds computation and rendering
+        if (effect == OUTLINE || _isMacOS) {
             bounds = layout.getOutline(null).getBounds();
         }
         if (useAdvance) {
@@ -252,20 +254,38 @@ public class AWTTextFactory extends BTextFactory
                 Composite ocomp = gfx.getComposite();
                 if (_antialias) {
                     gfx.setComposite(AlphaComposite.SrcOut);
+                    // on the MacOS we're not using the TextLayout to render,
+                    // so we have to explicitly activate anti-aliasing
+                    if (_isMacOS) {
+                        gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                             RenderingHints.VALUE_ANTIALIAS_ON);
+                    }
                 }
 
                 int dx = 0;
                 if (effect == SHADOW) {
                     gfx.setColor(new Color(effectColor.r, effectColor.g,
                                            effectColor.b, effectColor.a));
-                    layout.draw(
-                            gfx, effectSize - 1, layout.getAscent()+effectSize);
+                    float tx = effectSize - 1;
+                    float ty = layout.getAscent() + effectSize;
+                    if (_isMacOS) {
+                        gfx.translate(tx, ty);
+                        gfx.fill(layout.getOutline(null));
+                        gfx.translate(-tx, -ty);
+                    } else {
+                        layout.draw(gfx, tx, ty);
+                    }
                     dx = 1;
                     gfx.setComposite(ocomp);
                 }
 
                 gfx.setColor(new Color(color.r, color.g, color.b, color.a));
-                layout.draw(gfx, dx, layout.getAscent());
+                if (_isMacOS) {
+                    gfx.translate(dx, layout.getAscent());
+                    gfx.fill(layout.getOutline(null));
+                } else {
+                    layout.draw(gfx, dx, layout.getAscent());
+                }
             }
 
         } finally {
@@ -519,6 +539,18 @@ public class AWTTextFactory extends BTextFactory
         new HashMap<TextAttribute, Font>();
     protected int _height;
     protected BufferedImage _stub;
+
+    protected static boolean _isMacOS;
+    static {
+        try {
+            String osname = System.getProperty("os.name");
+            osname = (osname == null) ? "" : osname;
+            _isMacOS = (osname.indexOf("Mac OS") != -1 ||
+                        osname.indexOf("MacOS") != -1);
+        } catch (Exception e) {
+            // oh well
+        }
+    }
 
     protected static final char NONE = '!';
     protected static final char BOLD = 'b';
