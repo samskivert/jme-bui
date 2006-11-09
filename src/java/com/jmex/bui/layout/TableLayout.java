@@ -126,7 +126,7 @@ public class TableLayout extends BLayoutManager
     public Dimension computePreferredSize (
         BContainer target, int whint, int hhint)
     {
-        computeMetrics(target, true);
+        computeMetrics(target, true, whint);
         int cx = (_columnWidths.length-1) * _colgap;
         int rx = (computeRows(target)-1) * _rowgap;
         return new Dimension(sum(_columnWidths) + cx, sum(_rowHeights) + rx);
@@ -135,10 +135,12 @@ public class TableLayout extends BLayoutManager
     // documentation inherited
     public void layoutContainer (BContainer target)
     {
-        computeMetrics(target, false);
+        Insets insets = target.getInsets();
+        int availwid = target.getWidth() - insets.getHorizontal();
+
+        computeMetrics(target, false, availwid);
         int totwidth = sum(_columnWidths) + (_columnWidths.length-1) * _colgap;
         int totheight = sum(_rowHeights) + (computeRows(target)-1) * _rowgap;
-        Insets insets = target.getInsets();
 
         // account for our horizontal alignment
         int sx = insets.left;
@@ -160,8 +162,8 @@ public class TableLayout extends BLayoutManager
         int row = 0, col = 0, x = sx;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
-            child.setBounds(x, y - _rowHeights[row],
-                            _columnWidths[col], _rowHeights[row]);
+            int width = Math.min(_columnWidths[col], availwid);
+            child.setBounds(x, y - _rowHeights[row], width, _rowHeights[row]);
             x += (_columnWidths[col] + _colgap);
             if (++col == _columnWidths.length) {
                 y -= (_rowHeights[row] + _rowgap);
@@ -172,7 +174,8 @@ public class TableLayout extends BLayoutManager
         }
     }
 
-    protected void computeMetrics (BContainer target, boolean preferred)
+    protected void computeMetrics (
+        BContainer target, boolean preferred, int whint)
     {
         int rows = computeRows(target);
         if (_rowHeights == null || _rowHeights.length != rows) {
@@ -185,7 +188,7 @@ public class TableLayout extends BLayoutManager
         int row = 0, col = 0, maxrh = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
-            Dimension psize = child.getPreferredSize(-1, -1);
+            Dimension psize = child.getPreferredSize(whint, -1);
             if (psize.height > _rowHeights[row]) {
                 _rowHeights[row] = psize.height;
                 if (maxrh < _rowHeights[row]) {
