@@ -98,6 +98,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
     {
         _values.clear();
         _model.setValue(0);
+        _vport.removeAll();
         _vport.invalidate();
     }
 
@@ -136,11 +137,13 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
         }
 
         /**
-         * Recomputes our layout and snaps to the bottom.
+         * Recomputes our layout and snaps to the bottom if we were at the
+         * bottom previously.
          */
         public void invalidateAndSnap ()
         {
-            _snap = true;
+            _snap = 
+                _model.getValue() + _model.getExtent() >= _model.getMaximum();
             invalidate();
         }
 
