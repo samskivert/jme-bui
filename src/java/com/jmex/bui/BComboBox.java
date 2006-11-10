@@ -38,6 +38,24 @@ import com.jmex.bui.util.Insets;
  */
 public class BComboBox extends BLabel
 {
+    /** A handy class for displaying a label that is associated with a
+     * particular non-displayable value. */
+    public static class Item
+    {
+        public Object value;
+
+        public Item (Object value, String label) {
+            this.value = value;
+            _label = label;
+        }
+
+        public String toString () {
+            return _label;
+        }
+
+        protected String _label;
+    }
+
     /**
      * Creates an empty combo box.
      */
