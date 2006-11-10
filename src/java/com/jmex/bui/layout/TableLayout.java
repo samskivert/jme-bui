@@ -87,18 +87,20 @@ public class TableLayout extends BLayoutManager
      * Configures the horizontal alignment (or stretching) of this table. This
      * must be called before the container using this layout is validated.
      */
-    public void setHorizontalAlignment (Alignment align)
+    public TableLayout setHorizontalAlignment (Alignment align)
     {
         _halign = align;
+        return this;
     }
 
     /**
      * Configures the vertical alignment of this table. This must be called
      * before the container using this layout is validated.
      */
-    public void setVerticalAlignment (Alignment align)
+    public TableLayout setVerticalAlignment (Alignment align)
     {
         _valign = align;
+        return this;
     }
 
     /**
@@ -107,9 +109,10 @@ public class TableLayout extends BLayoutManager
      * up among all of the non-fixed columns. All columns are non-fixed by
      * default.
      */
-    public void setFixedColumn (int column, boolean fixed)
+    public TableLayout setFixedColumn (int column, boolean fixed)
     {
         _fixedColumns[column] = fixed;
+        return this;
     }
 
     /**
@@ -117,9 +120,10 @@ public class TableLayout extends BLayoutManager
      * size. This must be called before the container using this layout is
      * validated.
      */
-    public void setEqualRows (boolean equalRows)
+    public TableLayout setEqualRows (boolean equalRows)
     {
         _equalRows = equalRows;
+        return this;
     }
 
     // documentation inherited
