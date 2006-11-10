@@ -62,7 +62,7 @@ public class BComboBox extends BLabel
     public BComboBox ()
     {
         super("");
-        setWrap(false);
+        setFit(Fit.TRUNCATE);
     }
 
     /**

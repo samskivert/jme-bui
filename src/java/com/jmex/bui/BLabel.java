@@ -38,6 +38,10 @@ import com.jmex.bui.util.Insets;
 public class BLabel extends BTextComponent
     implements BConstants
 {
+    /** Configures the label's strategy when it does not fit into its allocated
+     * space. */
+    public enum Fit { WRAP, TRUNCATE, SCALE };
+
     /**
      * Creates a label that will display the supplied text.
      */
@@ -119,21 +123,12 @@ public class BLabel extends BTextComponent
     }
 
     /**
-     * Configures this label to wrap or truncate if it cannot fit text into its
-     * allotted width. The default is to wrap.
+     * Configures whether this label will wrap, truncate or scale if it cannot
+     * fit text into its allotted width. The default is to wrap.
      */
-    public void setWrap (boolean wrap)
+    public void setFit (Fit mode)
     {
-        _label.setWrap(wrap);
-    }
-
-    /**
-     * Configures this label to fit intself into the allotted space.  This
-     * works only when wrap is off.
-     */
-    public void setFit (boolean fit)
-    {
-        _label.setFit(fit);
+        _label.setFit(mode);
     }
 
     // documentation inherited

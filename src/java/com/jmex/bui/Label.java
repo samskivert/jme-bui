@@ -144,21 +144,12 @@ public class Label
     }
 
     /**
-     * Configures this label to wrap or truncate when it cannot fit text into
-     * its allotted width.
+     * Configures whether this label will wrap, truncate or scale if it cannot
+     * fit text into its allotted width. The default is to wrap.
      */
-    public void setWrap (boolean wrap)
+    public void setFit (BLabel.Fit mode)
     {
-        _wrap = wrap;
-    }
-
-    /**
-     * Configures a label to shrink itself to fit inside the container size.
-     * This will only occur if the label is non-wrapping.
-     */
-    public void setFit (boolean fit)
-    {
-        _fit = fit;
+        _fit = mode;
     }
 
     /**
@@ -272,8 +263,8 @@ public class Label
 
         if (_text != null) {
             // if we're not wrapping, clip to the bounds of our container
-            if (!_wrap) {
-                if (!_fit) {
+            if (_fit != BLabel.Fit.WRAP) {
+                if (_fit != BLabel.Fit.SCALE) {
                     GL11.glEnable(GL11.GL_SCISSOR_TEST);
                 }
                 Insets insets = _container.getInsets();
@@ -282,7 +273,7 @@ public class Label
                 if (width <= 0 || height <= 0) {
                     return;
                 }
-                if (_fit) {
+                if (_fit == BLabel.Fit.SCALE) {
                     _text.render(renderer, _tx, _ty, width, height,
                             _container.getHorizontalAlignment(), alpha);
                     return;
@@ -297,7 +288,7 @@ public class Label
                 _text.render(renderer, _tx, _ty,
                              _container.getHorizontalAlignment(), alpha);
             } finally {
-                if (!_wrap) {
+                if (_fit != BLabel.Fit.WRAP) {
                     GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 }
             }
@@ -320,7 +311,7 @@ public class Label
     protected Dimension layoutAndComputeSize (int tgtwidth)
     {
         // if we're not wrapping, force our target width
-        if (!_wrap) {
+        if (_fit != BLabel.Fit.WRAP) {
             tgtwidth = Short.MAX_VALUE-1;
         }
 
@@ -554,8 +545,7 @@ public class Label
 
     protected int _orient = HORIZONTAL;
     protected int _gap = 3;
-    protected boolean _wrap = true;
-    protected boolean _fit = false;
+    protected BLabel.Fit _fit = BLabel.Fit.WRAP;
 
     protected BIcon _icon;
     protected int _ix, _iy;

@@ -77,7 +77,7 @@ public class BTabbedPane extends BContainer
         };
         tbutton.setStyleClass("tab");
         tbutton.addListener(_selector);
-        tbutton.setWrap(false);
+        tbutton.setFit(BLabel.Fit.TRUNCATE);
         _buttons.add(tbutton);
 
         _tabs.add(new Tab(title, hasClose, tab));
