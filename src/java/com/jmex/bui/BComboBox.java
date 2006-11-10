@@ -126,6 +126,15 @@ public class BComboBox extends BLabel
     }
 
     /**
+     * Requires that the combo box be configured with {@link Item} items,
+     * returns the @{link Item#value} of the currently selected item.
+     */
+    public Object getSelectedValue ()
+    {
+        return (_selidx == -1) ? null : ((Item)_items.get(_selidx).item).value;
+    }
+
+    /**
      * Selects the item with the specified index.
      */
     public void selectItem (int index)
