@@ -140,9 +140,10 @@ public abstract class GroupLayout extends BLayoutManager
     /** A justification constant. */
     public final static Justification BOTTOM = new Justification(4);
 
-    public void setPolicy (Policy policy)
+    public GroupLayout setPolicy (Policy policy)
     {
 	_policy = policy;
+        return this;
     }
 
     public Policy getPolicy ()
@@ -150,9 +151,10 @@ public abstract class GroupLayout extends BLayoutManager
 	return _policy;
     }
 
-    public void setOffAxisPolicy (Policy offpolicy)
+    public GroupLayout setOffAxisPolicy (Policy offpolicy)
     {
 	_offpolicy = offpolicy;
+        return this;
     }
 
     public Policy getOffAxisPolicy ()
@@ -160,9 +162,10 @@ public abstract class GroupLayout extends BLayoutManager
 	return _offpolicy;
     }
 
-    public void setGap (int gap)
+    public GroupLayout setGap (int gap)
     {
 	_gap = gap;
+        return this;
     }
 
     public int getGap ()
@@ -170,9 +173,10 @@ public abstract class GroupLayout extends BLayoutManager
 	return _gap;
     }
 
-    public void setJustification (Justification justification)
+    public GroupLayout setJustification (Justification justification)
     {
 	_justification = justification;
+        return this;
     }
 
     public Justification getJustification ()
@@ -180,9 +184,10 @@ public abstract class GroupLayout extends BLayoutManager
 	return _justification;
     }
 
-    public void setOffAxisJustification (Justification justification)
+    public GroupLayout setOffAxisJustification (Justification justification)
     {
 	_offjust = justification;
+        return this;
     }
 
     public Justification getOffAxisJustification ()
