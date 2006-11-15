@@ -26,10 +26,10 @@ import com.jme.renderer.Renderer;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.event.ActionEvent;
-import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.BEvent;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.icon.BIcon;
+import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
@@ -92,7 +92,7 @@ public class BComboBox extends BLabel
     public void addItem (int index, Object item)
     {
         _items.add(index, new ComboMenuItem(item));
-        clearCachedMenu();
+        clearCache();
     }
 
     /**
@@ -100,7 +100,7 @@ public class BComboBox extends BLabel
      */
     public void setItems (Object[] items)
     {
-        clearCachedMenu();
+        clearCache();
         _items.clear();
         _selidx = -1;
 
@@ -167,19 +167,15 @@ public class BComboBox extends BLabel
         return _items.size();
     }
 
-    // documentation inherited
+    @Override // from BComponent
     public boolean dispatchEvent (BEvent event)
     {
-        if (event instanceof MouseEvent) {
+        if (event instanceof MouseEvent && isEnabled()) {
             MouseEvent mev = (MouseEvent)event;
             switch (mev.getType()) {
             case MouseEvent.MOUSE_PRESSED:
                 if (_menu == null) {
-                    _menu = new BPopupMenu(getWindow());
-                    _menu.addListener(_listener);
-                    for (int ii = 0; ii < _items.size(); ii++) {
-                        _menu.addMenuItem(_items.get(ii));
-                    }
+                    _menu = new ComboPopupMenu();
                 }
                 _menu.popup(getAbsoluteX(), getAbsoluteY(), false);
                 break;
@@ -197,13 +193,34 @@ public class BComboBox extends BLabel
         return super.dispatchEvent(event);
     }
 
-    // documentation inherited
+    @Override // from BComponent
     protected String getDefaultStyleClass ()
     {
         return "combobox";
     }
 
-    // TODO: make getPreferredSize() use the widest label
+    @Override // from BComponent
+    protected Dimension computePreferredSize (int whint, int hhint)
+    {
+        // our preferred size is based on the widest of our items; computing
+        // this is rather expensive, so we cache it like we do the menu
+        if (_psize == null) {
+            _psize = new Dimension();
+            Label label = new Label(this);
+            for (ComboMenuItem mitem : _items) {
+                if (mitem.item instanceof BIcon) {
+                    label.setIcon((BIcon)mitem.item);
+                } else {
+                    label.setText(mitem.item == null ?
+                                  "" : mitem.item.toString());
+                }
+                Dimension lsize = label.computePreferredSize(whint, hhint);
+                _psize.width = Math.max(_psize.width, lsize.width);
+                _psize.height = Math.max(_psize.height, lsize.height);
+            }
+        }
+        return _psize;
+    }
 
     protected void selectItem (int index, long when, int modifiers)
     {
@@ -221,13 +238,38 @@ public class BComboBox extends BLabel
         emitEvent(new ActionEvent(this, when, modifiers, "selectionChanged"));
     }
 
-    protected void clearCachedMenu ()
+    protected void clearCache ()
     {
         if (_menu != null) {
             _menu.removeAll();
             _menu = null;
         }
+        _psize = null;
     }
+
+    protected class ComboPopupMenu extends BPopupMenu
+    {
+        public ComboPopupMenu () {
+            super(BComboBox.this.getWindow());
+            for (int ii = 0; ii < _items.size(); ii++) {
+                addMenuItem(_items.get(ii));
+            }
+        }
+
+        protected void itemSelected (BMenuItem item, long when, int modifiers) {
+            selectItem(_items.indexOf(item), when, modifiers);
+            dismiss();
+        }
+
+        protected Dimension computePreferredSize (int whint, int hhint) {
+            // prefer a size that is at least as wide as the combobox from
+            // which we are going to popup
+            Dimension d = super.computePreferredSize(whint, hhint);
+            d.width = Math.max(d.width, BComboBox.this.getWidth() -
+                               getInsets().getHorizontal());
+            return d;
+        }
+    };
 
     protected class ComboMenuItem extends BMenuItem
     {
@@ -245,14 +287,15 @@ public class BComboBox extends BLabel
         }
     }
 
-    protected ActionListener _listener = new ActionListener() {
-        public void actionPerformed (ActionEvent event) {
-            selectItem(_items.indexOf(event.getSource()),
-                       event.getWhen(), event.getModifiers());
-        }
-    };
-
+    /** The index of the currently selected item. */
     protected int _selidx = -1;
+
+    /** The list of items in this combo box. */
     protected ArrayList<ComboMenuItem> _items = new ArrayList<ComboMenuItem>();
-    protected BPopupMenu _menu;
+
+    /** A cached popup menu containing our items. */
+    protected ComboPopupMenu _menu;
+
+    /** Our cached preferred size. */
+    protected Dimension _psize;
 }
