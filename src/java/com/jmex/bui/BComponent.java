@@ -664,6 +664,10 @@ public class BComponent
     /**
      * Computes and returns a preferred size for this component. This method is
      * called if no overriding preferred size has been supplied.
+     *
+     * @return the computed preferred size of this component <em>in a newly
+     * created Dimension</em> instance which will be adopted (and modified) by
+     * the caller.
      */
     protected Dimension computePreferredSize (int whint, int hhint)
     {
