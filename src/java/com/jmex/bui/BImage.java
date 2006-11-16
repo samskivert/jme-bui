@@ -194,9 +194,9 @@ public class BImage extends Quad
 
         texture.setFilter(Texture.FM_LINEAR);
         texture.setMipmapState(Texture.MM_NONE);
-        texture.setCorrection(Texture.CM_AFFINE);
         _tstate.setTexture(texture);
         _tstate.setEnabled(true);
+        _tstate.setCorrection(TextureState.CM_AFFINE);
         setRenderState(_tstate);
         updateRenderState();
     }
@@ -320,8 +320,6 @@ public class BImage extends Quad
     {
         if (_tstate.getNumberOfSetTextures() > 0) {
             _tstate.deleteAll();
-            _tstate.getTexture().setNeedsFilterRefresh(true);
-            _tstate.getTexture().setNeedsWrapRefresh(true);
         }
     }
 
