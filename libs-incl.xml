@@ -3,7 +3,7 @@
 <project name="library-dependencies">
   <fileset dir="${projects.root}" id="jme-bui.libs">
     <include name="${libs.dir}/junit-3.7.jar"/>
-    <include name="lib/jme.jar"/>
-    <include name="lib/lwjgl.jar"/>
+    <include name="${distlib.dir}/jme.jar"/>
+    <include name="${distlib.dir}/lwjgl.jar"/>
   </fileset>
 </project>
