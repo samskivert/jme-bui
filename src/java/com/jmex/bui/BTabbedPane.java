@@ -107,6 +107,16 @@ public class BTabbedPane extends BContainer
      */
     public void removeTab (int tabidx)
     {
+        removeTab(tabidx, false);
+    }
+
+    /**
+     * Removes the tab at the specified index.
+     *
+     * @param btnClose set to true if the tab was removed by the close button
+     */
+    public void removeTab (int tabidx, boolean btnClose)
+    {
         _buttons.remove(_buttons.getComponent(tabidx));
         Tab tab = _tabs.remove(tabidx);
 
@@ -133,7 +143,7 @@ public class BTabbedPane extends BContainer
         }
 
         // and let interested parties know what happened
-        tabWasRemoved(tab.component);
+        tabWasRemoved(tab.component, btnClose);
     }
 
     /**
@@ -252,8 +262,10 @@ public class BTabbedPane extends BContainer
 
     /**
      * Called when a tab was removed.
+     *
+     * @param btnClose set to true if the tab was removed by the close button
      */
-    protected void tabWasRemoved (BComponent tab)
+    protected void tabWasRemoved (BComponent tab, boolean btnClose)
     {
     }
 
@@ -276,7 +288,7 @@ public class BTabbedPane extends BContainer
     protected ActionListener _closer = new ActionListener() {
         public void actionPerformed (ActionEvent event) {
             if (_selidx >= 0) {
-                removeTab(_selidx);
+                removeTab(_selidx, true);
             }
         }
     };
