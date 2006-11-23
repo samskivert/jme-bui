@@ -31,12 +31,33 @@ import com.jmex.bui.BTextField;
  */
 public class IntegerDocument extends Document
 {
+    /**
+     * Creates a new document that allows any integer value.
+     */
+    public IntegerDocument ()
+    {
+        this(false);
+    }
+    
+    /**
+     * Creates a new integer document.
+     *
+     * @param positive if true, only accept positive values
+     */
+    public IntegerDocument (boolean positive)
+    {
+        _positive = positive;
+    }
+    
     // documentation inherited
     protected boolean validateEdit (String oldText, String newText)
     {
         // some special cases
         if (newText.length() == 0) {
             return true;
+        }
+        if (newText.startsWith("-") && _positive) {
+            return false;
         }
         if (newText.equals("-")) {
             return true;
@@ -48,4 +69,7 @@ public class IntegerDocument extends Document
             return false;
         }
     }
+    
+    /** If true, only positive values are allowed. */
+    protected boolean _positive;
 }
