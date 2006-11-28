@@ -51,10 +51,10 @@ import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
- * Defines a stylesheet which is used to configure the style (font family, font
- * size, foreground and background color, etc.) of components in the BUI
- * library. The BUI stylesheets syntax is a subset of the Cascading Style Sheet
- * sytnax and follows its semantic conventions as well where possible.
+ * Defines a stylesheet which is used to configure the style (font family, font size, foreground
+ * and background color, etc.) of components in the BUI library. The BUI stylesheets syntax is a
+ * subset of the Cascading Style Sheet sytnax and follows its semantic conventions as well where
+ * possible.
  *
  * <p> A basic stylesheet enumerating most usable values is as follows:
  * <pre>
@@ -87,35 +87,31 @@ import com.jmex.bui.util.Insets;
  * }
  * </pre>
  *
- * Each component is identified by its default stylesheet class, which are
- * derived from the component's Java class name: <code>window, label,
- * textfield, component, popupmenu, etc.</code> The component's stylesheet
- * class can be overridden with a call to {@link BComponent#setStyleClass}.
+ * Each component is identified by its default stylesheet class, which are derived from the
+ * component's Java class name: <code>window, label, textfield, component, popupmenu, etc.</code>
+ * The component's stylesheet class can be overridden with a call to {@link
+ * BComponent#setStyleClass}.
  *
  * <p> A component's style is resolved in the following manner:
  * <ul>
- * <li> First by looking up the property using the component's stylesheet
- * class.
+ * <li> First by looking up the property using the component's stylesheet class.
 
- * <li> <em>For certain properties</em>, the interface hierarchy is then
- * climbed and each parents' stylesheet class is checked for the property in
- * question. The properties for which that applies are: <code>color, font,
- * text-align, vertical-align</code>.
+ * <li> <em>For certain properties</em>, the interface hierarchy is then climbed and each parents'
+ * stylesheet class is checked for the property in question. The properties for which that applies
+ * are: <code>color, font, text-align, vertical-align</code>.
  *
- * <li> Lastly the <code>root</code> stylesheet class is checked (for all
- * properties, not just those for which we climb the interface hierarchy).
+ * <li> Lastly the <code>root</code> stylesheet class is checked (for all properties, not just
+ * those for which we climb the interface hierarchy).
  * </ul>
  *
- * <p> This resolution process is followed at the time the component is added
- * to the interface hierarchy and the result is used to configure the
- * component. We tradeoff the relative expense of doing the lookup every time
- * the component is rendered (every frame) with the memory expense of storing
- * the style of every component in memory.
+ * <p> This resolution process is followed at the time the component is added to the interface
+ * hierarchy and the result is used to configure the component. We tradeoff the relative expense of
+ * doing the lookup every time the component is rendered (every frame) with the memory expense of
+ * storing the style of every component in memory.
  */
 public class BStyleSheet
 {
-    /** An interface used by the stylesheet to obtain font and image
-     * resources. */
+    /** An interface used by the stylesheet to obtain font and image resources. */
     public interface ResourceProvider
     {
         /**
@@ -191,9 +187,8 @@ public class BStyleSheet
         // load up the default BUI stylesheet
         BStyleSheet style = null;
         try {
-            style = new BStyleSheet(new InputStreamReader(
-                                        BStyleSheet.class.getClassLoader().
-                                        getResourceAsStream("rsrc/style.bss")),
+            style = new BStyleSheet(new InputStreamReader(BStyleSheet.class.getClassLoader().
+                                                          getResourceAsStream("rsrc/style.bss")),
                                     new DefaultResourceProvider());
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -225,8 +220,7 @@ public class BStyleSheet
 
     public BBackground getBackground (BComponent component, String pseudoClass)
     {
-        return (BBackground)findProperty(
-            component, pseudoClass, "background", false);
+        return (BBackground)findProperty(component, pseudoClass, "background", false);
     }
 
     public BIcon getIcon (BComponent component, String pseudoClass)
@@ -242,42 +236,36 @@ public class BStyleSheet
 
     public int getTextAlignment (BComponent component, String pseudoClass)
     {
-        Integer value = (Integer)
-            findProperty(component, pseudoClass, "text-align", true);
+        Integer value = (Integer)findProperty(component, pseudoClass, "text-align", true);
         return (value == null) ? BConstants.LEFT : value.intValue();
     }
 
     public int getVerticalAlignment (BComponent component, String pseudoClass)
     {
-        Integer value = (Integer)
-            findProperty(component, pseudoClass, "vertical-align", true);
+        Integer value = (Integer)findProperty(component, pseudoClass, "vertical-align", true);
         return (value == null) ? BConstants.CENTER : value.intValue();
     }
 
     public int getTextEffect (BComponent component, String pseudoClass)
     {
-        Integer value = (Integer)
-            findProperty(component, pseudoClass, "text-effect", true);
+        Integer value = (Integer)findProperty(component, pseudoClass, "text-effect", true);
         return (value == null) ? BConstants.NORMAL : value.intValue();
     }
 
     public int getEffectSize (BComponent component, String pseudoClass)
     {
-        Integer value = (Integer)
-            findProperty(component, pseudoClass, "effect-size", true);
+        Integer value = (Integer)findProperty(component, pseudoClass, "effect-size", true);
         return (value == null) ? BConstants.DEFAULT_SIZE : value.intValue();
     }
 
     public ColorRGBA getEffectColor (BComponent component, String pseudoClass)
     {
-        return (ColorRGBA)findProperty(
-            component, pseudoClass, "effect-color", true);
+        return (ColorRGBA)findProperty(component, pseudoClass, "effect-color", true);
     }
 
     public Insets getInsets (BComponent component, String pseudoClass)
     {
-        Insets insets = (Insets)
-            findProperty(component, pseudoClass, "padding", false);
+        Insets insets = (Insets)findProperty(component, pseudoClass, "padding", false);
         return (insets == null) ? Insets.ZERO_INSETS : insets;
     }
 
@@ -296,8 +284,8 @@ public class BStyleSheet
         return new DefaultKeyMap();
     }
 
-    protected Object findProperty (BComponent component, String pseudoClass,
-                                   String property, boolean climb)
+    protected Object findProperty (
+        BComponent component, String pseudoClass, String property, boolean climb)
     {
         Object value;
 
@@ -356,7 +344,8 @@ public class BStyleSheet
     {
         while (tok.nextToken() != StreamTokenizer.TT_EOF) {
             Rule rule = startRule(tok);
-            while (parseProperty(tok, rule)) {}
+            while (parseProperty(tok, rule)) {
+            }
             _rules.put(makeFQClass(rule.styleClass, rule.pseudoClass), rule);
         }
     }
@@ -419,8 +408,8 @@ public class BStyleSheet
                 args.add(new Double(tok.nval));
                 break;
             default:
-                System.err.println("Unexpected token: '" + (char)tok.ttype +
-                                   "'. Line " + tok.lineno() + ".");
+                System.err.println(
+                    "Unexpected token: '" + (char)tok.ttype + "'. Line " + tok.lineno() + ".");
                 break;
             }
         }
@@ -429,8 +418,8 @@ public class BStyleSheet
             rule.properties.put(name, createProperty(name, args));
 //             System.out.println("  " + name + " -> " + rule.get(name));
         } catch (Exception e) {
-            System.err.println("Failure parsing property '" + name +
-                               "' line " + sline + ": " + e.getMessage());
+            System.err.println(
+                "Failure parsing property '" + name + "' line " + sline + ": " + e.getMessage());
             if (!(e instanceof IllegalArgumentException)) {
                 e.printStackTrace(System.err);
             }
@@ -459,8 +448,7 @@ public class BStyleSheet
                             "Unknown background scaling type: '" + scale + "'");
                     }
                     bprop.scale = scval.intValue();
-                    if (bprop.scale == ImageBackground.FRAME_XY &&
-                            args.size() > 3) {
+                    if (bprop.scale == ImageBackground.FRAME_XY && args.size() > 3) {
                         bprop.frame = new Insets();
                         bprop.frame.top = parseInt(args.get(3));
                         bprop.frame.right = (args.size() > 4) ?
@@ -492,8 +480,7 @@ public class BStyleSheet
                 iprop.height = parseInt(args.get(2));
 
             } else {
-                throw new IllegalArgumentException(
-                    "Unknown icon type: '" + iprop.type + "'");
+                throw new IllegalArgumentException("Unknown icon type: '" + iprop.type + "'");
             }
             return iprop;
 
@@ -503,10 +490,8 @@ public class BStyleSheet
                 fprop.family = (String)args.get(0);
                 fprop.style = (String)args.get(1);
                 if (!fprop.style.equals(PLAIN) && !fprop.style.equals(BOLD) &&
-                    !fprop.style.equals(ITALIC) &&
-                    !fprop.style.equals(BOLD_ITALIC)) {
-                    throw new IllegalArgumentException(
-                        "Unknown font style: '" + fprop.style + "'");
+                    !fprop.style.equals(ITALIC) && !fprop.style.equals(BOLD_ITALIC)) {
+                    throw new IllegalArgumentException("Unknown font style: '" + fprop.style + "'");
                 }
                 fprop.size = parseInt(args.get(2));
                 return fprop;
@@ -522,8 +507,7 @@ public class BStyleSheet
             String type = (String)args.get(0);
             Object value = _taconsts.get(type);
             if (value == null) {
-                throw new IllegalArgumentException(
-                    "Unknown text-align type '" + type + "'");
+                throw new IllegalArgumentException("Unknown text-align type '" + type + "'");
             }
             return value;
 
@@ -531,8 +515,7 @@ public class BStyleSheet
             String type = (String)args.get(0);
             Object value = _vaconsts.get(type);
             if (value == null) {
-                throw new IllegalArgumentException(
-                    "Unknown vertical-align type '" + type + "'");
+                throw new IllegalArgumentException("Unknown vertical-align type '" + type + "'");
             }
             return value;
 
@@ -540,41 +523,33 @@ public class BStyleSheet
             String type = (String)args.get(0);
             Object value = _teconsts.get(type);
             if (value == null) {
-                throw new IllegalArgumentException(
-                    "Unknown text-effect type '" + type + "'");
+                throw new IllegalArgumentException("Unknown text-effect type '" + type + "'");
             }
             return value;
 
         } else if (name.equals("effect-size")) {
             Integer value = new Integer(parseInt(args.get(0)));
             return value;
-            
 
         } else if (name.equals("padding")) {
             Insets insets = new Insets();
             insets.top = parseInt(args.get(0));
-            insets.right = (args.size() > 1) ?
-                parseInt(args.get(1)) : insets.top;
-            insets.bottom = (args.size() > 2) ?
-                parseInt(args.get(2)) : insets.top;
-            insets.left = (args.size() > 3) ?
-                parseInt(args.get(3)) : insets.right;
+            insets.right = (args.size() > 1) ? parseInt(args.get(1)) : insets.top;
+            insets.bottom = (args.size() > 2) ? parseInt(args.get(2)) : insets.top;
+            insets.left = (args.size() > 3) ? parseInt(args.get(3)) : insets.right;
             return insets;
 
         } else if (name.equals("border")) {
             int thickness = parseInt(args.get(0));
             String type = (String)args.get(1);
             if (type.equals("blank")) {
-                return new EmptyBorder(
-                    thickness, thickness, thickness, thickness);
+                return new EmptyBorder(thickness, thickness, thickness, thickness);
 
             } else if (type.equals("solid")) {
-                // TODO: use thickness
-                return new LineBorder(parseColor((String)args.get(2)));
+                return new LineBorder(parseColor((String)args.get(2)), thickness);
 
             } else {
-                throw new IllegalArgumentException(
-                    "Unknown border type '" + type + "'");
+                throw new IllegalArgumentException("Unknown border type '" + type + "'");
             }
 
         } else if (name.equals("size")) {
@@ -586,14 +561,12 @@ public class BStyleSheet
         } else if (name.equals("parent")) {
             Rule parent = _rules.get(args.get(0));
             if (parent == null) {
-                throw new IllegalArgumentException(
-                    "Unknown parent class '" + args.get(0) + "'");
+                throw new IllegalArgumentException("Unknown parent class '" + args.get(0) + "'");
             }
             return parent;
 
         } else {
-            throw new IllegalArgumentException(
-                "Unknown property '" + name + "'");
+            throw new IllegalArgumentException("Unknown property '" + name + "'");
         }
     }
 
@@ -613,8 +586,7 @@ public class BStyleSheet
 
     protected ColorRGBA parseColor (String hex)
     {
-        if (!hex.startsWith("#") ||
-            (hex.length() != 7 && hex.length() != 9)) {
+        if (!hex.startsWith("#") || (hex.length() != 7 && hex.length() != 9)) {
             String errmsg = "Color must be #RRGGBB or #RRGGBBAA: " + hex;
             throw new IllegalArgumentException(errmsg);
         }
@@ -635,8 +607,7 @@ public class BStyleSheet
 
     protected static String makeFQClass (String styleClass, String pseudoClass)
     {
-        return (pseudoClass == null) ? styleClass :
-            (styleClass + ":" + pseudoClass);
+        return (pseudoClass == null) ? styleClass : (styleClass + ":" + pseudoClass);
     }
 
     protected static class Rule
@@ -645,8 +616,7 @@ public class BStyleSheet
 
         public String pseudoClass;
 
-        public HashMap<String, Object> properties =
-            new HashMap<String, Object>();
+        public HashMap<String, Object> properties = new HashMap<String, Object>();
 
         public Object get (HashMap rules, String key)
         {
@@ -658,6 +628,7 @@ public class BStyleSheet
             return (prule != null) ? prule.get(rules, key) : null;
         }
 
+        @Override // from Object
         public String toString () {
             return "[class=" + styleClass + ", pclass=" + pseudoClass + "]";
         }
@@ -674,6 +645,7 @@ public class BStyleSheet
         String style;
         int size;
 
+        @Override // from Property
         public Object resolve (ResourceProvider rsrcprov) {
 //             System.out.println("Resolving text factory [family=" + family +
 //                                ", style=" + style + ", size=" + size + "].");
@@ -689,19 +661,21 @@ public class BStyleSheet
         int scale = ImageBackground.SCALE_XY;
         Insets frame;
 
+        @Override // from Property
         public Object resolve (ResourceProvider rsrcprov) {
             if (type.equals("solid")) {
                 return new TintedBackground(color);
+
             } else if (type.equals("image")) {
                 BImage image;
                 try {
                     image = rsrcprov.loadImage(ipath);
                 } catch (IOException ioe) {
-                    System.err.println("Failed to load background image '" +
-                                       ipath + "': " + ioe);
+                    System.err.println("Failed to load background image '" + ipath + "': " + ioe);
                     return new BlankBackground();
                 }
                 return new ImageBackground(scale, image, frame);
+
             } else {
                 return new BlankBackground();
             }
@@ -714,14 +688,14 @@ public class BStyleSheet
         public String ipath;
         public int width, height;
 
+        @Override // from Property
         public Object resolve (ResourceProvider rsrcprov) {
             if (type.equals("image")) {
                 BImage image;
                 try {
                     image = rsrcprov.loadImage(ipath);
                 } catch (IOException ioe) {
-                    System.err.println("Failed to load icon image '" +
-                                       ipath + "': " + ioe);
+                    System.err.println("Failed to load icon image '" + ipath + "': " + ioe);
                     return new BlankIcon(10, 10);
                 }
                 return new ImageIcon(image);
@@ -738,14 +712,10 @@ public class BStyleSheet
     protected ResourceProvider _rsrcprov;
     protected HashMap<String, Rule> _rules = new HashMap<String, Rule>();
 
-    protected static HashMap<String, Integer> _taconsts =
-        new HashMap<String, Integer>();
-    protected static HashMap<String, Integer> _vaconsts =
-        new HashMap<String, Integer>();
-    protected static HashMap<String, Integer> _teconsts =
-        new HashMap<String, Integer>();
-    protected static HashMap<String, Integer> _ibconsts =
-        new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _taconsts = new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _vaconsts = new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _teconsts = new HashMap<String, Integer>();
+    protected static HashMap<String, Integer> _ibconsts = new HashMap<String, Integer>();
 
     static {
         // alignment constants
