@@ -4,6 +4,7 @@
   <fileset dir="${libs.dir}" id="jme-bui.libs">
     <include name="junit-3.7.jar"/>
     <include name="jme.jar"/>
+    <include name="jme-awt.jar"/>
     <include name="lwjgl.jar"/>
   </fileset>
 </project>

@@ -23,7 +23,7 @@ decoratedwindow {
 popupmenu {
   background: solid #00000088;
 //  padding: 5;
-  border: 1 solid #FFFFFF;
+  border: 2 solid #FFFFFF;
   font: "Dialog" bold 16;
 }
 
@@ -35,7 +35,7 @@ component:disabled {
 
 tooltip_window {
   background: solid #FFFFFF;
-  border: 1 solid #000000;
+  border: 2 solid #000000;
   padding: 5;
 }
 

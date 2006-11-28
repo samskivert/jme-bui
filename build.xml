@@ -60,6 +60,12 @@
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
+    <!-- copy native libraries into dist/lib -->
+    <copy todir="${deploy.dir}/lib">
+      <fileset dir="lib/" includes="**/*.so"/>
+      <fileset dir="lib/" includes="**/*.jnilib"/>
+      <fileset dir="lib/" includes="**/*.dylib"/>
+    </copy>
   </target>
 
   <!-- build the javadoc documentation -->
