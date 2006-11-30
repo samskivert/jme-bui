@@ -157,10 +157,7 @@ public abstract class BRootNode extends Geometry
         // saved focus
         if (_windows.size() > 0) {
             BWindow top = _windows.get(_windows.size()-1);
-            if (top._savedFocus != null) {
-                setFocus(top._savedFocus);
-                top._savedFocus = null;
-            }
+            top.gotFocus();
         }
     }
 

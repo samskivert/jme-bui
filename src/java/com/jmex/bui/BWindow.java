@@ -265,6 +265,18 @@ public class BWindow extends BContainer
         }
     }
 
+    /**
+     * Called when this window gets the focus after a window on the
+     * hierarchy has been removed.
+     */
+    protected void gotFocus ()
+    {
+        if (_savedFocus != null) {
+            _root.setFocus(_savedFocus);
+            _savedFocus = null;
+        }
+    }
+
     /** The stylesheet used to configure components in this window. */
     protected BStyleSheet _style;
 
