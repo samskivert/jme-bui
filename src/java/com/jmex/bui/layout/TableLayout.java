@@ -192,15 +192,17 @@ public class TableLayout extends BLayoutManager
         int row = 0, col = 0, maxrh = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
-            Dimension psize = child.getPreferredSize(whint, -1);
-            if (psize.height > _rowHeights[row]) {
-                _rowHeights[row] = psize.height;
-                if (maxrh < _rowHeights[row]) {
-                    maxrh = _rowHeights[row];
+            if (child.isVisible()) {
+                Dimension psize = child.getPreferredSize(whint, -1);
+                if (psize.height > _rowHeights[row]) {
+                    _rowHeights[row] = psize.height;
+                    if (maxrh < _rowHeights[row]) {
+                        maxrh = _rowHeights[row];
+                    }
                 }
-            }
-            if (psize.width > _columnWidths[col]) {
-                _columnWidths[col] = psize.width;
+                if (psize.width > _columnWidths[col]) {
+                    _columnWidths[col] = psize.width;
+                }
             }
             if (++col == _columnWidths.length) {
                 col = 0;

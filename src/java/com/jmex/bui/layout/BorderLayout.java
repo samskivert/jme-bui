@@ -121,7 +121,7 @@ public class BorderLayout extends BLayoutManager
         BComponent comp;
         for (int cidx = 0; cidx < VERTS.length; cidx++) {
             comp = _components[VERTS[cidx].intValue()];
-            if (comp != null) {
+            if (comp != null && comp.isVisible()) {
                 Dimension cpsize = comp.getPreferredSize(whint, -1);
                 psize.width = Math.max(psize.width, cpsize.width);
                 psize.height += cpsize.height;
@@ -135,7 +135,7 @@ public class BorderLayout extends BLayoutManager
         int centerWidth = 0, centerHeight = 0;
         for (int cidx = 0; cidx < HORIZS.length; cidx++) {
             comp = _components[HORIZS[cidx].intValue()];
-            if (comp != null) {
+            if (comp != null && comp.isVisible()) {
                 Dimension cpsize = comp.getPreferredSize(-1, hhint);
                 centerWidth += cpsize.width;
                 centerHeight = Math.max(centerHeight, cpsize.height);
@@ -147,7 +147,7 @@ public class BorderLayout extends BLayoutManager
         }
 
         comp = _components[CENTER.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             Dimension cpsize = comp.getPreferredSize(whint, hhint);
             centerWidth += cpsize.width;
             centerHeight = Math.max(centerHeight, cpsize.height);
@@ -175,7 +175,7 @@ public class BorderLayout extends BLayoutManager
         int height = target.getHeight() - insets.getVertical();
 
         BComponent comp = _components[SOUTH.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             Dimension cpsize = comp.getPreferredSize(width, -1);
             comp.setBounds(x, y, width, cpsize.height);
             y += (cpsize.height + _vgap);
@@ -183,7 +183,7 @@ public class BorderLayout extends BLayoutManager
         }
 
         comp = _components[NORTH.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             Dimension cpsize = comp.getPreferredSize(width, -1);
             comp.setBounds(x, target.getHeight() - insets.top - cpsize.height,
                            width, cpsize.height);
@@ -191,7 +191,7 @@ public class BorderLayout extends BLayoutManager
         }
 
         comp = _components[WEST.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             Dimension cpsize = comp.getPreferredSize(-1, -1);
             comp.setBounds(x, y, cpsize.width, height);
             x += (cpsize.width + _hgap);
@@ -199,7 +199,7 @@ public class BorderLayout extends BLayoutManager
         }
 
         comp = _components[EAST.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             Dimension cpsize = comp.getPreferredSize(-1, -1);
             comp.setBounds(target.getWidth() - insets.right - cpsize.width, y,
                            cpsize.width, height);
@@ -207,7 +207,7 @@ public class BorderLayout extends BLayoutManager
         }
 
         comp = _components[CENTER.intValue()];
-        if (comp != null) {
+        if (comp != null && comp.isVisible()) {
             comp.setBounds(x, y, width, height);
         }
     }

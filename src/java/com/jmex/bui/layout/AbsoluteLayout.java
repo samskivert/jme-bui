@@ -96,6 +96,9 @@ public class AbsoluteLayout extends BLayoutManager
         Rectangle rec = new Rectangle();
         for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
             BComponent comp = target.getComponent(ii);
+            if (!comp.isVisible()) {
+                continue;
+            }
             Object cons = _spots.get(comp);
             if (cons instanceof Point) {
                 Point p = (Point)cons;
@@ -116,6 +119,9 @@ public class AbsoluteLayout extends BLayoutManager
         int height = target.getHeight();
         for (int ii = 0, cc = target.getComponentCount(); ii < cc; ii++) {
             BComponent comp = target.getComponent(ii);
+            if (!comp.isVisible()) {
+                continue;
+            }
             Object cons = _spots.get(comp);
             if (cons instanceof Point) {
                 Point p = (Point)cons;

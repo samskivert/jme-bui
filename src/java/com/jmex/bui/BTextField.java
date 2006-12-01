@@ -179,7 +179,7 @@ public class BTextField extends BTextComponent
     // documentation inherited
     public boolean acceptsFocus ()
     {
-        return isEnabled();
+        return isVisible() && isEnabled();
     }
 
     // documentation inherited

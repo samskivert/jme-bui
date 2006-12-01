@@ -261,39 +261,37 @@ public abstract class GroupLayout extends BLayoutManager
 
 	for (int i = 0; i < count; i++) {
 	    BComponent child = parent.getComponent(i);
-// 	    if (!child.isVisible()) {
-// 		continue;
-// 	    }
+ 	    if (!child.isVisible()) {
+     		continue;
+ 	    }
 
-            // our layout manager passes only one of the hints depending on
-            // whether it is horizontal (height) or vertical (width), so we can
-            // pass that hint directly along to the child
+        // our layout manager passes only one of the hints depending on
+        // whether it is horizontal (height) or vertical (width), so we can
+        // pass that hint directly along to the child
 	    Dimension csize = child.getPreferredSize(whint, hhint);
 	    info.count++;
 	    info.totwid += csize.width;
 	    info.tothei += csize.height;
 
 	    if (csize.width > info.maxwid) {
-		info.maxwid = csize.width;
+    	    info.maxwid = csize.width;
 	    }
 	    if (csize.height > info.maxhei) {
-		info.maxhei = csize.height;
+    	    info.maxhei = csize.height;
 	    }
 
 	    if (isFixed(child)) {
-		info.fixwid += csize.width;
-		info.fixhei += csize.height;
-		info.numfix++;
-
+        	info.fixwid += csize.width;
+        	info.fixhei += csize.height;
+        	info.numfix++;
 	    } else {
-		info.totweight += getWeight(child);
-
-                if (csize.width > info.maxfreewid) {
-                    info.maxfreewid = csize.width;
-                }
-                if (csize.height > info.maxfreehei) {
-                    info.maxfreehei = csize.height;
-                }
+    		info.totweight += getWeight(child);
+            if (csize.width > info.maxfreewid) {
+                info.maxfreewid = csize.width;
+            }
+            if (csize.height > info.maxfreehei) {
+                info.maxfreehei = csize.height;
+            }
 	    }
 
 	    info.dimens[i] = csize;

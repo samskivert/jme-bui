@@ -323,6 +323,35 @@ public class BComponent
     }
 
     /**
+     * Sets this component's visibility state.  A component that is invisible
+     * is not rendered and does not contribute to the layout.
+     */
+    public void setVisible (boolean visible)
+    {
+        if (visible != _visible) {
+            _visible = visible;
+            invalidate();
+        }
+    }
+    
+    /**
+     * Returns true if this component is visible, false if it is not.
+     */
+    public boolean isVisible ()
+    {
+        return _visible;
+    }
+    
+    /**
+     * Returns true if this component is both added to the interface hierarchy
+     * and visible, false if not.
+     */
+    public boolean isShowing ()
+    {
+        return isAdded() && isVisible();
+    }
+    
+    /**
      * Returns the state of this component, at this level just {@link #DEFAULT}
      * and {@link #DISABLED}.
      */
@@ -529,7 +558,9 @@ public class BComponent
     public void validate ()
     {
         if (!_valid) {
-            layout();
+            if (isVisible()) {
+                layout();
+            }
             _valid = true;
         }
     }
@@ -555,6 +586,9 @@ public class BComponent
      */
     public void render (Renderer renderer)
     {
+        if (!_visible) {
+            return;
+        }
         GL11.glTranslatef(_x, _y, 0);
 
         try {
@@ -580,7 +614,7 @@ public class BComponent
      */
     public BComponent getHitComponent (int mx, int my)
     {
-	if ((mx >= _x) && (my >= _y) &&
+        if (isVisible() && (mx >= _x) && (my >= _y) &&
             (mx < _x + _width) && (my < _y + _height)) {
             return this;
         }
@@ -917,7 +951,7 @@ public class BComponent
     protected String _tiptext;
     protected boolean _tipmouse;
 
-    protected boolean _valid, _enabled = true, _hover;
+    protected boolean _valid, _enabled = true, _visible = true, _hover;
     protected float _alpha = 1f;
 
     protected ColorRGBA[] _colors = new ColorRGBA[getStateCount()];

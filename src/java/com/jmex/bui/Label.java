@@ -57,7 +57,7 @@ public class Label
         releaseText();
 
         // if we're already part of the hierarchy, recreate our glyps
-        if (_container.isAdded()) {
+        if (_container.isShowing()) {
             layoutAndComputeSize(_twidth);
         }
 
@@ -186,7 +186,7 @@ public class Label
      */
     public void stateDidChange ()
     {
-        if (_container.isAdded()) {
+        if (_container.isShowing()) {
             layoutAndComputeSize(_twidth);
         }
     }
