@@ -21,6 +21,7 @@
 package com.jmex.bui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.jme.renderer.Renderer;
 
@@ -33,13 +34,11 @@ import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
- * Displays a selected value and allows that value to be changed by selecting
- * from a popup menu.
+ * Displays a selected value and allows that value to be changed by selecting from a popup menu.
  */
 public class BComboBox extends BLabel
 {
-    /** A handy class for displaying a label that is associated with a
-     * particular non-displayable value. */
+    /** Used for displaying a label that is associated with a particular non-displayable value. */
     public static class Item
     {
         public Object value;
@@ -66,8 +65,8 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Creates a combo box with the supplied set of items. The result of {@link
-     * Object#toString} for each item will be displayed in the list.
+     * Creates a combo box with the supplied set of items. The result of {@link Object#toString}
+     * for each item will be displayed in the list.
      */
     public BComboBox (Object[] items)
     {
@@ -76,8 +75,18 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Appends an item to our list of items. The result of {@link
-     * Object#toString} for the item will be displayed in the list.
+     * Creates a combo box with the supplied set of items. The result of {@link Object#toString}
+     * for each item will be displayed in the list.
+     */
+    public BComboBox (Collection<?> items)
+    {
+        super("");
+        setItems(items);
+    }
+
+    /**
+     * Appends an item to our list of items. The result of {@link Object#toString} for the item
+     * will be displayed in the list.
      */
     public void addItem (Object item)
     {
@@ -85,9 +94,9 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Inserts an item into our list of items at the specified position
-     * (zero being before all other items and so forth).  The result of
-     * {@link Object#toString} for the item will be displayed in the list.
+     * Inserts an item into our list of items at the specified position (zero being before all
+     * other items and so forth).  The result of {@link Object#toString} for the item will be
+     * displayed in the list.
      */
     public void addItem (int index, Object item)
     {
@@ -98,12 +107,20 @@ public class BComboBox extends BLabel
     /**
      * Replaces any existing items in this combo box with the supplied items.
      */
+    public void setItems (Collection<?> items)
+    {
+        prepSetItems();
+        for (Object item : items) {
+            addItem(item);
+        }
+    }
+
+    /**
+     * Replaces any existing items in this combo box with the supplied items.
+     */
     public void setItems (Object[] items)
     {
-        clearCache();
-        _items.clear();
-        _selidx = -1;
-
+        prepSetItems();
         for (int ii = 0; ii < items.length; ii++) {
             addItem(items[ii]);
         }
@@ -126,8 +143,8 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Requires that the combo box be configured with {@link Item} items,
-     * returns the @{link Item#value} of the currently selected item.
+     * Requires that the combo box be configured with {@link Item} items, returns the @{link
+     * Item#value} of the currently selected item.
      */
     public Object getSelectedValue ()
     {
@@ -143,8 +160,8 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Selects the item with the specified index. <em>Note:</em> the supplied
-     * item is compared with the item list using {@link Object#equals}.
+     * Selects the item with the specified index. <em>Note:</em> the supplied item is compared with
+     * the item list using {@link Object#equals}.
      */
     public void selectItem (Object item)
     {
@@ -202,8 +219,8 @@ public class BComboBox extends BLabel
     @Override // from BComponent
     protected Dimension computePreferredSize (int whint, int hhint)
     {
-        // our preferred size is based on the widest of our items; computing
-        // this is rather expensive, so we cache it like we do the menu
+        // our preferred size is based on the widest of our items; computing this is rather
+        // expensive, so we cache it like we do the menu
         if (_psize == null || _phint.width != whint || _phint.height != hhint) {
             _phint.width = whint;
             _phint.height = hhint;
@@ -213,8 +230,7 @@ public class BComboBox extends BLabel
                 if (mitem.item instanceof BIcon) {
                     label.setIcon((BIcon)mitem.item);
                 } else {
-                    label.setText(mitem.item == null ?
-                                  "" : mitem.item.toString());
+                    label.setText(mitem.item == null ? "" : mitem.item.toString());
                 }
                 Dimension lsize = label.computePreferredSize(whint, hhint);
                 _psize.width = Math.max(_psize.width, lsize.width);
@@ -222,6 +238,13 @@ public class BComboBox extends BLabel
             }
         }
         return new Dimension(_psize);
+    }
+
+    protected void prepSetItems ()
+    {
+        clearCache();
+        _items.clear();
+        _selidx = -1;
     }
 
     protected void selectItem (int index, long when, int modifiers)
@@ -264,11 +287,9 @@ public class BComboBox extends BLabel
         }
 
         protected Dimension computePreferredSize (int whint, int hhint) {
-            // prefer a size that is at least as wide as the combobox from
-            // which we are going to popup
+            // prefer a size that is at least as wide as the combobox from which we will popup
             Dimension d = super.computePreferredSize(whint, hhint);
-            d.width = Math.max(d.width, BComboBox.this.getWidth() -
-                               getInsets().getHorizontal());
+            d.width = Math.max(d.width, BComboBox.this.getWidth() - getInsets().getHorizontal());
             return d;
         }
     };
