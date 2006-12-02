@@ -21,7 +21,6 @@
 package com.jmex.bui;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.jme.renderer.Renderer;
 
@@ -78,7 +77,7 @@ public class BComboBox extends BLabel
      * Creates a combo box with the supplied set of items. The result of {@link Object#toString}
      * for each item will be displayed in the list.
      */
-    public BComboBox (Collection<?> items)
+    public BComboBox (Iterable<?> items)
     {
         super("");
         setItems(items);
@@ -107,7 +106,7 @@ public class BComboBox extends BLabel
     /**
      * Replaces any existing items in this combo box with the supplied items.
      */
-    public void setItems (Collection<?> items)
+    public void setItems (Iterable<?> items)
     {
         prepSetItems();
         for (Object item : items) {
