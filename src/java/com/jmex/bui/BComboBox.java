@@ -108,7 +108,7 @@ public class BComboBox extends BLabel
      */
     public void setItems (Iterable<?> items)
     {
-        prepSetItems();
+        clearItems();
         for (Object item : items) {
             addItem(item);
         }
@@ -119,7 +119,7 @@ public class BComboBox extends BLabel
      */
     public void setItems (Object[] items)
     {
-        prepSetItems();
+        clearItems();
         for (int ii = 0; ii < items.length; ii++) {
             addItem(items[ii]);
         }
@@ -183,6 +183,16 @@ public class BComboBox extends BLabel
         return _items.size();
     }
 
+    /**
+     * Removes all items from this combo box.
+     */
+    public void clearItems ()
+    {
+        clearCache();
+        _items.clear();
+        _selidx = -1;
+    }
+
     @Override // from BComponent
     public boolean dispatchEvent (BEvent event)
     {
@@ -237,13 +247,6 @@ public class BComboBox extends BLabel
             }
         }
         return new Dimension(_psize);
-    }
-
-    protected void prepSetItems ()
-    {
-        clearCache();
-        _items.clear();
-        _selidx = -1;
     }
 
     protected void selectItem (int index, long when, int modifiers)
