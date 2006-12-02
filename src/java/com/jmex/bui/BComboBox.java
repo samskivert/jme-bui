@@ -230,9 +230,7 @@ public class BComboBox extends BLabel
     {
         // our preferred size is based on the widest of our items; computing this is rather
         // expensive, so we cache it like we do the menu
-        if (_psize == null || _phint.width != whint || _phint.height != hhint) {
-            _phint.width = whint;
-            _phint.height = hhint;
+        if (_psize == null) {
             _psize = new Dimension();
             Label label = new Label(this);
             for (ComboMenuItem mitem : _items) {
@@ -241,7 +239,7 @@ public class BComboBox extends BLabel
                 } else {
                     label.setText(mitem.item == null ? "" : mitem.item.toString());
                 }
-                Dimension lsize = label.computePreferredSize(whint, hhint);
+                Dimension lsize = label.computePreferredSize(-1, -1);
                 _psize.width = Math.max(_psize.width, lsize.width);
                 _psize.height = Math.max(_psize.height, lsize.height);
             }
@@ -323,7 +321,4 @@ public class BComboBox extends BLabel
 
     /** Our cached preferred size. */
     protected Dimension _psize;
-
-    /** The hints provided for our cached preferred size. */
-    protected Dimension _phint = new Dimension();
 }
