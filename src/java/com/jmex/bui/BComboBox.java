@@ -199,6 +199,22 @@ public class BComboBox extends BLabel
     }
 
     /**
+     * Returns the item at the specified index.
+     */
+    public Object getItem (int index)
+    {
+        return _items.get(index).item;
+    }
+
+    /**
+     * Returns the value at the specified index, the item must be an instance of {@link Item}.
+     */
+    public Object getValue (int index)
+    {
+        return ((Item)_items.get(index).item).value;
+    }
+
+    /**
      * Removes all items from this combo box.
      */
     public void clearItems ()
