@@ -51,6 +51,11 @@ public class BComboBox extends BLabel
             return _label;
         }
 
+        public boolean equals (Object other) {
+            Item oitem = (Item)other;
+            return (value == null) ? (oitem.value == null) : value.equals(oitem.value);
+        }
+
         protected String _label;
     }
 
@@ -142,7 +147,7 @@ public class BComboBox extends BLabel
     }
 
     /**
-     * Requires that the combo box be configured with {@link Item} items, returns the @{link
+     * Requires that the combo box be configured with {@link Item} items, returns the {@link
      * Item#value} of the currently selected item.
      */
     public Object getSelectedValue ()
@@ -173,6 +178,16 @@ public class BComboBox extends BLabel
             }
         }
         selectItem(selidx);
+    }
+
+    /**
+     * Requires that the combo box be configured with {@link Item} items, selects the item with a
+     * {@link Item#value} equal to the supplied value.
+     */
+    public void selectValue (Object value)
+    {
+        // Item.equals only compares the values
+        selectItem(new Item(value, ""));
     }
 
     /**
