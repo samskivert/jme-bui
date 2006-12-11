@@ -251,12 +251,14 @@ public class BScrollPane extends BContainer
 
             // and recompute our scrollbar range
             if (_vmodel != null) {
-                _vmodel.setRange(0, _vmodel.getValue(),
-                    getHeight() - insets.getVertical(), d.height);
+                int extent = getHeight() - insets.getVertical();
+                int value = Math.max(0,Math.min(_vmodel.getValue(), d.height - extent));
+                _vmodel.setRange(0, value, extent, d.height);
             }
             if (_hmodel != null) {
-                _hmodel.setRange(0, _hmodel.getValue(),
-                    getWidth() - insets.getHorizontal(), d.width);
+                int extent = getWidth() - insets.getHorizontal();
+                int value = Math.max(0,Math.min(_hmodel.getValue(), d.width - extent));
+                _hmodel.setRange(0, value, extent, d.width);
             }
         }
 
