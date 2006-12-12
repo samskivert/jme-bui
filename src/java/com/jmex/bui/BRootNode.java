@@ -119,6 +119,23 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Removes all windows from the root node.
+     */
+    public void removeAllWindows ()
+    {
+        setFocus(null);
+        for (int ii = _windows.size() - 1; ii >= 0; ii--) {
+            BWindow window = _windows.remove(ii);
+            // remove the window from the interface heirarchy
+            window.setRootNode(null);
+        }
+
+        // then remove the hover component (which may result in a mouse exited
+        // even being dispatched to the window or one of its children)
+        updateHoverComponent(_mouseX, _mouseY);
+    }
+
+    /**
      * Removes a window from participation in the input system.
      */
     public void removeWindow (BWindow window)
