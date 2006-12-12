@@ -143,7 +143,7 @@ public class BComboBox extends BLabel
      */
     public Object getSelectedItem ()
     {
-        return _selidx == -1 ? null : _items.get(_selidx).item;
+        return getItem(_selidx);
     }
 
     /**
@@ -152,7 +152,7 @@ public class BComboBox extends BLabel
      */
     public Object getSelectedValue ()
     {
-        return (_selidx == -1) ? null : ((Item)_items.get(_selidx).item).value;
+        return getValue(_selidx);
     }
 
     /**
@@ -203,7 +203,7 @@ public class BComboBox extends BLabel
      */
     public Object getItem (int index)
     {
-        return _items.get(index).item;
+        return (index < 0 || index >= _items.size()) ? null : _items.get(index).item;
     }
 
     /**
@@ -211,7 +211,7 @@ public class BComboBox extends BLabel
      */
     public Object getValue (int index)
     {
-        return ((Item)_items.get(index).item).value;
+        return (index < 0 || index >= _items.size()) ? null : ((Item)_items.get(index).item).value;
     }
 
     /**
