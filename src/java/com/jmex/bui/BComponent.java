@@ -131,21 +131,31 @@ public class BComponent
      */
     public Dimension getPreferredSize (int whint, int hhint)
     {
-        Dimension ps = _preferredSize;
-        if (ps == null) {
-            // extract space from the hints for our insets
-            Insets insets = getInsets();
-            if (whint > 0) {
-                whint -= insets.getHorizontal();
-            }
-            if (hhint > 0) {
-                hhint -= insets.getVertical();
-            }
-            ps = computePreferredSize(whint, hhint);
-            // now add our insets back into our preferred size
-            ps.width += insets.getHorizontal();
-            ps.height += insets.getVertical();
+        // extract space from the hints for our insets
+        Insets insets = getInsets();
+        if (whint > 0) {
+            whint -= insets.getHorizontal();
         }
+        if (hhint > 0) {
+            hhint -= insets.getVertical();
+        }
+
+        // compute our "natural" preferred size
+        Dimension ps = computePreferredSize(whint, hhint);
+
+        // override our preferred size with user supplied values
+        if (_preferredSize != null) {
+            if (_preferredSize.width >= 0) {
+                ps.width = _preferredSize.width;
+            }
+            if (_preferredSize.height >= 0) {
+                ps.height = _preferredSize.height;
+            }
+        }
+
+        // now add our insets back in
+        ps.width += insets.getHorizontal();
+        ps.height += insets.getVertical();
 
         // now make sure we're not smaller in either dimension than our
         // background will allow
@@ -160,7 +170,9 @@ public class BComponent
 
     /**
      * Configures the preferred size of this component. This will override any information provided
-     * by derived classes that have opinions about their preferred size.
+     * by derived classes that have opinions about their preferred size. Either the width or the
+     * height can be configured as -1 in which case the computed preferred size will be used for
+     * that dimension.
      */
     public void setPreferredSize (Dimension preferredSize)
     {
