@@ -55,10 +55,9 @@ public class BImage extends Quad
     public static AlphaState blendState;
 
     /**
-     * Configures the supplied spatial with transparency in the standard user
-     * interface sense which is that transparent pixels show through to the
-     * background but non-transparent pixels are not blended with what is
-     * behind them.
+     * Configures the supplied spatial with transparency in the standard user interface sense which
+     * is that transparent pixels show through to the background but non-transparent pixels are not
+     * blended with what is behind them.
      */
     public static void makeTransparent (Spatial target)
     {
@@ -98,8 +97,7 @@ public class BImage extends Quad
 
         // render the image into a raster of the proper format
         boolean hasAlpha = TextureManager.hasAlpha(image);
-        int type = hasAlpha ?
-            BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR;
+        int type = hasAlpha ? BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR;
         BufferedImage tex = new BufferedImage(twidth, theight, type);
         AffineTransform tx = null;
         if (flip) {
@@ -113,8 +111,7 @@ public class BImage extends Quad
         // grab the image memory and stuff it into a direct byte buffer
         ByteBuffer scratch = ByteBuffer.allocateDirect(
             4 * twidth * theight).order(ByteOrder.nativeOrder());
-        byte data[] = (byte[])tex.getRaster().getDataElements(
-            0, 0, twidth, theight, null);
+        byte data[] = (byte[])tex.getRaster().getDataElements(0, 0, twidth, theight, null);
         scratch.clear();
         scratch.put(data);
         scratch.flip();
@@ -131,8 +128,8 @@ public class BImage extends Quad
     }
 
     /**
-     * Creates an image of the specified size, using the supplied JME image
-     * data. The image should be a power of two size if OpenGL requires it.
+     * Creates an image of the specified size, using the supplied JME image data. The image should
+     * be a power of two size if OpenGL requires it.
      *
      * @param width the width of the renderable image.
      * @param height the height of the renderable image.
@@ -176,10 +173,10 @@ public class BImage extends Quad
     /**
      * Configures the image data to be used by this image.
      *
-     * @param width the width of the renderable image (the image data itself
-     * should be a power of two if OpenGL requires it).
-     * @param height the height of the renderable image (the image data itself
-     * should be a power of two if OpenGL requires it).
+     * @param width the width of the renderable image (the image data itself should be a power of
+     * two if OpenGL requires it).
+     * @param height the height of the renderable image (the image data itself should be a power of
+     * two if OpenGL requires it).
      */
     public void setImage (Image image)
     {
@@ -202,9 +199,8 @@ public class BImage extends Quad
     }
 
     /**
-     * Configures our texture coordinates to the specified subimage. This does
-     * not normally need to be called, but if one is stealthily using a BImage
-     * as a quad, then it does.
+     * Configures our texture coordinates to the specified subimage. This does not normally need to
+     * be called, but if one is stealthily using a BImage as a quad, then it does.
      */
     public void setTextureCoords (int sx, int sy, int swidth, int sheight)
     {
@@ -231,14 +227,11 @@ public class BImage extends Quad
     }
 
     /**
-     * Renders this image at the specified coordinates, scaled to the specified
-     * size.
+     * Renders this image at the specified coordinates, scaled to the specified size.
      */
-    public void render (Renderer renderer, int tx, int ty,
-                        int twidth, int theight, float alpha)
+    public void render (Renderer renderer, int tx, int ty, int twidth, int theight, float alpha)
     {
-        render(renderer, 0, 0, _width, _height, tx, ty, twidth, theight,
-            alpha);
+        render(renderer, 0, 0, _width, _height, tx, ty, twidth, theight, alpha);
     }
 
     /**
@@ -247,16 +240,13 @@ public class BImage extends Quad
     public void render (Renderer renderer, int sx, int sy,
                         int swidth, int sheight, int tx, int ty, float alpha)
     {
-        render(renderer, sx, sy, swidth, sheight, tx, ty, swidth, sheight,
-            alpha);
+        render(renderer, sx, sy, swidth, sheight, tx, ty, swidth, sheight, alpha);
     }
 
     /**
-     * Renders a region of this image at the specified coordinates, scaled to
-     * the specified size.
+     * Renders a region of this image at the specified coordinates, scaled to the specified size.
      */
-    public void render (Renderer renderer,
-                        int sx, int sy, int swidth, int sheight,
+    public void render (Renderer renderer, int sx, int sy, int swidth, int sheight,
                         int tx, int ty, int twidth, int theight, float alpha)
     {
         if (_referents == 0) {
@@ -277,9 +267,8 @@ public class BImage extends Quad
     }
 
     /**
-     * Notes that something is referencing this image and will subsequently
-     * call {@link #render} to render the image. <em>This must be paired with a
-     * call to {@link #release}.</em>
+     * Notes that something is referencing this image and will subsequently call {@link #render} to
+     * render the image. <em>This must be paired with a call to {@link #release}.</em>
      */
     public void reference ()
     {
@@ -287,10 +276,9 @@ public class BImage extends Quad
     }
 
     /**
-     * Unbinds our underlying texture from OpenGL, removing the data from
-     * graphics memory. This should be done when the an image is no longer
-     * being displayed. The image will automatically rebind next time it is
-     * rendered.
+     * Unbinds our underlying texture from OpenGL, removing the data from graphics memory. This
+     * should be done when the an image is no longer being displayed. The image will automatically
+     * rebind next time it is rendered.
      */
     public void release ()
     {
@@ -311,8 +299,7 @@ public class BImage extends Quad
         super("name", width, height);
         _width = width;
         _height = height;
-        _tstate = DisplaySystem.getDisplaySystem().getRenderer().
-            createTextureState();
+        _tstate = DisplaySystem.getDisplaySystem().getRenderer().createTextureState();
         setTransparent(true);
     }
 
@@ -326,8 +313,7 @@ public class BImage extends Quad
     /** Rounds the supplied value up to a power of two. */
     protected static int nextPOT (int value)
     {
-        return (Integer.bitCount(value) > 1) ?
-            (Integer.highestOneBit(value) << 1) : value;
+        return (Integer.bitCount(value) > 1) ? (Integer.highestOneBit(value) << 1) : value;
     }
 
     protected TextureState _tstate;
@@ -338,14 +324,11 @@ public class BImage extends Quad
     protected static boolean _supportsNonPowerOfTwo;
 
     static {
-        blendState = DisplaySystem.getDisplaySystem().getRenderer().
-            createAlphaState();
+        blendState = DisplaySystem.getDisplaySystem().getRenderer().createAlphaState();
         blendState.setBlendEnabled(true);
         blendState.setSrcFunction(AlphaState.SB_SRC_ALPHA);
         blendState.setDstFunction(AlphaState.DB_ONE_MINUS_SRC_ALPHA);
         blendState.setEnabled(true);
-
-        _supportsNonPowerOfTwo =
-            GLContext.getCapabilities().GL_ARB_texture_non_power_of_two;
+        _supportsNonPowerOfTwo = GLContext.getCapabilities().GL_ARB_texture_non_power_of_two;
     }
 }

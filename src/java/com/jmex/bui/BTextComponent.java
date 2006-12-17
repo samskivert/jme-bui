@@ -152,6 +152,31 @@ public abstract class BTextComponent extends BComponent
         }
     }
 
+    /**
+     * Returns the text factory that should be used by the supplied label (for which we are by
+     * definition acting as container) to generate its text.
+     */
+    protected BTextFactory getTextFactory (Label forLabel)
+    {
+        return getTextFactory();
+    }
+
+    /**
+     * Creates a text configuration for the supplied label (for which we are by definition acting
+     * as container).
+     */
+    protected Label.Config getLabelConfig (Label forLabel, int twidth)
+    {
+        Label.Config config = new Label.Config();
+        config.text = forLabel.getText();
+        config.color = getColor();
+        config.effect = getTextEffect();
+        config.effectSize = getEffectSize();
+        config.effectColor = getEffectColor();
+        config.twidth = twidth;
+        return config;
+    }
+
     protected int[] checkNonDefault (int[] styles, int defval)
     {
         for (int ii = 0; ii < styles.length; ii++) {

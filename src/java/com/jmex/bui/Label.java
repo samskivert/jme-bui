@@ -197,7 +197,7 @@ public class Label
     public Dimension computePreferredSize (int whint, int hhint)
     {
         // if our cached preferred size is not valid, recompute it
-        Config prefconfig = getConfig(whint > 0 ? whint : _twidth);
+        Config prefconfig = _container.getLabelConfig(this, whint > 0 ? whint : _twidth);
         if (!prefconfig.equals(_prefconfig)) {
             _prefconfig = prefconfig;
             _prefsize = layoutAndComputeSize(prefconfig.twidth);
@@ -208,45 +208,44 @@ public class Label
     /**
      * Lays out the label text and icon.
      */
-    public void layout (Insets insets)
+    public void layout (Insets insets, int contWidth, int contHeight)
     {
         // compute any offsets needed to center or align things
-        Dimension size = layoutAndComputeSize(
-            _container.getWidth() - insets.getHorizontal());
+        Dimension size = layoutAndComputeSize(contWidth - insets.getHorizontal());
         int xoff = 0, yoff = 0;
         switch (_orient) {
         case HORIZONTAL:
             if (_icon != null) {
-                _ix = getXOffset(insets, size.width);
-                _iy = getYOffset(insets, _icon.getHeight());
+                _ix = getXOffset(insets, contWidth, size.width);
+                _iy = getYOffset(insets, contHeight, _icon.getHeight());
                 xoff = (_icon.getWidth() + _gap);
             }
             if (_text != null) {
-                _tx = getXOffset(insets, size.width) + xoff;
-                _ty = getYOffset(insets, _text.size.height);
+                _tx = getXOffset(insets, contWidth, size.width) + xoff;
+                _ty = getYOffset(insets, contHeight, _text.size.height);
             }
             break;
 
         case VERTICAL:
             if (_text != null) {
-                _tx = getXOffset(insets, _text.size.width);
-                _ty = getYOffset(insets, size.height);
+                _tx = getXOffset(insets, contWidth, _text.size.width);
+                _ty = getYOffset(insets, contHeight, size.height);
                 yoff = (_text.size.height + _gap);
             }
             if (_icon != null) {
-                _ix = getXOffset(insets, _icon.getWidth());
-                _iy = getYOffset(insets, size.height) + yoff;
+                _ix = getXOffset(insets, contWidth, _icon.getWidth());
+                _iy = getYOffset(insets, contHeight, size.height) + yoff;
             }
             break;
 
         case OVERLAPPING:
             if (_icon != null) {
-                _ix = getXOffset(insets, _icon.getWidth());
-                _iy = getYOffset(insets, _icon.getHeight());
+                _ix = getXOffset(insets, contWidth, _icon.getWidth());
+                _iy = getYOffset(insets, contHeight, _icon.getHeight());
             }
             if (_text != null) {
-                _tx = getXOffset(insets, _text.size.width);
-                _ty = getYOffset(insets, _text.size.height);
+                _tx = getXOffset(insets, contWidth, _text.size.width);
+                _ty = getYOffset(insets, contHeight, _text.size.height);
             }
             break;
         }
@@ -255,43 +254,46 @@ public class Label
     /**
      * Renders the label text and icon.
      */
-    public void render (Renderer renderer, float alpha)
+    public void render (Renderer renderer, int x, int y, int contWidth, int contHeight, float alpha)
     {
-        if (_icon != null) {
-            _icon.render(renderer, _ix, _iy, alpha);
-        }
+        GL11.glTranslatef(x, y, 0);
 
-        if (_text != null) {
-            // if we're not wrapping, clip to the bounds of our container
-            if (_fit != BLabel.Fit.WRAP) {
-                if (_fit != BLabel.Fit.SCALE) {
-                    GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                }
-                Insets insets = _container.getInsets();
-                int width = _container.getWidth() - insets.getHorizontal();
-                int height = _container.getHeight() - insets.getVertical();
-                if (width <= 0 || height <= 0) {
-                    return;
-                }
-                if (_fit == BLabel.Fit.SCALE) {
-                    _text.render(renderer, _tx, _ty, width, height,
-                            _container.getHorizontalAlignment(), alpha);
-                    return;
-                }
-                GL11.glScissor(_container.getAbsoluteX() + insets.left,
-                               _container.getAbsoluteY() + insets.bottom,
-                               width, height);
+        try {
+            if (_icon != null) {
+                _icon.render(renderer, _ix, _iy, alpha);
             }
 
-            try {
+            if (_text != null) {
+                // if we're not wrapping, clip to the bounds of our container
+                if (_fit != BLabel.Fit.WRAP) {
+                    if (_fit != BLabel.Fit.SCALE) {
+                        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                    }
+                    Insets insets = _container.getInsets();
+                    int width = contWidth - insets.getHorizontal();
+                    int height = contHeight - insets.getVertical();
+                    if (width <= 0 || height <= 0) {
+                        return;
+                    }
+                    if (_fit == BLabel.Fit.SCALE) {
+                        _text.render(renderer, _tx, _ty, width, height,
+                                     _container.getHorizontalAlignment(), alpha);
+                        return;
+                    }
+                    GL11.glScissor(_container.getAbsoluteX() + insets.left,
+                                   _container.getAbsoluteY() + insets.bottom, width, height);
+                }
+
                 // and then render our target component
                 _text.render(renderer, _tx, _ty,
                              _container.getHorizontalAlignment(), alpha);
-            } finally {
-                if (_fit != BLabel.Fit.WRAP) {
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                }
             }
+
+        } finally {
+            if (_fit != BLabel.Fit.WRAP) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            }
+            GL11.glTranslatef(x, y, 0);
         }
     }
 
@@ -363,25 +365,23 @@ public class Label
         return new Dimension(width, height);
     }
 
-    protected int getXOffset (Insets insets, int width)
+    protected int getXOffset (Insets insets, int contWidth, int width)
     {
         switch (_container.getHorizontalAlignment()) {
         default:
         case LEFT: return insets.left;
-        case RIGHT: return _container.getWidth() - width - insets.right;
-        case CENTER: return (_container.getWidth() - insets.getHorizontal() -
-                             width) / 2 + insets.left;
+        case RIGHT: return contWidth - width - insets.right;
+        case CENTER: return (contWidth - insets.getHorizontal() - width) / 2 + insets.left;
         }
     }
 
-    protected int getYOffset (Insets insets, int height)
+    protected int getYOffset (Insets insets, int contHeight, int height)
     {
         switch (_container.getVerticalAlignment()) {
         default:
-        case TOP: return _container.getHeight() - height - insets.top;
+        case TOP: return contHeight - height - insets.top;
         case BOTTOM: return insets.bottom;
-        case CENTER: return (_container.getHeight() - insets.getVertical() -
-                             height) / 2 + insets.bottom;
+        case CENTER: return (contHeight - insets.getVertical() - height) / 2 + insets.bottom;
         }
     }
 
@@ -391,7 +391,7 @@ public class Label
     protected void recreateGlyphs (int twidth)
     {
         // no need to recreate our glyphs if our config hasn't changed
-        Config config = getConfig(twidth);
+        Config config = _container.getLabelConfig(this, twidth);
         if (config.equals(_config) && _text != null) {
             return;
         }
@@ -414,7 +414,7 @@ public class Label
         }
 
         // render up some new text
-        BTextFactory tfact = _container.getTextFactory();
+        BTextFactory tfact = _container.getTextFactory(this);
         _text = new Text();
         _text.lines = tfact.wrapText(
                 _value, config.color, config.effect, config.effectSize,
@@ -428,21 +428,6 @@ public class Label
         if (_container.isAdded()) {
             _text.wasAdded();
         }
-    }
-
-    /**
-     * Returns our current text configuration.
-     */
-    protected Config getConfig (int twidth)
-    {
-        Config config = new Config();
-        config.text = _value;
-        config.color = _container.getColor();
-        config.effect = _container.getTextEffect();
-        config.effectSize = _container.getEffectSize();
-        config.effectColor = _container.getEffectColor();
-        config.twidth = twidth;
-        return config;
     }
 
     protected static class Config

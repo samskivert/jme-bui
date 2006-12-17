@@ -174,14 +174,14 @@ public class BLabel extends BTextComponent
     protected void layout ()
     {
         super.layout();
-        _label.layout(getInsets());
+        _label.layout(getInsets(), getWidth(), getHeight());
     }
 
     // documentation inherited
     protected void renderComponent (Renderer renderer)
     {
         super.renderComponent(renderer);
-        _label.render(renderer, _alpha);
+        _label.render(renderer, 0, 0, getWidth(), getHeight(), _alpha);
     }
 
     // documentation inherited
