@@ -293,7 +293,7 @@ public class Label
             if (_fit != BLabel.Fit.WRAP) {
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
-            GL11.glTranslatef(x, y, 0);
+            GL11.glTranslatef(-x, -y, 0);
         }
     }
 
