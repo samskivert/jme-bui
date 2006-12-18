@@ -131,22 +131,28 @@ public class BComponent
      */
     public Dimension getPreferredSize (int whint, int hhint)
     {
-        // extract space from the hints for our insets
-        Insets insets = getInsets();
-        if (whint > 0) {
-            whint -= insets.getHorizontal();
-        }
-        if (hhint > 0) {
-            hhint -= insets.getVertical();
-        }
-
         Dimension ps;
         // if we have a fully specified preferred size, just use it
         if (_preferredSize != null && _preferredSize.width >= 0 && _preferredSize.height >= 0) {
             ps = new Dimension(_preferredSize);
+
         } else {
+            // extract space from the hints for our insets
+            Insets insets = getInsets();
+            if (whint > 0) {
+                whint -= insets.getHorizontal();
+            }
+            if (hhint > 0) {
+                hhint -= insets.getVertical();
+            }
+
             // compute our "natural" preferred size
             ps = computePreferredSize(whint, hhint);
+
+            // now add our insets back in
+            ps.width += insets.getHorizontal();
+            ps.height += insets.getVertical();
+
             // then override it with user supplied values
             if (_preferredSize != null) {
                 if (_preferredSize.width >= 0) {
@@ -157,10 +163,6 @@ public class BComponent
                 }
             }
         }
-
-        // now add our insets back in
-        ps.width += insets.getHorizontal();
-        ps.height += insets.getVertical();
 
         // now make sure we're not smaller in either dimension than our
         // background will allow
