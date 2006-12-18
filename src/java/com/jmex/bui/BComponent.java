@@ -140,16 +140,21 @@ public class BComponent
             hhint -= insets.getVertical();
         }
 
-        // compute our "natural" preferred size
-        Dimension ps = computePreferredSize(whint, hhint);
-
-        // override our preferred size with user supplied values
-        if (_preferredSize != null) {
-            if (_preferredSize.width >= 0) {
-                ps.width = _preferredSize.width;
-            }
-            if (_preferredSize.height >= 0) {
-                ps.height = _preferredSize.height;
+        Dimension ps;
+        // if we have a fully specified preferred size, just use it
+        if (_preferredSize != null && _preferredSize.width >= 0 && _preferredSize.height >= 0) {
+            ps = new Dimension(_preferredSize);
+        } else {
+            // compute our "natural" preferred size
+            ps = computePreferredSize(whint, hhint);
+            // then override it with user supplied values
+            if (_preferredSize != null) {
+                if (_preferredSize.width >= 0) {
+                    ps.width = _preferredSize.width;
+                }
+                if (_preferredSize.height >= 0) {
+                    ps.height = _preferredSize.height;
+                }
             }
         }
 
@@ -177,6 +182,14 @@ public class BComponent
     public void setPreferredSize (Dimension preferredSize)
     {
         _preferredSize = preferredSize;
+    }
+
+    /**
+     * Configures the preferred size of this component. See {@link #setPreferredSize(Dimension)}.
+     */
+    public void setPreferrerSize (int width, int height)
+    {
+        setPreferredSize(new Dimension(width, height));
     }
 
     /** Returns the x coordinate of this component. */
@@ -227,7 +240,8 @@ public class BComponent
      */
     public Insets getInsets ()
     {
-        return _insets[getState()];
+        Insets insets = _insets[getState()];
+        return (insets == null) ? Insets.ZERO_INSETS : insets;
     }
 
     /**
