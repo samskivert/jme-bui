@@ -39,6 +39,7 @@ public class BComboBox extends BLabel
 {
     /** Used for displaying a label that is associated with a particular non-displayable value. */
     public static class Item
+        implements Comparable<Item>
     {
         public Object value;
 
@@ -54,6 +55,10 @@ public class BComboBox extends BLabel
         public boolean equals (Object other) {
             Item oitem = (Item)other;
             return (value == null) ? (oitem.value == null) : value.equals(oitem.value);
+        }
+
+        public int compareTo (Item other) {
+            return _label.compareTo(other._label);
         }
 
         protected String _label;
