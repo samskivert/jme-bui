@@ -39,6 +39,7 @@ import com.jmex.bui.text.EditCommands;
 import com.jmex.bui.text.LengthLimitedDocument;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
+import com.jmex.bui.util.Rectangle;
 
 /**
  * Displays and allows for the editing of a single line of text.
@@ -342,15 +343,16 @@ public class BTextField extends BTextComponent
         if (_glyphs != null) {
             // clip the text to our visible text region
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(getAbsoluteX() + insets.left,
-                           getAbsoluteY() + insets.bottom,
-                           _width - insets.getHorizontal(),
-                           _height - insets.getVertical());
+            boolean scissored = intersectScissorBox(_srect,
+                getAbsoluteX() + insets.left,
+                getAbsoluteY() + insets.bottom,
+                _width - insets.getHorizontal(),
+                _height - insets.getVertical());
             try {
                 _glyphs.render(renderer, insets.left - _txoff,
                                insets.bottom, _alpha);
             } finally {
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                restoreScissorState(scissored, _srect);
             }
         }
 
@@ -478,4 +480,6 @@ public class BTextField extends BTextComponent
     protected int _prefWidth = -1;
     protected boolean _showCursor;
     protected int _cursp, _cursx, _txoff;
+    
+    protected Rectangle _srect = new Rectangle();
 }
