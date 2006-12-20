@@ -998,7 +998,7 @@ public class BComponent
     protected BBackground[] _backgrounds = new BBackground[getStateCount()];
 
     /** Temporary storage for scissor box queries. */
-    protected static IntBuffer _bbuf = BufferUtils.createIntBuffer(4);
+    protected static IntBuffer _bbuf = BufferUtils.createIntBuffer(16);
     
     protected static final int STATE_COUNT = 3;
     protected static final String[] STATE_PCLASSES = { null, "hover", "disabled" };
