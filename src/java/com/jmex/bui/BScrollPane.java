@@ -27,6 +27,7 @@ import com.jmex.bui.event.MouseWheelListener;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
+import com.jmex.bui.util.Rectangle;
 
 /**
  * Provides a scrollable clipped view on a sub-heirarchy of components.
@@ -334,8 +335,8 @@ public class BScrollPane extends BContainer
             int yoffset = getYOffset();
             int xoffset = getXOffset();
             GL11.glTranslatef(xoffset, yoffset, 0);
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor((getAbsoluteX() + insets.left) - xoffset,
+            boolean scissored = intersectScissorBox(_srect,
+                (getAbsoluteX() + insets.left) - xoffset,
                 (getAbsoluteY() + insets.bottom) - yoffset,
                 _width - insets.getHorizontal(),
                 _height - insets.getVertical());
@@ -343,7 +344,7 @@ public class BScrollPane extends BContainer
                 // and then render our target component
                 _target.render(renderer);
             } finally {
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                restoreScissorState(scissored, _srect);
                 GL11.glTranslatef(-xoffset, -yoffset, 0);
             }
         }
@@ -362,6 +363,7 @@ public class BScrollPane extends BContainer
         protected BoundedRangeModel _vmodel, _hmodel;
         protected BComponent _target;
         protected MouseWheelListener _wheelListener;
+        protected Rectangle _srect = new Rectangle();
     }
     
     protected BViewport _vport;

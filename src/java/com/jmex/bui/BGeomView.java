@@ -30,6 +30,7 @@ import com.jme.system.DisplaySystem;
 
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
+import com.jmex.bui.util.Rectangle;
 
 /**
  * Displays 3D geometry (a {@link Spatial}) inside a normal user interface.
@@ -146,10 +147,9 @@ public class BGeomView extends BComponent
             }
 
             // clear the z buffer over the area to which we will be drawing
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(ax, ay, width, height);
+            boolean scissored = intersectScissorBox(_srect, ax, ay, width, height);
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            restoreScissorState(scissored, _srect);
             
             // now set up the custom camera and render our geometry
             renderer.setCamera(_camera);
@@ -194,4 +194,6 @@ public class BGeomView extends BComponent
     protected Spatial _geom;
     protected int _swidth, _sheight;
     protected float _cx, _cy, _cwidth, _cheight;
+    
+    protected Rectangle _srect = new Rectangle();
 }

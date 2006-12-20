@@ -32,6 +32,7 @@ import com.jmex.bui.text.BText;
 import com.jmex.bui.text.BTextFactory;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
+import com.jmex.bui.util.Rectangle;
 
 /**
  * Handles the underlying layout and rendering for {@link BLabel} and {@link
@@ -252,52 +253,6 @@ public class Label
     }
 
     /**
-     * Renders the label text and icon.
-     */
-    public void render (Renderer renderer, int x, int y, int contWidth, int contHeight, float alpha)
-    {
-        GL11.glTranslatef(x, y, 0);
-
-        try {
-            if (_icon != null) {
-                _icon.render(renderer, _ix, _iy, alpha);
-            }
-
-            if (_text != null) {
-                // if we're not wrapping, clip to the bounds of our container
-                if (_fit != BLabel.Fit.WRAP) {
-                    if (_fit != BLabel.Fit.SCALE) {
-                        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                    }
-                    Insets insets = _container.getInsets();
-                    int width = contWidth - insets.getHorizontal();
-                    int height = contHeight - insets.getVertical();
-                    if (width <= 0 || height <= 0) {
-                        return;
-                    }
-                    if (_fit == BLabel.Fit.SCALE) {
-                        _text.render(renderer, _tx, _ty, width, height,
-                                     _container.getHorizontalAlignment(), alpha);
-                        return;
-                    }
-                    GL11.glScissor(_container.getAbsoluteX() + insets.left,
-                                   _container.getAbsoluteY() + insets.bottom, width, height);
-                }
-
-                // and then render our target component
-                _text.render(renderer, _tx, _ty,
-                             _container.getHorizontalAlignment(), alpha);
-            }
-
-        } finally {
-            if (_fit != BLabel.Fit.WRAP) {
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            }
-            GL11.glTranslatef(-x, -y, 0);
-        }
-    }
-
-    /**
      * Releases any underlying texture resources created by this label.
      */
     public void releaseText ()
@@ -310,6 +265,52 @@ public class Label
         }
     }
 
+    /**
+     * Renders the label text and icon.
+     */
+    public void render (Renderer renderer, int x, int y, int contWidth, int contHeight, float alpha)
+    {
+        GL11.glTranslatef(x, y, 0);
+        try {
+            if (_icon != null) {
+                _icon.render(renderer, _ix, _iy, alpha);
+            }
+            if (_text != null) {
+                renderText(renderer, contWidth, contHeight, alpha);
+            }
+        } finally {
+            GL11.glTranslatef(-x, -y, 0);
+        }
+    }
+
+    protected void renderText (Renderer renderer, int contWidth, int contHeight, float alpha)
+    {
+        if (_fit == BLabel.Fit.WRAP) {
+            _text.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+            return;
+        }
+        Insets insets = _container.getInsets();
+        int width = contWidth - insets.getHorizontal();
+        int height = contHeight - insets.getVertical();
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        if (_fit == BLabel.Fit.SCALE) {
+            _text.render(renderer, _tx, _ty, width, height,
+                         _container.getHorizontalAlignment(), alpha);
+            return;
+        }
+        boolean scissored = BComponent.intersectScissorBox(_srect,
+            _container.getAbsoluteX() + insets.left,
+            _container.getAbsoluteY() + insets.bottom,
+            width, height);
+        try {
+            _text.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+        } finally {
+            BComponent.restoreScissorState(scissored, _srect);
+        }
+    }
+    
     protected Dimension layoutAndComputeSize (int tgtwidth)
     {
         // if we're not wrapping, force our target width
@@ -542,4 +543,6 @@ public class Label
 
     protected Config _prefconfig;
     protected Dimension _prefsize;
+    
+    protected Rectangle _srect = new Rectangle();
 }

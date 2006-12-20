@@ -290,20 +290,20 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
         protected void renderComponent (Renderer renderer)
         {
             Insets insets = getInsets();
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(getAbsoluteX() + insets.left,
-                           getAbsoluteY() + insets.bottom,
-                           _width - insets.getHorizontal(),
-                           _height - insets.getVertical());
             GL11.glTranslatef(0, _offset, 0);
+            boolean scissored = intersectScissorBox(_srect,
+                getAbsoluteX() + insets.left,
+                getAbsoluteY() + insets.bottom,
+                _width - insets.getHorizontal(),
+                _height - insets.getVertical());
             try {
                 // render our children
                 for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
                     getComponent(ii).render(renderer);
                 }
             } finally {
+                restoreScissorState(scissored, _srect);
                 GL11.glTranslatef(0, -_offset, 0);
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
         }
 
@@ -334,6 +334,7 @@ public abstract class BScrollingList<V, C extends BComponent> extends BContainer
 
         protected int _offset;
         protected boolean _snap;
+        protected Rectangle _srect = new Rectangle();
     }
 
     /** Used to track the total height of our entries. */

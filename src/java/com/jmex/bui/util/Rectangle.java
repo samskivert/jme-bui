@@ -39,24 +39,29 @@ public class Rectangle
 
     public Rectangle (int x, int y, int width, int height)
     {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        set(x, y, width, height);
     }
 
     public Rectangle (Rectangle other)
     {
-        x = other.x;
-        y = other.y;
-        width = other.width;
-        height = other.height;
+        set(other.x, other.y, other.width, other.height);
     }
 
     public Rectangle ()
     {
     }
 
+    /**
+     * Sets the fields of this rectangle.
+     */
+    public void set (int x, int y, int width, int height)
+    {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+    
     /**
      * Adds the specified rectangle to this rectangle, causing this rectangle
      * to become the union of itself and the specified rectangle.

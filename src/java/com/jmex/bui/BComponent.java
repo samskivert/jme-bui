@@ -20,6 +20,8 @@
 
 package com.jmex.bui;
 
+import java.nio.IntBuffer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,6 +34,7 @@ import com.jme.renderer.RenderContext;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
+import com.jme.util.geom.BufferUtils;
 
 import com.jmex.bui.background.BBackground;
 import com.jmex.bui.border.BBorder;
@@ -935,6 +938,48 @@ public class BComponent
         return true;
     }
 
+    /**
+     * Activates scissoring and sets the scissor region to the intersection of the current region
+     * (if any) and the specified rectangle.  After rendering the scissored region, call
+     * {@link #restoreScissorState} to restore the previous state.
+     *
+     * @param store a rectangle to hold the previous scissor region for later restoration
+     * @return <code>true</code> if scissoring was already enabled, false if it was not.
+     */
+    protected static boolean intersectScissorBox (
+        Rectangle store, int x, int y, int width, int height)
+    {
+        boolean enabled = GL11.glIsEnabled(GL11.GL_SCISSOR_TEST);
+        if (enabled) {
+            GL11.glGetInteger(GL11.GL_SCISSOR_BOX, _bbuf);
+            store.set(_bbuf.get(0), _bbuf.get(1), _bbuf.get(2), _bbuf.get(3));
+            int x1 = Math.max(x, store.x), y1 = Math.max(y, store.y),
+                x2 = Math.min(x + width, store.x + store.width),
+                y2 = Math.min(y + height, store.y + store.height);
+            GL11.glScissor(x, y, Math.max(0, x2 - x1), Math.max(0, y2 - y1));
+        } else {
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(x, y, width, height);
+        }
+        return enabled;
+    }
+    
+    /**
+     * Restores the previous scissor state after a call to {@link #intersectScissorBox}.
+     *
+     * @param enabled the value returned by {@link #intersectScissorBox}, indicating whether or not
+     * scissoring was enabled
+     * @param rect the scissor box to restore
+     */
+    protected static void restoreScissorState (boolean enabled, Rectangle rect)
+    {
+        if (enabled) {
+            GL11.glScissor(rect.x, rect.y, rect.width, rect.height);
+        } else {
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);            
+        }
+    }
+    
     protected BContainer _parent;
     protected String _styleClass;
     protected Dimension _preferredSize;
@@ -952,6 +997,9 @@ public class BComponent
     protected BBorder[] _borders = new BBorder[getStateCount()];
     protected BBackground[] _backgrounds = new BBackground[getStateCount()];
 
+    /** Temporary storage for scissor box queries. */
+    protected static IntBuffer _bbuf = BufferUtils.createIntBuffer(4);
+    
     protected static final int STATE_COUNT = 3;
     protected static final String[] STATE_PCLASSES = { null, "hover", "disabled" };
 }
