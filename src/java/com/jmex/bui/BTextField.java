@@ -342,7 +342,6 @@ public class BTextField extends BTextComponent
         // render our text
         if (_glyphs != null) {
             // clip the text to our visible text region
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
             boolean scissored = intersectScissorBox(_srect,
                 getAbsoluteX() + insets.left,
                 getAbsoluteY() + insets.bottom,
