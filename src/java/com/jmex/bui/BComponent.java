@@ -192,7 +192,7 @@ public class BComponent
     /**
      * Configures the preferred size of this component. See {@link #setPreferredSize(Dimension)}.
      */
-    public void setPreferrerSize (int width, int height)
+    public void setPreferredSize (int width, int height)
     {
         setPreferredSize(new Dimension(width, height));
     }
