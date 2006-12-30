@@ -36,7 +36,7 @@ import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 
 /**
- * Creates instances of {@link JMEBitmapText} for text rendering.
+ * Creates instances of {@link BText} for text rendering.
  */
 public class JMEBitmapTextFactory extends BTextFactory
 {

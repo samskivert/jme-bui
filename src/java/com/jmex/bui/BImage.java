@@ -172,11 +172,6 @@ public class BImage extends Quad
 
     /**
      * Configures the image data to be used by this image.
-     *
-     * @param width the width of the renderable image (the image data itself should be a power of
-     * two if OpenGL requires it).
-     * @param height the height of the renderable image (the image data itself should be a power of
-     * two if OpenGL requires it).
      */
     public void setImage (Image image)
     {

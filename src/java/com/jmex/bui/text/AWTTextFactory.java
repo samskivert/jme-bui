@@ -65,12 +65,12 @@ import com.jmex.bui.util.Dimension;
  * text syntax:
  *
  * <pre>
- * @=b(this text would be bold)
- * @=i(this text would be italic)
- * @=s(this text would be striked-through)
- * @=u(this text would be underlined)
- * @=bi(this text would be bold and italic)
- * @=bi#FFCC99(this text would be bold, italic and pink)
+ * &#064;=b(this text would be bold)
+ * &#064;=i(this text would be italic)
+ * &#064;=s(this text would be striked-through)
+ * &#064;=u(this text would be underlined)
+ * &#064;=bi(this text would be bold and italic)
+ * &#064;=bi#FFCC99(this text would be bold, italic and pink)
  * </pre>
  */
 public class AWTTextFactory extends BTextFactory
