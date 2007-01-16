@@ -77,6 +77,8 @@ public class TableLayout extends BLayoutManager
      */
     public TableLayout (int columns, int rowgap, int colgap)
     {
+        // A table must have at least a column
+        columns = Math.max(1, columns);
         _columnWidths = new int[columns];
         _fixedColumns = new boolean[columns];
         _rowgap = rowgap;
