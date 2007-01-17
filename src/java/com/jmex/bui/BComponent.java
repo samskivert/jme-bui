@@ -136,7 +136,7 @@ public class BComponent
     {
         Dimension ps;
         // if we have a fully specified preferred size, just use it
-        if (_preferredSize != null && _preferredSize.width >= 0 && _preferredSize.height >= 0) {
+        if (_preferredSize != null && _preferredSize.width != -1 && _preferredSize.height != -1) {
             ps = new Dimension(_preferredSize);
 
         } else {
@@ -158,10 +158,10 @@ public class BComponent
 
             // then override it with user supplied values
             if (_preferredSize != null) {
-                if (_preferredSize.width >= 0) {
+                if (_preferredSize.width != -1) {
                     ps.width = _preferredSize.width;
                 }
-                if (_preferredSize.height >= 0) {
+                if (_preferredSize.height != -1) {
                     ps.height = _preferredSize.height;
                 }
             }
