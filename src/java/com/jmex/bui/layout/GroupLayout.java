@@ -44,32 +44,32 @@ public abstract class GroupLayout extends BLayoutManager
      */
     public static class Constraints
     {
-	/** Whether or not this component is fixed. */
-	public boolean fixed = false;
+        /** Whether or not this component is fixed. */
+        public boolean fixed = false;
 
-	/**
-	 * The weight of this component relative to the other components
-	 * in the container.
-	 */
-	public int weight = 1;
+        /**
+         * The weight of this component relative to the other components
+         * in the container.
+         */
+        public int weight = 1;
 
-	/**
-	 * Constructs a new constraints object with the specified
-	 * fixedness and weight.
-	 */
-	public Constraints (boolean fixed)
-	{
-	    this.fixed = fixed;
-	}
+        /**
+         * Constructs a new constraints object with the specified
+         * fixedness and weight.
+         */
+        public Constraints (boolean fixed)
+        {
+            this.fixed = fixed;
+        }
 
-	/**
-	 * Constructs a new constraints object with the specified
-	 * fixedness and weight.
-	 */
-	public Constraints (int weight)
-	{
-	    this.weight = weight;
-	}
+        /**
+         * Constructs a new constraints object with the specified
+         * fixedness and weight.
+         */
+        public Constraints (int weight)
+        {
+            this.weight = weight;
+        }
     }
 
     /** A class used to make our policy constants type-safe. */
@@ -142,111 +142,111 @@ public abstract class GroupLayout extends BLayoutManager
 
     public GroupLayout setPolicy (Policy policy)
     {
-	_policy = policy;
+        _policy = policy;
         return this;
     }
 
     public Policy getPolicy ()
     {
-	return _policy;
+        return _policy;
     }
 
     public GroupLayout setOffAxisPolicy (Policy offpolicy)
     {
-	_offpolicy = offpolicy;
+        _offpolicy = offpolicy;
         return this;
     }
 
     public Policy getOffAxisPolicy ()
     {
-	return _offpolicy;
+        return _offpolicy;
     }
 
     public GroupLayout setGap (int gap)
     {
-	_gap = gap;
+        _gap = gap;
         return this;
     }
 
     public int getGap ()
     {
-	return _gap;
+        return _gap;
     }
 
     public GroupLayout setJustification (Justification justification)
     {
-	_justification = justification;
+        _justification = justification;
         return this;
     }
 
     public Justification getJustification ()
     {
-	return _justification;
+        return _justification;
     }
 
     public GroupLayout setOffAxisJustification (Justification justification)
     {
-	_offjust = justification;
+        _offjust = justification;
         return this;
     }
 
     public Justification getOffAxisJustification ()
     {
-	return _offjust;
+        return _offjust;
     }
 
     // documentation inherited from interface
     public void addLayoutComponent (BComponent comp, Object constraints)
     {
-	if (constraints != null) {
-	    if (constraints instanceof Constraints) {
-		if (_constraints == null) {
-		    _constraints = new HashMap<BComponent, Object>();
-		}
-		_constraints.put(comp, constraints);
+        if (constraints != null) {
+            if (constraints instanceof Constraints) {
+                if (_constraints == null) {
+                    _constraints = new HashMap<BComponent, Object>();
+                }
+                _constraints.put(comp, constraints);
 
-	    } else {
-		throw new RuntimeException("GroupLayout constraints " +
-					   "object must be of type " +
-					   "GroupLayout.Constraints");
-	    }
-	}
+            } else {
+                throw new RuntimeException("GroupLayout constraints " +
+                                           "object must be of type " +
+                                           "GroupLayout.Constraints");
+            }
+        }
     }
 
     // documentation inherited from interface
     public void removeLayoutComponent (BComponent comp)
     {
-	if (_constraints != null) {
-	    _constraints.remove(comp);
-	}
+        if (_constraints != null) {
+            _constraints.remove(comp);
+        }
     }
 
     protected boolean isFixed (BComponent child)
     {
-	if (_constraints == null) {
-	    return false;
-	}
+        if (_constraints == null) {
+            return false;
+        }
 
-	Constraints c = (Constraints)_constraints.get(child);
-	if (c != null) {
-	    return c.fixed;
-	}
+        Constraints c = (Constraints)_constraints.get(child);
+        if (c != null) {
+            return c.fixed;
+        }
 
-	return false;
+        return false;
     }
 
     protected int getWeight (BComponent child)
     {
-	if (_constraints == null) {
-	    return 1;
-	}
+        if (_constraints == null) {
+            return 1;
+        }
 
-	Constraints c = (Constraints)_constraints.get(child);
-	if (c != null) {
-	    return c.weight;
-	}
+        Constraints c = (Constraints)_constraints.get(child);
+        if (c != null) {
+            return c.weight;
+        }
 
-	return 1;
+        return 1;
     }
 
     /**
@@ -255,49 +255,49 @@ public abstract class GroupLayout extends BLayoutManager
      */
     protected DimenInfo computeDimens (BContainer parent, int whint, int hhint)
     {
-	int count = parent.getComponentCount();
-	DimenInfo info = new DimenInfo();
-	info.dimens = new Dimension[count];
+        int count = parent.getComponentCount();
+        DimenInfo info = new DimenInfo();
+        info.dimens = new Dimension[count];
 
-	for (int i = 0; i < count; i++) {
-	    BComponent child = parent.getComponent(i);
- 	    if (!child.isVisible()) {
-     		continue;
- 	    }
-
-        // our layout manager passes only one of the hints depending on
-        // whether it is horizontal (height) or vertical (width), so we can
-        // pass that hint directly along to the child
-	    Dimension csize = child.getPreferredSize(whint, hhint);
-	    info.count++;
-	    info.totwid += csize.width;
-	    info.tothei += csize.height;
-
-	    if (csize.width > info.maxwid) {
-    	    info.maxwid = csize.width;
-	    }
-	    if (csize.height > info.maxhei) {
-    	    info.maxhei = csize.height;
-	    }
-
-	    if (isFixed(child)) {
-        	info.fixwid += csize.width;
-        	info.fixhei += csize.height;
-        	info.numfix++;
-	    } else {
-    		info.totweight += getWeight(child);
-            if (csize.width > info.maxfreewid) {
-                info.maxfreewid = csize.width;
+        for (int i = 0; i < count; i++) {
+            BComponent child = parent.getComponent(i);
+            if (!child.isVisible()) {
+                continue;
             }
-            if (csize.height > info.maxfreehei) {
-                info.maxfreehei = csize.height;
+
+            // our layout manager passes only one of the hints depending on
+            // whether it is horizontal (height) or vertical (width), so we can
+            // pass that hint directly along to the child
+            Dimension csize = child.getPreferredSize(whint, hhint);
+            info.count++;
+            info.totwid += csize.width;
+            info.tothei += csize.height;
+
+            if (csize.width > info.maxwid) {
+                info.maxwid = csize.width;
             }
-	    }
+            if (csize.height > info.maxhei) {
+                info.maxhei = csize.height;
+            }
 
-	    info.dimens[i] = csize;
-	}
+            if (isFixed(child)) {
+                info.fixwid += csize.width;
+                info.fixhei += csize.height;
+                info.numfix++;
+            } else {
+                info.totweight += getWeight(child);
+                if (csize.width > info.maxfreewid) {
+                    info.maxfreewid = csize.width;
+                }
+                if (csize.height > info.maxfreehei) {
+                    info.maxfreehei = csize.height;
+                }
+            }
 
-	return info;
+            info.dimens[i] = csize;
+        }
+
+        return info;
     }
 
     /**

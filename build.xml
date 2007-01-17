@@ -54,7 +54,7 @@
 
   <!-- build the java class files -->
   <target name="compile" depends="prepare">
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="on" deprecation="on" source="1.5">
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
