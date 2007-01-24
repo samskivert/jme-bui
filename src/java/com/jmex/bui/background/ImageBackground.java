@@ -68,25 +68,41 @@ public class ImageBackground extends BBackground
     public static final int FRAME_X = 10;
     public static final int FRAME_Y = 11;
 
+    /**
+     * Creates an image background in the specified mode using the supplied image.
+     */
     public ImageBackground (int mode, BImage image)
     {
         this(mode, image, null);
     }
 
+    /**
+     * Creates an image background in the specified mode using the supplied image and the special
+     * frame. This should only be used if one of the framing modes is being used and the supplied
+     * frame will be used instead of the default frame which divides the image in thirds.
+     */
     public ImageBackground (int mode, BImage image, Insets frame)
     {
         _mode = mode;
         _image = image;
-        _suppliedFrame = _frame = frame;
+        _frame = frame;
+
+        // compute the frame for our framed mode if one was not specially provided
+        if (_frame == null && (_mode == FRAME_X || _mode == FRAME_Y || _mode == FRAME_XY)) {
+            int twidth = _image.getWidth(), theight = _image.getHeight();
+            _frame = new Insets();
+            _frame.left = twidth/3;
+            _frame.right = twidth/3;
+            _frame.top = theight/3;
+            _frame.bottom = theight/3;
+        }
     }
 
     // documentation inherited
     public int getMinimumWidth ()
     {
-        if (_mode == FRAME_XY && _suppliedFrame != null) {
-            return _frame.left + _frame.right;
-        }
-        return _image.getWidth();
+        return (_mode == FRAME_XY || _mode == FRAME_X) ?
+            (_frame.left + _frame.right) : _image.getWidth();
     }
 
     /**
@@ -94,15 +110,12 @@ public class ImageBackground extends BBackground
      */
     public int getMinimumHeight ()
     {
-        if (_mode == FRAME_XY && _suppliedFrame != null) {
-            return _frame.top + _frame.bottom;
-        }
-        return _image.getHeight();
+        return (_mode == FRAME_XY || _mode == FRAME_Y) ?
+            _frame.top + _frame.bottom : _image.getHeight();
     }
 
     // documentation inherited
-    public void render (Renderer renderer, int x, int y, int width, int height,
-        float alpha)
+    public void render (Renderer renderer, int x, int y, int width, int height, float alpha)
     {
         super.render(renderer, x, y, width, height, alpha);
 
@@ -220,49 +233,36 @@ public class ImageBackground extends BBackground
     {
         // render each of our image sections appropriately
         int twidth = _image.getWidth(), theight = _image.getHeight();
-        if (_frame == null) {
-            _frame = new Insets();
-            _frame.left = twidth/3;
-            _frame.right = twidth/3;
-            _frame.top = theight/3;
-            _frame.bottom = theight/3;
-        }
 
         // draw the corners
         _image.render(renderer, 0, 0, _frame.left, _frame.bottom, x, y, alpha);
-        _image.render(renderer, twidth-_frame.right, 0, _frame.right,
-                      _frame.bottom, x+width-_frame.right, y, alpha);
-        _image.render(renderer, 0, theight-_frame.top, _frame.left,
-                      _frame.top, x, y+height-_frame.top, alpha);
-        _image.render(renderer, twidth-_frame.right, theight-_frame.top,
-                      _frame.right, _frame.top, x+width-_frame.right,
-                      y+height-_frame.top, alpha);
+        _image.render(renderer, twidth-_frame.right, 0, _frame.right, _frame.bottom,
+                      x+width-_frame.right, y, alpha);
+        _image.render(renderer, 0, theight-_frame.top, _frame.left, _frame.top,
+                      x, y+height-_frame.top, alpha);
+        _image.render(renderer, twidth-_frame.right, theight-_frame.top, _frame.right, _frame.top,
+                      x+width-_frame.right, y+height-_frame.top, alpha);
 
         // draw the "gaps"
-        int wmiddle = twidth - _frame.getHorizontal(),
-            hmiddle = theight - _frame.getVertical();
-        int gwmiddle = width - _frame.getHorizontal(),
-            ghmiddle = height - _frame.getVertical();
+        int wmiddle = twidth - _frame.getHorizontal(), hmiddle = theight - _frame.getVertical();
+        int gwmiddle = width - _frame.getHorizontal(), ghmiddle = height - _frame.getVertical();
         _image.render(renderer, _frame.left, 0, wmiddle, _frame.bottom,
                       x+_frame.left, y, gwmiddle, _frame.bottom, alpha);
-        _image.render(renderer, _frame.left, theight-_frame.top, wmiddle,
-                      _frame.top, x+_frame.left, y+height-_frame.top, 
-                      gwmiddle, _frame.top, alpha);
-        _image.render(renderer, 0, _frame.bottom, _frame.left, hmiddle, x,
-                      y+_frame.bottom, _frame.left, ghmiddle, alpha);
-        _image.render(renderer, twidth-_frame.right, _frame.bottom,
-                      _frame.right, hmiddle, x+width-_frame.right,
-                      y+_frame.bottom, _frame.right, ghmiddle, alpha);
+        _image.render(renderer, _frame.left, theight-_frame.top, wmiddle, _frame.top, x+_frame.left,
+                      y+height-_frame.top, gwmiddle, _frame.top, alpha);
+        _image.render(renderer, 0, _frame.bottom, _frame.left, hmiddle, x, y+_frame.bottom,
+                      _frame.left, ghmiddle, alpha);
+        _image.render(renderer, twidth-_frame.right, _frame.bottom, _frame.right, hmiddle,
+                      x+width-_frame.right, y+_frame.bottom, _frame.right, ghmiddle, alpha);
 
         // draw the center
         _image.render(renderer, _frame.left, _frame.bottom, wmiddle, hmiddle,
-                      x+_frame.left, y+_frame.bottom, gwmiddle, ghmiddle,
-                      alpha);
+                      x+_frame.left, y+_frame.bottom, gwmiddle, ghmiddle, alpha);
     }
 
     protected int _mode;
     protected BImage _image;
-    protected Insets _frame, _suppliedFrame;
+    protected Insets _frame;
 
     protected static final int CENTER = 0;
     protected static final int SCALE = 1;
