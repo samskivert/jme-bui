@@ -78,7 +78,8 @@ public class TableLayout extends BLayoutManager
     {
         // A table must have at least a column
         columns = Math.max(1, columns);
-        _columnWidths = new int[columns];
+        _prefMetrics.columnWidths = new int[columns];
+        _realMetrics.columnWidths = new int[columns];
         _fixedColumns = new boolean[columns];
         _rowgap = rowgap;
         _colgap = colgap;
@@ -128,10 +129,10 @@ public class TableLayout extends BLayoutManager
     // documentation inherited
     public Dimension computePreferredSize (BContainer target, int whint, int hhint)
     {
-        computeMetrics(target, true, whint);
-        int cx = (_columnWidths.length-1) * _colgap;
-        int rx = (computeRows(target)-1) * _rowgap;
-        return new Dimension(sum(_columnWidths) + cx, sum(_rowHeights) + rx);
+        Metrics metrics = computeMetrics(target, true, whint);
+        int cx = (metrics.columnWidths.length-1) * _colgap;
+        int rx = (computeRows(target, true)-1) * _rowgap;
+        return new Dimension(sum(metrics.columnWidths) + cx, sum(metrics.rowHeights) + rx);
     }
 
     // documentation inherited
@@ -140,9 +141,9 @@ public class TableLayout extends BLayoutManager
         Insets insets = target.getInsets();
         int availwid = target.getWidth() - insets.getHorizontal();
 
-        computeMetrics(target, false, availwid);
-        int totwidth = sum(_columnWidths) + (_columnWidths.length-1) * _colgap;
-        int totheight = sum(_rowHeights) + (computeRows(target)-1) * _rowgap;
+        Metrics metrics = computeMetrics(target, false, availwid);
+        int totwidth = sum(metrics.columnWidths) + (metrics.columnWidths.length-1) * _colgap;
+        int totheight = sum(metrics.rowHeights) + (computeRows(target, false)-1) * _rowgap;
 
         // account for our horizontal alignment
         int sx = insets.left;
@@ -163,11 +164,11 @@ public class TableLayout extends BLayoutManager
         int row = 0, col = 0, x = sx;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
-            int width = Math.min(_columnWidths[col], availwid);
-            child.setBounds(x, y - _rowHeights[row], width, _rowHeights[row]);
-            x += (_columnWidths[col] + _colgap);
-            if (++col == _columnWidths.length) {
-                y -= (_rowHeights[row] + _rowgap);
+            int width = Math.min(metrics.columnWidths[col], availwid);
+            child.setBounds(x, y - metrics.rowHeights[row], width, metrics.rowHeights[row]);
+            x += (metrics.columnWidths[col] + _colgap);
+            if (++col == metrics.columnWidths.length) {
+                y -= (metrics.rowHeights[row] + _rowgap);
                 row++;
                 col = 0;
                 x = sx;
@@ -175,32 +176,38 @@ public class TableLayout extends BLayoutManager
         }
     }
 
-    protected void computeMetrics (BContainer target, boolean preferred, int whint)
+    protected Metrics computeMetrics (BContainer target, boolean preferred, int whint)
     {
-        int rows = computeRows(target);
-        if (_rowHeights == null || _rowHeights.length != rows) {
-            _rowHeights = new int[rows];
-        } else {
-            Arrays.fill(_rowHeights, 0);
+        Metrics metrics = preferred ? _prefMetrics : _realMetrics;
+        if (whint == metrics.cachedHint) {
+            return metrics;
         }
-        Arrays.fill(_columnWidths, 0);
+
+        metrics.cachedHint = whint;
+        int rows = computeRows(target, preferred);
+        if (metrics.rowHeights == null || metrics.rowHeights.length != rows) {
+            metrics.rowHeights = new int[rows];
+        } else {
+            Arrays.fill(metrics.rowHeights, 0);
+        }
+        Arrays.fill(metrics.columnWidths, 0);
 
         int row = 0, col = 0, maxrh = 0;
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
             if (child.isVisible()) {
                 Dimension psize = child.getPreferredSize(whint, -1);
-                if (psize.height > _rowHeights[row]) {
-                    _rowHeights[row] = psize.height;
-                    if (maxrh < _rowHeights[row]) {
-                        maxrh = _rowHeights[row];
+                if (psize.height > metrics.rowHeights[row]) {
+                    metrics.rowHeights[row] = psize.height;
+                    if (maxrh < metrics.rowHeights[row]) {
+                        maxrh = metrics.rowHeights[row];
                     }
                 }
-                if (psize.width > _columnWidths[col]) {
-                    _columnWidths[col] = psize.width;
+                if (psize.width > metrics.columnWidths[col]) {
+                    metrics.columnWidths[col] = psize.width;
                 }
             }
-            if (++col == _columnWidths.length) {
+            if (++col == metrics.columnWidths.length) {
                 col = 0;
                 row++;
             }
@@ -209,33 +216,33 @@ public class TableLayout extends BLayoutManager
         // if we are stretching, adjust the column widths accordingly (however, no adjusting if
         // we're computing our preferred size)
         int naturalWidth;
-        if (!preferred && _halign == STRETCH && (naturalWidth = sum(_columnWidths)) > 0) {
+        if (!preferred && _halign == STRETCH && (naturalWidth = sum(metrics.columnWidths)) > 0) {
             // sum the width of the non-fixed columns
             int freewid = 0;
             for (int ii = 0; ii < _fixedColumns.length; ii++) {
                 if (!_fixedColumns[ii]) {
-                    freewid += _columnWidths[ii];
+                    freewid += metrics.columnWidths[ii];
                 }
             }
 
             // now divide up the extra space among said non-fixed columns
             int avail = target.getWidth() - target.getInsets().getHorizontal() -
-                naturalWidth - (_colgap * (_columnWidths.length-1));
+                naturalWidth - (_colgap * (metrics.columnWidths.length-1));
             int used = 0;
-            for (int ii = 0; ii < _columnWidths.length; ii++) {
+            for (int ii = 0; ii < metrics.columnWidths.length; ii++) {
                 if (_fixedColumns[ii]) {
                     continue;
                 }
-                int adjust = _columnWidths[ii] * avail / freewid;
-                _columnWidths[ii] += adjust;
+                int adjust = metrics.columnWidths[ii] * avail / freewid;
+                metrics.columnWidths[ii] += adjust;
                 used += adjust;
             }
 
             // add any rounding error to the first non-fixed column
-            if (_columnWidths.length > 0) {
+            if (metrics.columnWidths.length > 0) {
                 for (int ii = 0; ii < _fixedColumns.length; ii++) {
                     if (!_fixedColumns[ii]) {
-                        _columnWidths[ii] += (avail - used);
+                        metrics.columnWidths[ii] += (avail - used);
                         break;
                     }
                 }
@@ -244,15 +251,18 @@ public class TableLayout extends BLayoutManager
 
         // if we're equalizing rows, make all row heights the max
         if (_equalRows) {
-            Arrays.fill(_rowHeights, maxrh);
+            Arrays.fill(metrics.rowHeights, maxrh);
         }
+
+        return metrics;
     }
 
-    protected int computeRows (BContainer target)
+    protected int computeRows (BContainer target, boolean preferred)
     {
+        Metrics metrics = preferred ? _prefMetrics : _realMetrics;
         int ccount = target.getComponentCount();
-        int rows = ccount / _columnWidths.length;
-        if (ccount % _columnWidths.length != 0) {
+        int rows = ccount / metrics.columnWidths.length;
+        if (ccount % metrics.columnWidths.length != 0) {
             rows++;
         }
         return rows;
@@ -267,10 +277,16 @@ public class TableLayout extends BLayoutManager
         return total;
     }
 
+    protected class Metrics
+    {
+        public int cachedHint = Integer.MIN_VALUE;
+        public int[] columnWidths;
+        public int[] rowHeights;
+    }
+
     protected Alignment _halign = LEFT, _valign = TOP;
     protected boolean _equalRows;
     protected int _rowgap, _colgap;
-    protected int[] _columnWidths;
-    protected int[] _rowHeights;
     protected boolean[] _fixedColumns;
+    protected Metrics _prefMetrics = new Metrics(), _realMetrics = new Metrics();
 }
