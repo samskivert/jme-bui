@@ -29,12 +29,11 @@ import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
- * Lays out components in a simple grid arrangement, wherein the width and
- * height of each column and row is defined by the widest preferred width
- * and height of any component in that column and row.
+ * Lays out components in a simple grid arrangement, wherein the width and height of each column
+ * and row is defined by the widest preferred width and height of any component in that column and
+ * row.
  *
- * <p> The table layout defaults to left horizontal alignment and top vertical
- * alignment.
+ * <p> The table layout defaults to left horizontal alignment and top vertical alignment.
  */
 public class TableLayout extends BLayoutManager
 {
@@ -58,13 +57,13 @@ public class TableLayout extends BLayoutManager
     /** Bottom justifies the table contents within the container. */
     public static final Alignment BOTTOM = new Alignment();
 
-    /** Divides the column space among the columns in proportion to their
-     * preferred size. This only works with {@link #setHorizontalAlignment}. */
+    /** Divides the column space among the columns in proportion to their preferred size. This only
+     * works with {@link #setHorizontalAlignment}. */
     public static final Alignment STRETCH = new Alignment();
 
     /**
-     * Creates a table layout with the specified number of columns and a zero
-     * pixel gap between rows and columns.
+     * Creates a table layout with the specified number of columns and a zero pixel gap between
+     * rows and columns.
      */
     public TableLayout (int columns)
     {
@@ -72,8 +71,8 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
-     * Creates a table layout with the specified number of columns and the
-     * specifeid gap between rows and columns.
+     * Creates a table layout with the specified number of columns and the specifeid gap between
+     * rows and columns.
      */
     public TableLayout (int columns, int rowgap, int colgap)
     {
@@ -86,8 +85,8 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
-     * Configures the horizontal alignment (or stretching) of this table. This
-     * must be called before the container using this layout is validated.
+     * Configures the horizontal alignment (or stretching) of this table. This must be called
+     * before the container using this layout is validated.
      */
     public TableLayout setHorizontalAlignment (Alignment align)
     {
@@ -96,8 +95,8 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
-     * Configures the vertical alignment of this table. This must be called
-     * before the container using this layout is validated.
+     * Configures the vertical alignment of this table. This must be called before the container
+     * using this layout is validated.
      */
     public TableLayout setVerticalAlignment (Alignment align)
     {
@@ -106,10 +105,9 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
-     * Configures a column as fixed or free. If a table layout is configured
-     * with <code>STRETCH</code> horizontal alignment, extra space is divided
-     * up among all of the non-fixed columns. All columns are non-fixed by
-     * default.
+     * Configures a column as fixed or free. If a table layout is configured with
+     * <code>STRETCH</code> horizontal alignment, extra space is divided up among all of the
+     * non-fixed columns. All columns are non-fixed by default.
      */
     public TableLayout setFixedColumn (int column, boolean fixed)
     {
@@ -118,9 +116,8 @@ public class TableLayout extends BLayoutManager
     }
 
     /**
-     * Configures whether or not the table will force all rows to be a uniform
-     * size. This must be called before the container using this layout is
-     * validated.
+     * Configures whether or not the table will force all rows to be a uniform size. This must be
+     * called before the container using this layout is validated.
      */
     public TableLayout setEqualRows (boolean equalRows)
     {
@@ -129,8 +126,7 @@ public class TableLayout extends BLayoutManager
     }
 
     // documentation inherited
-    public Dimension computePreferredSize (
-        BContainer target, int whint, int hhint)
+    public Dimension computePreferredSize (BContainer target, int whint, int hhint)
     {
         computeMetrics(target, true, whint);
         int cx = (_columnWidths.length-1) * _colgap;
@@ -159,8 +155,7 @@ public class TableLayout extends BLayoutManager
         // account for our vertical alignment
         int y = insets.bottom;
         if (_valign == CENTER) {
-            y += totheight +
-                (target.getHeight() - insets.getVertical() - totheight)/2;
+            y += totheight + (target.getHeight() - insets.getVertical() - totheight)/2;
         } else if (_valign == TOP) {
             y = target.getHeight() - insets.top;
         }
@@ -180,15 +175,14 @@ public class TableLayout extends BLayoutManager
         }
     }
 
-    protected void computeMetrics (
-        BContainer target, boolean preferred, int whint)
+    protected void computeMetrics (BContainer target, boolean preferred, int whint)
     {
         int rows = computeRows(target);
         if (_rowHeights == null || _rowHeights.length != rows) {
             _rowHeights = new int[rows];
         } else {
             Arrays.fill(_rowHeights, 0);
-        }            
+        }
         Arrays.fill(_columnWidths, 0);
 
         int row = 0, col = 0, maxrh = 0;
@@ -212,11 +206,10 @@ public class TableLayout extends BLayoutManager
             }
         }
 
-        // if we are stretching, adjust the column widths accordingly (however,
-        // no adjusting if we're computing our preferred size)
+        // if we are stretching, adjust the column widths accordingly (however, no adjusting if
+        // we're computing our preferred size)
         int naturalWidth;
-        if (!preferred && _halign == STRETCH &&
-            (naturalWidth = sum(_columnWidths)) > 0) {
+        if (!preferred && _halign == STRETCH && (naturalWidth = sum(_columnWidths)) > 0) {
             // sum the width of the non-fixed columns
             int freewid = 0;
             for (int ii = 0; ii < _fixedColumns.length; ii++) {
