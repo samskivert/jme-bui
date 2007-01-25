@@ -140,6 +140,16 @@ public class BComponent
             ps = new Dimension(_preferredSize);
 
         } else {
+            // if we have no hints but have a preferred size, use our preferred size as our hints
+            if (_preferredSize != null) {
+                if (whint <= 0 && _preferredSize.width > 0) {
+                    whint = _preferredSize.width;
+                }
+                if (hhint <= 0 && _preferredSize.height > 0) {
+                    hhint = _preferredSize.height;
+                }
+            }
+
             // extract space from the hints for our insets
             Insets insets = getInsets();
             if (whint > 0) {
