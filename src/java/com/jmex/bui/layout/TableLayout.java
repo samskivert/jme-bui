@@ -212,6 +212,14 @@ public class TableLayout extends BLayoutManager
             }
         }
 
+        // if we have more (or less?) components in our preferred size cache than are in the
+        // container, flush the cache; this won't happen often (compared to invalidations which
+        // happen all the damned time) and we don't want to leak memory if someone is removing old
+        // components and adding new ones to a table-layout using container willy nilly
+        if (_pscache.size() != target.getComponentCount()) {
+            _pscache.clear();
+        }
+
         // if we are stretching, adjust the column widths accordingly (however, no adjusting if
         // we're computing our preferred size)
         int naturalWidth;
