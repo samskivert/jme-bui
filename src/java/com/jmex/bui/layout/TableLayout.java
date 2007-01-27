@@ -21,6 +21,7 @@
 package com.jmex.bui.layout;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import com.jmex.bui.BComponent;
 import com.jmex.bui.BContainer;
@@ -78,8 +79,6 @@ public class TableLayout extends BLayoutManager
     {
         // A table must have at least a column
         columns = Math.max(1, columns);
-        _prefMetrics.columnWidths = new int[columns];
-        _realMetrics.columnWidths = new int[columns];
         _fixedColumns = new boolean[columns];
         _rowgap = rowgap;
         _colgap = colgap;
@@ -178,12 +177,9 @@ public class TableLayout extends BLayoutManager
 
     protected Metrics computeMetrics (BContainer target, boolean preferred, int whint)
     {
-        Metrics metrics = preferred ? _prefMetrics : _realMetrics;
-        if (whint == metrics.cachedHint) {
-            return metrics;
-        }
+        Metrics metrics = new Metrics();
+        metrics.columnWidths = new int[_fixedColumns.length];
 
-        metrics.cachedHint = whint;
         int rows = computeRows(target, preferred);
         if (metrics.rowHeights == null || metrics.rowHeights.length != rows) {
             metrics.rowHeights = new int[rows];
@@ -196,7 +192,10 @@ public class TableLayout extends BLayoutManager
         for (int ii = 0, ll = target.getComponentCount(); ii < ll; ii++) {
             BComponent child = target.getComponent(ii);
             if (child.isVisible()) {
-                Dimension psize = child.getPreferredSize(whint, -1);
+                Dimension psize = _pscache.get(child);
+                if (psize == null || !child.isValid()) {
+                    _pscache.put(child, psize = child.getPreferredSize(whint, -1));
+                }
                 if (psize.height > metrics.rowHeights[row]) {
                     metrics.rowHeights[row] = psize.height;
                     if (maxrh < metrics.rowHeights[row]) {
@@ -259,10 +258,9 @@ public class TableLayout extends BLayoutManager
 
     protected int computeRows (BContainer target, boolean preferred)
     {
-        Metrics metrics = preferred ? _prefMetrics : _realMetrics;
         int ccount = target.getComponentCount();
-        int rows = ccount / metrics.columnWidths.length;
-        if (ccount % metrics.columnWidths.length != 0) {
+        int rows = ccount / _fixedColumns.length;
+        if (ccount % _fixedColumns.length != 0) {
             rows++;
         }
         return rows;
@@ -288,5 +286,7 @@ public class TableLayout extends BLayoutManager
     protected boolean _equalRows;
     protected int _rowgap, _colgap;
     protected boolean[] _fixedColumns;
-    protected Metrics _prefMetrics = new Metrics(), _realMetrics = new Metrics();
+
+    // TODO: expire from this cache (rarely needed)
+    protected HashMap<BComponent,Dimension> _pscache = new HashMap<BComponent,Dimension>();
 }
