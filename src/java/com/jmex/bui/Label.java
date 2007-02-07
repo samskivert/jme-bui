@@ -201,7 +201,7 @@ public class Label
         Config prefconfig = _container.getLabelConfig(this, whint > 0 ? whint : _twidth);
         if (!prefconfig.equals(_prefconfig)) {
             _prefconfig = prefconfig;
-            _prefsize = layoutAndComputeSize(prefconfig.twidth);
+            _prefsize = layoutAndComputeSize(prefconfig.minwidth);
         }
         return new Dimension(_prefsize);
     }
@@ -393,9 +393,11 @@ public class Label
     {
         // no need to recreate our glyphs if our config hasn't changed
         Config config = _container.getLabelConfig(this, twidth);
-        if (config.equals(_config) && _text != null) {
+        if (_config != null && _text != null && _config.matches(config, twidth)) {
             return;
         }
+
+        Config oconfig = _config;
         _config = config;
 
         // clear out any previous rendered text
@@ -417,13 +419,19 @@ public class Label
         // render up some new text
         BTextFactory tfact = _container.getTextFactory(this);
         _text = new Text();
-        _text.lines = tfact.wrapText(
-                _value, config.color, config.effect, config.effectSize,
-                config.effectColor, twidth);
+        _text.lines = tfact.wrapText(_value, config.color, config.effect, config.effectSize,
+                                     config.effectColor, twidth);
+        _config.lines = _text.lines.length;
         for (int ii = 0; ii < _text.lines.length; ii++) {
-            _text.size.width = Math.max(
-                _text.size.width, _text.lines[ii].getSize().width);
+            _text.size.width = Math.max(_text.size.width, _text.lines[ii].getSize().width);
             _text.size.height += _text.lines[ii].getSize().height;
+        }
+
+        // if our old config is the same number of lines as our new config, expand the width region
+        // that this configuration will match
+        if (oconfig != null && oconfig.lines == _config.lines) {
+            _config.minwidth = Math.min(_config.minwidth, oconfig.minwidth);
+            _config.maxwidth = Math.max(_config.maxwidth, oconfig.maxwidth);
         }
 
         if (_container.isAdded()) {
@@ -438,35 +446,43 @@ public class Label
         public int effect;
         public int effectSize;
         public ColorRGBA effectColor;
-        public int twidth;
+        public int minwidth, maxwidth;
+        public int lines;
 
-        public boolean equals (Object other) {
+        public boolean matches (Config other, int twidth) {
             if (other == null) {
                 return false;
             }
-            Config oc = (Config)other;
-            if (twidth != oc.twidth) {
+
+            // if any of the styles are different, we don't match
+            if (effect != other.effect) {
                 return false;
             }
-            if (effect != oc.effect) {
+            if (text != other.text && (text == null || !text.equals(other.text))) {
                 return false;
             }
-            if (text != oc.text && (text == null || !text.equals(oc.text))) {
+            if (!color.equals(other.color)) {
                 return false;
             }
-            if (!color.equals(oc.color)) {
+            if (effectColor != other.effectColor &&
+                (effectColor == null || !effectColor.equals(other.effectColor))) {
                 return false;
             }
-            if (effectColor != oc.effectColor &&
-                (effectColor == null || !effectColor.equals(oc.effectColor))) {
-                return false;
+
+            // if we are only one line we are fine as long as we're less than or equal to the
+            // target width (only if it is smaller than our minwidth might it cause us to wrap)
+            if (lines == 1 && minwidth <= twidth) {
+                return true;
             }
-            return true;
+
+            // otherwise the new target width has to fall within our handled range
+            return (minwidth <= twidth) && (twidth <= maxwidth);
         }
 
         public String toString () {
-            return text + "(" + color + "," + effect + "," +
-                effectColor + "," + twidth + ")";
+            return text + "(" + Integer.toHexString(color.hashCode()) + "," + effect + "," +
+                Integer.toHexString(effectColor.hashCode()) + "," +
+                minwidth + "<>" + maxwidth + ")";
         }
     }
 

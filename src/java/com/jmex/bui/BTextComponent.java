@@ -173,7 +173,7 @@ public abstract class BTextComponent extends BComponent
         config.effect = getTextEffect();
         config.effectSize = getEffectSize();
         config.effectColor = getEffectColor();
-        config.twidth = twidth;
+        config.minwidth = config.maxwidth = twidth;
         return config;
     }
 

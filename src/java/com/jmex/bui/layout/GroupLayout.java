@@ -32,40 +32,30 @@ import com.jmex.bui.util.Dimension;
 public abstract class GroupLayout extends BLayoutManager
 {
     /**
-     * The group layout managers supports two constraints: fixedness
-     * and weight. A fixed component will not be stretched along the major
-     * axis of the group. Those components that are stretched will have
-     * the extra space divided among them according to their weight
-     * (specifically receiving the ratio of their weight to the total
-     * weight of all of the free components in the container).
+     * The group layout managers supports two constraints: fixedness and weight. A fixed component
+     * will not be stretched along the major axis of the group. Those components that are stretched
+     * will have the extra space divided among them according to their weight (specifically
+     * receiving the ratio of their weight to the total weight of all of the free components in the
+     * container).
      *
-     * <p/> If a constraints object is constructed with fixedness set to
-     * true and with a weight, the weight will be ignored.
+     * <p/> If a constraints object is constructed with fixedness set to true and with a weight,
+     * the weight will be ignored.
      */
     public static class Constraints
     {
         /** Whether or not this component is fixed. */
         public boolean fixed = false;
 
-        /**
-         * The weight of this component relative to the other components
-         * in the container.
-         */
+        /** The weight of this component relative to the other components in the container. */
         public int weight = 1;
 
-        /**
-         * Constructs a new constraints object with the specified
-         * fixedness and weight.
-         */
+        /** Constructs a new constraints object with the specified fixedness and weight. */
         public Constraints (boolean fixed)
         {
             this.fixed = fixed;
         }
 
-        /**
-         * Constructs a new constraints object with the specified
-         * fixedness and weight.
-         */
+        /** Constructs a new constraints object with the specified fixedness and weight. */
         public Constraints (int weight)
         {
             this.weight = weight;
@@ -95,33 +85,24 @@ public abstract class GroupLayout extends BLayoutManager
     }
 
     /**
-     * A constraints object that indicates that the component should be
-     * fixed and have the default weight of one. This is so commonly used
-     * that we create and make this object available here.
+     * A constraints object that indicates that the component should be fixed and have the default
+     * weight of one. This is so commonly used that we create and make this object available here.
      */
     public final static Constraints FIXED = new Constraints(true);
 
-    /**
-     * Do not adjust the widgets on this axis.
-     */
+    /** Do not adjust the widgets on this axis. */
     public final static Policy NONE = new Policy(0);
 
-    /**
-     * Stretch all the widgets to their maximum possible size on this
-     * axis.
-     */
+    /** Stretch all the widgets to their maximum possible size on this axis. */
     public final static Policy STRETCH = new Policy(1);
 
-    /**
-     * Stretch all the widgets to be equal to the size of the largest
-     * widget on this axis.
-     */
+    /** Stretch all the widgets to be equal to the size of the largest widget on this axis. */
     public final static Policy EQUALIZE = new Policy(2);
 
     /**
-     * Only valid for off-axis policy, this leaves widgets alone unless
-     * they are larger in the off-axis direction than their container, in
-     * which case it constrains them to fit on the off-axis.
+     * Only valid for off-axis policy, this leaves widgets alone unless they are larger in the
+     * off-axis direction than their container, in which case it constrains them to fit on the
+     * off-axis.
      */
     public final static Policy CONSTRAIN = new Policy(3);
 
@@ -206,9 +187,8 @@ public abstract class GroupLayout extends BLayoutManager
                 _constraints.put(comp, constraints);
 
             } else {
-                throw new RuntimeException("GroupLayout constraints " +
-                                           "object must be of type " +
-                                           "GroupLayout.Constraints");
+                throw new RuntimeException(
+                    "GroupLayout constraints object must be of type GroupLayout.Constraints");
             }
         }
     }
@@ -250,54 +230,93 @@ public abstract class GroupLayout extends BLayoutManager
     }
 
     /**
-     * Computes dimensions of the children widgets that are useful for the
-     * group layout managers.
+     * Computes dimensions of the children widgets that are useful for the group layout managers.
      */
-    protected DimenInfo computeDimens (BContainer parent, int whint, int hhint)
+    protected DimenInfo computeDimens (BContainer parent, boolean horiz, int whint, int hhint)
     {
         int count = parent.getComponentCount();
         DimenInfo info = new DimenInfo();
         info.dimens = new Dimension[count];
 
-        for (int i = 0; i < count; i++) {
-            BComponent child = parent.getComponent(i);
+        // first compute the dimensions of our fixed children (to which we pass the width and
+        // height hints straight through because they can theoretically take up the whole size)
+        for (int ii = 0; ii < count; ii++) {
+            BComponent child = parent.getComponent(ii);
             if (!child.isVisible()) {
                 continue;
             }
 
-            // our layout manager passes only one of the hints depending on
-            // whether it is horizontal (height) or vertical (width), so we can
-            // pass that hint directly along to the child
-            Dimension csize = child.getPreferredSize(whint, hhint);
+            // we need to count all of our visible children first
             info.count++;
-            info.totwid += csize.width;
-            info.tothei += csize.height;
-
-            if (csize.width > info.maxwid) {
-                info.maxwid = csize.width;
-            }
-            if (csize.height > info.maxhei) {
-                info.maxhei = csize.height;
+            if (!isFixed(child)) {
+                continue;
             }
 
-            if (isFixed(child)) {
-                info.fixwid += csize.width;
-                info.fixhei += csize.height;
-                info.numfix++;
+            Dimension csize = computeChildDimens(info, ii, child, whint, hhint);
+            info.fixwid += csize.width;
+            info.fixhei += csize.height;
+            info.numfix++;
+            info.dimens[ii] = csize;
+        }
+
+        // if we have no fixed components, stop here
+        if (info.numfix == info.count) {
+            return info;
+        }
+
+        // if we're stretching, divide up the remaining space (minus gaps) and let the free
+        // children know what they're getting when we first ask them for their preferred size
+        if (_policy == STRETCH) {
+            if (horiz) {
+                if (whint > 0) {
+                    int owhint = whint;
+                    whint -= (info.fixwid + _gap * (info.count-1));
+                    whint /= (info.count - info.numfix);
+                }
             } else {
-                info.totweight += getWeight(child);
-                if (csize.width > info.maxfreewid) {
-                    info.maxfreewid = csize.width;
-                }
-                if (csize.height > info.maxfreehei) {
-                    info.maxfreehei = csize.height;
+                if (hhint > 0) {
+                    hhint -= (info.fixhei + _gap * (info.count-1));
+                    hhint /= (info.count - info.numfix);
                 }
             }
+        }
 
-            info.dimens[i] = csize;
+        for (int ii = 0; ii < count; ii++) {
+            BComponent child = parent.getComponent(ii);
+            if (!child.isVisible() || isFixed(child)) {
+                continue;
+            }
+
+            Dimension csize = computeChildDimens(info, ii, child, whint, hhint);
+            info.totweight += getWeight(child);
+            if (csize.width > info.maxfreewid) {
+                info.maxfreewid = csize.width;
+            }
+            if (csize.height > info.maxfreehei) {
+                info.maxfreehei = csize.height;
+            }
+            info.dimens[ii] = csize;
         }
 
         return info;
+    }
+
+    /**
+     * A helper function for {@link #computeDimens}.
+     */
+    protected Dimension computeChildDimens (
+        DimenInfo info, int ii, BComponent child, int whint, int hhint)
+    {
+        Dimension csize = child.getPreferredSize(whint, hhint);
+        info.totwid += csize.width;
+        info.tothei += csize.height;
+        if (csize.width > info.maxwid) {
+            info.maxwid = csize.width;
+        }
+        if (csize.height > info.maxhei) {
+            info.maxhei = csize.height;
+        }
+        return csize;
     }
 
     /**
@@ -353,8 +372,8 @@ public abstract class GroupLayout extends BLayoutManager
     public static GroupLayout makeHStretch ()
     {
         HGroupLayout lay = new HGroupLayout();
-        lay.setPolicy(GroupLayout.STRETCH);
-        lay.setOffAxisPolicy(GroupLayout.STRETCH);
+        lay.setPolicy(STRETCH);
+        lay.setOffAxisPolicy(STRETCH);
         return lay;
     }
 
@@ -365,8 +384,8 @@ public abstract class GroupLayout extends BLayoutManager
     public static GroupLayout makeVStretch ()
     {
         VGroupLayout lay = new VGroupLayout();
-        lay.setPolicy(GroupLayout.STRETCH);
-        lay.setOffAxisPolicy(GroupLayout.STRETCH);
+        lay.setPolicy(STRETCH);
+        lay.setOffAxisPolicy(STRETCH);
         return lay;
     }
 

@@ -34,15 +34,13 @@ import com.jmex.bui.util.Rectangle;
 public class HGroupLayout extends GroupLayout
 {
     // documentation inherited
-    public Dimension computePreferredSize (
-        BContainer target, int whint, int hhint)
+    public Dimension computePreferredSize (BContainer target, int whint, int hhint)
     {
-        DimenInfo info = computeDimens(target, -1, hhint);
+        DimenInfo info = computeDimens(target, true, whint, hhint);
         Dimension dims = new Dimension();
 
         if (_policy == STRETCH) {
-            dims.width = info.maxfreewid * (info.count - info.numfix) +
-                info.fixwid;
+            dims.width = info.maxfreewid * (info.count - info.numfix) + info.fixwid;
         } else if (_policy == EQUALIZE) {
             dims.width = info.maxwid * info.count;
         } else { // NONE or CONSTRAIN
@@ -64,15 +62,14 @@ public class HGroupLayout extends GroupLayout
         b.width -= insets.getHorizontal();
         b.height -= insets.getVertical();
 
-        DimenInfo info = computeDimens(target, -1, b.height);
+        DimenInfo info = computeDimens(target, true, b.width, b.height);
         int nk = target.getComponentCount();
         int sx, sy;
         int totwid, totgap = _gap * (info.count-1);
         int freecount = info.count - info.numfix;
 
-        // when stretching, there is the possibility that a pixel or more
-        // will be lost to rounding error. we account for that here and
-        // assign the extra space to the first free component
+        // when stretching, there is the possibility that a pixel or more will be lost to rounding
+        // error. we account for that here and assign the extra space to the first free component
         int freefrac = 0;
 
         // do the on-axis policy calculations
