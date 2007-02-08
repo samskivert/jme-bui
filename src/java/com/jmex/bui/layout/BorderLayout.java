@@ -113,8 +113,7 @@ public class BorderLayout extends BLayoutManager
     }
 
     // documentation inherited
-    public Dimension computePreferredSize (
-        BContainer target, int whint, int hhint)
+    public Dimension computePreferredSize (BContainer target, int whint, int hhint)
     {
         Dimension psize = new Dimension();
         int horizComps = 0, vertComps = 0;
