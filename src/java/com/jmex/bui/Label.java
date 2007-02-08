@@ -177,6 +177,7 @@ public class Label
     {
         // if our cached preferred size is not valid, recompute it
         Config prefconfig = layoutConfig(_prefconfig, whint > 0 ? whint : Short.MAX_VALUE-1);
+        prefconfig.glyphs = null; // we don't need to retain these
         _prefsize = computeSize(_prefconfig = prefconfig);
         return new Dimension(_prefsize);
     }
@@ -396,10 +397,10 @@ public class Label
 
         // if our old config is the same number of lines as our new config, expand the width region
         // that this configuration will match
-        if (_config != null && _config.glyphs != null &&
-            _config.glyphs.lines.length == config.glyphs.lines.length) {
-            config.minwidth = Math.min(config.minwidth, _config.minwidth);
-            config.maxwidth = Math.max(config.maxwidth, _config.maxwidth);
+        if (oconfig != null && oconfig.glyphs != null &&
+            oconfig.glyphs.lines.length == config.glyphs.lines.length) {
+            config.minwidth = Math.min(config.minwidth, oconfig.minwidth);
+            config.maxwidth = Math.max(config.maxwidth, oconfig.maxwidth);
         }
 
         return config;
