@@ -177,8 +177,8 @@ public class Label
     {
         // if our cached preferred size is not valid, recompute it
         Config prefconfig = layoutConfig(_prefconfig, whint > 0 ? whint : Short.MAX_VALUE-1);
-        prefconfig.glyphs = null; // we don't need to retain these
         _prefsize = computeSize(_prefconfig = prefconfig);
+        prefconfig.glyphs = null; // we don't need to retain these
         return new Dimension(_prefsize);
     }
 
