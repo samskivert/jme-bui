@@ -164,13 +164,6 @@ public class BLabel extends BTextComponent
     }
 
     // documentation inherited
-    protected void stateDidChange ()
-    {
-        super.stateDidChange();
-        _label.stateDidChange();
-    }
-
-    // documentation inherited
     protected void layout ()
     {
         super.layout();

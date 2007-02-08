@@ -35,8 +35,7 @@ import com.jmex.bui.util.Insets;
 import com.jmex.bui.util.Rectangle;
 
 /**
- * Handles the underlying layout and rendering for {@link BLabel} and {@link
- * BButton}.
+ * Handles the underlying layout and rendering for {@link BLabel} and {@link BButton}.
  */
 public class Label
     implements BConstants
@@ -52,15 +51,9 @@ public class Label
     public void setText (String text)
     {
         _value = text;
-        _twidth = Short.MAX_VALUE;
 
-        // clear out our old text texture
+        // clear out our old text config and texture
         releaseText();
-
-        // if we're already part of the hierarchy, recreate our glyps
-        if (_container.isShowing()) {
-            layoutAndComputeSize(_twidth);
-        }
 
         // our size may have changed so we need to revalidate
         _container.invalidate();
@@ -98,9 +91,8 @@ public class Label
         }
 
         if (owidth != nwidth || oheight != nheight) {
-            // reset our target width so that we force a text reflow to account
-            // for the changed icon size
-            _twidth = Short.MAX_VALUE;
+            // reset our config so that we force a text reflow to account for the changed icon size
+            releaseText();
             _container.invalidate();
         } else if (_container.isValid()) {
             _container.layout();
@@ -132,9 +124,8 @@ public class Label
     }
 
     /**
-     * Sets the orientation of this label with respect to its icon. If the
-     * horizontal (the default) the text is displayed to the right of the
-     * icon, if vertical the text is displayed below it.
+     * Sets the orientation of this label with respect to its icon. If the horizontal (the default)
+     * the text is displayed to the right of the icon, if vertical the text is displayed below it.
      */
     public void setOrientation (int orient)
     {
@@ -145,8 +136,8 @@ public class Label
     }
 
     /**
-     * Configures whether this label will wrap, truncate or scale if it cannot
-     * fit text into its allotted width. The default is to wrap.
+     * Configures whether this label will wrap, truncate or scale if it cannot fit text into its
+     * allotted width. The default is to wrap.
      */
     public void setFit (BLabel.Fit mode)
     {
@@ -154,41 +145,28 @@ public class Label
     }
 
     /**
-     * Called by our containing component when it was added to the interface
-     * hierarchy.
+     * Called by our containing component when it was added to the interface hierarchy.
      */
     public void wasAdded ()
     {
         if (_icon != null) {
             _icon.wasAdded();
         }
-        if (_text != null) {
-            _text.wasAdded();
+        if (_config != null && _config.glyphs != null) {
+            _config.glyphs.wasAdded();
         }
-        layoutAndComputeSize(_twidth);
     }
 
     /**
-     * Called by our containing component when it was removed from the
-     * interface hierarchy.
+     * Called by our containing component when it was removed from the interface hierarchy.
      */
     public void wasRemoved ()
     {
         if (_icon != null) {
             _icon.wasRemoved();
         }
-        if (_text != null) {
-            _text.wasRemoved();
-        }
-    }
-
-    /**
-     * Called by our containing component when its state changes.
-     */
-    public void stateDidChange ()
-    {
-        if (_container.isShowing()) {
-            layoutAndComputeSize(_twidth);
+        if (_config != null && _config.glyphs != null) {
+            _config.glyphs.wasRemoved();
         }
     }
 
@@ -198,11 +176,8 @@ public class Label
     public Dimension computePreferredSize (int whint, int hhint)
     {
         // if our cached preferred size is not valid, recompute it
-        Config prefconfig = _container.getLabelConfig(this, whint > 0 ? whint : _twidth);
-        if (!prefconfig.equals(_prefconfig)) {
-            _prefconfig = prefconfig;
-            _prefsize = layoutAndComputeSize(prefconfig.minwidth);
-        }
+        Config prefconfig = layoutConfig(_prefconfig, whint > 0 ? whint : Short.MAX_VALUE-1);
+        _prefsize = computeSize(_prefconfig = prefconfig);
         return new Dimension(_prefsize);
     }
 
@@ -212,7 +187,8 @@ public class Label
     public void layout (Insets insets, int contWidth, int contHeight)
     {
         // compute any offsets needed to center or align things
-        Dimension size = layoutAndComputeSize(contWidth - insets.getHorizontal());
+        Config config = layoutConfig(_config, contWidth - insets.getHorizontal());
+        Dimension size = computeSize(config);
         int xoff = 0, yoff = 0;
         switch (_orient) {
         case HORIZONTAL:
@@ -221,17 +197,17 @@ public class Label
                 _iy = getYOffset(insets, contHeight, _icon.getHeight());
                 xoff = (_icon.getWidth() + _gap);
             }
-            if (_text != null) {
+            if (config.glyphs != null) {
                 _tx = getXOffset(insets, contWidth, size.width) + xoff;
-                _ty = getYOffset(insets, contHeight, _text.size.height);
+                _ty = getYOffset(insets, contHeight, config.glyphs.size.height);
             }
             break;
 
         case VERTICAL:
-            if (_text != null) {
-                _tx = getXOffset(insets, contWidth, _text.size.width);
+            if (config.glyphs != null) {
+                _tx = getXOffset(insets, contWidth, config.glyphs.size.width);
                 _ty = getYOffset(insets, contHeight, size.height);
-                yoff = (_text.size.height + _gap);
+                yoff = (config.glyphs.size.height + _gap);
             }
             if (_icon != null) {
                 _ix = getXOffset(insets, contWidth, _icon.getWidth());
@@ -244,12 +220,14 @@ public class Label
                 _ix = getXOffset(insets, contWidth, _icon.getWidth());
                 _iy = getYOffset(insets, contHeight, _icon.getHeight());
             }
-            if (_text != null) {
-                _tx = getXOffset(insets, contWidth, _text.size.width);
-                _ty = getYOffset(insets, contHeight, _text.size.height);
+            if (config.glyphs != null) {
+                _tx = getXOffset(insets, contWidth, config.glyphs.size.width);
+                _ty = getYOffset(insets, contHeight, config.glyphs.size.height);
             }
             break;
         }
+
+        useConfig(config);
     }
 
     /**
@@ -257,11 +235,11 @@ public class Label
      */
     public void releaseText ()
     {
-        if (_text != null) {
+        if (_config != null && _config.glyphs != null) {
             if (_container.isAdded()) {
-                _text.wasRemoved();
+                _config.glyphs.wasRemoved();
             }
-            _text = null;
+            _config = null;
         }
     }
 
@@ -275,7 +253,7 @@ public class Label
             if (_icon != null) {
                 _icon.render(renderer, _ix, _iy, alpha);
             }
-            if (_text != null) {
+            if (_config != null && _config.glyphs != null) {
                 renderText(renderer, contWidth, contHeight, alpha);
             }
         } finally {
@@ -286,64 +264,46 @@ public class Label
     protected void renderText (Renderer renderer, int contWidth, int contHeight, float alpha)
     {
         if (_fit == BLabel.Fit.WRAP) {
-            _text.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+            _config.glyphs.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
             return;
         }
+
         Insets insets = _container.getInsets();
         int width = contWidth - insets.getHorizontal();
         int height = contHeight - insets.getVertical();
         if (width <= 0 || height <= 0) {
             return;
         }
+
         if (_fit == BLabel.Fit.SCALE) {
-            _text.render(renderer, _tx, _ty, width, height,
-                         _container.getHorizontalAlignment(), alpha);
+            _config.glyphs.render(
+                renderer, _tx, _ty, width, height, _container.getHorizontalAlignment(), alpha);
             return;
         }
-        boolean scissored = BComponent.intersectScissorBox(_srect,
-            _container.getAbsoluteX() + insets.left,
-            _container.getAbsoluteY() + insets.bottom,
-            width, height);
+
+        boolean scissored = BComponent.intersectScissorBox(
+            _srect, _container.getAbsoluteX() + insets.left,
+            _container.getAbsoluteY() + insets.bottom, width, height);
         try {
-            _text.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+            _config.glyphs.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
         } finally {
             BComponent.restoreScissorState(scissored, _srect);
         }
     }
-    
-    protected Dimension layoutAndComputeSize (int tgtwidth)
+
+    protected Dimension computeSize (Config config)
     {
-        // if we're not wrapping, force our target width
-        if (_fit != BLabel.Fit.WRAP) {
-            tgtwidth = Short.MAX_VALUE-1;
-        }
-
-        // make a note of our current target width
-        _twidth = tgtwidth;
-
-        // maybe relayout our text so that we can find out how tall it will be
-        if (_value != null) {
-            // account for the space taken up by the icon
-            if (_icon != null && _orient == HORIZONTAL) {
-                tgtwidth -= _gap;
-                tgtwidth -= _icon.getWidth();
-            }
-
-            // re-line-break our text
-            recreateGlyphs(tgtwidth);
-        }
-
         int iwidth = 0, iheight = 0, twidth = 0, theight = 0, gap = 0;
         if (_icon != null) {
             iwidth = _icon.getWidth();
             iheight = _icon.getHeight();
         }
-        if (_text != null) {
+        if (config.glyphs != null) {
             if (_icon != null) {
                 gap = _gap;
             }
-            twidth = _text.size.width;
-            theight = _text.size.height;
+            twidth = config.glyphs.size.width;
+            theight = config.glyphs.size.height;
         }
 
         int width, height;
@@ -387,55 +347,74 @@ public class Label
     }
 
     /**
-     * Clears out old glyphs and creates new ones for our current text.
+     * Creates glyphs for the current text at the specified target width.
      */
-    protected void recreateGlyphs (int twidth)
+    protected Config layoutConfig (Config oconfig, int twidth)
     {
-        // no need to recreate our glyphs if our config hasn't changed
-        Config config = _container.getLabelConfig(this, twidth);
-        if (_config != null && _text != null && _config.matches(config, twidth)) {
-            return;
+        // if we're not wrapping, force our target width
+        if (_fit != BLabel.Fit.WRAP) {
+            twidth = Short.MAX_VALUE-1;
         }
 
-        Config oconfig = _config;
-        _config = config;
+        if (_value != null) {
+            // account for the space taken up by the icon
+            if (_icon != null && _orient == HORIZONTAL) {
+                twidth -= _gap;
+                twidth -= _icon.getWidth();
+            }
+        }
 
-        // clear out any previous rendered text
-        releaseText();
+        // no need to recreate our glyphs if our config hasn't changed
+        Config config = _container.getLabelConfig(this, twidth);
+        if (oconfig != null && oconfig.glyphs != null && oconfig.matches(config, twidth)) {
+            return oconfig;
+        }
 
         // if we have no text, we're done
         if (_value == null || _value.equals("")) {
-            return;
+            return config;
         }
 
         // sanity check
         if (twidth < 0) {
-            Log.log.warning("Requested to layout with negative target width " +
-                            "[text=" + _value + ", twidth=" + twidth + "].");
+            Log.log.warning("Requested to layout with negative target width [text=" + _value +
+                            ", twidth=" + twidth + "].");
             Thread.dumpStack();
-            return;
+            return config;
         }
 
         // render up some new text
         BTextFactory tfact = _container.getTextFactory(this);
-        _text = new Text();
-        _text.lines = tfact.wrapText(_value, config.color, config.effect, config.effectSize,
-                                     config.effectColor, twidth);
-        _config.lines = _text.lines.length;
-        for (int ii = 0; ii < _text.lines.length; ii++) {
-            _text.size.width = Math.max(_text.size.width, _text.lines[ii].getSize().width);
-            _text.size.height += _text.lines[ii].getSize().height;
+        Text text = new Text();
+        text.lines = tfact.wrapText(
+            _value, config.color, config.effect, config.effectSize, config.effectColor, twidth);
+        for (int ii = 0; ii < text.lines.length; ii++) {
+            text.size.width = Math.max(text.size.width, text.lines[ii].getSize().width);
+            text.size.height += text.lines[ii].getSize().height;
         }
+        config.glyphs = text;
 
         // if our old config is the same number of lines as our new config, expand the width region
         // that this configuration will match
-        if (oconfig != null && oconfig.lines == _config.lines) {
-            _config.minwidth = Math.min(_config.minwidth, oconfig.minwidth);
-            _config.maxwidth = Math.max(_config.maxwidth, oconfig.maxwidth);
+        if (_config != null && _config.glyphs != null &&
+            _config.glyphs.lines.length == config.glyphs.lines.length) {
+            config.minwidth = Math.min(config.minwidth, _config.minwidth);
+            config.maxwidth = Math.max(config.maxwidth, _config.maxwidth);
         }
 
-        if (_container.isAdded()) {
-            _text.wasAdded();
+        return config;
+    }
+
+    protected void useConfig (Config config)
+    {
+        // clear out any previous rendered text
+        releaseText();
+
+        // note our new config
+        _config = config;
+
+        if (_config != null && _config.glyphs != null && _container.isAdded()) {
+            _config.glyphs.wasAdded();
         }
     }
 
@@ -447,7 +426,7 @@ public class Label
         public int effectSize;
         public ColorRGBA effectColor;
         public int minwidth, maxwidth;
-        public int lines;
+        public Text glyphs;
 
         public boolean matches (Config other, int twidth) {
             if (other == null) {
@@ -471,7 +450,7 @@ public class Label
 
             // if we are only one line we are fine as long as we're less than or equal to the
             // target width (only if it is smaller than our minwidth might it cause us to wrap)
-            if (lines == 1 && minwidth <= twidth) {
+            if (glyphs != null && glyphs.lines.length == 1 && minwidth <= twidth) {
                 return true;
             }
 
@@ -480,9 +459,12 @@ public class Label
         }
 
         public String toString () {
-            return text + "(" + Integer.toHexString(color.hashCode()) + "," + effect + "," +
-                Integer.toHexString(effectColor.hashCode()) + "," +
+            return text + "(" + toString(color) + "," + effect + "," + toString(effectColor) + "," +
                 minwidth + "<>" + maxwidth + ")";
+        }
+
+        protected String toString (ColorRGBA color) {
+            return color == null ? "null" : Integer.toHexString(color.hashCode());
         }
     }
 
@@ -506,10 +488,10 @@ public class Label
             }
         }
 
-        public void render (Renderer renderer, int tx, int ty, 
+        public void render (Renderer renderer, int tx, int ty,
                 int width, int height, int halign, float alpha) {
             // render only the first line
-            float scale = 1f; 
+            float scale = 1f;
             if (size.width > width) {
                 scale = (float)width/size.width;
             }
@@ -553,12 +535,11 @@ public class Label
     protected int _ix, _iy;
 
     protected Config _config;
-    protected Text _text;
-    protected int _tx, _ty, _twidth = Short.MAX_VALUE;
+    protected int _tx, _ty;
     protected float _alpha = 1f;
 
     protected Config _prefconfig;
     protected Dimension _prefsize;
-    
+
     protected Rectangle _srect = new Rectangle();
 }
