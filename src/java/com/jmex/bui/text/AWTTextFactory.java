@@ -2,7 +2,7 @@
 // $Id$
 //
 // BUI - a user interface library for the JME 3D engine
-// Copyright (C) 2005, Michael Bayne, All Rights Reserved
+// Copyright (C) 2005-2006, Michael Bayne, All Rights Reserved
 //
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -60,9 +60,8 @@ import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 
 /**
- * Formats text by using the AWT to render runs of text into a bitmap and then
- * texturing a quad with the result.  This text factory handles a simple styled
- * text syntax:
+ * Formats text by using the AWT to render runs of text into a bitmap and then texturing a quad
+ * with the result.  This text factory handles a simple styled text syntax:
  *
  * <pre>
  * &#064;=b(this text would be bold)
@@ -83,14 +82,12 @@ public class AWTTextFactory extends BTextFactory
         _antialias = antialias;
         _attrs.put(TextAttribute.FONT, font);
 
-        // we need a graphics context to figure out how big our text is
-        // going to be, but we need an image to get the graphics context,
-        // but we don't want to create our image until we know how big our
-        // text needs to be. dooh!
+        // we need a graphics context to figure out how big our text is going to be, but we need an
+        // image to get the graphics context, but we don't want to create our image until we know
+        // how big our text needs to be. dooh!
         _stub = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 
-        // compute the height of our font by creating a sample text and
-        // storing its height
+        // compute the height of our font by creating a sample text and storing its height
         _height = createText("J", ColorRGBA.black).getSize().height;
     }
 
@@ -101,9 +98,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText createText (String text, ColorRGBA color, int effect,
-                             int effectSize, ColorRGBA effectColor,
-                             boolean useAdvance)
+    public BText createText (String text, ColorRGBA color, int effect, int effectSize,
+                             ColorRGBA effectColor, boolean useAdvance)
     {
         if (text.equals("")) {
             text = " ";
@@ -116,9 +112,8 @@ public class AWTTextFactory extends BTextFactory
                 gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                      RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             }
-            layout = new TextLayout(
-                parseStyledText(text, _attrs, null).getIterator(),
-                gfx.getFontRenderContext());
+            layout = new TextLayout(parseStyledText(text, _attrs, null).getIterator(),
+                                    gfx.getFontRenderContext());
         } finally {
             gfx.dispose();
         }
@@ -128,9 +123,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     // documentation inherited
-    public BText[] wrapText (String text, ColorRGBA color, int effect,
-                             int effectSize, ColorRGBA effectColor,
-                             int maxWidth)
+    public BText[] wrapText (String text, ColorRGBA color, int effect, int effectSize,
+                             ColorRGBA effectColor, int maxWidth)
     {
         // the empty string will break things; so use a single space instead
         if (text.length() == 0) {
@@ -154,8 +148,8 @@ public class AWTTextFactory extends BTextFactory
 
             int pos = 0;
             while (pos < text.length()) {
-                // stop at the next newline or the end of the line if there
-                // are no newlines in the text
+                // stop at the next newline or the end of the line if there are no newlines in the
+                // text
                 int nextret = text.indexOf('\n', pos);
                 if (nextret == -1) {
                     nextret = text.length();
@@ -171,8 +165,7 @@ public class AWTTextFactory extends BTextFactory
                     pos++;
                 }
 
-                texts.add(createText(layout, color, effect, effectSize,
-                                     effectColor, length, true));
+                texts.add(createText(layout, color, effect, effectSize, effectColor, length, true));
             }
 
         } finally {
@@ -183,32 +176,28 @@ public class AWTTextFactory extends BTextFactory
     }
 
     /** Helper function. */
-    protected BText createText (
-            final TextLayout layout, ColorRGBA color, final int effect, 
-            final int effectSize, ColorRGBA effectColor, final int length, 
-            boolean useAdvance)
+    protected BText createText (final TextLayout layout, ColorRGBA color, final int effect, 
+                                final int effectSize, ColorRGBA effectColor, final int length, 
+                                boolean useAdvance)
     {
         // determine the size of our rendered text
         final Dimension size = new Dimension();
         Rectangle2D bounds = layout.getBounds();
 
-        // MacOS font rendering is buggy, so we must compute the outline and
-        // use that for bounds computation and rendering
+        // MacOS font rendering is buggy, so we must compute the outline and use that for bounds
+        // computation and rendering
         if (effect == OUTLINE || _isMacOS) {
             bounds = layout.getOutline(null).getBounds();
         }
         if (useAdvance) {
-            size.width = (int)Math.round(
-                Math.max(bounds.getX(), 0) + layout.getAdvance());
+            size.width = (int)Math.round(Math.max(bounds.getX(), 0) + layout.getAdvance());
         } else {
-            size.width = (int)Math.round(
-                Math.max(bounds.getX(), 0) + bounds.getWidth());
+            size.width = (int)Math.round(Math.max(bounds.getX(), 0) + bounds.getWidth());
         }
-        size.height = (int)(layout.getLeading() + layout.getAscent() +
-                            layout.getDescent());
+        size.height = (int)(layout.getLeading() + layout.getAscent() + layout.getDescent());
 
-        // blank text results in a zero sized bounds, bump it up to 1x1 to
-        // avoid freakout by the BufferedImage
+        // blank text results in a zero sized bounds, bump it up to 1x1 to avoid freakout by the
+        // BufferedImage
         size.width = Math.max(size.width, 1);
         size.height = Math.max(size.height, 1);
 
@@ -221,8 +210,8 @@ public class AWTTextFactory extends BTextFactory
         }
 
         // render the text into the image
-        BufferedImage image = new BufferedImage(
-            size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage image = new BufferedImage(size.width, size.height,
+                                                BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
         try {
             if (effect == OUTLINE) {
@@ -232,11 +221,11 @@ public class AWTTextFactory extends BTextFactory
                 }
                 gfx.translate(0, layout.getAscent());
                 if (effectSize > 1) {
-                    gfx.setColor(new Color(effectColor.r, effectColor.g,
-                                           effectColor.b, effectColor.a));
+                    gfx.setColor(new Color(effectColor.r, effectColor.g, effectColor.b,
+                                           effectColor.a));
                     Stroke oldstroke = gfx.getStroke();
-                    gfx.setStroke(new BasicStroke((float)effectSize, 
-                                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    gfx.setStroke(new BasicStroke((float)effectSize, BasicStroke.CAP_ROUND,
+                                                  BasicStroke.JOIN_ROUND));
                     gfx.draw(layout.getOutline(null));
                     gfx.setStroke(oldstroke);
                 }
@@ -249,13 +238,13 @@ public class AWTTextFactory extends BTextFactory
                 }
 
             } else {
-                // if we're antialiasing, we need to set a custom compositing
-                // rule to avoid incorrectly blending with the blank background
+                // if we're antialiasing, we need to set a custom compositing rule to avoid
+                // incorrectly blending with the blank background
                 Composite ocomp = gfx.getComposite();
                 if (_antialias) {
                     gfx.setComposite(AlphaComposite.SrcOut);
-                    // on the MacOS we're not using the TextLayout to render,
-                    // so we have to explicitly activate anti-aliasing
+                    // on the MacOS we're not using the TextLayout to render, so we have to
+                    // explicitly activate anti-aliasing
                     if (_isMacOS) {
                         gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                              RenderingHints.VALUE_ANTIALIAS_ON);
@@ -292,8 +281,8 @@ public class AWTTextFactory extends BTextFactory
             gfx.dispose();
         }
 
-        // TODO: render into a properly sized image in the first place and
-        // create a JME Image directly
+        // TODO: render into a properly sized image in the first place and create a JME Image
+        // directly
         final BImage bimage = new BImage(image);
 
 //         final ByteBuffer idata =
@@ -331,8 +320,7 @@ public class AWTTextFactory extends BTextFactory
             public void render (Renderer renderer, int x, int y, float alpha) {
                 bimage.render(renderer, x, y, alpha);
             }
-            public void render (Renderer renderer, int x, int y,
-                    int w, int h, float alpha) {
+            public void render (Renderer renderer, int x, int y, int w, int h, float alpha) {
                 bimage.render(renderer, x, y, w, h, alpha);
             }
             public void release () {
@@ -342,8 +330,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     /**
-     * Parses our simple styled text formatting codes and creates an attributed
-     * string to render them.
+     * Parses our simple styled text formatting codes and creates an attributed string to render
+     * them.
      */
     protected AttributedString parseStyledText (
         String text, HashMap<TextAttribute, Font> attrs, String[] bare)
@@ -356,8 +344,7 @@ public class AWTTextFactory extends BTextFactory
             return new AttributedString(text, attrs);
         }
 
-        // parse the style commands into an array of styled runs and extract
-        // the raw text along the way
+        // parse the style commands into an array of runs and extract the raw text along the way
         ArrayList<StyleRun> stack = new ArrayList<StyleRun>();
         ArrayList<StyleRun> runs = new ArrayList<StyleRun>();
         StringBuffer raw = new StringBuffer();
@@ -378,8 +365,8 @@ public class AWTTextFactory extends BTextFactory
                 continue;
 
             } else if (c == '@') { // start of run
-                // if we don't have enough characters left in the string for a
-                // complete run, skip it; we need at least 5: @=X()
+                // if we don't have enough characters left in the string for a complete run, skip
+                // it; we need at least 5: @=X()
                 if (ii >= ll-5) {
                     raw.append(c);
                     rawpos++;
@@ -426,9 +413,8 @@ public class AWTTextFactory extends BTextFactory
                 run.styles[ss] = Character.toLowerCase(styles.charAt(ss));
                 if (run.styles[ss] == '#') {
                     if (ss > ssl-7) {
-                        Log.log.warning("Invalid color definition " +
-                                        "[text=" + text + ", color=" +
-                                        styles.substring(ss) + "].");
+                        Log.log.warning("Invalid color definition [text=" + text +
+                                        ", color=" + styles.substring(ss) + "].");
                         ss = ssl;
                     } else {
                         String hex = styles.substring(ss+1, ss+7);
@@ -436,8 +422,7 @@ public class AWTTextFactory extends BTextFactory
                         try {
                             run.color = new Color(Integer.parseInt(hex, 16));
                         } catch (Exception e) {
-                            Log.log.warning("Invalid color definition " +
-                                            "[text=" + text +
+                            Log.log.warning("Invalid color definition [text=" + text +
                                             ", color=#" + hex +"].");
                         }
                     }
@@ -461,40 +446,31 @@ public class AWTTextFactory extends BTextFactory
                 switch (run.styles[ss]) {
                 case '#':
                     if (run.color != null) {
-                        string.addAttribute(
-                            TextAttribute.FOREGROUND,
-                            run.color, run.start, run.end);
+                        string.addAttribute(TextAttribute.FOREGROUND, run.color,
+                                            run.start, run.end);
                     }
                     break;
 
                 case 'i':
-                    string.addAttribute(
-                        TextAttribute.POSTURE,
-                        TextAttribute.POSTURE_OBLIQUE,
-                        run.start, run.end);
+                    string.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE,
+                                        run.start, run.end);
                     break;
 
                 case 'b':
                     // setting TextAttribute.WEIGHT doesn't seem to work
                     string.addAttribute(
-                        TextAttribute.FONT,
-                        attrs.get(TextAttribute.FONT).
-                        deriveFont(Font.BOLD),
+                        TextAttribute.FONT, attrs.get(TextAttribute.FONT).deriveFont(Font.BOLD),
                         run.start, run.end);
                     break;
 
                 case 's':
-                    string.addAttribute(
-                        TextAttribute.STRIKETHROUGH,
-                        TextAttribute.STRIKETHROUGH_ON,
-                        run.start, run.end);
+                    string.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON,
+                                        run.start, run.end);
                     break;
 
                 case 'u':
-                    string.addAttribute(
-                        TextAttribute.UNDERLINE,
-                        TextAttribute.UNDERLINE_ON,
-                        run.start, run.end);
+                    string.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON,
+                                        run.start, run.end);
                     break;
 
                 case 0: // ignore blank spots
@@ -502,8 +478,7 @@ public class AWTTextFactory extends BTextFactory
 
                 default:
                     Log.log.warning("Invalid style command [text=" + text +
-                                    ", command=" + run.styles[ss] +
-                                    ", run=" + run + "].");
+                                    ", command=" + run.styles[ss] + ", run=" + run + "].");
                     break;
                 }
             }
@@ -535,8 +510,7 @@ public class AWTTextFactory extends BTextFactory
     }
 
     protected boolean _antialias;
-    protected HashMap<TextAttribute, Font> _attrs =
-        new HashMap<TextAttribute, Font>();
+    protected HashMap<TextAttribute, Font> _attrs = new HashMap<TextAttribute, Font>();
     protected int _height;
     protected BufferedImage _stub;
 
@@ -545,8 +519,7 @@ public class AWTTextFactory extends BTextFactory
         try {
             String osname = System.getProperty("os.name");
             osname = (osname == null) ? "" : osname;
-            _isMacOS = (osname.indexOf("Mac OS") != -1 ||
-                        osname.indexOf("MacOS") != -1);
+            _isMacOS = (osname.indexOf("Mac OS") != -1 || osname.indexOf("MacOS") != -1);
         } catch (Exception e) {
             // oh well
         }
