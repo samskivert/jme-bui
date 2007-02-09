@@ -400,6 +400,18 @@ public abstract class GroupLayout extends BLayoutManager
     }
 
     /**
+     * Makes a horizontal box of components that uses the supplied (on-axis) justification.
+     */
+    public static BContainer makeHBox (Justification justification, BComponent ... comps)
+    {
+        BContainer cont = makeHBox(justification);
+        for (BComponent comp : comps) {
+            cont.add(comp);
+        }
+        return cont;
+    }
+
+    /**
      * Creates a container configured with a vertical group layout manager.
      */
     public static BContainer makeVBox (Justification justification)
@@ -407,6 +419,18 @@ public abstract class GroupLayout extends BLayoutManager
         VGroupLayout lay = new VGroupLayout();
         lay.setJustification(justification);
         return new BContainer(lay);
+    }
+
+    /**
+     * Makes a vertical box of components that uses the supplied (on-axis) justification.
+     */
+    public static BContainer makeVBox (Justification justification, BComponent ... comps)
+    {
+        BContainer cont = makeVBox(justification);
+        for (BComponent comp : comps) {
+            cont.add(comp);
+        }
+        return cont;
     }
 
     protected Policy _policy = NONE;
