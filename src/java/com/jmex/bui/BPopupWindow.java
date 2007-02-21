@@ -34,6 +34,7 @@ public class BPopupWindow extends BWindow
     {
         super(parent.getStyleSheet(), layout);
         _parentWindow = parent;
+        setLayer(parent.getLayer());
 
         // set up our background and border from the look and feel
 //         setBackground(_lnf.createPopupBackground());

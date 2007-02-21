@@ -63,10 +63,25 @@ public abstract class BRootNode extends Geometry
      */
     public void addWindow (BWindow window)
     {
+        addWindow(window, false);
+    }
+
+    /**
+     * Registers a top-level window with the input system.
+     *
+     * @param topLayer if true, will set the window layer to the top most layer if it's current
+     * layer is less than that.
+     */
+    public void addWindow (BWindow window, boolean topLayer)
+    {
         // make a note of the current top window
         BWindow curtop = null;
         if (_windows.size() > 0) {
             curtop = _windows.get(_windows.size()-1);
+        }
+
+        if (topLayer && curtop != null) {
+            window.setLayer(Math.max(window.getLayer(), curtop.getLayer()));
         }
 
         // add this window into the stack and resort
@@ -301,7 +316,7 @@ public abstract class BRootNode extends Geometry
         _lastTipTime += time;
         String tiptext;
         if (_hcomponent == null || _tipwin != null ||
-            (_lastMoveTime < getTooltipTimeout() && 
+            (_lastMoveTime < getTooltipTimeout() &&
              _lastTipTime > TIP_MODE_RESET) ||
             (tiptext = _hcomponent.getTooltipText()) == null) {
             if (_tipwin != null) {
@@ -335,7 +350,7 @@ public abstract class BRootNode extends Geometry
             tx = _mouseX - _tipwin.getWidth()/2;
             ty = _mouseY + 10;
         } else {
-            tx = _hcomponent.getAbsoluteX() + 
+            tx = _hcomponent.getAbsoluteX() +
                 (_hcomponent.getWidth() - _tipwin.getWidth()) / 2;
             ty = _hcomponent.getAbsoluteY() + _hcomponent.getHeight() + 10;
         }
