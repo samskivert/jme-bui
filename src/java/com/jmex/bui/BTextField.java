@@ -75,8 +75,8 @@ public class BTextField extends BTextComponent
 
     /**
      * Creates a text field with the specified starting text and max length.
-     * The maximum input length is controlled by a {@link 
-     * LengthLimitedDocument}, changing the document will remove the length 
+     * The maximum input length is controlled by a {@link
+     * LengthLimitedDocument}, changing the document will remove the length
      * control.
      */
     public BTextField (String text, int maxLength)
@@ -190,6 +190,7 @@ public class BTextField extends BTextComponent
             KeyEvent kev = (KeyEvent)event;
             if (kev.getType() == KeyEvent.KEY_PRESSED) {
                 int modifiers = kev.getModifiers(), keyCode = kev.getKeyCode();
+                Log.log.info("Recieved key press [keyCode=" + keyCode + ", keyChar=" + kev.getKeyChar() + "].");
                 switch (_keymap.lookupMapping(modifiers, keyCode)) {
                 case BACKSPACE:
                     if (_cursp > 0 && _text.getLength() > 0) {
@@ -413,7 +414,7 @@ public class BTextField extends BTextComponent
 
         // format our text and determine how much of it we can display
         _glyphs = getTextFactory().createText(
-            getDisplayText(), getColor(), BConstants.NORMAL, 
+            getDisplayText(), getColor(), BConstants.NORMAL,
             BConstants.DEFAULT_SIZE, null, true);
         if (isAdded()) {
             _glyphs.wasAdded();
@@ -430,7 +431,7 @@ public class BTextField extends BTextComponent
             _glyphs.wasRemoved();
         }
         _glyphs = null;
-    }        
+    }
 
     /**
      * This method allows a derived class (specifically {@link
@@ -465,7 +466,7 @@ public class BTextField extends BTextComponent
             int avail = getWidth() - getInsets().getHorizontal();
             if (_cursx > _txoff + avail) {
                 _txoff = _cursx - avail;
-            } else if (_glyphs != null && 
+            } else if (_glyphs != null &&
                     _glyphs.getSize().width - _txoff < avail) {
                 _txoff = Math.max(0, _cursx - avail);
             }
@@ -479,6 +480,6 @@ public class BTextField extends BTextComponent
     protected int _prefWidth = -1;
     protected boolean _showCursor;
     protected int _cursp, _cursx, _txoff;
-    
+
     protected Rectangle _srect = new Rectangle();
 }
