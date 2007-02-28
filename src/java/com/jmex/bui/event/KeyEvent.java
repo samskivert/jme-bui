@@ -58,6 +58,24 @@ public class KeyEvent extends InputEvent
      */
     public char getKeyChar ()
     {
+        // TEMP: This is a hack to get around a bug in lwjgl's handling of
+        // numpad keys in windows
+        if ((int)_keyChar == 0) {
+            switch (_keyCode) {
+            case KeyInput.KEY_NUMPAD1: return '1';
+            case KeyInput.KEY_NUMPAD2: return '2';
+            case KeyInput.KEY_NUMPAD3: return '3';
+            case KeyInput.KEY_NUMPAD4: return '4';
+            case KeyInput.KEY_NUMPAD5: return '5';
+            case KeyInput.KEY_NUMPAD6: return '6';
+            case KeyInput.KEY_NUMPAD7: return '7';
+            case KeyInput.KEY_NUMPAD8: return '8';
+            case KeyInput.KEY_NUMPAD9: return '9';
+            case KeyInput.KEY_NUMPAD0: return '0';
+            default: return _keyChar;
+            }
+        }
+        // END TEMP
         return _keyChar;
     }
 
@@ -89,7 +107,7 @@ public class KeyEvent extends InputEvent
             break;
         }
     }
-    
+
     protected void toString (StringBuffer buf)
     {
         super.toString(buf);
