@@ -190,7 +190,7 @@ public class BTextField extends BTextComponent
             KeyEvent kev = (KeyEvent)event;
             if (kev.getType() == KeyEvent.KEY_PRESSED) {
                 int modifiers = kev.getModifiers(), keyCode = kev.getKeyCode();
-                Log.log.info("Recieved key press [keyCode=" + keyCode + ", keyChar=" + kev.getKeyChar() + "].");
+                Log.log.info("Recieved key press [keyCode=" + keyCode + ", keyChar=" + (int)kev.getKeyChar() + "].");
                 switch (_keymap.lookupMapping(modifiers, keyCode)) {
                 case BACKSPACE:
                     if (_cursp > 0 && _text.getLength() > 0) {
