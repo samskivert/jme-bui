@@ -140,12 +140,12 @@ public class BComponent
             ps = new Dimension(_preferredSize);
 
         } else {
-            // if we have no hints but have a preferred size, use our preferred size as our hints
+            // override hints with preferred size
             if (_preferredSize != null) {
-                if (whint <= 0 && _preferredSize.width > 0) {
+                if (_preferredSize.width > 0) {
                     whint = _preferredSize.width;
                 }
-                if (hhint <= 0 && _preferredSize.height > 0) {
+                if (_preferredSize.height > 0) {
                     hhint = _preferredSize.height;
                 }
             }
@@ -319,7 +319,7 @@ public class BComponent
     {
         _alpha = alpha;
     }
-    
+
     /**
      * Returns the alpha transparency of this component.
      */
@@ -327,7 +327,7 @@ public class BComponent
     {
         return _alpha;
     }
-    
+
     /**
      * Sets this components enabled state. A component that is not enabled should not respond to
      * user interaction and should render itself in such a way as not to afford user interaction.
@@ -359,7 +359,7 @@ public class BComponent
             invalidate();
         }
     }
-    
+
     /**
      * Returns true if this component is visible, false if it is not.
      */
@@ -367,7 +367,7 @@ public class BComponent
     {
         return _visible;
     }
-    
+
     /**
      * Returns true if this component is both added to the interface hierarchy and visible, false
      * if not.
@@ -376,7 +376,7 @@ public class BComponent
     {
         return isAdded() && isVisible();
     }
-    
+
     /**
      * Returns the state of this component, either {@link #DEFAULT} or {@link #DISABLED}.
      */
@@ -491,7 +491,7 @@ public class BComponent
             invalidate();
         }
     }
-    
+
     /**
      * Adds a listener to this component. The listener will be notified when events of the
      * appropriate type are dispatched on this component.
@@ -638,7 +638,7 @@ public class BComponent
         }
         return null;
     }
-    
+
     /**
      * Instructs this component to process the supplied event. If the event is not processed, it
      * will be passed up to its parent component for processing. Derived classes should thus only
@@ -973,7 +973,7 @@ public class BComponent
         }
         return enabled;
     }
-    
+
     /**
      * Restores the previous scissor state after a call to {@link #intersectScissorBox}.
      *
@@ -986,10 +986,10 @@ public class BComponent
         if (enabled) {
             GL11.glScissor(rect.x, rect.y, rect.width, rect.height);
         } else {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);            
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
     }
-    
+
     protected BContainer _parent;
     protected String _styleClass;
     protected Dimension _preferredSize;
@@ -1009,7 +1009,7 @@ public class BComponent
 
     /** Temporary storage for scissor box queries. */
     protected static IntBuffer _bbuf = BufferUtils.createIntBuffer(16);
-    
+
     protected static final int STATE_COUNT = 3;
     protected static final String[] STATE_PCLASSES = { null, "hover", "disabled" };
 }
