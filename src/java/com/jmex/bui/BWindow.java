@@ -103,6 +103,14 @@ public class BWindow extends BContainer
     }
 
     /**
+     * Returns whether this window should have shading applied beneath it.
+     */
+    public boolean shouldShadeBehind ()
+    {
+        return _modal;
+    }
+
+    /**
      * Returns whether or not this window is an overlay, in which case its children will not
      * receive input focus by default.
      */
@@ -110,7 +118,7 @@ public class BWindow extends BContainer
     {
         return false;
     }
-    
+
     /**
      * Returns the root node that manages this window.
      */

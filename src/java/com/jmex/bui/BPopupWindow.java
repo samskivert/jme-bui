@@ -41,6 +41,12 @@ public class BPopupWindow extends BWindow
 //         setBorder(_lnf.createPopupBorder());
     }
 
+    @Override // documentation inherited
+    public boolean shouldShadeBehind ()
+    {
+        return false;
+    }
+
     /**
      * Sizes the window to its preferred size and then displays it at the
      * specified coordinates extending either above the location or below

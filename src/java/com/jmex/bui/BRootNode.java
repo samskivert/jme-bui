@@ -24,10 +24,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
 
+import org.lwjgl.opengl.GL11;
+
 import com.jme.intersection.CollisionResults;
 import com.jme.intersection.PickResults;
 import com.jme.math.Ray;
 import com.jme.renderer.Camera;
+import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;
 import com.jme.scene.Spatial;
@@ -377,11 +380,24 @@ public abstract class BRootNode extends Geometry
     public void draw (Renderer renderer)
     {
         super.draw(renderer);
+        BWindow modalWin = null;
+        if (_modalShade != null) {
+            for (int ii = _windows.size() - 1; ii >= 0; ii--) {
+                BWindow win = _windows.get(ii);
+                if (win.shouldShadeBehind()) {
+                    modalWin = win;
+                    break;
+                }
+            }
+        }
 
         // render all of our windows
         for (int ii = 0, ll = _windows.size(); ii < ll; ii++) {
             BWindow win = _windows.get(ii);
             try {
+                if (win == modalWin) {
+                    renderModalShade();
+                }
                 win.render(renderer);
             } catch (Throwable t) {
                 Log.log.log(Level.WARNING, win + " failed in render()", t);
@@ -399,6 +415,14 @@ public abstract class BRootNode extends Geometry
     public boolean hasCollision (Spatial scene, boolean checkTriangles)
     {
         return false; // nothing doing
+    }
+
+    /**
+     * Sets the color of the shade behind the first active modal window.
+     */
+    public void setModalShade (ColorRGBA color)
+    {
+        _modalShade = color;
     }
 
     /**
@@ -573,6 +597,23 @@ public abstract class BRootNode extends Geometry
         }
     }
 
+    protected void renderModalShade ()
+    {
+        BComponent.applyDefaultStates();
+        BImage.blendState.apply();
+
+        int width = DisplaySystem.getDisplaySystem().getWidth();
+        int height = DisplaySystem.getDisplaySystem().getHeight();
+
+        GL11.glColor4f(_modalShade.r, _modalShade.g, _modalShade.b, _modalShade.a);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(0, 0);
+        GL11.glVertex2f(width, 0);
+        GL11.glVertex2f(width, height);
+        GL11.glVertex2f(0, height);
+        GL11.glEnd();
+    }
+
     protected long _tickStamp;
     protected int _modifiers;
     protected int _mouseX, _mouseY;
@@ -580,6 +621,7 @@ public abstract class BRootNode extends Geometry
     protected BWindow _tipwin;
     protected float _lastMoveTime, _tipTime = 1f, _lastTipTime;
     protected int _tipWidth = -1;
+    protected ColorRGBA _modalShade;
 
     protected ArrayList<BWindow> _windows = new ArrayList<BWindow>();
     protected BComponent _hcomponent, _ccomponent;
