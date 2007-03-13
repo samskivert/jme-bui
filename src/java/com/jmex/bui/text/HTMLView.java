@@ -193,7 +193,6 @@ public class HTMLView extends BComponent
             _rsize.width == vwidth && _rsize.height == vheight) {
             return;
         }
-        _rsize = new Rectangle(0, 0, vwidth, vheight);
 
         // release our old texture image
         release();
@@ -201,6 +200,7 @@ public class HTMLView extends BComponent
         BufferedImage image = new BufferedImage(
             vwidth, vheight, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D gfx = image.createGraphics();
+        _rsize = new Rectangle(0, 0, vwidth, vheight);
         try {
             gfx.setClip(_rsize);
             if (_antialias) {
@@ -302,34 +302,33 @@ public class HTMLView extends BComponent
         }
 
         public AttributeSet getAttributes () {
-	    return null;
-	}
+            return null;
+        }
 
         public float getPreferredSpan (int axis) {
-	    return _target.getPreferredSpan(axis);
+            return _target.getPreferredSpan(axis);
         }
 
         public float getMinimumSpan (int axis) {
-	    return _target.getMinimumSpan(axis);
+            return _target.getMinimumSpan(axis);
         }
 
         public float getMaximumSpan (int axis) {
-	    return Integer.MAX_VALUE;
+            return Integer.MAX_VALUE;
         }
 
-        public void preferenceChanged (
-            View child, boolean width, boolean height) {
+        public void preferenceChanged (View child, boolean width, boolean height) {
             forceRelayout();
         }
 
         public float getAlignment (int axis) {
-	    return _target.getAlignment(axis);
+            return _target.getAlignment(axis);
         }
 
         public void paint (Graphics g, Shape allocation) {
-	    Rectangle alloc = allocation.getBounds();
-	    _target.setSize(alloc.width, alloc.height);
-	    _target.paint(g, allocation);
+            Rectangle alloc = allocation.getBounds();
+            _target.setSize(alloc.width, alloc.height);
+            _target.paint(g, allocation);
         }
 
         public void setParent (View parent) {
@@ -346,18 +345,16 @@ public class HTMLView extends BComponent
 
         public Shape modelToView (int pos, Shape a, Position.Bias b)
             throws BadLocationException {
-	    return _target.modelToView(pos, a, b);
+            return _target.modelToView(pos, a, b);
         }
 
-	public Shape modelToView (
-            int p0, Position.Bias b0, int p1, Position.Bias b1, Shape a)
+        public Shape modelToView (int p0, Position.Bias b0, int p1, Position.Bias b1, Shape a)
             throws BadLocationException {
-	    return _target.modelToView(p0, b0, p1, b1, a);
-	}
+	        return _target.modelToView(p0, b0, p1, b1, a);
+        }
 
-        public int viewToModel (
-            float x, float y, Shape a, Position.Bias[] bias) {
-	    return _target.viewToModel(x, y, a, bias);
+        public int viewToModel (float x, float y, Shape a, Position.Bias[] bias) {
+	        return _target.viewToModel(x, y, a, bias);
         }
 
         public Document getDocument () {
@@ -365,19 +362,19 @@ public class HTMLView extends BComponent
         }
 
         public int getStartOffset () {
-	    return _target.getStartOffset();
+            return _target.getStartOffset();
         }
 
         public int getEndOffset () {
-	    return _target.getEndOffset();
+            return _target.getEndOffset();
         }
 
         public Element getElement () {
-	    return _target.getElement();
+            return _target.getElement();
         }
 
         public void setSize (float width, float height) {
-	    _target.setSize(width, height);
+            _target.setSize(width, height);
         }
 
         public Container getContainer () {
@@ -385,7 +382,7 @@ public class HTMLView extends BComponent
         }
 
         public ViewFactory getViewFactory () {
-	    return _kit.getViewFactory();
+            return _kit.getViewFactory();
         }
 
         protected View _target;
