@@ -229,6 +229,17 @@ public class BComboBox extends BLabel
         _selidx = -1;
     }
 
+    /**
+     * Sets the preferred number of columns in the popup menu.
+     */
+    public void setPreferredColumns (int columns)
+    {
+        _columns = columns;
+        if (_menu != null) {
+            _menu.setPreferredColumns(columns);
+        }
+    }
+
     @Override // from BComponent
     public boolean dispatchEvent (BEvent event)
     {
@@ -237,7 +248,7 @@ public class BComboBox extends BLabel
             switch (mev.getType()) {
             case MouseEvent.MOUSE_PRESSED:
                 if (_menu == null) {
-                    _menu = new ComboPopupMenu();
+                    _menu = new ComboPopupMenu(_columns);
                 }
                 _menu.popup(getAbsoluteX(), getAbsoluteY(), false);
                 break;
@@ -310,8 +321,8 @@ public class BComboBox extends BLabel
 
     protected class ComboPopupMenu extends BPopupMenu
     {
-        public ComboPopupMenu () {
-            super(BComboBox.this.getWindow());
+        public ComboPopupMenu (int columns) {
+            super(BComboBox.this.getWindow(), columns);
             for (int ii = 0; ii < _items.size(); ii++) {
                 addMenuItem(_items.get(ii));
             }
@@ -357,4 +368,7 @@ public class BComboBox extends BLabel
 
     /** Our cached preferred size. */
     protected Dimension _psize;
+
+    /** Our preferred number of columns for the popup menu. */
+    protected int _columns;
 }
