@@ -180,6 +180,7 @@ public class BTabbedPane extends BContainer
      */
     public void selectTab (int tabidx)
     {
+        tabidx = Math.max(0, Math.min(_tabs.size() - 1, tabidx));
         // no NOOPing
         if (tabidx == _selidx) {
             return;
@@ -267,6 +268,10 @@ public class BTabbedPane extends BContainer
      */
     protected void tabWasRemoved (BComponent tab, boolean btnClose)
     {
+        // update the button actions
+        for (int ii = 0, ll = _buttons.getComponentCount(); ii < ll; ii++) {
+            getTabButton(ii).setAction("" + ii);
+        }
     }
 
     // documentation inherited
