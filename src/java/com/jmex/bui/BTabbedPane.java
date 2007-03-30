@@ -180,11 +180,11 @@ public class BTabbedPane extends BContainer
      */
     public void selectTab (int tabidx)
     {
-        tabidx = Math.max(0, Math.min(_tabs.size() - 1, tabidx));
         // no NOOPing
         if (tabidx == _selidx) {
             return;
         }
+        tabidx = Math.max(0, Math.min(_tabs.size() - 1, tabidx));
 
         // make sure the appropriate button is selected
         for (int ii = 0; ii < _tabs.size(); ii++) {
