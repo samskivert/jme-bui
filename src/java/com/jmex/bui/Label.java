@@ -50,6 +50,9 @@ public class Label
      */
     public void setText (String text)
     {
+        if (_value != null && _value.equals(text)) {
+            return;
+        }
         _value = text;
 
         // clear out our old text config and texture
@@ -72,6 +75,9 @@ public class Label
      */
     public void setIcon (BIcon icon)
     {
+        if (_icon == icon) {
+            return;
+        }
         int owidth = 0, oheight = 0, nwidth = 0, nheight = 0;
         if (_icon != null) {
             owidth = _icon.getWidth();
@@ -408,6 +414,11 @@ public class Label
 
     protected void useConfig (Config config)
     {
+        // make sure it's not the one we're already using
+        if (_config == config) {
+            return;
+        }
+
         // clear out any previous rendered text
         releaseText();
 

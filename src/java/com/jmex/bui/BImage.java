@@ -185,7 +185,7 @@ public class BImage extends Quad
         _theight = image.getHeight();
 
         texture.setFilter(Texture.FM_LINEAR);
-        texture.setMipmapState(Texture.MM_NONE);
+        texture.setMipmapState(Texture.MM_LINEAR);
         _tstate.setTexture(texture);
         _tstate.setEnabled(true);
         _tstate.setCorrection(TextureState.CM_AFFINE);
