@@ -313,6 +313,24 @@ public class BComponent
     }
 
     /**
+     * Returns a reference to the cursor used by this component.
+     */
+    public BCursor getCursor ()
+    {
+        return _cursor;
+    }
+
+    /**
+     * Configures the cursor for this component for the specified state.  This must only be
+     * called after the component has been added to the interface hierarchy or the value will be
+     * overridden by the stylesheet associated with this component.
+     */
+    public void setCursor (BCursor cursor)
+    {
+        _cursor = cursor;
+    }
+
+    /**
      * Sets the alpha level for this component.
      */
     public void setAlpha (float alpha)
@@ -688,6 +706,9 @@ public class BComponent
             if (getState() != ostate) {
                 stateDidChange();
             }
+            if (processed && changeCursor()) {
+                updateCursor(_cursor);
+            }
         }
 
         // dispatch this event to our listeners
@@ -757,6 +778,7 @@ public class BComponent
             _preferredSize = style.getSize(this, null);
         }
 
+        _cursor = style.getCursor(this, null);
         for (int ii = 0; ii < getStateCount(); ii++) {
             _colors[ii] = style.getColor(this, getStatePseudoClass(ii));
             _insets[ii] = style.getInsets(this, getStatePseudoClass(ii));
@@ -879,6 +901,24 @@ public class BComponent
     protected void stateDidChange ()
     {
         invalidate();
+    }
+
+    /**
+     * Returns true if the component should update the mouse cursor.
+     */
+    protected boolean changeCursor ()
+    {
+        return _enabled && _visible && _hover;
+    }
+
+    /**
+     * Updates the mouse cursor with the supplied cursor.
+     */
+    protected void updateCursor (BCursor cursor)
+    {
+        if (cursor != null) {
+            cursor.show();
+        }
     }
 
     /**
@@ -1006,6 +1046,7 @@ public class BComponent
     protected Insets[] _insets = new Insets[getStateCount()];
     protected BBorder[] _borders = new BBorder[getStateCount()];
     protected BBackground[] _backgrounds = new BBackground[getStateCount()];
+    protected BCursor _cursor;
 
     /** Temporary storage for scissor box queries. */
     protected static IntBuffer _bbuf = BufferUtils.createIntBuffer(16);

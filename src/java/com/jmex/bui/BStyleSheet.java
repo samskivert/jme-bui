@@ -21,6 +21,8 @@
 package com.jmex.bui;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +32,7 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.imageio.ImageIO;
 
 import com.jme.renderer.ColorRGBA;
 
@@ -67,6 +70,7 @@ import com.jmex.bui.util.Insets;
  *                                    //      tilex|tiley|tilexy|
  *                                    //      framex|framey|framexy
  *   background: image monkey.png framexy top right bottom left;
+ *   cursor: name;
  *
  *   // text properties
  *   font: Helvetica XX 12; // XX = normal|bold|italic|bolditalic
@@ -124,6 +128,11 @@ public class BStyleSheet
          * Loads the image with the specified path.
          */
         public BImage loadImage (String path) throws IOException;
+
+        /**
+         * Loads the cursor with the specified name.
+         */
+        public BCursor loadCursor (String name) throws IOException;
     }
 
     /** A default implementation of the stylesheet resource provider. */
@@ -165,9 +174,44 @@ public class BStyleSheet
             return image;
         }
 
+        public BCursor loadCursor (String path) throws IOException {
+            // we'll just assume the name is an image path
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+
+            // first check the cache
+            WeakReference<BCursor> cref = _ccache.get(path);
+            BCursor cursor;
+            if (cref != null && (cursor = cref.get()) != null) {
+                return cursor;
+            }
+
+            // create and cache a new cursor with the appropriate data
+            URL url = getClass().getResource(path);
+            if (url == null) {
+                throw new IOException("Can't locate cursor image '" + path + "'.");
+            }
+            BufferedImage image = ImageIO.read(url);
+            BufferedImage cimage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = cimage.createGraphics();
+            try {
+                g.drawImage(image, null, 0, 0);
+                cursor = new BCursor(cimage, 0, 0);
+            } finally {
+                g.dispose();
+            }
+            _ccache.put(path, new WeakReference<BCursor>(cursor));
+            return cursor;
+        }
+
         /** A cache of {@link BImage} instances. */
         protected HashMap<String,WeakReference<BImage>> _cache =
             new HashMap<String,WeakReference<BImage>>();
+
+        /** A cache of {@link BCursor} instances. */
+        protected HashMap<String, WeakReference<BCursor>> _ccache =
+            new HashMap<String, WeakReference<BCursor>>();
     }
 
     /** A font style constant. */
@@ -226,6 +270,11 @@ public class BStyleSheet
     public BIcon getIcon (BComponent component, String pseudoClass)
     {
         return (BIcon)findProperty(component, pseudoClass, "icon", false);
+    }
+
+    public BCursor getCursor (BComponent component, String pseudoClass)
+    {
+        return (BCursor)findProperty(component, pseudoClass, "cursor", true);
     }
 
     public BTextFactory getTextFactory (
@@ -484,6 +533,11 @@ public class BStyleSheet
             }
             return iprop;
 
+        } else if (name.equals("cursor")) {
+            CursorProperty cprop = new CursorProperty();
+            cprop.name = (String)args.get(0);
+            return cprop;
+
         } else if (name.equals("font")) {
             try {
                 FontProperty fprop = new FontProperty();
@@ -705,6 +759,21 @@ public class BStyleSheet
 
             } else {
                 return new BlankIcon(10, 10);
+            }
+        }
+    }
+
+    protected static class CursorProperty extends Property
+    {
+        public String name;
+
+        @Override // from Property
+        public Object resolve (ResourceProvider rsrcprov) {
+            try {
+                return rsrcprov.loadCursor(name);
+            } catch (IOException ioe) {
+                System.err.println("Failed to load cursor '" + name + "': " + ioe);
+                return null;
             }
         }
     }
