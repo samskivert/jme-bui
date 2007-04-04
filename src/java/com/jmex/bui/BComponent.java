@@ -321,9 +321,9 @@ public class BComponent
     }
 
     /**
-     * Configures the cursor for this component for the specified state.  This must only be
-     * called after the component has been added to the interface hierarchy or the value will be
-     * overridden by the stylesheet associated with this component.
+     * Configures the cursor for this component.  This must only be called after the component has
+     * been added to the interface hierarchy or the value will be overridden by the stylesheet
+     * associated with this component.
      */
     public void setCursor (BCursor cursor)
     {
