@@ -110,7 +110,7 @@ public class BImage extends Quad
 
         // grab the image memory and stuff it into a direct byte buffer
         ByteBuffer scratch = ByteBuffer.allocateDirect(
-            4 * twidth * theight).order(ByteOrder.nativeOrder());
+            (hasAlpha ? 4 : 3) * twidth * theight).order(ByteOrder.nativeOrder());
         byte data[] = (byte[])tex.getRaster().getDataElements(0, 0, twidth, theight, null);
         scratch.clear();
         scratch.put(data);
