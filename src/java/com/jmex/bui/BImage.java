@@ -51,6 +51,20 @@ import com.jme.util.TextureManager;
  */
 public class BImage extends Quad
 {
+    /** An interface for pooling OpenGL textures. */
+    public interface TexturePool
+    {
+        /**
+         * Acquires textures from the pool for the state.
+         */
+        public void acquireTextures (TextureState tstate);
+
+        /**
+         * Releases the state's textures back into the pool.
+         */
+        public void releaseTextures (TextureState tstate);
+    }
+
     /** An alpha state that blends the source plus one minus destination. */
     public static AlphaState blendState;
 
@@ -62,6 +76,24 @@ public class BImage extends Quad
     public static void makeTransparent (Spatial target)
     {
         target.setRenderState(blendState);
+    }
+
+    /**
+     * Sets the texture pool from which to acquire and release OpenGL texture objects.
+     * Applications can provide a pool in order to avoid the rapid creation and destruction of
+     * OpenGL textures.  The default pool always creates new textures and deletes released ones.
+     */
+    public static void setTexturePool (TexturePool pool)
+    {
+        _texturePool = pool;
+    }
+
+    /**
+     * Returns a reference to the configured texture pool.
+     */
+    public static TexturePool getTexturePool ()
+    {
+        return _texturePool;
     }
 
     /**
@@ -176,7 +208,9 @@ public class BImage extends Quad
     public void setImage (Image image)
     {
         // free our old texture as appropriate
-        releaseTexture();
+        if (_referents > 0) {
+            releaseTexture();
+        }
 
         Texture texture = new Texture();
         texture.setImage(image);
@@ -191,6 +225,11 @@ public class BImage extends Quad
         _tstate.setCorrection(TextureState.CM_AFFINE);
         setRenderState(_tstate);
         updateRenderState();
+
+        // preload the new texture
+        if (_referents > 0) {
+            acquireTexture();
+        }
     }
 
     /**
@@ -267,7 +306,9 @@ public class BImage extends Quad
      */
     public void reference ()
     {
-        _referents++;
+        if (_referents++ == 0) {
+            acquireTexture();
+        }
     }
 
     /**
@@ -298,10 +339,17 @@ public class BImage extends Quad
         setTransparent(true);
     }
 
+    protected void acquireTexture ()
+    {
+        if (_tstate.getNumberOfSetTextures() > 0) {
+            _texturePool.acquireTextures(_tstate);
+        }
+    }
+
     protected void releaseTexture ()
     {
         if (_tstate.getNumberOfSetTextures() > 0) {
-            _tstate.deleteAll();
+            _texturePool.releaseTextures(_tstate);
         }
     }
 
@@ -317,6 +365,15 @@ public class BImage extends Quad
     protected int _referents;
 
     protected static boolean _supportsNonPowerOfTwo;
+
+    protected static TexturePool _texturePool = new TexturePool() {
+        public void acquireTextures (TextureState tstate) {
+            tstate.apply(); // preload
+        }
+        public void releaseTextures (TextureState tstate) {
+            tstate.deleteAll();
+        }
+    };
 
     static {
         blendState = DisplaySystem.getDisplaySystem().getRenderer().createAlphaState();
