@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 /**
  * Contains a cursor.
@@ -72,6 +73,7 @@ public class BCursor
     public void setCursor (Cursor cursor)
     {
         _cursor = cursor;
+        _image = null;
     }
 
     /**
@@ -79,7 +81,13 @@ public class BCursor
      */
     public void setCursor (BufferedImage image, int hx, int hy)
     {
-        _cursor = createCursor(image, hx, hy);
+        if (Mouse.isCreated()) {
+            setCursor(createCursor(image, hx, hy));
+        } else {
+            _image = image;
+            _hx = hx;
+            _hy = hy;
+        }
     }
 
     /**
@@ -95,6 +103,20 @@ public class BCursor
      */
     public void show ()
     {
+        if (!Display.isCreated()) {
+            return;
+        }
+        if (!Mouse.isCreated()) {
+            try {
+                Mouse.create();
+            } catch (Throwable t) {
+                Log.log.log(Level.WARNING, "Problem creating mouse", t);
+                return;
+            }
+        }
+        if (_image != null) {
+            setCursor(_image, _hx, _hy);
+        }
         if (Mouse.getNativeCursor() != _cursor) {
             try {
                 Mouse.setNativeCursor(_cursor);
@@ -105,4 +127,7 @@ public class BCursor
     }
 
     protected Cursor _cursor;
+
+    protected BufferedImage _image;
+    protected int _hx, _hy;
 }

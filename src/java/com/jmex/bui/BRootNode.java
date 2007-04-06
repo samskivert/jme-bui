@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.logging.Level;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.input.Mouse;
 
 import com.jme.intersection.CollisionResults;
 import com.jme.intersection.PickResults;
@@ -55,15 +54,6 @@ public abstract class BRootNode extends Geometry
 
         // we need to render in the ortho queue
         setRenderQueueMode(Renderer.QUEUE_ORTHO);
-
-        // make sure our mouse is created for cursor changes
-        if (!Mouse.isCreated()) {
-            try {
-                Mouse.create();
-            } catch (Throwable t) {
-                Log.log.log(Level.WARNING, "Problem creating mouse", t);
-            }
-        }
     }
 
     /**
