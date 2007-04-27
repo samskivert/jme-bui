@@ -55,6 +55,7 @@ import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
+import com.jmex.bui.BConstants;
 import com.jmex.bui.BImage;
 import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
@@ -112,8 +113,9 @@ public class AWTTextFactory extends BTextFactory
                 gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                      RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             }
-            layout = new TextLayout(parseStyledText(text, _attrs, null).getIterator(),
-                                    gfx.getFontRenderContext());
+            layout = new TextLayout(
+                    parseStyledText(text, _attrs, null, effect != BConstants.PLAIN).getIterator(),
+                    gfx.getFontRenderContext());
         } finally {
             gfx.dispose();
         }
@@ -141,7 +143,8 @@ public class AWTTextFactory extends BTextFactory
             }
 
             String[] bare = new String[1];
-            AttributedString atext = parseStyledText(text, _attrs, bare);
+            AttributedString atext =
+                parseStyledText(text, _attrs, bare, effect != BConstants.PLAIN);
             LineBreakMeasurer measurer = new LineBreakMeasurer(
                 atext.getIterator(), gfx.getFontRenderContext());
             text = bare[0];
@@ -176,8 +179,8 @@ public class AWTTextFactory extends BTextFactory
     }
 
     /** Helper function. */
-    protected BText createText (final TextLayout layout, ColorRGBA color, final int effect, 
-                                final int effectSize, ColorRGBA effectColor, final int length, 
+    protected BText createText (final TextLayout layout, ColorRGBA color, final int effect,
+                                final int effectSize, ColorRGBA effectColor, final int length,
                                 boolean useAdvance)
     {
         // determine the size of our rendered text
@@ -334,10 +337,10 @@ public class AWTTextFactory extends BTextFactory
      * them.
      */
     protected AttributedString parseStyledText (
-        String text, HashMap<TextAttribute, Font> attrs, String[] bare)
+        String text, HashMap<TextAttribute, Font> attrs, String[] bare, boolean style)
     {
         // if there are no style commands in the text, skip the complexity
-        if (text.indexOf("@=") == -1) {
+        if (!style || text.indexOf("@=") == -1) {
             if (bare != null) {
                 bare[0] = text;
             }

@@ -413,7 +413,7 @@ public class BTextField extends BTextComponent
 
         // format our text and determine how much of it we can display
         _glyphs = getTextFactory().createText(
-            getDisplayText(), getColor(), BConstants.NORMAL,
+            getDisplayText(), getColor(), BConstants.PLAIN,
             BConstants.DEFAULT_SIZE, null, true);
         if (isAdded()) {
             _glyphs.wasAdded();

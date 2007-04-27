@@ -345,6 +345,11 @@ public abstract class BRootNode extends Geometry
         _tipwin.setStyleClass("tooltip_window");
         _tipwin.add(tcomp, BorderLayout.CENTER);
         addWindow(_tipwin);
+        // it's possible that adding the tip window will cause it to immediately be removed, so
+        // make sure we don't NPE
+        if (_tipwin == null) {
+            return;
+        }
         int width = DisplaySystem.getDisplaySystem().getWidth();
         int height = DisplaySystem.getDisplaySystem().getHeight();
         _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);

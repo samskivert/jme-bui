@@ -800,6 +800,7 @@ public class BStyleSheet
         _teconsts.put("none", new Integer(BConstants.NORMAL));
         _teconsts.put("shadow", new Integer(BConstants.SHADOW));
         _teconsts.put("outline", new Integer(BConstants.OUTLINE));
+        _teconsts.put("plain", new Integer(BConstants.PLAIN));
 
         // background image constants
         _ibconsts.put("centerxy", new Integer(ImageBackground.CENTER_XY));

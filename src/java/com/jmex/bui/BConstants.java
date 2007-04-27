@@ -58,6 +58,9 @@ public interface BConstants
     /** A code for text with a single pixel drop shadow.*/
     public static final int SHADOW = 2;
 
+    /** A code for text with no effect and no styling.*/
+    public static final int PLAIN = 3;
+
     /** The default text effect size. */
     public static final int DEFAULT_SIZE = 1;
 }
