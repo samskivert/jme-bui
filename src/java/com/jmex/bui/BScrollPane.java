@@ -41,7 +41,7 @@ public class BScrollPane extends BContainer
 
     public BScrollPane (BComponent child, boolean vert, boolean horiz)
     {
-        this(child, true, false, -1);
+        this(child, vert, horiz, -1);
     }
 
     public BScrollPane (
@@ -49,14 +49,14 @@ public class BScrollPane extends BContainer
     {
         super(new BorderLayout(0, 0));
 
-        add(_vport = new BViewport(child, vert, horiz, snap), 
+        add(_vport = new BViewport(child, vert, horiz, snap),
             BorderLayout.CENTER);
         if (vert) {
-            add(_vbar = new BScrollBar(BScrollBar.VERTICAL, 
+            add(_vbar = new BScrollBar(BScrollBar.VERTICAL,
                     _vport.getVModel()), BorderLayout.EAST);
         }
         if (horiz) {
-            add(_hbar = new BScrollBar(BScrollBar.HORIZONTAL, 
+            add(_hbar = new BScrollBar(BScrollBar.HORIZONTAL,
                     _vport.getHModel()), BorderLayout.SOUTH);
         }
     }
@@ -68,7 +68,7 @@ public class BScrollPane extends BContainer
     {
         return _vport.getTarget();
     }
-    
+
     /**
      * Returns a reference to the vertical scroll bar.
      */
@@ -194,7 +194,7 @@ public class BScrollPane extends BContainer
         {
             return _target;
         }
-        
+
         /**
          * Returns the range model defined by this viewport's size and the
          * preferred size of its target component.
@@ -203,7 +203,7 @@ public class BScrollPane extends BContainer
         {
             return _vmodel;
         }
-        
+
         /**
          * Returns the range model defined by this viewport's size and the
          * preferred size of its target component.
@@ -212,7 +212,7 @@ public class BScrollPane extends BContainer
         {
             return _hmodel;
         }
-        
+
         // documentation inherited
         public void invalidate ()
         {
@@ -237,9 +237,9 @@ public class BScrollPane extends BContainer
             int twidth = getWidth() - insets.getHorizontal();
             int theight = getHeight() - insets.getVertical();
             Dimension d = _target.getPreferredSize(twidth, theight);
-            d.width = (_hmodel != null) ? 
+            d.width = (_hmodel != null) ?
                 Math.max(d.width, twidth) : twidth;
-            d.height = (_vmodel != null) ? 
+            d.height = (_vmodel != null) ?
                 Math.max(d.height, theight) : theight;
             if (_target.getWidth() != d.width ||
                 _target.getHeight() != d.height) {
@@ -326,7 +326,7 @@ public class BScrollPane extends BContainer
         {
             return new Dimension(_target.getPreferredSize(whint, hhint));
         }
-        
+
         // documentation inherited
         protected void renderComponent (Renderer renderer)
         {
@@ -365,7 +365,7 @@ public class BScrollPane extends BContainer
         protected MouseWheelListener _wheelListener;
         protected Rectangle _srect = new Rectangle();
     }
-    
+
     protected BViewport _vport;
     protected BScrollBar _vbar, _hbar;
     protected boolean _showAlways = true, _layingOut;
