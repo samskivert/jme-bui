@@ -403,7 +403,7 @@ public class AWTTextFactory extends BTextFactory
 
             int parenidx = text.indexOf('(', ii);
             if (parenidx == -1) {
-                Log.log.warning("Invalid style specification, missing paren " +
+                Log.log.info("Invalid style specification, missing paren " +
                                 "[text=" + text + ", pos=" + ii + "].");
                 continue;
             }
@@ -480,7 +480,7 @@ public class AWTTextFactory extends BTextFactory
                     break;
 
                 default:
-                    Log.log.warning("Invalid style command [text=" + text +
+                    Log.log.info("Invalid style command [text=" + text +
                                     ", command=" + run.styles[ss] + ", run=" + run + "].");
                     break;
                 }
