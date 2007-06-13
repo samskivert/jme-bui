@@ -154,7 +154,7 @@ public class BScrollPane extends BContainer
         }
         // Check if adding the vertical bar now requires the horizontal bar
         // to be added
-        if (vadded && hadded) {
+        if (vadded && !hadded) {
             BoundedRangeModel hmodel = _hbar.getModel();
             if (hmodel.getExtent() != hmodel.getRange()) {
                 add(_hbar, BorderLayout.SOUTH);
