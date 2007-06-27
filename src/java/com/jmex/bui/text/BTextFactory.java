@@ -71,7 +71,16 @@ public abstract class BTextFactory
      * Wraps a string into a set of text objects that do not exceed the
      * specified width.
      */
+    public BText[] wrapText (String text, ColorRGBA color, int effect, int maxWidth)
+    {
+        return wrapText(text, color, effect, DEFAULT_SIZE, null, maxWidth);
+    }
+
+    /**
+     * Wraps a string into a set of text objects that do not exceed the
+     * specified width.
+     */
     public abstract BText[] wrapText (
-        String text, ColorRGBA color, int effect, int effectSize, 
+        String text, ColorRGBA color, int effect, int effectSize,
         ColorRGBA effectColor, int maxWidth);
 }

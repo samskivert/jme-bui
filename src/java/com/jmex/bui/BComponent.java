@@ -779,6 +779,7 @@ public class BComponent
         }
 
         _cursor = style.getCursor(this, null);
+        _tipStyle = style.getTooltipStyle(this, null);
         for (int ii = 0; ii < getStateCount(); ii++) {
             _colors[ii] = style.getColor(this, getStatePseudoClass(ii));
             _insets[ii] = style.getInsets(this, getStatePseudoClass(ii));
@@ -824,7 +825,7 @@ public class BComponent
         if (tiptext.startsWith("<html>")) {
             return new HTMLView("", tiptext);
         } else {
-            return new BLabel(tiptext, "tooltip_label");
+            return new BLabel(tiptext, _tipStyle);
         }
     }
 
@@ -1037,6 +1038,7 @@ public class BComponent
     protected ArrayList<ComponentListener> _listeners;
     protected HashMap<String, Object> _properties;
     protected String _tiptext;
+    protected String _tipStyle;
     protected boolean _tipmouse;
 
     protected boolean _valid, _enabled = true, _visible = true, _hover;

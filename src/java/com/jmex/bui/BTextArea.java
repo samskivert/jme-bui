@@ -92,7 +92,7 @@ public class BTextArea extends BContainer
         }
         return BConstants.TOP;
     }
-    
+
     /**
      * Configures the preferred width of this text area (the preferred height
      * will be calculated from the font).
@@ -197,6 +197,18 @@ public class BTextArea extends BContainer
         return (textfact != null) ? textfact : _textfacts[DEFAULT];
     }
 
+    /**
+     * Returns the effect for this component's text.
+     */
+    public int getTextEffect ()
+    {
+        if (_teffects != null) {
+            int teffect = _teffects[getState()];
+            return (teffect != -1) ? teffect : _teffects[DEFAULT];
+        }
+        return BConstants.NORMAL;
+    }
+
     @Override // from BTextArea
     public void setEnabled (boolean enabled)
     {
@@ -242,7 +254,7 @@ public class BTextArea extends BContainer
             _textfacts[ii] = style.getTextFactory(
                 this, getStatePseudoClass(ii));
         }
-        
+
         int[] haligns = new int[getStateCount()];
         for (int ii = 0; ii < getStateCount(); ii++) {
             haligns[ii] = style.getTextAlignment(this, getStatePseudoClass(ii));
@@ -255,6 +267,12 @@ public class BTextArea extends BContainer
                 this, getStatePseudoClass(ii));
         }
         _valigns = checkNonDefault(valigns, BConstants.CENTER);
+
+        int[] teffects = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            teffects[ii] = style.getTextEffect(this, getStatePseudoClass(ii));
+        }
+        _teffects = checkNonDefault(teffects, BConstants.NORMAL);
     }
 
     protected int[] checkNonDefault (int[] styles, int defval)
@@ -266,7 +284,7 @@ public class BTextArea extends BContainer
         }
         return null;
     }
-    
+
     // documentation inherited
     protected void layout ()
     {
@@ -282,14 +300,14 @@ public class BTextArea extends BContainer
 
         int halign = getHorizontalAlignment(),
             valign = getVerticalAlignment();
-        
+
         // compute the total height of the lines
         int start = _model.getValue(), stop = start + _model.getExtent(),
             lheight = 0;
         for (int ii = start; ii < stop; ii++) {
             lheight += _lines.get(ii).height;
         }
-        
+
         int x = getInsets().left, y;
         Insets insets = getInsets();
         if (valign == BConstants.TOP) {
@@ -300,7 +318,7 @@ public class BTextArea extends BContainer
             y = lheight + insets.bottom +
                 (_height - insets.getVertical() - lheight) / 2;
         }
-        
+
         // render the lines
         for (int ii = start; ii < stop; ii++) {
             Line line = _lines.get(ii);
@@ -314,7 +332,7 @@ public class BTextArea extends BContainer
             line.render(renderer, x, y, _alpha);
         }
     }
-    
+
     // documentation inherited
     protected Dimension computePreferredSize (int whint, int hhint)
     {
@@ -371,7 +389,7 @@ public class BTextArea extends BContainer
             int offset = 0;
             ColorRGBA color = (run.color == null) ? getColor() : run.color;
             while ((offset = current.addRun(
-                        getTextFactory(), run, color, maxWidth, offset)) > 0) {
+                        getTextFactory(), run, color, getTextEffect(), maxWidth, offset)) > 0) {
                 _lines.add(current = new Line());
             }
             if (run.endsLine) {
@@ -449,7 +467,7 @@ public class BTextArea extends BContainer
          * factory, returns the offset into the run that must be appeneded
          * to a new line or -1 if the entire run was appended.
          */
-        public int addRun (BTextFactory tfact, Run run, ColorRGBA color,
+        public int addRun (BTextFactory tfact, Run run, ColorRGBA color, int effect,
                            int maxWidth, int offset)
         {
             if (dx == 0) {
@@ -458,7 +476,7 @@ public class BTextArea extends BContainer
             String rtext = run.text.substring(offset);
             // TODO: this could perhaps be done more efficiently now that the
             // text factory breaks things down into multiple lines for us
-            BText[] text = tfact.wrapText(rtext, color, maxWidth-dx);
+            BText[] text = tfact.wrapText(rtext, color, effect, maxWidth-dx);
             segments.add(text[0]);
             // we only ever add runs when we're added
             text[0].wasAdded();
@@ -510,6 +528,7 @@ public class BTextArea extends BContainer
 
     protected int[] _haligns;
     protected int[] _valigns;
+    protected int[] _teffects;
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
     protected BoundedRangeModel _model = new BoundedRangeModel(0, 0, 0, 0);
     protected int _prefWidth = -1;

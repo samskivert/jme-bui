@@ -88,6 +88,8 @@ import com.jmex.bui.util.Insets;
  *
  *   // explicit inheritance
  *   parent: other_class; // other_class must be defined *before* this one
+ *
+ *   tooltip: other_class; // used to define the style class for the tool_tip
  * }
  * </pre>
  *
@@ -326,6 +328,11 @@ public class BStyleSheet
     public Dimension getSize (BComponent component, String pseudoClass)
     {
         return (Dimension)findProperty(component, pseudoClass, "size", false);
+    }
+
+    public String getTooltipStyle (BComponent component, String pseudoClass)
+    {
+        return (String)findProperty(component, pseudoClass, "tooltip", true);
     }
 
     public BKeyMap getKeyMap (BComponent component, String pseudoClass)
@@ -618,6 +625,10 @@ public class BStyleSheet
                 throw new IllegalArgumentException("Unknown parent class '" + args.get(0) + "'");
             }
             return parent;
+
+        } else if (name.equals("tooltip")) {
+            String style = (String)args.get(0);
+            return style;
 
         } else {
             throw new IllegalArgumentException("Unknown property '" + name + "'");
