@@ -271,7 +271,8 @@ public class Label
     protected void renderText (Renderer renderer, int contWidth, int contHeight, float alpha)
     {
         if (_fit == BLabel.Fit.WRAP) {
-            _config.glyphs.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+            _config.glyphs.render(
+                renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha, _config.spacing);
             return;
         }
 
@@ -292,7 +293,8 @@ public class Label
             _srect, _container.getAbsoluteX() + insets.left,
             _container.getAbsoluteY() + insets.bottom, width, height);
         try {
-            _config.glyphs.render(renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha);
+            _config.glyphs.render(
+                renderer, _tx, _ty, _container.getHorizontalAlignment(), alpha, _config.spacing);
         } finally {
             BComponent.restoreScissorState(scissored, _srect);
         }
@@ -397,7 +399,7 @@ public class Label
             _value, config.color, config.effect, config.effectSize, config.effectColor, twidth);
         for (int ii = 0; ii < text.lines.length; ii++) {
             text.size.width = Math.max(text.size.width, text.lines[ii].getSize().width);
-            text.size.height += text.lines[ii].getSize().height;
+            text.size.height += text.lines[ii].getSize().height + (ii > 0 ? config.spacing : 0);
         }
         config.glyphs = text;
 
@@ -439,6 +441,7 @@ public class Label
         public ColorRGBA effectColor;
         public int minwidth, maxwidth;
         public Text glyphs;
+        public int spacing;
 
         public boolean matches (Config other, int twidth) {
             if (other == null) {
@@ -457,6 +460,9 @@ public class Label
             }
             if (effectColor != other.effectColor &&
                 (effectColor == null || !effectColor.equals(other.effectColor))) {
+                return false;
+            }
+            if (effectSize != other.effectSize || spacing != other.spacing) {
                 return false;
             }
 
@@ -486,7 +492,7 @@ public class Label
         public Dimension size = new Dimension();
 
         public void render (Renderer renderer, int tx, int ty, int halign,
-                            float alpha) {
+                            float alpha, int spacing) {
             // render the lines from the bottom up
             for (int ii = lines.length-1; ii >= 0; ii--) {
                 int lx = tx;
@@ -496,7 +502,7 @@ public class Label
                     lx += (size.width - lines[ii].getSize().width)/2;
                 }
                 lines[ii].render(renderer, lx, ty, alpha);
-                ty += lines[ii].getSize().height;
+                ty += lines[ii].getSize().height + (ii > 0 ? spacing : 0);
             }
         }
 

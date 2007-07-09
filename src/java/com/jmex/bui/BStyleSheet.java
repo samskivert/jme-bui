@@ -77,6 +77,7 @@ import com.jmex.bui.util.Insets;
  *   text-align: XX; // XX = left|center|right
  *   vertical-align: XX; // XX = top|center|bottom
  *   text-effect: XX; // XX = none|outline|shadow
+ *   line-spacing: -2; // XX = amount of space to add/remove between lines
  *
  *   // box properties
  *   padding: top; // right=top, bottom=top, left=top
@@ -301,6 +302,12 @@ public class BStyleSheet
     {
         Integer value = (Integer)findProperty(component, pseudoClass, "text-effect", true);
         return (value == null) ? BConstants.NORMAL : value.intValue();
+    }
+
+    public int getLineSpacing (BComponent component, String pseudoClass)
+    {
+        Integer value = (Integer)findProperty(component, pseudoClass, "line-spacing", true);
+        return (value == null) ? BConstants.DEFAULT_SPACING : value.intValue();
     }
 
     public int getEffectSize (BComponent component, String pseudoClass)
@@ -589,6 +596,10 @@ public class BStyleSheet
             return value;
 
         } else if (name.equals("effect-size")) {
+            Integer value = new Integer(parseInt(args.get(0)));
+            return value;
+
+        } else if (name.equals("line-spacing")) {
             Integer value = new Integer(parseInt(args.get(0)));
             return value;
 

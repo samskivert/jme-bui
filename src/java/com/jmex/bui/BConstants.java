@@ -63,4 +63,7 @@ public interface BConstants
 
     /** The default text effect size. */
     public static final int DEFAULT_SIZE = 1;
+
+    /** The default text line spacing. */
+    public static final int DEFAULT_SPACING = 0;
 }

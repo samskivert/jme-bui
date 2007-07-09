@@ -109,6 +109,18 @@ public abstract class BTextComponent extends BComponent
         return ColorRGBA.white;
     }
 
+    /**
+     * Returns the line spacing for our text.
+     */
+    public int getLineSpacing ()
+    {
+        if (_lineSpacings != null) {
+            return _lineSpacings[getState()];
+        }
+        return BConstants.DEFAULT_SPACING;
+    }
+
+
     // documentation inherited
     protected void configureStyle (BStyleSheet style)
     {
@@ -138,6 +150,12 @@ public abstract class BTextComponent extends BComponent
             effsizes[ii] = style.getEffectSize(this, getStatePseudoClass(ii));
         }
         _effsizes = checkNonDefault(effsizes, BConstants.DEFAULT_SIZE);
+
+        int[] lineSpacings = new int[getStateCount()];
+        for (int ii = 0; ii < getStateCount(); ii++) {
+            lineSpacings[ii] = style.getLineSpacing(this, getStatePseudoClass(ii));
+        }
+        _lineSpacings = checkNonDefaultInt(lineSpacings, BConstants.DEFAULT_SPACING);
 
         ColorRGBA[] effcols = new ColorRGBA[getStateCount()];
         boolean nondef = false;
@@ -173,14 +191,25 @@ public abstract class BTextComponent extends BComponent
         config.effect = getTextEffect();
         config.effectSize = getEffectSize();
         config.effectColor = getEffectColor();
+        config.spacing = getLineSpacing();
         config.minwidth = config.maxwidth = twidth;
         return config;
     }
 
     protected int[] checkNonDefault (int[] styles, int defval)
     {
+        return checkNonDefaultVal(styles, defval, -1);
+    }
+
+    protected int[] checkNonDefaultInt (int[] styles, int defval)
+    {
+        return checkNonDefaultVal(styles, defval, defval);
+    }
+
+    protected int[] checkNonDefaultVal (int[] styles, int defval1, int defval2)
+    {
         for (int ii = 0; ii < styles.length; ii++) {
-            if (styles[ii] != -1 && styles[ii] != defval) {
+            if (styles[ii] != defval1 && styles[ii] != defval2) {
                 return styles;
             }
         }
@@ -191,6 +220,7 @@ public abstract class BTextComponent extends BComponent
     protected int[] _valigns;
     protected int[] _teffects;
     protected int[] _effsizes;
+    protected int[] _lineSpacings;
     protected ColorRGBA[] _effcols;
     protected BTextFactory[] _textfacts = new BTextFactory[getStateCount()];
 }
