@@ -206,9 +206,12 @@ public class AWTTextFactory extends BTextFactory
 
         switch (effect) {
         case SHADOW:
-        case OUTLINE:
             size.width += effectSize;
             size.height += effectSize;
+            break;
+        case OUTLINE:
+            size.width += effectSize*2;
+            size.height += effectSize*2;
             break;
         }
 
@@ -222,7 +225,9 @@ public class AWTTextFactory extends BTextFactory
                     gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                          RenderingHints.VALUE_ANTIALIAS_ON);
                 }
-                gfx.translate(0, layout.getAscent());
+                float tx = effectSize - 1;
+                float ty = layout.getAscent() + effectSize;
+                gfx.translate(tx, ty);
                 if (effectSize > 1) {
                     gfx.setColor(new Color(effectColor.r, effectColor.g, effectColor.b,
                                            effectColor.a));
