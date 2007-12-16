@@ -170,8 +170,9 @@ left {
 center {
   font: "Dialog" bold 16;
   text-align: center;
-  text-effect: shadow;
-  effect-color: #000000;
+  text-effect: glow;
+  effect-color: #99CCFF;
+  effect-size: 3;
   vertical-align: center;
   border: 1 solid #FFCC99;
 }
@@ -179,7 +180,7 @@ center {
 right {
   font: "Dialog" bold 16;
   text-align: right;
-  text-effect: shadow;
+  text-effect: outline;
   effect-color: #000000;
   vertical-align: bottom;
   border: 1 solid #FFCC99;
