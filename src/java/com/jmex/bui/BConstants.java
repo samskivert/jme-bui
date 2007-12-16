@@ -61,6 +61,9 @@ public interface BConstants
     /** A code for text with no effect and no styling.*/
     public static final int PLAIN = 3;
 
+    /** A code for text with glow effect. */
+    public static final int GLOW = 4;
+
     /** The default text effect size. */
     public static final int DEFAULT_SIZE = 1;
 

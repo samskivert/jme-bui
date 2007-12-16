@@ -76,7 +76,7 @@ import com.jmex.bui.util.Insets;
  *   font: Helvetica XX 12; // XX = normal|bold|italic|bolditalic
  *   text-align: XX; // XX = left|center|right
  *   vertical-align: XX; // XX = top|center|bottom
- *   text-effect: XX; // XX = none|outline|shadow
+ *   text-effect: XX; // XX = none|outline|shadow|glow
  *   line-spacing: -2; // XX = amount of space to add/remove between lines
  *
  *   // box properties
@@ -823,6 +823,7 @@ public class BStyleSheet
         _teconsts.put("shadow", new Integer(BConstants.SHADOW));
         _teconsts.put("outline", new Integer(BConstants.OUTLINE));
         _teconsts.put("plain", new Integer(BConstants.PLAIN));
+        _teconsts.put("glow", new Integer(BConstants.GLOW));
 
         // background image constants
         _ibconsts.put("centerxy", new Integer(ImageBackground.CENTER_XY));
