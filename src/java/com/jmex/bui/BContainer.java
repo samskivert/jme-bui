@@ -29,6 +29,8 @@ import com.jmex.bui.layout.BLayoutManager;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
+import static com.jmex.bui.Log.log;
+
 /**
  * A user interface element that is meant to contain other interface
  * elements.
@@ -139,6 +141,22 @@ public class BContainer extends BComponent
     }
 
     /**
+     * Replaces a given old component with a new component (if the old component exits).
+     *
+     * @return true if the old component was replaced, false otherwise.
+     */
+    public boolean replace (BComponent oldc, BComponent newc)
+    {
+        int idx = _children.indexOf(oldc);
+        if (idx >= 0) {
+            remove(idx);
+            add(idx, newc);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Removes the specified child from this container.
      */
     public void remove (BComponent child)
@@ -179,6 +197,15 @@ public class BContainer extends BComponent
     }
 
     /**
+     * Returns the index of the specified component in this container or -1 if the component count
+     * not be found.
+     */
+    public int getComponentIndex (BComponent component)
+    {
+        return _children.indexOf(component);
+    }
+
+    /**
      * Removes all children of this container.
      */
     public void removeAll ()
@@ -198,7 +225,7 @@ public class BContainer extends BComponent
             getComponent(ii).setAlpha(alpha);
         }
     }
-    
+
     // documentation inherited
     public void setEnabled (boolean enabled)
     {
@@ -220,7 +247,7 @@ public class BContainer extends BComponent
             getComponent(ii).setVisible(visible);
         }
     }
-    
+
     // documentation inherited
     public BComponent getHitComponent (int mx, int my)
     {
@@ -247,8 +274,7 @@ public class BContainer extends BComponent
     public void validate ()
     {
         if (!_valid) {
-            // lay ourselves out
-            layout();
+            layout(); // lay ourselves out
 
             // now validate our children
             applyOperation(new ChildOp() {
@@ -257,8 +283,7 @@ public class BContainer extends BComponent
                 }
             });
 
-            // finally mark ourselves as valid
-            _valid = true;
+            _valid = true; // finally mark ourselves as valid
         }
     }
 
@@ -302,9 +327,8 @@ public class BContainer extends BComponent
     {
         super.wasAdded();
 
-        // call wasAdded() on all of our existing children; if they are
-        // added later (after we are added), they will automatically have
-        // wasAdded() called on them at that time
+        // call wasAdded() on all of our existing children; if they are added later (after we are
+        // added), they will automatically have wasAdded() called on them at that time
         applyOperation(new ChildOp() {
             public void apply (BComponent child) {
                 child.wasAdded();
@@ -326,12 +350,10 @@ public class BContainer extends BComponent
     }
 
     /**
-     * Returns the next component that should receive focus in this
-     * container given the current focus owner. If the supplied current
-     * focus owner is null, the container should return its first
-     * focusable component. If the container has no focusable components
-     * following the current focus, it should call {@link #getNextFocus()}
-     * to search further up the hierarchy.
+     * Returns the next component that should receive focus in this container given the current
+     * focus owner. If the supplied current focus owner is null, the container should return its
+     * first focusable component. If the container has no focusable components following the
+     * current focus, it should call {@link #getNextFocus()} to search further up the hierarchy.
      */
     protected BComponent getNextFocus (BComponent current)
     {
@@ -352,12 +374,10 @@ public class BContainer extends BComponent
     }
 
     /**
-     * Returns the previous component that should receive focus in this
-     * container given the current focus owner. If the supplied current
-     * focus owner is null, the container should return its last focusable
-     * component. If the container has no focusable components before the
-     * current focus, it should call {@link #getPreviousFocus()} to search
-     * further up the hierarchy.
+     * Returns the previous component that should receive focus in this container given the current
+     * focus owner. If the supplied current focus owner is null, the container should return its
+     * last focusable component. If the container has no focusable components before the current
+     * focus, it should call {@link #getPreviousFocus()} to search further up the hierarchy.
      */
     protected BComponent getPreviousFocus (BComponent current)
     {
@@ -382,13 +402,12 @@ public class BContainer extends BComponent
      */
     protected void applyOperation (ChildOp op)
     {
-        for (int ii = 0, ll = getComponentCount(); ii < ll; ii++) {
-            BComponent child = getComponent(ii);
+        for (BComponent child : _children) {
             try {
                 op.apply(child);
             } catch (Exception e) {
-                Log.log.log(Level.WARNING, "Child operation choked" +
-                            "[op=" + op + ", child=" + child + "].", e);
+                log.log(Level.WARNING, "Child operation choked [op=" + op +
+                        ", child=" + child + "].", e);
             }
         }
     }
