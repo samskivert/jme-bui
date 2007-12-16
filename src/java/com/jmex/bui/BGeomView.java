@@ -38,8 +38,8 @@ import com.jmex.bui.util.Rectangle;
 public class BGeomView extends BComponent
 {
     /**
-     * Creates a view with no configured geometry. Geometry can be set later
-     * with {@link #setGeometry}.
+     * Creates a view with no configured geometry. Geometry can be set later with {@link
+     * #setGeometry}.
      */
     public BGeomView ()
     {
@@ -59,6 +59,9 @@ public class BGeomView extends BComponent
      */
     public Camera getCamera ()
     {
+        if (_camera == null) {
+            _camera = createCamera(DisplaySystem.getDisplaySystem());
+        }
         return _camera;
     }
 
@@ -71,8 +74,15 @@ public class BGeomView extends BComponent
     }
 
     /**
-     * Called every frame (while we're added to the view hierarchy) by the
-     * {@link BRootNode}.
+     * Returns the geometry rendered by this view.
+     */
+    public Spatial getGeometry()
+    {
+    	return _geom;
+    }
+
+    /**
+     * Called every frame (while we're added to the view hierarchy) by the {@link BRootNode}.
      */
     public void update (float frameTime)
     {
@@ -107,76 +117,78 @@ public class BGeomView extends BComponent
 
         applyDefaultStates();
         Camera cam = renderer.getCamera();
+        boolean useOrtho = (_geom.getRenderQueueMode() == Renderer.QUEUE_ORTHO);
         try {
-            renderer.unsetOrtho();
+            if (!useOrtho) {
+                renderer.unsetOrtho();
 
-            // create or resize our camera if necessary
-            DisplaySystem display = DisplaySystem.getDisplaySystem();
-            int swidth = display.getWidth(),
-                sheight = display.getHeight();
-            boolean updateDisplay = false;
-            if (_camera == null || _swidth != swidth || _sheight != sheight) {
-                _swidth = swidth;
-                _sheight = sheight;
-                if (_camera == null) {
-                    _camera = createCamera(display);
-                } else {
-                    _camera.resize(_swidth, _sheight);
+                // create or resize our camera if necessary
+                DisplaySystem display = DisplaySystem.getDisplaySystem();
+                int swidth = display.getWidth(), sheight = display.getHeight();
+                boolean updateDisplay = false;
+                if (_camera == null || _swidth != swidth || _sheight != sheight) {
+                    _swidth = swidth;
+                    _sheight = sheight;
+                    if (_camera == null) {
+                        _camera = createCamera(display);
+                    } else {
+                        _camera.resize(_swidth, _sheight);
+                    }
+                    updateDisplay = true;
                 }
-                updateDisplay = true;
+
+                // set up our camera viewport if it has changed
+                Insets insets = getInsets();
+                int ax = getAbsoluteX() + insets.left, ay = getAbsoluteY() + insets.bottom;
+                int width = _width - insets.getHorizontal(), height = _height - insets.getVertical();
+                if (updateDisplay || _cx != ax || _cy != ay ||
+                    _cwidth != width || _cheight != height) {
+                    _cx = ax;
+                    _cy = ay;
+                    _cwidth = width;
+                    _cheight = height;
+                    float left = _cx / _swidth, right = left + _cwidth / _swidth;
+                    float bottom = _cy / _sheight;
+                    float top = bottom + _cheight / _sheight;
+                    _camera.setViewPort(left, right, bottom, top);
+                    _camera.setFrustumPerspective(45.0f, _width / (float)_height, 1, 1000);
+                }
+
+                // clear the z buffer over the area to which we will be drawing
+                boolean scissored = intersectScissorBox(_srect, ax, ay, width, height);
+                GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+                restoreScissorState(scissored, _srect);
+
+                // now set up the custom camera and render our geometry
+                renderer.setCamera(_camera);
+                _camera.update();
             }
 
-            // set up our camera viewport if it has changed
-            Insets insets = getInsets();
-            int ax = getAbsoluteX() + insets.left,
-                ay = getAbsoluteY() + insets.bottom,
-                width = _width - insets.getHorizontal(),
-                height = _height - insets.getVertical();
-            if (updateDisplay || _cx != ax || _cy != ay ||
-                _cwidth != width || _cheight != height) {
-                _cx = ax;
-                _cy = ay;
-                _cwidth = width;
-                _cheight = height;
-                float left = _cx / _swidth, right = left + _cwidth / _swidth;
-                float bottom = _cy / _sheight;
-                float top = bottom + _cheight / _sheight;
-                _camera.setViewPort(left, right, bottom, top);
-                _camera.setFrustumPerspective(
-                    45.0f, _width / (float)_height, 1, 1000);
-            }
-
-            // clear the z buffer over the area to which we will be drawing
-            boolean scissored = intersectScissorBox(_srect, ax, ay, width, height);
-            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-            restoreScissorState(scissored, _srect);
-            
-            // now set up the custom camera and render our geometry
-            renderer.setCamera(_camera);
-            _camera.update();
+            // actually render the geometry
             renderer.draw(_geom);
 
         } finally {
-            // restore the camera
-            renderer.setCamera(cam);
-            cam.update();
-            renderer.setOrtho();
+            if (!useOrtho) {
+                // restore the camera
+                renderer.setCamera(cam);
+                cam.update();
+                cam.apply();
+                renderer.setOrtho();
 
-            // we need to restore the GL translation as that got wiped out when
-            // we left and re-entered ortho mode
-            GL11.glTranslatef(getAbsoluteX(), getAbsoluteY(), 0);
+                // we need to restore the GL translation as that got wiped out when we left and
+                // re-entered ortho mode
+                GL11.glTranslatef(getAbsoluteX(), getAbsoluteY(), 0);
+            }
         }
     }
 
     /**
-     * Called to create and configure the camera that we'll use when rendering
-     * our geometry.
+     * Called to create and configure the camera that we'll use when rendering our geometry.
      */
     protected Camera createCamera (DisplaySystem ds)
     {
         // create a standard camera and frustum
-        Camera camera = ds.getRenderer().createCamera(
-            (int)_swidth, (int)_sheight);
+        Camera camera = ds.getRenderer().createCamera((int)_swidth, (int)_sheight);
         camera.setParallelProjection(false);
 
         // put and point it somewhere sensible by default
@@ -194,6 +206,6 @@ public class BGeomView extends BComponent
     protected Spatial _geom;
     protected int _swidth, _sheight;
     protected float _cx, _cy, _cwidth, _cheight;
-    
+
     protected Rectangle _srect = new Rectangle();
 }
