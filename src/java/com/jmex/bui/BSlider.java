@@ -29,8 +29,8 @@ import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 
 /**
- * Displays a track with a little frob somewhere along its length that allows a
- * user to select a smoothly varying value between two bounds.
+ * Displays a track with a little frob somewhere along its length that allows a user to select a
+ * smoothly varying value between two bounds.
  */
 public class BSlider extends BComponent
     implements BConstants
@@ -46,8 +46,8 @@ public class BSlider extends BComponent
     }
 
     /**
-     * Creates a slider with the specified orientation and range model. Note
-     * that the extent must be set to zero.
+     * Creates a slider with the specified orientation and range model. Note that the extent must
+     * be set to zero.
      *
      * @param orient either {@link #HORIZONTAL} or {@link #VERTICAL}.
      */
@@ -122,8 +122,7 @@ public class BSlider extends BComponent
     {
         if (isEnabled() && event instanceof MouseEvent) {
             MouseEvent mev = (MouseEvent)event;
-            int mx = mev.getX() - getAbsoluteX(),
-                my = mev.getY() - getAbsoluteY();
+            int mx = mev.getX() - getAbsoluteX(), my = mev.getY() - getAbsoluteY();
             switch (mev.getType()) {
             case MouseEvent.MOUSE_PRESSED:
                 if (mev.getButton() == 0) {
@@ -140,8 +139,7 @@ public class BSlider extends BComponent
             case MouseEvent.MOUSE_WHEELED:
                 // move by 1/10th if we're wheeled
                 int delta = _model.getRange()/10, value = _model.getValue();
-                _model.setValue(mev.getDelta() > 0 ?
-                                value + delta : value - delta);
+                _model.setValue(mev.getDelta() > 0 ? value + delta : value - delta);
                 break;
 
             default:

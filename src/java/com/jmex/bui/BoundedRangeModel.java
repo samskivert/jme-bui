@@ -28,13 +28,11 @@ import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.MouseWheelListener;
 
 /**
- * Defines the model used by the {@link BScrollBar} to communicate with
- * other components and external entities that wish to be manipulated by a
- * scroll bar.
+ * Defines the model used by the {@link BScrollBar} to communicate with other components and
+ * external entities that wish to be manipulated by a scroll bar.
  *
- * <p> A bounded range model has a minimum and maximum value, a current
- * value and an extent. These are easily visualized by showing how they
- * control a scroll bar:
+ * <p> A bounded range model has a minimum and maximum value, a current value and an extent. These
+ * are easily visualized by showing how they control a scroll bar:
  *
  * <pre>
  * +-------------------------------------------------------------------+
@@ -48,8 +46,8 @@ import com.jmex.bui.event.MouseWheelListener;
 public class BoundedRangeModel
 {
     /**
-     * Creates a bounded range model with the specified minimum value,
-     * current value, extent and maximum value.
+     * Creates a bounded range model with the specified minimum value, current value, extent and
+     * maximum value.
      */
     public BoundedRangeModel (int min, int value, int extent, int max)
     {
@@ -84,8 +82,7 @@ public class BoundedRangeModel
     }
 
     /**
-     * Returns the maximum value this model will allow for <code>value +
-     * extent</code>.
+     * Returns the maximum value this model will allow for <code>value + extent</code>.
      */
     public int getMaximum ()
     {
@@ -117,8 +114,16 @@ public class BoundedRangeModel
     }
 
     /**
-     * Returns the increment by which this model should be scrolled when the
-     * user presses one of the buttons at the end of the scrollbar.
+     * Returns the value of the model mapped into the range [0-1]: (value - minumum) / range.
+     */
+    public float getRatio ()
+    {
+        return (getValue() - getMinimum()) / (float)getRange();
+    }
+
+    /**
+     * Returns the increment by which this model should be scrolled when the user presses one of
+     * the buttons at the end of the scrollbar.
      */
     public int getScrollIncrement ()
     {
@@ -126,9 +131,8 @@ public class BoundedRangeModel
     }
 
     /**
-     * Configures the minimum value of this model, adjusting the value,
-     * extent and maximum as necessary to maintain the consistency of the
-     * model.
+     * Configures the minimum value of this model, adjusting the value, extent and maximum as
+     * necessary to maintain the consistency of the model.
      */
     public void setMinimum (int minimum)
     {
@@ -138,9 +142,8 @@ public class BoundedRangeModel
     }
 
     /**
-     * Configures the maximum value of this model, adjusting the value,
-     * extent and minimum as necessary to maintain the consistency of the
-     * model.
+     * Configures the maximum value of this model, adjusting the value, extent and minimum as
+     * necessary to maintain the consistency of the model.
      */
     public void setMaximum (int maximum)
     {
@@ -150,9 +153,8 @@ public class BoundedRangeModel
     }
 
     /**
-     * Configures the value of this model. The new value will be adjusted
-     * if it does not fall within the range of <code>min <= value <= max -
-     * extent<code>.
+     * Configures the value of this model. The new value will be adjusted if it does not fall
+     * within the range of <code>min <= value <= max - extent<code>.
      */
     public void setValue (int value)
     {
@@ -161,9 +163,8 @@ public class BoundedRangeModel
     }
 
     /**
-     * Configures the extent of this model. The new value will be adjusted
-     * if it does not fall within the range of <code>0 <= extent <= max -
-     * value<code>.
+     * Configures the extent of this model. The new value will be adjusted if it does not fall
+     * within the range of <code>0 <= extent <= max - value<code>.
      */
     public void setExtent (int extent)
     {
@@ -172,11 +173,10 @@ public class BoundedRangeModel
     }
 
     /**
-     * Configures this model with a new minimum, maximum, current value
-     * and extent.
+     * Configures this model with a new minimum, maximum, current value and extent.
      *
-     * @return true if the range was modified, false if the values were
-     * already set to the requested values.
+     * @return true if the range was modified, false if the values were already set to the
+     * requested values.
      */
     public boolean setRange (int min, int value, int extent, int max)
     {
@@ -205,8 +205,8 @@ public class BoundedRangeModel
     }
 
     /**
-     * Creates a mouse wheel listener that will respond to wheel events by
-     * adjusting this model up or down accordingly.
+     * Creates a mouse wheel listener that will respond to wheel events by adjusting this model up
+     * or down accordingly.
      */
     public MouseWheelListener createWheelListener ()
     {
@@ -227,7 +227,6 @@ public class BoundedRangeModel
 
     protected int _min, _max;
     protected int _value, _extent;
-    protected ArrayList<ChangeListener> _listeners =
-        new ArrayList<ChangeListener>();
+    protected ArrayList<ChangeListener> _listeners = new ArrayList<ChangeListener>();
     protected ChangeEvent _event = new ChangeEvent(this);
 }
