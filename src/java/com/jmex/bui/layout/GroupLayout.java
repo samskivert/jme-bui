@@ -84,6 +84,9 @@ public abstract class GroupLayout extends BLayoutManager
         }
     }
 
+    /** The default gap used by a group layout. */
+    public static final int DEFAULT_GAP = 5;
+
     /**
      * A constraints object that indicates that the component should be fixed and have the default
      * weight of one. This is so commonly used that we create and make this object available here.
@@ -440,6 +443,4 @@ public abstract class GroupLayout extends BLayoutManager
     protected Justification _offjust = CENTER;
 
     protected HashMap<BComponent, Object> _constraints;
-
-    protected static final int DEFAULT_GAP = 5;
 }
