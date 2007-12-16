@@ -38,8 +38,7 @@ import com.jmex.bui.util.Insets;
 public class BLabel extends BTextComponent
     implements BConstants
 {
-    /** Configures the label's strategy when it does not fit into its allocated
-     * space. */
+    /** Configures the label's strategy when it does not fit into its allocated space. */
     public enum Fit { WRAP, TRUNCATE, SCALE };
 
     /**
@@ -51,14 +50,11 @@ public class BLabel extends BTextComponent
     }
 
     /**
-     * Creates a label that will display the supplied text using the specified
-     * style class.
+     * Creates a label that will display the supplied text using the specified style class.
      */
     public BLabel (String text, String styleClass)
     {
-        _label = new Label(this);
-        _label.setText(text);
-        setStyleClass(styleClass);
+    	this(null, text, styleClass);
     }
 
     /**
@@ -66,20 +62,35 @@ public class BLabel extends BTextComponent
      */
     public BLabel (BIcon icon)
     {
-        this(icon, null);
+        this(icon, null, null);
     }
 
     /**
-     * Creates a label that will display the supplied icon using the specified
-     * style class.
+     * Creates a label that will display the supplied icon using the specified style class.
      */
     public BLabel (BIcon icon, String styleClass)
     {
-        _label = new Label(this);
-        _label.setIcon(icon);
-        setStyleClass(styleClass);
+    	this(icon, null, styleClass);
     }
-    
+
+    /**
+     * Creates a label that will display the supplied text and icon using the specified style
+     * class. All arguments can be null.
+     */
+    public BLabel (BIcon icon, String text, String styleClass)
+    {
+        _label = new Label(this);
+        if (text != null) {
+            _label.setText(text);
+        }
+        if (styleClass != null) {
+            setStyleClass(styleClass);
+        }
+        if (icon != null) {
+            _label.setIcon(icon);
+        }
+    }
+
     /**
      * Configures the label to display the specified icon.
      */
@@ -129,6 +140,14 @@ public class BLabel extends BTextComponent
     public void setFit (Fit mode)
     {
         _label.setFit(mode);
+    }
+
+    /**
+     * Returns the current fit mode for this label.
+     */
+    public Fit getFit ()
+    {
+        return _label._fit;
     }
 
     // documentation inherited
