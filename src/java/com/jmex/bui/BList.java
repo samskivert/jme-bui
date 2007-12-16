@@ -27,14 +27,15 @@ import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.layout.GroupLayout;
 
 /**
- * Displays a list of selectable entries and fires an {@link ActionEvent} when
- * the selected value changes.
+ * Displays a list of selectable entries and fires an {@link ActionEvent} when the selected value
+ * changes. Each entry is displayed as a string obtained by calling {@link Object#toString} on the
+ * supplied values.
  */
 public class BList extends BContainer
 {
     /** The action fired when the list selection changes. */
     public static final String SELECT = "select";
-    
+
     /**
      * Creates an empty list.
      */
@@ -42,7 +43,7 @@ public class BList extends BContainer
     {
         this(null);
     }
-    
+
     /**
      * Creates a list and populates it with the supplied values.
      */
@@ -56,7 +57,7 @@ public class BList extends BContainer
             }
         }
     }
-    
+
     /**
      * Adds a value to the list.
      */
@@ -76,8 +77,8 @@ public class BList extends BContainer
         add(button);
         _values.add(value);
     }
-    
-    /** 
+
+    /**
      * Removes a value from the list, if it is present.
      *
      * @return true if the value was removed, false if it was not in the list
@@ -95,7 +96,7 @@ public class BList extends BContainer
         _values.remove(idx);
         return true;
     }
-    
+
     /**
      * Returns the currently selected value.
      *
@@ -105,7 +106,7 @@ public class BList extends BContainer
     {
         return (_selidx == -1) ? null : _values.get(_selidx);
     }
-    
+
     /**
      * Sets the selected value.
      *
@@ -123,19 +124,19 @@ public class BList extends BContainer
         }
         _selidx = idx;
     }
-    
+
     // documentation inherited
     protected String getDefaultStyleClass ()
     {
         return "list";
     }
-    
+
     /** The values contained in the list. */
     protected ArrayList<Object> _values = new ArrayList<Object>();
-    
+
     /** The index of the current selection (or -1 for none). */
     protected int _selidx = -1;
-    
+
     /** Listens for button selections. */
     protected ActionListener _slistener = new ActionListener() {
         public void actionPerformed (ActionEvent e) {
