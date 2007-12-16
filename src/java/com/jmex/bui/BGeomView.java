@@ -172,7 +172,6 @@ public class BGeomView extends BComponent
                 // restore the camera
                 renderer.setCamera(cam);
                 cam.update();
-                cam.apply();
                 renderer.setOrtho();
 
                 // we need to restore the GL translation as that got wiped out when we left and
