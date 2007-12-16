@@ -91,8 +91,8 @@ public abstract class BRootNode extends Geometry
         _windows.add(window);
         resortWindows();
 
-        // if this window is now the top window, we need to transfer the focus
-        // to it (and save the previous top window's focus)
+        // if this window is now the top window, we need to transfer the focus to it (and save the
+        // previous top window's focus)
         BComponent pendfocus = null;
         if (_windows.get(_windows.size()-1) == window && !window.isOverlay()) {
             // store the previous top window's focus and clear it
@@ -108,8 +108,8 @@ public abstract class BRootNode extends Geometry
         // add this window to the hierarchy (which may set a new focus)
         window.setRootNode(this);
 
-        // if no new focus was set when we added the window, give the focus to
-        // the previously pending focus component
+        // if no new focus was set when we added the window, give the focus to the previously
+        // pending focus component
         if (_focus == null && pendfocus != null) {
             setFocus(pendfocus);
         }
@@ -128,8 +128,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Called when an added window's layer is changed. Adjusts the ordering of
-     * the windows in the stack.
+     * Called when an added window's layer is changed. Adjusts the ordering of the windows in the
+     * stack.
      */
     public void resortWindows ()
     {
@@ -148,8 +148,8 @@ public abstract class BRootNode extends Geometry
             window.setRootNode(null);
         }
 
-        // then remove the hover component (which may result in a mouse exited
-        // even being dispatched to the window or one of its children)
+        // then remove the hover component (which may result in a mouse exited even being
+        // dispatched to the window or one of its children)
         updateHoverComponent(_mouseX, _mouseY);
     }
 
@@ -168,14 +168,13 @@ public abstract class BRootNode extends Geometry
 
         // first remove the window from our list
         if (!_windows.remove(window)) {
-            Log.log.warning("Requested to remove unmanaged window " +
-                            "[window=" + window + "].");
+            Log.log.warning("Requested to remove unmanaged window [window=" + window + "].");
             Thread.dumpStack();
             return;
         }
 
-        // then remove the hover component (which may result in a mouse exited
-        // even being dispatched to the window or one of its children)
+        // then remove the hover component (which may result in a mouse exited even being
+        // dispatched to the window or one of its children)
         updateHoverComponent(_mouseX, _mouseY);
 
         // remove the window from the interface heirarchy
@@ -188,8 +187,7 @@ public abstract class BRootNode extends Geometry
             }
         }
 
-        // finally restore the focus to the new top-most window if it has a
-        // saved focus
+        // finally restore the focus to the new top-most window if it has a saved focus
         if (_windows.size() > 0) {
             BWindow top = _windows.get(_windows.size()-1);
             top.gotFocus();
@@ -197,9 +195,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Configures the number of seconds that the mouse must rest over a
-     * component to trigger a tooltip. If the value is set to zero, tips will
-     * appear immediately.
+     * Configures the number of seconds that the mouse must rest over a component to trigger a
+     * tooltip. If the value is set to zero, tips will appear immediately.
      */
     public void setTooltipTimeout (float seconds)
     {
@@ -207,8 +204,7 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Returns the tool tip timeout. See {@link #setTooltipTimeout} for
-     * details.
+     * Returns the tool tip timeout. See {@link #setTooltipTimeout} for details.
      */
     public float getTooltipTimeout ()
     {
@@ -216,8 +212,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Sets the preferred width of tooltip windows. The default is to prefer a
-     * width slightly less wide that the entire window.
+     * Sets the preferred width of tooltip windows. The default is to prefer a width slightly less
+     * wide that the entire window.
      */
     public void setTooltipPreferredWidth (int width)
     {
@@ -225,8 +221,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Registers a listener that will be notified of all events prior to their
-     * being dispatched normally.
+     * Registers a listener that will be notified of all events prior to their being dispatched
+     * normally.
      */
     public void addGlobalEventListener (EventListener listener)
     {
@@ -242,17 +238,16 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * This is called by a window or a scroll pane when it has become invalid.
-     * The root node should schedule a revalidation of this component on the
-     * next tick or the next time an event is processed.
+     * This is called by a window or a scroll pane when it has become invalid.  The root node
+     * should schedule a revalidation of this component on the next tick or the next time an event
+     * is processed.
      */
     public abstract void rootInvalidated (BComponent root);
 
     /**
-     * Configures a component to receive all events that are not sent to some
-     * other component. When an event is not consumed during normal processing,
-     * it is sent to the default event targets, most recently registered to
-     * least recently registered.
+     * Configures a component to receive all events that are not sent to some other component. When
+     * an event is not consumed during normal processing, it is sent to the default event targets,
+     * most recently registered to least recently registered.
      */
     public void pushDefaultEventTarget (BComponent component)
     {
@@ -268,8 +263,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Requests that the specified component be given the input focus.
-     * Pass null to clear the focus.
+     * Requests that the specified component be given the input focus.  Pass null to clear the
+     * focus.
      */
     public void requestFocus (BComponent component)
     {
@@ -285,6 +280,22 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
+     * Returns the total number of windows added to this node.
+     */
+    public int getWindowCount ()
+    {
+        return _windows.size();
+    }
+
+    /**
+     * Returns the window at the specified index.
+     */
+    public BWindow getWindow (int index)
+    {
+        return _windows.get(index);
+    }
+
+    /**
      * Generates a string representation of this instance.
      */
     public String toString ()
@@ -293,9 +304,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * A large component that changes its tooltip while it is the hover
-     * component in the normal course of events can call this method to force
-     * an update to the tooltip window.
+     * A large component that changes its tooltip while it is the hover component in the normal
+     * course of events can call this method to force an update to the tooltip window.
      */
     public void tipTextChanged (BComponent component)
     {
@@ -345,11 +355,14 @@ public abstract class BRootNode extends Geometry
         _tipwin.setStyleClass("tooltip_window");
         _tipwin.add(tcomp, BorderLayout.CENTER);
         addWindow(_tipwin);
+
         // it's possible that adding the tip window will cause it to immediately be removed, so
         // make sure we don't NPE
         if (_tipwin == null) {
             return;
         }
+
+        // if it's still here, lay it out
         int width = DisplaySystem.getDisplaySystem().getWidth();
         int height = DisplaySystem.getDisplaySystem().getHeight();
         _tipwin.pack(_tipWidth == -1 ? width-10 : _tipWidth, height-10);
@@ -365,17 +378,16 @@ public abstract class BRootNode extends Geometry
         tx = Math.max(5, Math.min(tx, width-_tipwin.getWidth()-5));
         ty = Math.min(ty, height- _tipwin.getHeight() - 5);
         _tipwin.setLocation(tx, ty);
-        // we need to validate here because we're adding a window in the middle
-        // of our normal frame processing
+        // we need to validate here because we're adding a window in the middle of our normal frame
+        // processing
         _tipwin.validate();
     }
 
     // documentation inherited
     public void onDraw (Renderer renderer)
     {
-        // we're rendered in the ortho queue, so we just add ourselves to
-        // the queue here and we'll get a call directly to draw() later
-        // when the ortho queue is rendered
+        // we're rendered in the ortho queue, so we just add ourselves to the queue here and we'll
+        // get a call directly to draw() later when the ortho queue is rendered
         if (!renderer.isProcessingQueue()) {
             renderer.checkAndAdd(this);
         }
@@ -431,13 +443,14 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Dispatches an event to the specified target (which may be null). If the
-     * target is null, or did not consume the event, it will be passed on to
-     * the most recently opened modal window if one exists (and the supplied
-     * target component was not a child of that window) and then to the default
-     * event targets if the event is still unconsumed.
+     * Dispatches an event to the specified target (which may be null). If the target is null, or
+     * did not consume the event, it will be passed on to the most recently opened modal window if
+     * one exists (and the supplied target component was not a child of that window) and then to
+     * the default event targets if the event is still unconsumed.
+     *
+     * @return true if the event was dispatched, false if not.
      */
-    protected void dispatchEvent (BComponent target, BEvent event)
+    protected boolean dispatchEvent (BComponent target, BEvent event)
     {
         // notify our global listeners if we have any
         for (int ii = 0, ll = _globals.size(); ii < ll; ii++) {
@@ -453,7 +466,7 @@ public abstract class BRootNode extends Geometry
         BWindow sentwin = null;
         if (target != null) {
             if (target.dispatchEvent(event)) {
-                return;
+                return true;
             }
             sentwin = target.getWindow();
         }
@@ -464,7 +477,7 @@ public abstract class BRootNode extends Geometry
             if (window.isModal()) {
                 if (window != sentwin) {
                     if (window.dispatchEvent(event)) {
-                        return;
+                        return true;
                     }
                 }
                 break;
@@ -475,9 +488,12 @@ public abstract class BRootNode extends Geometry
         for (int ii = _defaults.size()-1; ii >= 0; ii--) {
             BComponent deftarg = _defaults.get(ii);
             if (deftarg.dispatchEvent(event)) {
-                return;
+                return true;
             }
         }
+
+        // let our caller know that the event was not dispatched by anyone
+        return false;
     }
 
     /**
@@ -493,20 +509,18 @@ public abstract class BRootNode extends Geometry
         // if the focus is changing, dispatch an event to report it
         if (_focus != focus) {
             if (_focus != null) {
-                _focus.dispatchEvent(
-                    new FocusEvent(this, _tickStamp, FocusEvent.FOCUS_LOST));
+                _focus.dispatchEvent(new FocusEvent(this, getTickStamp(), FocusEvent.FOCUS_LOST));
             }
             _focus = focus;
             if (_focus != null) {
-                _focus.dispatchEvent(
-                    new FocusEvent(this, _tickStamp, FocusEvent.FOCUS_GAINED));
+                _focus.dispatchEvent(new FocusEvent(this, getTickStamp(), FocusEvent.FOCUS_GAINED));
             }
         }
     }
 
     /**
-     * Registers a {@link BGeomView} with the root node. This is called
-     * automatically from {@link BGeomView#wasAdded}.
+     * Registers a {@link BGeomView} with the root node. This is called automatically from {@link
+     * BGeomView#wasAdded}.
      */
     protected void registerGeomView (BGeomView nview)
     {
@@ -514,8 +528,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Clears out a node view registration. This is called automatically from
-     * {@link BGeomView#wasRemoved}.
+     * Clears out a node view registration. This is called automatically from {@link
+     * BGeomView#wasRemoved}.
      */
     protected void unregisterGeomView (BGeomView nview)
     {
@@ -523,9 +537,8 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Called by a window when its position changes. This triggers a
-     * recomputation of the hover component as the window may have moved out
-     * from under or under the mouse.
+     * Called by a window when its position changes. This triggers a recomputation of the hover
+     * component as the window may have moved out from under or under the mouse.
      */
     protected void windowDidMove (BWindow window)
     {
@@ -547,13 +560,12 @@ public abstract class BRootNode extends Geometry
     }
 
     /**
-     * Recomputes the component over which the mouse is hovering,
-     * generating mouse exit and entry events as necessary.
+     * Recomputes the component over which the mouse is hovering, generating mouse exit and entry
+     * events as necessary.
      */
     protected void updateHoverComponent (int mx, int my)
     {
-        // check for a new hover component starting with each of our root
-        // components
+        // check for a new hover component starting with each of our root components
         BComponent nhcomponent = null;
         for (int ii = _windows.size()-1; ii >= 0; ii--) {
             BWindow comp = _windows.get(ii);
@@ -571,20 +583,18 @@ public abstract class BRootNode extends Geometry
         if (_hcomponent != nhcomponent) {
             // inform the previous component that the mouse has exited
             if (_hcomponent != null) {
-                _hcomponent.dispatchEvent(
-                    new MouseEvent(this, _tickStamp, _modifiers,
-                                   MouseEvent.MOUSE_EXITED, mx, my));
+                _hcomponent.dispatchEvent(new MouseEvent(this, getTickStamp(), _modifiers,
+                                                         MouseEvent.MOUSE_EXITED, mx, my));
             }
             // inform the new component that the mouse has entered
             if (nhcomponent != null) {
-                nhcomponent.dispatchEvent(
-                    new MouseEvent(this, _tickStamp, _modifiers,
-                                   MouseEvent.MOUSE_ENTERED, mx, my));
+                nhcomponent.dispatchEvent(new MouseEvent(this, getTickStamp(), _modifiers,
+                                                         MouseEvent.MOUSE_ENTERED, mx, my));
             }
             _hcomponent = nhcomponent;
 
-            // clear out any tooltip business in case the hover component
-            // changed as a result of a window popping up
+            // clear out any tooltip business in case the hover component changed as a result of a
+            // window popping up
             if (_hcomponent == null || _hcomponent.getWindow() != _tipwin) {
                 clearTipWindow();
             }
@@ -619,7 +629,6 @@ public abstract class BRootNode extends Geometry
         GL11.glEnd();
     }
 
-    protected long _tickStamp;
     protected int _modifiers;
     protected int _mouseX, _mouseY;
 

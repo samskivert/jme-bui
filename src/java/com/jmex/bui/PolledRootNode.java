@@ -219,6 +219,7 @@ public class PolledRootNode extends BRootNode
         }
     };
 
+    protected long _tickStamp;
     protected Timer _timer;
     protected InputHandler _handler;
     protected ArrayList<BComponent> _invalidRoots = new ArrayList<BComponent>();
