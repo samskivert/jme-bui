@@ -74,7 +74,6 @@ public class BComponent
                 Renderer.defaultStateList[ii].apply();
             }
         }
-        ctx.clearCurrentStates();
     }
 
     /**
@@ -295,9 +294,7 @@ public class BComponent
     }
 
     /**
-     * Configures the background for this component for the specified state.  This must only be
-     * called after the component has been added to the interface heirarchy or the value will be
-     * overridden by the stylesheet associated with this component.
+     * Configures the background for this component for the specified state.
      */
     public void setBackground (int state, BBackground background)
     {
@@ -533,6 +530,14 @@ public class BComponent
         } else {
             return false;
         }
+    }
+
+    /**
+     * Removes all listeners registered on this component.
+     */
+    public void removeAllListeners ()
+    {
+    	_listeners.clear();
     }
 
     /**
@@ -787,8 +792,9 @@ public class BComponent
             if (_borders[ii] != null) {
                 _insets[ii] = _borders[ii].adjustInsets(_insets[ii]);
             }
-            _backgrounds[ii] =
-                style.getBackground(this, getStatePseudoClass(ii));
+            if (_backgrounds[ii] == null) {
+                _backgrounds[ii] = style.getBackground(this, getStatePseudoClass(ii));
+            }
         }
     }
 
@@ -944,7 +950,7 @@ public class BComponent
     protected BComponent getNextFocus ()
     {
         if (_parent instanceof BContainer) {
-            return ((BContainer)_parent).getNextFocus(this);
+            return _parent.getNextFocus(this);
         } else if (acceptsFocus()) {
             return this;
         } else {
@@ -961,7 +967,7 @@ public class BComponent
     protected BComponent getPreviousFocus ()
     {
         if (_parent instanceof BContainer) {
-            return ((BContainer)_parent).getPreviousFocus(this);
+            return _parent.getPreviousFocus(this);
         } else if (acceptsFocus()) {
             return this;
         } else {
