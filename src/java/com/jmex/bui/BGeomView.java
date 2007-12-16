@@ -187,7 +187,7 @@ public class BGeomView extends BComponent
     protected Camera createCamera (DisplaySystem ds)
     {
         // create a standard camera and frustum
-        Camera camera = ds.getRenderer().createCamera((int)_swidth, (int)_sheight);
+        Camera camera = ds.getRenderer().createCamera(_swidth, _sheight);
         camera.setParallelProjection(false);
 
         // put and point it somewhere sensible by default
