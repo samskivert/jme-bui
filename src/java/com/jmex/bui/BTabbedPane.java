@@ -24,30 +24,52 @@ import java.util.ArrayList;
 
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
+import com.jmex.bui.event.ChangeEvent;
+import com.jmex.bui.event.ChangeListener;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.layout.GroupLayout;
 
+import static com.jmex.bui.Log.log;
+
 /**
- * Displays one of a set of components (tabs) depending on which tab is
- * selected.
+ * Displays one of a set of components (tabs) depending on which tab is selected.
  */
 public class BTabbedPane extends BContainer
 {
+    /**
+     * Creates a tabbed pane with left justified buttons.
+     */
     public BTabbedPane ()
     {
         this(GroupLayout.LEFT);
     }
 
-    public BTabbedPane (GroupLayout.Justification tabJustification)
+    /**
+     * Creates a tabbed pane.
+     *
+     * @param tabAlign the justification for the tab buttons.
+     */
+    public BTabbedPane (GroupLayout.Justification tabAlign)
+    {
+    	this(tabAlign, GroupLayout.DEFAULT_GAP);
+    }
+
+    /**
+     * Creates a tabbed pane.
+     *
+     * @param tabAlign the justification for the tab buttons.
+     * @param gap the number of pixels space between each tab button.
+     */
+    public BTabbedPane (GroupLayout.Justification tabAlign, int gap)
     {
         super(new BorderLayout());
 
         GroupLayout gl = GroupLayout.makeHoriz(
             GroupLayout.STRETCH, GroupLayout.LEFT, GroupLayout.CONSTRAIN);
         _top = new BContainer(gl);
-        gl = GroupLayout.makeHoriz(
-            GroupLayout.CONSTRAIN, tabJustification, GroupLayout.CONSTRAIN);
+        gl = GroupLayout.makeHoriz(GroupLayout.CONSTRAIN, tabAlign, GroupLayout.CONSTRAIN);
         _top.add(_buttons = new BContainer(gl));
+        gl.setGap(gap);
         add(_top, BorderLayout.NORTH);
 
         _close = new BButton("", _closer, "close");
@@ -67,8 +89,7 @@ public class BTabbedPane extends BContainer
      */
     public void addTab (String title, BComponent tab, boolean hasClose)
     {
-        BToggleButton tbutton = new BToggleButton(
-            title, String.valueOf(_tabs.size())) {
+        BToggleButton tbutton = new BToggleButton(title, String.valueOf(_tabs.size())) {
             protected void fireAction (long when, int modifiers) {
                 if (!_selected) {
                     super.fireAction(when, modifiers);
@@ -97,8 +118,7 @@ public class BTabbedPane extends BContainer
         if (idx != -1) {
             removeTab(idx);
         } else {
-            Log.log.warning("Requested to remove non-added tab " +
-                "[pane=" + this + ", tab=" + tab + "].");
+            log.warning("Requested to remove non-added tab [pane=" + this + ", tab=" + tab + "].");
         }
     }
 
@@ -285,7 +305,7 @@ public class BTabbedPane extends BContainer
             try {
                 selectTab(Integer.parseInt(event.getAction()));
             } catch (Exception e) {
-                Log.log.warning("Got weird action event " + event + ".");
+                log.warning("Got weird action event " + event + ".");
             }
         }
     };
