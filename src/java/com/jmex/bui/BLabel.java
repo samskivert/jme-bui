@@ -80,14 +80,14 @@ public class BLabel extends BTextComponent
     public BLabel (BIcon icon, String text, String styleClass)
     {
         _label = new Label(this);
+        if (icon != null) {
+            setIcon(icon);
+        }
         if (text != null) {
-            _label.setText(text);
+            setText(text);
         }
         if (styleClass != null) {
             setStyleClass(styleClass);
-        }
-        if (icon != null) {
-            _label.setIcon(icon);
         }
     }
 
