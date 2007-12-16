@@ -20,8 +20,11 @@
 
 package com.jmex.bui.icon;
 
-import com.jme.renderer.Renderer;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import javax.swing.Icon;
 
+import com.jme.renderer.Renderer;
 import com.jmex.bui.BImage;
 
 /**
@@ -35,6 +38,22 @@ public class ImageIcon extends BIcon
     public ImageIcon (BImage image)
     {
         _image = image;
+    }
+
+    /**
+     * Converts the supplied AWT icon into a BUI icon.
+     */
+    public ImageIcon (Icon icon)
+    {
+        BufferedImage cached = new BufferedImage(
+            icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D gfx = cached.createGraphics();
+        try {
+            icon.paintIcon(null, gfx, 0, 0);
+            _image = new BImage(cached);
+        } finally {
+            gfx.dispose();
+        }
     }
 
     // documentation inherited
