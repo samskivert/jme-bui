@@ -402,7 +402,8 @@ public class BContainer extends BComponent
      */
     protected void applyOperation (ChildOp op)
     {
-        for (BComponent child : _children) {
+        BComponent[] children = _children.toArray(new BComponent[_children.size()]);
+        for (BComponent child : children) {
             try {
                 op.apply(child);
             } catch (Exception e) {
