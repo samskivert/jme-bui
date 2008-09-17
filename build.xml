@@ -104,9 +104,20 @@
     </junit>
   </target>
 
-  <!-- builds our distribution files (war and jar) -->
+  <!-- builds our jar file -->
   <target name="dist" depends="prepare,compile">
-    <jar destfile="${deploy.dir}/${dist.jar}"
-         basedir="${classes.dir}"/>
+    <jar destfile="${deploy.dir}/${dist.jar}" basedir="${classes.dir}"/>
+  </target>
+
+  <!-- builds our downloadable zip files -->
+  <target name="downloads" depends="dist,savedoc">
+    <zip destfile="../jme-bui.zip">
+      <fileset dir="..">
+        <include name="jme-bui/**"/>
+        <exclude name="**/dist/**"/>
+        <exclude name="**/.svn/**"/>
+      </fileset>
+    </zip>
+    <zip destfile="../jme-bui-docs.zip" basedir="docs" includes="api"/>
   </target>
 </project>
