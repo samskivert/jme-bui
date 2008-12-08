@@ -42,7 +42,19 @@ public class BDecoratedWindow extends BWindow
             GroupLayout.CONSTRAIN);
 
         if (title != null) {
-            add(new BLabel(title, "window_title"), GroupLayout.FIXED);
+            setTitle(title);
+        }
+    }
+
+    /**
+     * Configures the title for this window.
+     */
+    public void setTitle (String title)
+    {
+        if (_title == null) {
+            add(_title = new BLabel(title, "window_title"), GroupLayout.FIXED);
+        } else {
+            _title.setText(title);
         }
     }
 
@@ -51,4 +63,6 @@ public class BDecoratedWindow extends BWindow
     {
         return "decoratedwindow";
     }
+
+    protected BLabel _title;
 }
