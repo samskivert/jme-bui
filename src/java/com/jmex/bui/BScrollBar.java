@@ -20,8 +20,6 @@
 
 package com.jmex.bui;
 
-import com.jme.renderer.Renderer;
-
 import com.jmex.bui.event.ActionEvent;
 import com.jmex.bui.event.ActionListener;
 import com.jmex.bui.event.ChangeEvent;
@@ -29,10 +27,8 @@ import com.jmex.bui.event.ChangeListener;
 import com.jmex.bui.event.MouseAdapter;
 import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.event.MouseListener;
-import com.jmex.bui.event.MouseMotionListener;
 import com.jmex.bui.event.MouseWheelListener;
 
-import com.jmex.bui.background.BBackground;
 import com.jmex.bui.layout.BorderLayout;
 import com.jmex.bui.util.Insets;
 

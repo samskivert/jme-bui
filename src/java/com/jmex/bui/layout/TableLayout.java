@@ -25,7 +25,6 @@ import java.util.HashMap;
 
 import com.jmex.bui.BComponent;
 import com.jmex.bui.BContainer;
-import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 

@@ -27,7 +27,6 @@ import com.jme.renderer.Renderer;
 
 import com.jmex.bui.layout.BLayoutManager;
 import com.jmex.bui.util.Dimension;
-import com.jmex.bui.util.Insets;
 
 import static com.jmex.bui.Log.log;
 

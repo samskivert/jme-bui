@@ -20,13 +20,10 @@
 
 package com.jmex.bui;
 
-import com.jme.renderer.Renderer;
 import com.jme.system.DisplaySystem;
 
-import com.jmex.bui.background.BBackground;
 import com.jmex.bui.layout.BLayoutManager;
 import com.jmex.bui.util.Dimension;
-import com.jmex.bui.util.Insets;
 
 /**
  * A window defines the top-level of a component hierarchy. It must be created with a stylesheet

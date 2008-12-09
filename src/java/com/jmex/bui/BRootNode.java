@@ -27,9 +27,6 @@ import java.util.logging.Level;
 import org.lwjgl.opengl.GL11;
 
 import com.jme.intersection.CollisionResults;
-import com.jme.intersection.PickResults;
-import com.jme.math.Ray;
-import com.jme.renderer.Camera;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Geometry;

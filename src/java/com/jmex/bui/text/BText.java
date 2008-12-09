@@ -21,7 +21,6 @@
 package com.jmex.bui.text;
 
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 import com.jmex.bui.util.Dimension;
 
 /**

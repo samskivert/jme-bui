@@ -32,7 +32,6 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 
-import com.jmex.bui.Log;
 import com.jmex.bui.util.Dimension;
 
 /**
@@ -113,9 +112,6 @@ public class JMEBitmapTextFactory extends BTextFactory
                 tgeom.setLocalTranslation(new Vector3f(x, y, 0));
                 tgeom.getTextColor().a = alpha * color.a;
                 renderer.draw(tgeom);
-            }
-            public void release () {
-                // TODO: unload factory wide texture at some point?
             }
         };
     }

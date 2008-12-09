@@ -31,7 +31,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 import com.jme.image.Image;

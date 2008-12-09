@@ -22,8 +22,6 @@ package com.jmex.bui;
 
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 

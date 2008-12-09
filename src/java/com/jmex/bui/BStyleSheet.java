@@ -32,6 +32,9 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 
 import com.jme.renderer.ColorRGBA;
@@ -232,11 +235,10 @@ public class BStyleSheet
     public static void main (String[] args)
     {
         // load up the default BUI stylesheet
-        BStyleSheet style = null;
         try {
-            style = new BStyleSheet(new InputStreamReader(BStyleSheet.class.getClassLoader().
-                                                          getResourceAsStream("rsrc/style.bss")),
-                                    new DefaultResourceProvider());
+            new BStyleSheet(new InputStreamReader(BStyleSheet.class.getClassLoader().
+                                                  getResourceAsStream("rsrc/style.bss")),
+                            new DefaultResourceProvider());
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
@@ -459,7 +461,7 @@ public class BStyleSheet
             fail(tok, ":");
         }
 
-        ArrayList<Comparable> args = new ArrayList<Comparable>();
+        List<Comparable<?>> args = new ArrayList<Comparable<?>>();
         while (tok.nextToken() != ';' && tok.ttype != '}') {
             switch (tok.ttype) {
             case '\'':
@@ -490,7 +492,7 @@ public class BStyleSheet
         return true;
     }
 
-    protected Object createProperty (String name, ArrayList args)
+    protected Object createProperty (String name, List<Comparable<?>> args)
     {
         if (name.equals("color") || name.equals("effect-color")) {
             return parseColor((String)args.get(0));
@@ -692,9 +694,9 @@ public class BStyleSheet
 
         public String pseudoClass;
 
-        public HashMap<String, Object> properties = new HashMap<String, Object>();
+        public Map<String, Object> properties = new HashMap<String, Object>();
 
-        public Object get (HashMap rules, String key)
+        public Object get (Map<String, Rule> rules, String key)
         {
             Object value = properties.get(key);
             if (value != null) {

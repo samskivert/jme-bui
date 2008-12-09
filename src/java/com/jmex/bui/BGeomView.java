@@ -28,7 +28,6 @@ import com.jme.renderer.Renderer;
 import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 
-import com.jmex.bui.util.Dimension;
 import com.jmex.bui.util.Insets;
 import com.jmex.bui.util.Rectangle;
 

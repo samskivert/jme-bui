@@ -26,7 +26,6 @@ import com.jme.util.LoggingSystem;
 
 import com.jmex.bui.*;
 import com.jmex.bui.layout.GroupLayout;
-import com.jmex.bui.icon.ImageIcon;
 
 public class ScrollingListTest extends BaseTest
     implements BConstants
@@ -36,16 +35,15 @@ public class ScrollingListTest extends BaseTest
         BWindow window = new BDecoratedWindow(style, null);
         window.setLayoutManager(GroupLayout.makeVStretch());
 
-        BImage image = null;
-        try {
-            image = new BImage(getClass().getClassLoader().
-                               getResource("rsrc/textures/scroll_right.png"));
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
+//         BImage image;
+//         try {
+//             image = new BImage(getClass().getClassLoader().
+//                                getResource("rsrc/textures/scroll_right.png"));
+//         } catch (Exception e) {
+//             e.printStackTrace(System.err);
+//         }
 
-        BScrollingList<String, BButton> list =
-            new BScrollingList<String, BButton>() {
+        BScrollingList<String, BButton> list = new BScrollingList<String, BButton>() {
             public BButton createComponent(String str) {
                 return new BButton(str);
             }

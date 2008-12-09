@@ -25,12 +25,10 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.Display;
 
 import com.jme.input.InputHandler;
-import com.jme.input.InputSystem;
 import com.jme.input.KeyInput;
 import com.jme.input.KeyInputListener;
 import com.jme.input.MouseInput;
 import com.jme.input.MouseInputListener;
-import com.jme.scene.Node;
 import com.jme.util.Timer;
 
 import com.jmex.bui.event.InputEvent;

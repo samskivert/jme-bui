@@ -28,11 +28,9 @@ import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
 
 import com.jme.input.KeyInput;
-import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.RenderContext;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Spatial;
 import com.jme.system.DisplaySystem;
 import com.jme.util.geom.BufferUtils;
 
@@ -949,7 +947,7 @@ public class BComponent
      */
     protected BComponent getNextFocus ()
     {
-        if (_parent instanceof BContainer) {
+        if (_parent != null) {
             return _parent.getNextFocus(this);
         } else if (acceptsFocus()) {
             return this;
@@ -966,7 +964,7 @@ public class BComponent
      */
     protected BComponent getPreviousFocus ()
     {
-        if (_parent instanceof BContainer) {
+        if (_parent != null) {
             return _parent.getPreviousFocus(this);
         } else if (acceptsFocus()) {
             return this;

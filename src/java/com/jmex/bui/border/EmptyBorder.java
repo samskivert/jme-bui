@@ -21,7 +21,6 @@
 package com.jmex.bui.border;
 
 import com.jmex.bui.util.Insets;
-import com.jme.renderer.Renderer;
 
 /**
  * Defines a border with no rendered geometry but that simply takes up

@@ -37,24 +37,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
-import org.lwjgl.opengl.GL11;
-
-import com.jme.image.Image;
-import com.jme.image.Texture;
-import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
-import com.jme.scene.Geometry;
-import com.jme.scene.Spatial;
-import com.jme.system.DisplaySystem;
-import com.jme.util.TextureManager;
 
 import com.jmex.bui.BConstants;
 import com.jmex.bui.BImage;
@@ -238,7 +226,7 @@ public class AWTTextFactory extends BTextFactory
                     gfx.setColor(new Color(effectColor.r, effectColor.g, effectColor.b,
                                            effectColor.a));
                     Stroke oldstroke = gfx.getStroke();
-                    gfx.setStroke(new BasicStroke((float)effectSize, BasicStroke.CAP_ROUND,
+                    gfx.setStroke(new BasicStroke(effectSize, BasicStroke.CAP_ROUND,
                                                   BasicStroke.JOIN_ROUND));
                     gfx.draw(layout.getOutline(null));
                     gfx.setStroke(oldstroke);
@@ -357,9 +345,9 @@ public class AWTTextFactory extends BTextFactory
             public void render (Renderer renderer, int x, int y, int w, int h, float alpha) {
                 bimage.render(renderer, x, y, w, h, alpha);
             }
-            public void release () {
-                bimage.release();
-            }
+//             public void release () {
+//                 bimage.release();
+//             }
         };
     }
 
