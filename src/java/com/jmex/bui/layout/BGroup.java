@@ -27,9 +27,9 @@ import com.jmex.bui.BContainer;
  * A builder for {@link GroupLayout} instances. You use it like so:
  *
  * <pre>
- * BContainer cont = new BContainer(BGroup.vertNone().offStretch().onTop().make());
+ * BContainer cont = new BContainer(BGroup.vert().offStretch().onTop().make());
  * // or even more compact:
- * BContainer cont = BGroup.vertNone().offStretch().onTop().makeBox();
+ * BContainer cont = BGroup.vert().offStretch().onTop().makeBox();
  * </pre>
  *
  * The layout constructed defaults to constrained off-axis layout, on and off-axis centering and a
@@ -40,7 +40,7 @@ public class BGroup
     /**
      * Starts vertical layout with a policy of {@link GroupLayout#NONE}.
      */
-    public static BGroup vertNone ()
+    public static BGroup vert ()
     {
         return new BGroup(false, GroupLayout.NONE);
     }
@@ -64,7 +64,7 @@ public class BGroup
     /**
      * Starts horizontal layout with a policy of {@link GroupLayout#NONE}.
      */
-    public static BGroup horizNone ()
+    public static BGroup horiz ()
     {
         return new BGroup(false, GroupLayout.NONE);
     }
@@ -115,7 +115,7 @@ public class BGroup
     /**
      * Configures the on-axis justification of this group to {@link GroupLayout#TOP}.
      */
-    public BGroup onTop ()
+    public BGroup alignTop ()
     {
         _onJust = GroupLayout.TOP;
         return this;
@@ -124,7 +124,7 @@ public class BGroup
     /**
      * Configures the on-axis justification of this group to {@link GroupLayout#LEFT}.
      */
-    public BGroup onLeft ()
+    public BGroup alignLeft ()
     {
         _onJust = GroupLayout.LEFT;
         return this;
@@ -133,7 +133,7 @@ public class BGroup
     /**
      * Configures the on-axis justification of this group to {@link GroupLayout#CENTER}.
      */
-    public BGroup onCenter ()
+    public BGroup alignCenter ()
     {
         _onJust = GroupLayout.CENTER;
         return this;
@@ -142,7 +142,7 @@ public class BGroup
     /**
      * Configures the on-axis justification of this group to {@link GroupLayout#BOTTOM}.
      */
-    public BGroup onBottom ()
+    public BGroup alignBottom ()
     {
         _onJust = GroupLayout.BOTTOM;
         return this;
@@ -151,7 +151,7 @@ public class BGroup
     /**
      * Configures the on-axis justification of this group to {@link GroupLayout#RIGHT}.
      */
-    public BGroup onRight ()
+    public BGroup alignRight ()
     {
         _onJust = GroupLayout.RIGHT;
         return this;
@@ -160,7 +160,7 @@ public class BGroup
     /**
      * Configures the off-axis justification of this group to {@link GroupLayout#TOP}.
      */
-    public BGroup offTop ()
+    public BGroup offAlignTop ()
     {
         _offJust = GroupLayout.TOP;
         return this;
@@ -169,7 +169,7 @@ public class BGroup
     /**
      * Configures the off-axis justification of this group to {@link GroupLayout#LEFT}.
      */
-    public BGroup offLeft ()
+    public BGroup offAlignLeft ()
     {
         _offJust = GroupLayout.LEFT;
         return this;
@@ -178,7 +178,7 @@ public class BGroup
     /**
      * Configures the off-axis justification of this group to {@link GroupLayout#CENTER}.
      */
-    public BGroup offCenter ()
+    public BGroup offAlignCenter ()
     {
         _offJust = GroupLayout.CENTER;
         return this;
@@ -187,7 +187,7 @@ public class BGroup
     /**
      * Configures the off-axis justification of this group to {@link GroupLayout#BOTTOM}.
      */
-    public BGroup offBottom ()
+    public BGroup offAlignBottom ()
     {
         _offJust = GroupLayout.BOTTOM;
         return this;
@@ -196,7 +196,7 @@ public class BGroup
     /**
      * Configures the off-axis justification of this group to {@link GroupLayout#RIGHT}.
      */
-    public BGroup offRight ()
+    public BGroup offAlignRight ()
     {
         _offJust = GroupLayout.RIGHT;
         return this;
