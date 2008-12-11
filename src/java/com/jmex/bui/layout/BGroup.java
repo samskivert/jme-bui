@@ -212,7 +212,7 @@ public class BGroup
     }
 
     /**
-     * Creates a {@link BGroupLayout} instance with our configuration.
+     * Creates a {@link GroupLayout} instance with our configuration.
      */
     public GroupLayout make ()
     {
