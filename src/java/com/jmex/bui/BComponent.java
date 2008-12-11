@@ -508,13 +508,16 @@ public class BComponent
     /**
      * Adds a listener to this component. The listener will be notified when events of the
      * appropriate type are dispatched on this component.
+     *
+     * @returns this component for handy call chaining.
      */
-    public void addListener (ComponentListener listener)
+    public BComponent addListener (ComponentListener listener)
     {
         if (_listeners == null) {
             _listeners = new ArrayList<ComponentListener>();
         }
         _listeners.add(listener);
+        return this;
     }
 
     /**

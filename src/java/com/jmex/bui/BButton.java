@@ -27,8 +27,8 @@ import com.jmex.bui.event.MouseEvent;
 import com.jmex.bui.icon.BIcon;
 
 /**
- * Displays a simple button that can be depressed and which generates an action
- * event when pressed and released.
+ * Displays a simple button that can be depressed and which generates an action event when pressed
+ * and released.
  */
 public class BButton extends BLabel
     implements BConstants
@@ -45,9 +45,8 @@ public class BButton extends BLabel
     }
 
     /**
-     * Creates a button with the specified label and action. The action
-     * will be dispatched via an {@link ActionEvent} when the button is
-     * clicked.
+     * Creates a button with the specified label and action. The action will be dispatched via an
+     * {@link ActionEvent} when the button is clicked.
      */
     public BButton (String text, String action)
     {
@@ -55,9 +54,8 @@ public class BButton extends BLabel
     }
 
     /**
-     * Creates a button with the specified label and action. The action will be
-     * dispatched via an {@link ActionEvent} to the specified {@link
-     * ActionListener} when the button is clicked.
+     * Creates a button with the specified label and action. The action will be dispatched via an
+     * {@link ActionEvent} to the specified {@link ActionListener} when the button is clicked.
      */
     public BButton (String text, ActionListener listener, String action)
     {
@@ -93,10 +91,13 @@ public class BButton extends BLabel
 
     /**
      * Configures the action to be generated when this button is clicked.
+     *
+     * @return this button for handy call chaining.
      */
-    public void setAction (String action)
+    public BComponent setAction (String action)
     {
         _action = action;
+        return this;
     }
 
     /**
@@ -144,8 +145,7 @@ public class BButton extends BLabel
                     _pressed = true;
                     _armed = true;
                 } else if (mev.getButton() == 1) {
-                    // clicking the right mouse button after arming the
-                    // button disarms it
+                    // clicking the right mouse button after arming the button disarms it
                     _armed = false;
                 }
                 break;
@@ -212,9 +212,8 @@ public class BButton extends BLabel
     }
 
     /**
-     * Called when the button is "clicked" which may due to the mouse being
-     * pressed and released while over the button or due to keyboard
-     * manipulation while the button has focus.
+     * Called when the button is "clicked" which may due to the mouse being pressed and released
+     * while over the button or due to keyboard manipulation while the button has focus.
      */
     protected void fireAction (long when, int modifiers)
     {
