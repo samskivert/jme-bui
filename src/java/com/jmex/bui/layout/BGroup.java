@@ -66,7 +66,7 @@ public class BGroup
      */
     public static BGroup horiz ()
     {
-        return new BGroup(false, GroupLayout.NONE);
+        return new BGroup(true, GroupLayout.NONE);
     }
 
     /**
@@ -74,7 +74,7 @@ public class BGroup
      */
     public static BGroup horizStretch ()
     {
-        return new BGroup(false, GroupLayout.STRETCH);
+        return new BGroup(true, GroupLayout.STRETCH);
     }
 
     /**
@@ -82,7 +82,7 @@ public class BGroup
      */
     public static BGroup horizEqual ()
     {
-        return new BGroup(false, GroupLayout.EQUALIZE);
+        return new BGroup(true, GroupLayout.EQUALIZE);
     }
 
     /**
