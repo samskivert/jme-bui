@@ -15,7 +15,7 @@
 
   <!-- import some targets to enumerate library dependencies -->
   <property name="libs.dir" value="lib"/>
-  <import file="libs-incl.xml"/>
+  <import file="etc/libs-incl.xml"/>
 
   <!-- declare our classpath -->
   <path id="classpath">
