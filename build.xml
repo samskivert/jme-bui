@@ -82,6 +82,7 @@
   </target>
 
   <target name="tests" depends="compile" description="Runs unit tests.">
+    <mkdir dir="${deploy.dir}/test-reports"/>
     <junit printsummary="no" haltonfailure="yes" fork="false">
       <classpath>
         <path refid="test.classpath"/>
