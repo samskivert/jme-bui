@@ -18,7 +18,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jmex.bui.tests;
+package com.jmex.bui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,10 +27,6 @@ import com.jme.app.SimpleGame;
 import com.jme.input.KeyBindingManager;
 import com.jme.input.MouseInput;
 import com.jme.renderer.ColorRGBA;
-
-import com.jmex.bui.BRootNode;
-import com.jmex.bui.BStyleSheet;
-import com.jmex.bui.PolledRootNode;
 
 /**
  * A base class for our various visual tests.

@@ -1,65 +1,65 @@
-<!-- build configuration -->
-<project name="jme-bui" default="compile" basedir=".">
-
-  <property name="lib.name"    value="jme-bui"/>
-  <property name="src.dir"     value="src/java"/>
+<?xml version="1.0"?>
+<project name="jme-bui" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+  <property name="src.dir"     value="src/main/java"/>
+  <property name="tsrc.dir"    value="src/test/java"/>
   <property name="deploy.dir"  value="dist"/>
-  <property name="dist.jar"    value="${lib.name}.jar"/>
   <property name="classes.dir" value="${deploy.dir}/classes"/>
 
-  <!-- javadoc bits -->
-  <property name="javadoc.dir"      value="${deploy.dir}/docs"/>
-  <property name="savedoc.dir"      value="docs"/>
-  <property name="doc.packages"     value="com.jme.bui.*"/>
-  <property name="copyright.holder" value="Michael Bayne"/>
-
-  <!-- import some targets to enumerate library dependencies -->
-  <property name="libs.dir" value="lib"/>
-  <import file="etc/libs-incl.xml"/>
-
-  <!-- declare our classpath -->
-  <path id="classpath">
-    <pathelement location="${classes.dir}"/>
-    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
-  </path>
-
-  <!-- prepares the application directories -->
-  <target name="prepare">
-    <mkdir dir="${deploy.dir}"/>
-    <mkdir dir="${javadoc.dir}"/>
-    <mkdir dir="${classes.dir}"/>
-    <mkdir dir="${classes.dir}/rsrc"/>
-    <!-- copy media and properties into the target directory -->
-    <copy todir="${classes.dir}/rsrc">
-      <fileset dir="rsrc" includes="**/*"/>
-    </copy>
-    <copy todir="${classes.dir}">
-      <fileset dir="${src.dir}" includes="**/*.properties"/>
-    </copy>
-    <copy todir="${deploy.dir}/lib" flatten="true">
-      <fileset refid="${lib.name}.libs"/>
-    </copy>
+  <property name="maven-ant.vers" value="2.1.1"/>
+  <property name="maven-ant.dir" value="${user.home}/.m2/ant-support"/>
+  <property name="maven-ant.jar" value="${maven-ant.dir}/maven-ant-tasks-${maven-ant.vers}.jar"/>
+  <property name="maven-ant.url"
+            value="http://mirrors.ibiblio.org/pub/mirrors/apache/maven/binaries"/>
+  <condition property="maven-ant.exists"><available file="${maven-ant.jar}"/></condition>
+  <target name="-download-maven-ant" unless="maven-ant.exists">
+    <mkdir dir="${maven-ant.dir}"/>
+    <get src="${maven-ant.url}/maven-ant-tasks-${maven-ant.vers}.jar" 
+         dest="${maven-ant.jar}" usetimestamp="true"/>
   </target>
 
-  <!-- cleans out the intermediate build files -->
+  <target name="-init-maven-ant" depends="-download-maven-ant">
+    <taskdef resource="org/apache/maven/artifact/ant/antlib.xml"
+             uri="urn:maven-artifact-ant" classpath="${maven-ant.jar}"/>
+    <artifact:pom id="pom" file="pom.xml"/>
+    <artifact:dependencies pathId="classpath" pomRefId="pom" useScope="compile"/>
+    <artifact:dependencies pathId="test.classpath" pomRefId="pom" useScope="test"/>
+  </target>
+
+  <target name="-prepare" depends="-init-maven-ant">
+    <mkdir dir="${deploy.dir}"/>
+  </target>
+
   <target name="clean">
     <delete dir="${deploy.dir}/classes"/>
     <delete dir="${deploy.dir}/docs"/>
   </target>
 
-  <!-- cleans out the built application -->
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
   </target>
 
-  <!-- build the java class files -->
-  <target name="compile" depends="prepare">
+  <target name="compile" depends="-prepare">
+    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${classes.dir}/rsrc"/>
+    <copy todir="${classes.dir}/rsrc"><fileset dir="rsrc" includes="**/*"/></copy>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="on" deprecation="on" source="1.5" target="1.5">
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
+
+    <mkdir dir="${deploy.dir}/test-classes"/>
+    <javac srcdir="${tsrc.dir}" destdir="${deploy.dir}/test-classes" includeAntRuntime="false"
+           debug="on" optimize="on" deprecation="on" source="1.5" target="1.5">
+      <classpath>
+        <path refid="test.classpath"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
+
     <!-- copy native libraries into dist/lib -->
     <copy todir="${deploy.dir}/lib">
       <fileset dir="lib/" includes="**/*.so"/>
@@ -68,13 +68,12 @@
     </copy>
   </target>
 
-  <!-- build the javadoc documentation -->
-  <target name="javadoc" depends="prepare">
+  <target name="javadoc" depends="-prepare">
     <tstamp><format property="year" pattern="yyyy" /></tstamp>
     <javadoc windowtitle="BUI API" doctitle="BUI API"
-             destdir="${javadoc.dir}" additionalparam="-breakiterator">
+             destdir="${deploy.dir}/docs" additionalparam="-breakiterator">
       <packageset dir="${src.dir}"/>
-      <bottom>Copyright &#169; ${year} ${copyright.holder}.
+      <bottom>Copyright &#169; 2008-${year} Michael Bayne.
               All Rights Reserved.</bottom>
       <classpath refid="classpath"/>
       <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
@@ -82,42 +81,23 @@
     </javadoc>
   </target>
 
-  <!-- builds the javadocs and stuffs them in a directory where they -->
-  <!-- won't be blown away when we do "clean" next time -->
-  <target name="savedoc" depends="javadoc">
-    <delete dir="${savedoc.dir}/api"/>
-    <copy todir="${savedoc.dir}/api">
-      <fileset dir="${javadoc.dir}" includes="**/*"/>
-    </copy>
-  </target>
-
-  <!-- runs our unit tests -->
   <target name="tests" depends="compile" description="Runs unit tests.">
     <junit printsummary="no" haltonfailure="yes" fork="false">
-      <classpath refid="classpath"/>
+      <classpath>
+        <path refid="test.classpath"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement location="${deploy.dir}/test-classes"/>
+      </classpath>
       <formatter type="brief" usefile="false"/>
       <batchtest>
-        <fileset dir="${src.dir}">
+        <fileset dir="${tsrc.dir}">
           <include name="**/*UTest.java"/>
         </fileset>
       </batchtest>
     </junit>
   </target>
 
-  <!-- builds our jar file -->
-  <target name="dist" depends="prepare,compile">
-    <jar destfile="${deploy.dir}/${dist.jar}" basedir="${classes.dir}"/>
-  </target>
-
-  <!-- builds our downloadable zip files -->
-  <target name="downloads" depends="dist,savedoc">
-    <zip destfile="../jme-bui.zip">
-      <fileset dir="..">
-        <include name="jme-bui/**"/>
-        <exclude name="**/dist/**"/>
-        <exclude name="**/.svn/**"/>
-      </fileset>
-    </zip>
-    <zip destfile="../jme-bui-docs.zip" basedir="docs" includes="api"/>
+  <target name="dist" depends="compile">
+    <jar destfile="${deploy.dir}/${ant.project.name}.jar" basedir="${classes.dir}"/>
   </target>
 </project>

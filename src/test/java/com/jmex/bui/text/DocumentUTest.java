@@ -18,12 +18,10 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package com.jmex.bui.tests.text;
+package com.jmex.bui.text;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
-
-import com.jmex.bui.text.Document;
 
 /**
  * A unit test for {@link Document}.
