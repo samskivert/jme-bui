@@ -89,7 +89,8 @@
         <pathelement location="${deploy.dir}/test-classes"/>
       </classpath>
       <formatter type="brief" usefile="false"/>
-      <batchtest>
+      <formatter type="xml"/>
+      <batchtest todir="${deploy.dir}/test-reports">
         <fileset dir="${tsrc.dir}">
           <include name="**/*UTest.java"/>
         </fileset>
@@ -99,5 +100,14 @@
 
   <target name="dist" depends="compile">
     <jar destfile="${deploy.dir}/${ant.project.name}.jar" basedir="${classes.dir}"/>
+  </target>
+
+  <property name="maven.deploy.repo" value="file://${user.home}/.m2/repository"/>
+  <target name="maven-deploy" depends="dist" 
+          description="Deploys our build artifacts to a Maven repository.">
+    <artifact:deploy file="${deploy.dir}/${ant.project.name}.jar" uniqueVersion="false">
+      <remoteRepository url="${maven.deploy.repo}"/>
+      <pom refid="pom"/>
+    </artifact:deploy>
   </target>
 </project>
