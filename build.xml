@@ -103,7 +103,7 @@
   </target>
 
   <property name="maven.deploy.repo" value="file://${user.home}/.m2/repository"/>
-  <target name="maven-deploy" depends="dist" 
+  <target name="maven-deploy" depends="dist,tests" 
           description="Deploys our build artifacts to a Maven repository.">
     <artifact:deploy file="${deploy.dir}/${ant.project.name}.jar" uniqueVersion="false">
       <remoteRepository url="${maven.deploy.repo}"/>
