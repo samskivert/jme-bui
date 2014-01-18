@@ -40,8 +40,7 @@ public class LabelTest extends BaseTest
 
         BImage image = null;
         try {
-            image = new BImage(getClass().getClassLoader().
-                              getResource("rsrc/textures/scroll_right.png"));
+            image = new BImage(getClass().getClassLoader().getResource("textures/scroll_right.png"));
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

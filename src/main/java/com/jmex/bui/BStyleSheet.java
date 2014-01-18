@@ -237,7 +237,7 @@ public class BStyleSheet
         // load up the default BUI stylesheet
         try {
             new BStyleSheet(new InputStreamReader(BStyleSheet.class.getClassLoader().
-                                                  getResourceAsStream("rsrc/style.bss")),
+                                                  getResourceAsStream("style.bss")),
                             new DefaultResourceProvider());
         } catch (Exception e) {
             e.printStackTrace(System.err);

@@ -60,7 +60,7 @@ public class LayoutTest extends BaseTest
         BImage icon = null;
         try {
             icon = new BImage(getClass().getClassLoader().
-                              getResource("rsrc/textures/scroll_up.png"));
+                              getResource("textures/scroll_up.png"));
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

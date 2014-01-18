@@ -44,8 +44,7 @@ public abstract class BaseTest extends SimpleGame
         // load up the default BUI stylesheet
         BStyleSheet style = null;
         try {
-            InputStream stin = getClass().getClassLoader().
-                getResourceAsStream("rsrc/style.bss");
+            InputStream stin = getClass().getClassLoader().getResourceAsStream("style.bss");
             style = new BStyleSheet(new InputStreamReader(stin),
                                     new BStyleSheet.DefaultResourceProvider());
         } catch (Exception e) {

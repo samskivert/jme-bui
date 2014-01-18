@@ -37,7 +37,7 @@ public class ScrollingListTest extends BaseTest
 //         BImage image;
 //         try {
 //             image = new BImage(getClass().getClassLoader().
-//                                getResource("rsrc/textures/scroll_right.png"));
+//                                getResource("textures/scroll_right.png"));
 //         } catch (Exception e) {
 //             e.printStackTrace(System.err);
 //         }
