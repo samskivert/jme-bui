@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.samskivert</groupId>
-  <artifactId>jme-bui</artifactId>
-  <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
-  <name>jme-bui</name>
-  <description>A user interface library for jMonkeyEngine.</description>
-  <url>http://code.google.com/p/jme-bui/</url>
-  <issueManagement>
-    <url>http://code.google.com/p/jme-bui/issues/list</url>
-  </issueManagement>
-
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>5</version>
   </parent>
+
+  <groupId>com.samskivert</groupId>
+  <artifactId>jme-bui</artifactId>
+  <packaging>jar</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>jme-bui</name>
+
+  <description>A user interface library for jMonkeyEngine.</description>
+  <url>http://code.google.com/p/jme-bui/</url>
+  <issueManagement>
+    <url>http://code.google.com/p/jme-bui/issues/list</url>
+  </issueManagement>
 
   <licenses>
     <license>
@@ -35,16 +36,12 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://jme-bui.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://jme-bui.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://jme-bui.googlecode.com/svn/trunk/</url>
+    <connection>scm:git:https://code.google.com/p/jme-bui/</connection>
+    <developerConnection>scm:git:https://code.google.com/p/jme-bui/</developerConnection>
+    <url>https://code.google.com/p/jme-bui/source/</url>
   </scm>
 
   <repositories>
-    <repository>
-      <id>lwjgl-repo</id>
-      <url>http://lwjgl-maven.googlecode.com/svn/trunk/repository</url>
-    </repository>
     <repository>
       <id>ooo-repo</id>
       <url>http://build.earth.threerings.net/maven-repository</url>
@@ -60,16 +57,16 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.lwjgl</groupId>
+      <groupId>org.lwjgl.lwjgl</groupId>
       <artifactId>lwjgl</artifactId>
-      <version>2.6</version>
+      <version>2.9.0</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.lwjgl</groupId>
+      <groupId>org.lwjgl.lwjgl</groupId>
       <artifactId>lwjgl_util</artifactId>
-      <version>2.6</version>
+      <version>2.9.0</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
