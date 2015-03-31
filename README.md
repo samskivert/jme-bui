@@ -11,7 +11,7 @@ following characteristics:
   * An open source license that allows the toolkit to be used and extended at no cost by
     developers working on personal and commercial projects
 
-== Note ==
+## Note
 
 BUI has long since been retired. JME has gone through multiple major releases since BUI was last
 maintained. The developers of BUI have put their efforts into a new engine, with accompanying user
